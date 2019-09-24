@@ -104,7 +104,7 @@ div.floors-tbl-freeze-column-div {
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="propertyDeactivateFlag" name="propertyDeactivateFlag"
-			id="propertyDeactivateFlag" value="${propertyDeactivateFlag}" />
+			id="propertyDeactivateFlag" value="${writeOff.propertyDeactivateFlag}" />
 			<input type="hidden" id="attachedDocuments"  value="${attachedDocuments}" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">

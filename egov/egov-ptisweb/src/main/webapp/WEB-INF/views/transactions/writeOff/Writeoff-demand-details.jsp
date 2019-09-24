@@ -127,15 +127,18 @@
 									<td class="greybox"><form:hidden
 											path="demandDetailBeanList[${status.index }].reasonMaster" />
 										<c:out value="${demandDetails.reasonMaster}"></c:out></td>
-									<td class="greybox"><form:input align="center"
-											type="text" class="demandDetailBeanList" style="width:80%"
+									<td class="greybox"><form:input align="center" type="text"
+											class="demandDetailBeanList" style="width:80%"
 											id="demandDetailBeanList${status.index}.actualAmount"
 											path="demandDetailBeanList[${status.index }].actualAmount"
 											value="${demandDetails.actualAmount}" readonly="true" /></td>
 									<td class="greybox"><form:input
 											id="demandDetailBeanList${status.index}.revisedAmount"
 											align="center" type="text" style="width:80%"
-											path="demandDetailBeanList[${status.index }].revisedAmount" onblur="checkPenaltyCollection(this)" /></td>
+											path="demandDetailBeanList[${status.index }].revisedAmount"
+											onblur="checkRevisedAmount(this,${status.index})" /> <form:errors
+											path="demandDetailBeanList[${status.index }].revisedAmount"
+											cssClass="add-margin error-msg" /></td>
 									<td class="greybox"><form:input align="center" type="text"
 											style="width:80%"
 											id="demandDetailBeanList${status.index}.actualCollection"

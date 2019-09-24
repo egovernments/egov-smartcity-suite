@@ -121,7 +121,7 @@ public class WriteOff extends StateAware<Position> {
     private String resolutionDate;
 
     @Column(name = "deactivate")
-    private Boolean propertyDeactivateFlag =false;
+    private boolean propertyDeactivateFlag;
 
     @Column(name = "resolutionType")
     private String resolutionType;
@@ -193,11 +193,11 @@ public class WriteOff extends StateAware<Position> {
         this.demandDetailBeanList = demandDetailBeanList;
     }
 
-    public Boolean getPropertyDeactivateFlag() {
+    public boolean getPropertyDeactivateFlag() {
         return propertyDeactivateFlag;
     }
 
-    public void setPropertyDeactivateFlag(Boolean propertyDeactivateFlag) {
+    public void setPropertyDeactivateFlag(boolean propertyDeactivateFlag) {
         this.propertyDeactivateFlag = propertyDeactivateFlag;
     }
 

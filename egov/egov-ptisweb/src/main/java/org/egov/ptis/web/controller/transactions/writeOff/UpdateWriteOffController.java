@@ -80,13 +80,11 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.WriteOffReasons;
 import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +97,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -118,8 +115,6 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
     private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
     @Autowired
     private WriteOffReasonRepository writeOffReasonRepository;
-    @Autowired
-    private PropertyService propertyService;
 
     @ModelAttribute
     public WriteOff writeOffModel(@PathVariable Long id) {
@@ -187,12 +182,14 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         String currentDesg = writeOffService.getLoggedInUserDesignation(
                 writeOff.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser());
         propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, false);
-        String value = request.getParameter("propertyDeactivateFlag");
-        writeOff.setPropertyDeactivateFlag(Boolean.valueOf(value));
+
         if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0)
             writeOff.setPropertyDeactivateFlag(true);
         else
             writeOff.setPropertyDeactivateFlag(false);
+        String value = request.getParameter("propertyDeactivateFlag");
+        if (Boolean.valueOf(value))
+            writeOff.setPropertyDeactivateFlag(Boolean.valueOf(value));
         if (request.getParameter(APPROVAL_COMMENT) != null)
             approvalComent = request.getParameter(APPROVAL_COMMENT);
         if (request.getParameter(WF_ACTION) != null)
@@ -232,12 +229,12 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             target = WO_SUCCESS_FORM;
         } else {
             if (currentDesg.contains(REVENUE_OFFICER_DESGN)) {
-                if (writeOff.getWriteOffType()!=null && !writeOff.getWriteOffType().getCode().isEmpty()) {
+                if (writeOff.getWriteOffType() != null && !writeOff.getWriteOffType().getCode().isEmpty()) {
                     final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
                             .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
                     writeOff.setWriteOffType(propMutMstr);
                 }
-                if (writeOff.getWriteOffReasons()!=null && !writeOff.getWriteOffReasons().getName().isEmpty()) {
+                if (writeOff.getWriteOffReasons() != null && !writeOff.getWriteOffReasons().getName().isEmpty()) {
                     final WriteOffReasons writeOffReasons = writeOffReasonRepository
                             .findByCode(writeOff.getWriteOffReasons().getCode());
                     writeOff.setWriteOffReasons(writeOffReasons);
@@ -249,7 +246,7 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
                     target = writeOffService.displayErrors(writeOff, model, errorMessages, request);
                     return target;
                 }
-                processAndStoreApplicationDocuments(writeOff);
+                writeOffService.processAndStoreApplicationDocuments(writeOff);
                 writeOffService.updateProperty(writeOff);
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
             }
@@ -262,24 +259,5 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             target = WO_SUCCESS_FORM;
         }
         return target;
-    }
-
-    public void processAndStoreApplicationDocuments(final WriteOff writeoff) {
-        for (final Document applicationDocument : writeoff.getWriteoffDocumentsProxy())
-            if (!writeoff.getWriteoffDocumentsProxy().isEmpty())
-                replaceDoc(writeoff, applicationDocument);
-        for (final Document applicationDocument : writeoff.getWriteoffDocumentsProxy())
-            if (applicationDocument.getFile() != null) {
-                applicationDocument.setType(writeOffService.getDocType(applicationDocument.getType().getName()));
-                applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
-            }
-    }
-
-    private void replaceDoc(final WriteOff writeoff, final Document applicationDocument) {
-        for (MultipartFile mp : applicationDocument.getFile())
-            if (mp.getSize() != 0)
-                for (Document document : writeoff.getDocuments())
-                    if (document.getType().getName().equals(applicationDocument.getType().getName()))
-                        document.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
     }
 }

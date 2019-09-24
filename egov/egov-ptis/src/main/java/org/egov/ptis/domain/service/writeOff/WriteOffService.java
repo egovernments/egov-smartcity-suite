@@ -173,8 +173,7 @@ public class WriteOffService extends GenericWorkFlowController {
         List<Map<String, Object>> sewConnDetails = propertyTaxCommonUtils
                 .getSewConnDetails(assessmentNo, request);
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(assessmentNo, request);
-        boolean hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
-                .getSewConnDetails(assessmentNo, request));
+        boolean hasActiveSwg = checkActiveSewage(sewConnDetails);
         for (Installment inst : installmentList)
             instString = instString.append(inst.getDescription() + ",");
         model.addAttribute("installments", installmentList);
@@ -679,9 +678,10 @@ public class WriteOffService extends GenericWorkFlowController {
         Map<String, String> errorMessages = new HashMap<>();
         if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF"))
             errorMessages = validateWCSewconnection(writeOff, request);
-
         if (errorMessages.isEmpty())
             errorMessages = validateCouncil(writeOff, request);
+        if (errorMessages.isEmpty())
+            errorMessages = validateDemand(writeOff.getDemandDetailBeanList());
         if (errorMessages.isEmpty() && writeOff.getState() == null) {
             List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(),
                     writeOff.getResolutionNo(),
@@ -693,6 +693,7 @@ public class WriteOffService extends GenericWorkFlowController {
     }
 
     public BindingResult validate(final WriteOff writeOff, final BindingResult errors) {
+        int i = 0;
         if (!StringUtils.isNotBlank(writeOff.getWriteOffType().getCode()))
             errors.rejectValue("writeOffType.mutationDesc", "writeoff.type");
         if (!StringUtils.isNotBlank(writeOff.getWriteOffReasons().getCode()))
@@ -701,6 +702,15 @@ public class WriteOffService extends GenericWorkFlowController {
             errors.rejectValue("resolutionNo", "writeoff.resolution.no");
         if (!StringUtils.isNotBlank(writeOff.getResolutionType()))
             errors.rejectValue("resolutionType", "writeoff.resolution.type");
+        if (writeOff.getDemandDetailBeanList() != null)
+            for (final DemandDetail demanddetail : writeOff.getDemandDetailBeanList()) {
+                demanddetail.setInstallment(installmentDao.findById(demanddetail.getInstallment().getId(), false));
+                if (demanddetail.getRevisedAmount() != null && demanddetail.getActualAmount() != null
+                        && demanddetail.getRevisedAmount().compareTo(demanddetail.getActualAmount()) > 0)
+                    errors.rejectValue("demandDetailBeanList[" + i + "].revisedAmount",
+                            "writeoff.revised.amount.is.greater.than");
+                i++;
+            }
         return errors;
     }
 
@@ -750,8 +760,12 @@ public class WriteOffService extends GenericWorkFlowController {
         model.addAttribute("fromInstallment", writeOff.getFromInstallment());
         model.addAttribute("toInstallment", writeOff.getToInstallment());
         prepareWorkflow(model, writeOff, new WorkflowContainer());
-        if (!writeOff.getWriteoffDocumentsProxy().isEmpty())
+        if (!writeOff.getWriteoffDocumentsProxy().isEmpty()) {
+            List<Document> documentList = writeOff.getWriteoffDocumentsProxy();
+            writeOff.getWriteoffDocumentsProxy().clear();
+            writeOff.setWriteoffDocumentsProxy(documentList);
             model.addAttribute("attachedDocuments", writeOff.getWriteoffDocumentsProxy());
+        }
         model.addAttribute("writeOff", writeOff);
         return WO_FORM;
     }
@@ -771,4 +785,41 @@ public class WriteOffService extends GenericWorkFlowController {
         }
         return demandDetailBeanList;
     }
+
+    public Map<String, String> validateDemand(List<DemandDetail> demandDetailBeanList) {
+
+        HashMap<String, String> errors = new HashMap<>();
+
+        for (final DemandDetail demandDetail : demandDetailBeanList) {
+            demandDetail.setInstallment(installmentDao.findById(demandDetail.getInstallment().getId(), false));
+            if (demandDetail.getActualCollection() != null && demandDetail.getRevisedAmount() != null && demandDetail
+                    .getActualCollection().add(demandDetail.getRevisedAmount()).compareTo(demandDetail.getActualAmount()) > 0)
+                errors.put(ERROR, "writeoff.revised.amount.is.greater.than.sum");
+        }
+        return errors;
+    }
+
+    public void processAndStoreApplicationDocuments(final WriteOff writeoff) {
+        for (final Document applicationDocument : writeoff.getWriteoffDocumentsProxy())
+            if (!writeoff.getWriteoffDocumentsProxy().isEmpty() && !writeoff.getDocuments().isEmpty())
+                replaceDoc(writeoff, applicationDocument);
+            else {
+                writeoff.getDocuments().clear();
+                writeoff.getDocuments().addAll(writeoff.getWriteoffDocumentsProxy());
+                for (final Document document : writeoff.getDocuments())
+                    if (document.getFile() != null) {
+                        document.setType(getDocType(document.getType().getName()));
+                        document.setFiles(propertyService.addToFileStore(document.getFile()));
+                    }
+            }
+    }
+
+    private void replaceDoc(final WriteOff writeoff, final Document applicationDocument) {
+        for (MultipartFile mp : applicationDocument.getFile())
+            if (mp.getSize() != 0)
+                for (Document document : writeoff.getDocuments())
+                    if (document.getType().getName().equals(applicationDocument.getType().getName()))
+                        document.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+    }
+
 }

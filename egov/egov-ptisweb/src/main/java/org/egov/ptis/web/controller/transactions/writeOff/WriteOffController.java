@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -67,7 +66,6 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.ptis.bean.demand.DemandDetail;
@@ -78,12 +76,9 @@ import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
-import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
-import org.egov.ptis.domain.entity.property.WriteOffReasons;
 import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
@@ -194,19 +189,17 @@ public class WriteOffController extends GenericWorkFlowController {
         String target = "";
         Long approvalPosition = 0l;
         String approvalComent = "";
-        final List<Document> documents = new ArrayList<>();
+        new ArrayList<>();
         Map<String, String> errorMessages = new HashMap<>();
         if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0)
             writeOff.setPropertyDeactivateFlag(true);
         else
             writeOff.setPropertyDeactivateFlag(false);
-        if (writeOff.getWriteOffType().getCode() != null) {
+        if (writeOff.getWriteOffType().getCode() != null)
             writeOff.setWriteOffType(propertyMutationMasterHibDAO
                     .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode()));
-        }
-        if (writeOff.getWriteOffReasons().getCode() != null) {
+        if (writeOff.getWriteOffReasons().getCode() != null)
             writeOff.setWriteOffReasons(writeOffReasonRepository.findByCode(writeOff.getWriteOffReasons().getCode()));
-        }
         resultBinder = writeOffService.validate(writeOff, resultBinder);
         if (!resultBinder.hasErrors())
             errorMessages = writeOffService.displayValidation(writeOff, request);
@@ -221,12 +214,7 @@ public class WriteOffController extends GenericWorkFlowController {
             workFlowAction = request.getParameter(WF_ACTION);
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-        if (!writeOff.getWriteoffDocumentsProxy().isEmpty()) {
-            documents.addAll(writeOff.getWriteoffDocumentsProxy());
-            writeOff.getDocuments().clear();
-            writeOff.getDocuments().addAll(documents);
-            processAndStoreApplicationDocuments(writeOff);
-        }
+        writeOffService.processAndStoreApplicationDocuments(writeOff);
         writeOffService.updateProperty(writeOff);
         writeOffService.updateDemandDetails(writeOff);
         writeOff.getBasicProperty().addProperty(writeOff.getProperty());
@@ -240,14 +228,5 @@ public class WriteOffController extends GenericWorkFlowController {
         model.addAttribute("propertyId", assessmentNo);
         target = WO_SUCCESS_FORM;
         return target;
-    }
-
-    public void processAndStoreApplicationDocuments(final WriteOff writeoff) {
-        if (!writeoff.getDocuments().isEmpty())
-            for (final Document applicationDocument : writeoff.getDocuments())
-                if (applicationDocument.getFile() != null) {
-                    applicationDocument.setType(writeOffService.getDocType(applicationDocument.getType().getName()));
-                    applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
-                }
     }
 }

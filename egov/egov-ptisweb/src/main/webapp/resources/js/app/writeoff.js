@@ -56,6 +56,7 @@ $( document ).ready(function() {
 		var flagvalue = $("#propertyDeactivateFlag").val();
 		$("#frominstallments").attr('disabled', true);
 		$("#toinstallments").attr('disabled', true);
+		displaydemand();
 		if(flagvalue==true)
 			document.getElementById("check").style.display = "block";
 	}
@@ -132,7 +133,6 @@ function getselectedinstallments(val){
 		var writeofftypes = $( "#writeOffType option:selected" ).text();
 		for(var i=0; i < $(".demandDetailBeanList").length; i++){
 		var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
-		
 		var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
 		var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
 		var collectionvalue = document.getElementById('demandDetailBeanList'+ i + '.actualCollection').value;
@@ -140,13 +140,17 @@ function getselectedinstallments(val){
 		if(actualAmountValue == collectionvalue){
 			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
 			document.getElementById(actualCollection).value;
+		if(document.getElementById(revisedAmount).value ==0)
 		document.getElementById(revisedAmount).disabled = true;
 		}
-		 else 
+		else {
 			 document.getElementById(revisedAmount).value = '';
+			 document.getElementById(revisedAmount).disabled = false;
+		 }
 		if(writeofftypes  == 'Full WriteOff'){
 		document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
 		document.getElementById(actualCollection).value;
+		document.getElementById(revisedAmount).disabled = true;
 		}
 			
 	}
@@ -219,4 +223,24 @@ function getselectedinstallments(val){
 	window.open(urlvalue,_blank); 
 	window.focus();
 	})
+	
+	function checkRevisedAmount(obj,index) {
+		var revisedAmount = jQuery(obj).val();
+		var collectionvalue = document.getElementById('demandDetailBeanList'+ index + '.actualCollection').value;
+		var actualAmountValue = document.getElementById('demandDetailBeanList'+ index + '.actualAmount').value;
+		if (revisedAmount) {
+		if(Number(revisedAmount) >Number(actualAmountValue)){
+				bootbox.alert("Writeoff Amount should be less than or equal to Demand Amount.");
+					document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';
+					return false;
+			}
+				if ((parseInt(collectionvalue) + parseInt(revisedAmount)) > Number(actualAmountValue)) {
+					bootbox
+							.alert("Sum of Collection and Writeoff Amount should be less than or equal to Demand Amount.");
+					document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';
+					return false;
+				}
+			}
+	}
+	
 	

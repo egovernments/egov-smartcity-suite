@@ -117,7 +117,7 @@ div.floors-tbl-freeze-column-div {
 		<form:hidden path="" name="state" id="state"
 			value="${writeOff.getState().getValue()}" />
 		<form:hidden path="" name="propertyDeactivateFlag"
-			id="propertyDeactivateFlag" value="${propertyDeactivateFlag}" />
+			id="propertyDeactivateFlag" value="${writeOff.propertyDeactivateFlag}" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
@@ -343,7 +343,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 									</c:if>
 									<c:if test="${writeOff.propertyDeactivateFlag == true}">
-										<div id="selected" style="display: none;">
+										<div id="check" style="display: block;">
 											<spring:message code="lbl.writeoff.deactivation.checkbox" />
 											<input type="checkbox" id="fullwriteoffcheckbox"
 												class="check_box" name="checkbox" checked="checked">
