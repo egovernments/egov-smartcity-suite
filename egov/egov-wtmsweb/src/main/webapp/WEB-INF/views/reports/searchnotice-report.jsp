@@ -209,7 +209,7 @@
 						<form:button type="button" class="btn btn-primary" id="zipid">
 							<spring:message code="lbl.zip" />
 						</form:button>
-						<form:button type="reset" class="btn btn-primary">
+						<form:button type="reset" class="btn btn-primary" id="resetid">
 							<spring:message code="lbl.reset" />
 						</form:button>
 						<a onclick="self.close()" class="btn btn-default"

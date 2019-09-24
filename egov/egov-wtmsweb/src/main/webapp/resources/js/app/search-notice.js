@@ -78,6 +78,12 @@ jQuery('#zipid').click(function(e) {
 	zipanddownload();
 });
 
+
+jQuery('#resetid').click(function(e) {
+	$('#noticetype').find('option').remove();
+});
+
+
 jQuery('#applicationType').change(function(e) {
 	populateNoticeType();
 });
