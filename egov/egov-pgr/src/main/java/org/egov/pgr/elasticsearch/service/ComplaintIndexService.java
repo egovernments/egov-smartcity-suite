@@ -48,6 +48,46 @@
 
 package org.egov.pgr.elasticsearch.service;
 
+import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.startOfToday;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
+import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.City;
@@ -59,9 +99,9 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSourceResponse;
 import org.egov.pgr.elasticsearch.entity.contract.IVRSFeedBackResponse;
@@ -94,34 +134,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static java.lang.String.format;
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.startOfToday;
-import static org.egov.pgr.utils.constants.PGRConstants.*;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 @Service
-@Transactional(readOnly = true)
 public class ComplaintIndexService {
 
     private static final String SOURCE = "source";
