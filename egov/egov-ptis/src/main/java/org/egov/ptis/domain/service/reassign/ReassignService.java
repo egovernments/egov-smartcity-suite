@@ -123,8 +123,8 @@ public class ReassignService {
             stateAware = persistenceService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(stateAwareId));
         }
         stateAware.transition().progressWithStateCopy().withOwner(position).withInitiator(position);
-        propertyService.updateIndexes(stateAware, transactionType);
         persistenceService.persist(stateAware);
+        propertyService.updateIndexes(stateAware, transactionType);
         return true;
     }
 

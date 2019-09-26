@@ -380,6 +380,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);
+            propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
                 propertyService.pushVacancyRemissionPortalMessage(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
 

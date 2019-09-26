@@ -469,7 +469,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         propService.processAndStoreDocument(property.getAssessmentDocuments());
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
@@ -479,6 +478,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
             basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
         }
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (citizenPortalUser)
             propService.pushPortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -889,10 +889,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
             basicProp.addProperty(property);
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setDocNumber(getDocNumber());
         setApplicationNoMessage(" with application number : ");
         return RESULT_ACK;
@@ -998,7 +998,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(property, null, true);
             financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_NEW_ASSESSENT);
         }
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(property);
@@ -1007,6 +1006,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
@@ -1033,7 +1033,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             basicProp.setUnderWorkflow(false);
         else
             basicProp.setUnderWorkflow(true);
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             if(isThirdPartyCheckbox() 
@@ -1044,6 +1043,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertySurveyService.updateSurveyIndex( APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         basicPropertyService.persist(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";

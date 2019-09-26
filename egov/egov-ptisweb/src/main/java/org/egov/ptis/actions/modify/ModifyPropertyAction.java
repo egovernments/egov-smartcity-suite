@@ -147,7 +147,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -389,25 +388,25 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient CityService cityService;
-    
+
     @Autowired
     private transient NoticeService noticeService;
-    
+
     @Autowired
     private transient WoodTypeRepository woodTypeRepository;
-    
+
     @Autowired
     private transient WallTypeRepository wallTypeRepository;
-    
+
     @Autowired
     private transient RoofTypeRepository roofTypeRepository;
 
     @Autowired
     private transient FloorTypeRepository floorTypeRepository;
-    
+
     @Autowired
     private transient PropertySurveyService propertySurveyService;
-    
+
     @Autowired
     private DemandVoucherService demandVoucherService;
 
@@ -590,7 +589,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         isEligibleForDocEdit();
-        if(SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()))
+        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()))
             enableActionsForGIS(propertyModel, documentTypes);
         corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
         amalgPropIds = new String[10];
@@ -599,9 +598,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (!currWfState.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
             int i = 0;
             for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
-                if ("W".equals(propstatval.getIsActive())) {
+                if ("W".equals(propstatval.getIsActive()))
                     setPropStatValForView(propstatval);
-                }
                 // setting the amalgamated properties
                 if (PROP_CREATE_RSN.equals(propstatval.getPropertyStatus().getStatusCode())
                         && "Y".equals(propstatval.getIsActive()) && propstatval.getReferenceBasicProperty() != null) {
@@ -618,9 +616,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
             int i = 0;
             for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
-                if ("Y".equals(propstatval.getIsActive())) {
+                if ("Y".equals(propstatval.getIsActive()))
                     setPropStatValForView(propstatval);
-                }
                 // setting the amalgamated properties
                 if (PROP_CREATE_RSN.equals(propstatval.getPropertyStatus().getStatusCode())
                         && "Y".equals(propstatval.getIsActive()) && propstatval.getReferenceBasicProperty() != null) {
@@ -714,7 +711,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
-        propService.updateIndexes(propertyModel, getApplicationType());
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
@@ -726,7 +722,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             surveyBean.setApplicationTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
-        
+
         // added to set createdDate for DemandCalculation object
         if (basicProp.getWFProperty() != null && basicProp.getWFProperty().getPtDemandSet() != null
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
@@ -742,6 +738,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             basicProp.getWFProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
             basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
         }
+        propService.updateIndexes(propertyModel, getApplicationType());
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         if (citizenPortalUser)
             propService.pushPortalMessage(propertyModel, getApplicationType());
@@ -822,8 +819,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
 
-        propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, getApplicationType());
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
             propService.updatePortal(propertyModel, getApplicationType());
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
@@ -862,21 +859,21 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
-        
+
         String appConfigValue = getDemandVoucherAppConfigValue();
         if ("Y".equalsIgnoreCase(appConfigValue)) {
             Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(propertyModel,
                     oldProperty, false);
             financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
         }
-        
-        propService.updateIndexes(propertyModel, getApplicationType());
+
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
             propertySurveyService.updateSurveyIndex(getApplicationType(), surveyBean);
         }
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, getApplicationType());
         setBasicProp(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
             propService.updatePortal(propertyModel, getApplicationType());
@@ -959,23 +956,24 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             return multipleSubmitRedirect();
         if (wfInitiator != null) {
             transitionWorkFlow(propertyModel);
-            propService.updateIndexes(propertyModel, getApplicationType());
             propertyImplService.update(propertyModel);
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
                 propService.updatePortal(propertyModel, getApplicationType());
             if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
                 SurveyBean surveyBean = new SurveyBean();
-                if(isThirdPartyCheckbox() 
-                		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(propertyModel.getState().getNextAction())){
-                	propertyModel.setThirdPartyVerified(true);
-                	propertyImplService.update(propertyModel);
+                if (isThirdPartyCheckbox()
+                        && PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                                .equalsIgnoreCase(propertyModel.getState().getNextAction())) {
+                    propertyModel.setThirdPartyVerified(true);
+                    propertyImplService.update(propertyModel);
                 }
                 surveyBean.setProperty(propertyModel);
                 propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
             }
-            
+
         }
+        propService.updateIndexes(propertyModel, getApplicationType());
         final String username = getInitiator();
         getAckMsg(username, wfInitiator);
         buildEmailandSms(propertyModel, getApplicationType());
@@ -999,9 +997,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null)
             if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
                 addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            if (propService.getWorkflowInitiator(propertyModel) == null)
-                addActionError(getText("reject.error.initiator.inactive",
-                        Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
+        if (propService.getWorkflowInitiator(propertyModel) == null)
+            addActionError(getText("reject.error.initiator.inactive",
+                    Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
         return wfInitiator;
     }
 

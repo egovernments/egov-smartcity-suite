@@ -199,7 +199,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Transactional(readOnly = true)
 public class PropertyService {
-    
+
     private static final String AND_PMV_HOUSE_NO_LIKE = " and pmv.houseNo like ? ";
     private static final String WHERE_PMV_IS_ACTIVE_TRUE = "where pmv.isActive = true ";
     private static final String SELECT_COUNT_DISTINCT_PMV = "select count(distinct pmv) ";
@@ -336,10 +336,10 @@ public class PropertyService {
      * @return Created or Updated property
      */
     public PropertyImpl createProperty(final PropertyImpl property, final String areaOfPlot, final String mutationCode,
-                                       final String propTypeId, final String propUsageId, final String propOccId, final Character status,
-                                       final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
-                                       final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId,
-                                       final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Boolean nonVacant) {
+            final String propTypeId, final String propUsageId, final String propOccId, final Character status,
+            final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
+            final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId,
+            final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Boolean nonVacant) {
         LOGGER.debug("Entered into createProperty");
         LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
                 + mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -474,7 +474,7 @@ public class PropertyService {
      * @param propOccId
      */
     public void createFloors(final Property property, final String mutationCode, final String propUsageId,
-                             final String propOccId) {
+            final String propOccId) {
         LOGGER.debug("Entered into createFloors");
         LOGGER.debug("createFloors: Property: " + property + ", mutationCode: " + mutationCode + ", propUsageId: "
                 + propUsageId + ", propOccId: " + propOccId);
@@ -560,8 +560,8 @@ public class PropertyService {
      * @return PropertyImpl
      */
     public PropertyStatusValues createPropStatVal(final BasicProperty basicProperty, final String statusCode,
-                                                  final Date propCompletionDate, final String courtOrdNum, final Date orderDate, final String judgmtDetails,
-                                                  final String parentPropId) {
+            final Date propCompletionDate, final String courtOrdNum, final Date orderDate, final String judgmtDetails,
+            final String parentPropId) {
         LOGGER.debug("Entered into createPropStatVal");
         LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: " + statusCode
                 + ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: " + courtOrdNum + ", orderDate: "
@@ -699,7 +699,7 @@ public class PropertyService {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Property createDemandForModify(final Property oldProperty, final Property newProperty,
-                                          final Date dateOfCompletion) {
+            final Date dateOfCompletion) {
         LOGGER.debug("Entered into createDemandForModify");
         LOGGER.debug("createDemandForModify: oldProperty: " + oldProperty + NEW_PROPERTY + newProperty
                 + DATE_OF_COMPLETION + dateOfCompletion);
@@ -714,7 +714,7 @@ public class PropertyService {
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         ptDemandOld = oldPtdemandMap.get(installmentFirstHalf.getDescription());
-        if(ptDemandOld == null){
+        if (ptDemandOld == null) {
             ptDemandOld = getLatestDemandforHistoryProp(oldProperty);
         }
         final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
@@ -835,7 +835,8 @@ public class PropertyService {
                 final EgDemandDetails newDmndDtls = getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst),
                         rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected()
+                            .subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),
@@ -939,7 +940,7 @@ public class PropertyService {
      * @return
      */
     private Set<EgDemandDetails> createAllDmdDetails(final List<Installment> instList,
-                                                     final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
+            final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
         LOGGER.debug("Entered into createAllDmdDeatails");
 
         final Set<EgDemandDetails> dmdDetSet = new HashSet<>();
@@ -969,8 +970,8 @@ public class PropertyService {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createAllDmdDetails(final Property oldProperty, final Property newProperty,
-                                     final Installment installment, final List<Installment> instList,
-                                     final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
+            final Installment installment, final List<Installment> instList,
+            final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
         LOGGER.debug("Entered into createAllDmdDeatails");
         LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + NEW_PROPERTY + newProperty
                 + ",installment: " + installment + ", instList: " + instList);
@@ -1020,10 +1021,10 @@ public class PropertyService {
             }
         };
 
-		ptDemandOld = oldPtdemandMap.get(installment.getDescription());
-		if (ptDemandOld == null) {
-			ptDemandOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
-		}
+        ptDemandOld = oldPtdemandMap.get(installment.getDescription());
+        if (ptDemandOld == null) {
+            ptDemandOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
+        }
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
 
         LOGGER.info("instList==========" + instList);
@@ -1096,14 +1097,14 @@ public class PropertyService {
         }
 
         // forwards the base collection for current installment Ptdemand
-		if (installment.equals(installment)) {
-			Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
-			if (ptdOld == null) {
-				ptdOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
-			}
-			final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
-			ptdNew.setAmtCollected(ptdOld.getAmtCollected());
-		}
+        if (installment.equals(installment)) {
+            Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
+            if (ptdOld == null) {
+                ptdOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
+            }
+            final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
+            ptdNew.setAmtCollected(ptdOld.getAmtCollected());
+        }
 
         LOGGER.info("Exit from PropertyService.createAllDmdDeatails, Modify Adjustments for "
                 + oldProperty.getBasicProperty().getUpicNo() + " And installment : " + installment + "\n\n"
@@ -1124,8 +1125,8 @@ public class PropertyService {
      * @return
      */
     private Set<EgDemandDetails> carryForwardCollection(final Property newProperty, final Installment inst,
-                                                        final Set<EgDemandDetails> newEgDemandDetailsSet, final Ptdemand ptDmndOld,
-                                                        final PropertyTypeMaster oldPropTypeMaster, final PropertyTypeMaster newPropTypeMaster) {
+            final Set<EgDemandDetails> newEgDemandDetailsSet, final Ptdemand ptDmndOld,
+            final PropertyTypeMaster oldPropTypeMaster, final PropertyTypeMaster newPropTypeMaster) {
         LOGGER.debug("Entered into carryForwardCollection");
         LOGGER.debug("carryForwardCollection: newProperty: " + newProperty + INST2 + inst
                 + ", newEgDemandDetailsSet: " + newEgDemandDetailsSet + ", ptDmndOld: " + ptDmndOld
@@ -1177,7 +1178,7 @@ public class PropertyService {
      * @param newDmndDtls
      */
     public void calculateExcessCollection(final Map<String, BigDecimal> dmdRsnAmt, final String rsn,
-                                          final EgDemandDetails oldDmndDtls, final EgDemandDetails newDmndDtls) {
+            final EgDemandDetails oldDmndDtls, final EgDemandDetails newDmndDtls) {
         /**
          * If old and new demand details are present then set the old collection amount to the new demand details else if old
          * demand details are not present then make the new collection amount as Zero
@@ -1197,7 +1198,8 @@ public class PropertyService {
             // This part of code handles the adjustment of extra collections
             // when there is decrease in tax during property modification.
 
-            final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
+            final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected()
+                    .subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
             // If there is extraColl then add to map
             if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                 dmdRsnAmt.put(rsn, extraCollAmt);
@@ -1278,7 +1280,7 @@ public class PropertyService {
      * @return EgDemandDetails
      */
     public EgDemandDetails getEgDemandDetailsForReason(final Set<EgDemandDetails> egDemandDetailsSet,
-                                                       final String demandReason) {
+            final String demandReason) {
         LOGGER.debug("Entered into getEgDemandDetailsForReason, egDemandDetailsSet: " + egDemandDetailsSet
                 + ", demandReason: " + demandReason);
         final List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
@@ -1302,7 +1304,7 @@ public class PropertyService {
      * @return EgDemandDetails
      */
     private List<EgDemandDetails> getEgDemandDetailsListForReason(final Set<EgDemandDetails> egDemandDetailsSet,
-                                                                  final String demandReason) {
+            final String demandReason) {
         LOGGER.debug("Entered into getEgDemandDetailsListForReason: egDemandDetailsSet: " + egDemandDetailsSet
                 + ", demandReason: " + demandReason);
         final List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
@@ -1369,7 +1371,7 @@ public class PropertyService {
      * @return newEgDemandDetails
      */
     private Set<EgDemandDetails> adjustmentsForTaxExempted(final Set<EgDemandDetails> oldEgDemandDetails,
-                                                           final Set<EgDemandDetails> newEgDemandDetails, final Installment inst) {
+            final Set<EgDemandDetails> newEgDemandDetails, final Installment inst) {
         LOGGER.debug("Entered into adjustmentsForTaxExempted, oldEgDemandDetails: " + oldEgDemandDetails
                 + ", newEgDemandDetails: " + newEgDemandDetails + ", inst:" + inst);
         BigDecimal totalCollAdjstmntAmnt = BigDecimal.ZERO;
@@ -1409,7 +1411,7 @@ public class PropertyService {
      * @return Demand details
      */
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final EgDemandReason dmdRsn,
-                                                final Installment inst) {
+            final Installment inst) {
         LOGGER.debug("Entered into createDemandDetails, amount: " + amount + ", dmdRsn: " + dmdRsn + INST2 + inst);
         final EgDemandDetails demandDetail = new EgDemandDetails();
         demandDetail.setAmount(amount);
@@ -1432,7 +1434,7 @@ public class PropertyService {
      * @return
      */
     public EgDemandDetails createDemandDetails(final BigDecimal amount, final BigDecimal amountCollected,
-                                               final EgDemandReason dmdRsn, final Installment inst) {
+            final EgDemandReason dmdRsn, final Installment inst) {
         LOGGER.debug("Entered into createDemandDetails, amount: " + amount + "amountCollected: " + amountCollected
                 + ", dmdRsn: " + dmdRsn + INST2 + inst);
         final EgDemandDetails demandDetail = new EgDemandDetails();
@@ -1455,7 +1457,7 @@ public class PropertyService {
      * @return FloorwiseDemandCalculations
      */
     private FloorwiseDemandCalculations createFloorDmdCalc(final PTDemandCalculations ptDmdCal, final Floor floor,
-                                                           final TaxCalculationInfo taxCalcInfo) {
+            final TaxCalculationInfo taxCalcInfo) {
         LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal + ", floor: " + floor + ", taxCalcInfo: "
                 + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
@@ -1467,7 +1469,7 @@ public class PropertyService {
                     && floor.getPropertyUsage().getUsageCode().equalsIgnoreCase(unitTax.getUnitUsage())
                     && floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(unitTax.getUnitOccupation())
                     && floor.getStructureClassification().getConstrTypeCode()
-                    .equalsIgnoreCase(unitTax.getUnitStructure())
+                            .equalsIgnoreCase(unitTax.getUnitStructure())
                     && floor.getBuiltUpArea().getArea().equals(Float.valueOf(unitTax.getFloorArea().toString())))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         totalAlv = totalAlv.add(floorDmdCalc.getAlv());
@@ -1482,7 +1484,7 @@ public class PropertyService {
      * @param floorDmdCalc
      */
     public void setFloorDmdCalTax(final UnitTaxCalculationInfo unitTax,
-                                  final FloorwiseDemandCalculations floorDmdCalc) {
+            final FloorwiseDemandCalculations floorDmdCalc) {
         floorDmdCalc.setAlv(unitTax.getNetARV());
         floorDmdCalc.setMrv(unitTax.getMrv());
         floorDmdCalc.setCategoryAmt(unitTax.getBaseRate());
@@ -1586,7 +1588,7 @@ public class PropertyService {
      * @return
      */
     public Property createArrearsDemand(final Property oldproperty, final Date dateOfCompletion,
-                                        final PropertyImpl property) {
+            final PropertyImpl property) {
         LOGGER.debug("Entered into createArrearsDemand, oldproperty: " + oldproperty + DATE_OF_COMPLETION
                 + dateOfCompletion + ", property: " + property);
         Ptdemand currPtDmd = null;
@@ -1620,7 +1622,7 @@ public class PropertyService {
      * @param isDemolition
      */
     public void addArrDmdDetToCurrentDmd(final Ptdemand ptDmd, final Ptdemand currPtDmd,
-                                         final Installment effectiveInstall, final boolean isDemolition) {
+            final Installment effectiveInstall, final boolean isDemolition) {
         /*
          * For create/modify/GRP/Bifurcation arrear penalty demand details will be added before, other demand details will be
          * added below In case of demolition, arrear penalty also needs to be added along with other demand details This check is
@@ -1640,8 +1642,8 @@ public class PropertyService {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public PropertyImpl creteNewPropertyForObjectionWorkflow(final BasicProperty basicProperty2,
-                                                             final String objectionNum, final Date objectionDate, final User objWfInitiator, final String docNumber,
-                                                             final String modifyRsn) {
+            final String objectionNum, final Date objectionDate, final User objWfInitiator, final String docNumber,
+            final String modifyRsn) {
 
         final BasicProperty basicProperty = basicProperty2;
 
@@ -1815,9 +1817,9 @@ public class PropertyService {
                 for (final EgDemandDetails dmdDet : ptdemand.getEgDemandDetails())
                     if (inst.equals(dmdDet.getEgDemandReason().getEgInstallmentMaster())
                             && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
+                                    .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
                             && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY))
+                                    .equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY))
                         rsnWiseDmd.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode(),
                                 propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
                 instWiseDmd.put(inst, rsnWiseDmd);
@@ -1855,7 +1857,7 @@ public class PropertyService {
      * @param newDemandDetailsByInstallment
      */
     public void adjustExcessCollectionAmount(final List<Installment> installments,
-                                             final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Ptdemand ptDemand) {
+            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Ptdemand ptDemand) {
         LOGGER.info("Entered into adjustExcessCollectionAmount");
         LOGGER.info("adjustExcessCollectionAmount: installments - " + installments
                 + ", newDemandDetailsByInstallment.size - " + newDemandDetailsByInstallment.size());
@@ -1877,8 +1879,8 @@ public class PropertyService {
      * @return
      */
     private Ptdemand adjustCollection(final List<Installment> installments,
-                                      final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Set<String> demandReasons,
-                                      final Ptdemand ptDemand) {
+            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Set<String> demandReasons,
+            final Ptdemand ptDemand) {
 
         LOGGER.info("Entered into adjustCollection");
         EgDemandDetails advanceDemandDetails = null;
@@ -1894,7 +1896,7 @@ public class PropertyService {
             for (final EgDemandDetails demandDetials : ptDemand.getEgDemandDetails()) {
                 if (advanceDemandDetails == null
                         && DEMANDRSN_CODE_ADVANCE
-                        .equals(demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                                .equals(demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         && currSecondHalf.equals(demandDetials.getEgDemandReason().getEgInstallmentMaster()))
                     advanceDemandDetails = demandDetials;
                 if (!demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -1910,7 +1912,8 @@ public class PropertyService {
                             newDemandDetailsByInstallment.get(installment), demandReason);
 
                     if (newDemandDetail != null) {
-                        balanceDemand = propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail).subtract(newDemandDetail.getAmtCollected());
+                        balanceDemand = propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail)
+                                .subtract(newDemandDetail.getAmtCollected());
 
                         if (balanceDemand.compareTo(BigDecimal.ZERO) > 0 && collection.compareTo(BigDecimal.ZERO) > 0)
                             if (collection.compareTo(balanceDemand) <= 0) {
@@ -1987,7 +1990,7 @@ public class PropertyService {
      * @return
      */
     public PropertyImpl changePropertyDetail(final PropertyImpl modProperty, final PropertyDetail propDetail,
-                                             final Integer numOfFloors) {
+            final Integer numOfFloors) {
 
         LOGGER.debug("Entered into changePropertyDetail, Property is Vacant Land");
 
@@ -2082,6 +2085,7 @@ public class PropertyService {
      * @param stateAwareObject
      * @param applicationType
      */
+    @Transactional
     public void updateIndexes(final StateAware stateAwareObject, final String applicationType) {
         final User stateOwner = getOwnerName(stateAwareObject);
         final int sla = getSlaValue(applicationType);
@@ -2110,8 +2114,9 @@ public class PropertyService {
         return user;
     }
 
-    private void updateVacancyRemissionApprovalIndex(final StateAware stateAwareObject, final String applictionType,
-                                                     final User stateOwner, final int sla) {
+    @Transactional
+    public void updateVacancyRemissionApprovalIndex(final StateAware stateAwareObject, final String applictionType,
+            final User stateOwner, final int sla) {
         final VacancyRemissionApproval vacancyRemissionApproval = (VacancyRemissionApproval) stateAwareObject;
         final VacancyRemission vacancyRemission = vacancyRemissionApproval.getVacancyRemission();
         final ApplicationIndex applicationIndex = applicationIndexService
@@ -2126,9 +2131,10 @@ public class PropertyService {
                     vacancyRemissionApproval);
     }
 
-    private void createVacancyRemissionApprovalApplicationIndex(final String applictionType, final User stateOwner,
-                                                                final int sla, final VacancyRemission vacancyRemission, final User owner,
-                                                                final VacancyRemissionApproval vacancyRemissionApproval, final String source) {
+    @Transactional
+    public void createVacancyRemissionApprovalApplicationIndex(final String applictionType, final User stateOwner,
+            final int sla, final VacancyRemission vacancyRemission, final User owner,
+            final VacancyRemissionApproval vacancyRemissionApproval, final String source) {
         ApplicationIndex applicationIndex;
         final Date applicationDate = vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate()
                 : new Date();
@@ -2146,16 +2152,16 @@ public class PropertyService {
                 .withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
                 .withApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
-                        || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
+                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
 
-    private void updateVacancyRemissionApprovalApplicationIndex(final User stateOwner,
-                                                                final ApplicationIndex applicationIndex, final User owner,
-                                                                final VacancyRemissionApproval vacancyRemissionApproval) {
+    @Transactional
+    public void updateVacancyRemissionApprovalApplicationIndex(final User stateOwner,
+            final ApplicationIndex applicationIndex, final User owner,
+            final VacancyRemissionApproval vacancyRemissionApproval) {
         applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
         applicationIndex.setApplicantName(owner.getName());
         applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
@@ -2163,17 +2169,18 @@ public class PropertyService {
         applicationIndex.setAadharNumber(owner.getAadhaarNumber());
         applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
                 ? ClosureStatus.YES : ClosureStatus.NO);
-        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
+                || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED))
             applicationIndex
                     .setApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                             ? ApprovalStatus.APPROVED
-                            : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
-                            || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
-                            ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+                            : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
+                                    ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
         applicationIndexService.updateApplicationIndex(applicationIndex);
     }
 
-    private void updatePropertyMutationIndex(final StateAware stateAwareObject, final User stateOwner, final int sla) {
+    @Transactional
+    public void updatePropertyMutationIndex(final StateAware stateAwareObject, final User stateOwner, final int sla) {
         final PropertyMutation propertyMutation = (PropertyMutation) stateAwareObject;
         final ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(propertyMutation.getApplicationNo());
@@ -2186,8 +2193,9 @@ public class PropertyService {
             updateMutationApplicationIndex(stateOwner, propertyMutation, applicationIndex, owner);
     }
 
-    private void createMutationApplicationIndex(final String applictionType, final User stateOwner, final int sla,
-                                                final PropertyMutation propertyMutation, final User owner, final String source) {
+    @Transactional
+    public void createMutationApplicationIndex(final String applictionType, final User stateOwner, final int sla,
+            final PropertyMutation propertyMutation, final User owner, final String source) {
         ApplicationIndex applicationIndex;
         final Date applicationDate = propertyMutation.getCreatedDate() != null ? propertyMutation.getCreatedDate()
                 : new Date();
@@ -2205,15 +2213,15 @@ public class PropertyService {
                 .withConsumerCode(propertyMutation.getBasicProperty().getUpicNo()).withClosed(closureStatus)
                 .withApproved(propertyMutation.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : propertyMutation.getState().getValue().contains(WF_STATE_REJECTED)
-                        || propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        : propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)
+                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
 
-    private void updateMutationApplicationIndex(final User stateOwner, final PropertyMutation propertyMutation,
-                                                final ApplicationIndex applicationIndex, final User owner) {
+    @Transactional
+    public void updateMutationApplicationIndex(final User stateOwner, final PropertyMutation propertyMutation,
+            final ApplicationIndex applicationIndex, final User owner) {
         applicationIndex.setStatus(propertyMutation.getState().getValue());
         applicationIndex.setApplicantName(owner.getName());
         applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
@@ -2221,17 +2229,18 @@ public class PropertyService {
         applicationIndex.setAadharNumber(owner.getAadhaarNumber());
         applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
                 : ClosureStatus.NO);
-        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
+                || propertyMutation.getState().getValue().contains(WF_STATE_REJECTED))
             applicationIndex.setApproved(propertyMutation.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                     ? ApprovalStatus.APPROVED
-                    : propertyMutation.getState().getValue().contains(WF_STATE_REJECTED)
-                    || propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)
-                    ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+                    : propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)
+                            ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
         applicationIndexService.updateApplicationIndex(applicationIndex);
     }
 
-    private void updateRevisionPetitionIndex(final StateAware stateAwareObject, final String applictionType,
-                                             final User stateOwner, final int sla) {
+    @Transactional
+    public void updateRevisionPetitionIndex(final StateAware stateAwareObject, final String applictionType,
+            final User stateOwner, final int sla) {
         final RevisionPetition revisionPetition = (RevisionPetition) stateAwareObject;
         final ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(revisionPetition.getObjectionNumber());
@@ -2242,8 +2251,9 @@ public class PropertyService {
             updateRevisionPetitionApplicationIndex(applictionType, stateOwner, revisionPetition, applicationIndex);
     }
 
-    private void createRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
-                                                        final int sla, final RevisionPetition revisionPetition, final String source) {
+    @Transactional
+    public void createRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
+            final int sla, final RevisionPetition revisionPetition, final String source) {
         ApplicationIndex applicationIndex;
         final User owner = revisionPetition.getBasicProperty().getPrimaryOwner();
         final Date applicationDate = revisionPetition.getCreatedDate() != null ? revisionPetition.getCreatedDate()
@@ -2262,34 +2272,35 @@ public class PropertyService {
                 .withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
                 .withApproved(revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : revisionPetition.getState().getValue().contains(WF_STATE_REJECTED)
-                        || revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        : revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
 
-    private void updateRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
-                                                        final RevisionPetition revisionPetition, final ApplicationIndex applicationIndex) {
+    @Transactional
+    public void updateRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
+            final RevisionPetition revisionPetition, final ApplicationIndex applicationIndex) {
         applicationIndex.setStatus(revisionPetition.getState().getValue());
         if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
                 || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
             applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
             applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
                     ? ClosureStatus.YES : ClosureStatus.NO);
-            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
+                    || revisionPetition.getState().getValue().contains(WF_STATE_REJECTED))
                 applicationIndex
                         .setApproved(revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                                 ? ApprovalStatus.APPROVED
-                                : revisionPetition.getState().getValue().contains(WF_STATE_REJECTED)
-                                || revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
-                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+                                : revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
         }
         applicationIndexService.updateApplicationIndex(applicationIndex);
     }
 
-    private void updatePropertyIndex(final StateAware stateAwareObject, final String applictionType,
-                                     final User stateOwner, final int sla) {
+    @Transactional
+    public void updatePropertyIndex(final StateAware stateAwareObject, final String applictionType,
+            final User stateOwner, final int sla) {
         final PropertyImpl property = (PropertyImpl) stateAwareObject;
         if (!SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             final ApplicationIndex applicationIndex = applicationIndexService
@@ -2311,8 +2322,9 @@ public class PropertyService {
      * @param owner
      * @param source
      */
-    private void createPropertyApplicationIndex(final String applictionType, final User stateOwner, final int sla,
-                                                final PropertyImpl property, final User owner, final String source) {
+    @Transactional
+    public void createPropertyApplicationIndex(final String applictionType, final User stateOwner, final int sla,
+            final PropertyImpl property, final User owner, final String source) {
         ApplicationIndex applicationIndex;
         final Date applicationDate = property.getCreatedDate() != null ? property.getCreatedDate() : new Date();
         final ClosureStatus closureStatus = property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2329,9 +2341,8 @@ public class PropertyService {
                 .withClosed(closureStatus)
                 .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : property.getState().getValue().contains(WF_STATE_REJECTED)
-                        || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
-                        : ApprovalStatus.INPROGRESS)
+                        : property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
 
         applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2344,8 +2355,10 @@ public class PropertyService {
      * @param applicationIndex
      * @param owner
      */
-    private void updatePropertyApplicationIndex(final String applictionType, final User stateOwner,
-                                                final PropertyImpl property, final ApplicationIndex applicationIndex, final User owner) {
+
+    @Transactional
+    public void updatePropertyApplicationIndex(final String applictionType, final User stateOwner,
+            final PropertyImpl property, final ApplicationIndex applicationIndex, final User owner) {
         applicationIndex.setStatus(property.getState().getValue());
         if (propertyApplicationTypes().contains(applictionType)) {
             applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
@@ -2355,12 +2368,12 @@ public class PropertyService {
             applicationIndex.setAadharNumber(owner.getAadhaarNumber());
             applicationIndex.setClosed(
                     property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
-            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
+                    || property.getState().getValue().contains(WF_STATE_REJECTED))
                 applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : property.getState().getValue().contains(WF_STATE_REJECTED)
-                        || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
-                        : ApprovalStatus.INPROGRESS);
+                        : (property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                : ApprovalStatus.INPROGRESS));
 
         }
         applicationIndexService.updateApplicationIndex(applicationIndex);
@@ -2421,8 +2434,8 @@ public class PropertyService {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         final BigDecimal currentWaterTaxDue = getWaterTaxDues(assessmentNo)
                 .get(WATER_TAX_DUES) == null ? BigDecimal.ZERO
-                : new BigDecimal(Double.valueOf(
-                (Double) getWaterTaxDues(assessmentNo).get(WATER_TAX_DUES)));
+                        : new BigDecimal(Double.valueOf(
+                                (Double) getWaterTaxDues(assessmentNo).get(WATER_TAX_DUES)));
         final Map<String, BigDecimal> propertyTaxDetails = getCurrentPropertyTaxDetails(
                 basicProperty.getActiveProperty());
         final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
@@ -2451,28 +2464,28 @@ public class PropertyService {
      * @param request
      * @return
      */
-	public Map<String, Object> getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-		final String wtmsRestURL = format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
-				assessmentNo);
-		return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+    public Map<String, Object> getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
+        final String wtmsRestURL = format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
+                assessmentNo);
+        return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
 
-	}
-	
-	/**
-	 * @param assessmentNo
-	 * @param dueDate
-	 * @param request
-	 * @return
-	 */
-	public Map<String, Object> getWaterTaxDues(final String assessmentNo, final Date dueDate,
-			final HttpServletRequest request) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		String effectiveDate = df.format(dueDate);
-		final String wtmsRestURL = format(WTMS_TAXDUE_WITH_DATE_RESTURL,
-				WebUtils.extractRequestDomainURL(request, false), assessmentNo, effectiveDate);
-		return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+    }
 
-	}
+    /**
+     * @param assessmentNo
+     * @param dueDate
+     * @param request
+     * @return
+     */
+    public Map<String, Object> getWaterTaxDues(final String assessmentNo, final Date dueDate,
+            final HttpServletRequest request) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String effectiveDate = df.format(dueDate);
+        final String wtmsRestURL = format(WTMS_TAXDUE_WITH_DATE_RESTURL,
+                WebUtils.extractRequestDomainURL(request, false), assessmentNo, effectiveDate);
+        return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+
+    }
 
     /**
      * Method to validate bifurcation of property either using create assessment or alter assessment
@@ -2483,7 +2496,7 @@ public class PropertyService {
      * @return
      */
     public String validationForBifurcation(final PropertyImpl propertyModel, final BasicProperty basicProperty,
-                                           final String reason) {
+            final String reason) {
         final List<PropertyStatusValues> children = propertyStatusValuesDAO
                 .getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
         final Boolean parentBifurcated = isPropertyBifurcated(basicProperty);
@@ -2548,7 +2561,7 @@ public class PropertyService {
             if ((PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason())
                     || PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(property.getPropertyModifyReason()))
                     && !(STATUS_WORKFLOW.equals(property.getStatus())
-                    || STATUS_CANCELLED.equals(property.getStatus()))) {
+                            || STATUS_CANCELLED.equals(property.getStatus()))) {
                 propBifurcated = Boolean.TRUE;
                 break;
             }
@@ -2791,7 +2804,7 @@ public class PropertyService {
      */
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum,
-                                                                              final String oldMuncipalNum, final String ownerName, final String doorNo) {
+            final String oldMuncipalNum, final String ownerName, final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(" where pmv.isActive = true ");
         if (assessmentNum != null && !assessmentNum.trim().isEmpty())
@@ -2828,7 +2841,7 @@ public class PropertyService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
-                                                             final String ownerName) {
+            final String ownerName) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ")
                 .append(" where pmv.locality.id=:locationId and pmv.isActive = true ");
@@ -2856,7 +2869,7 @@ public class PropertyService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId,
-                                                             final String ownerName, final String houseNum) {
+            final String ownerName, final String houseNum) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
@@ -2959,7 +2972,7 @@ public class PropertyService {
     }
 
     public Map<String, Object> getBoundaryQuery(final Long zoneId, final Long wardId, final String ownerName,
-                                                final String houseNum) {
+            final String houseNum) {
 
         final Map<String, Object> map = new HashMap<>();
         final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
@@ -3027,7 +3040,7 @@ public class PropertyService {
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(
                 "where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ? ")
-                .append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
+                        .append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
 
         map.put(SEARCH, search.append(from).append(where).toString());
         map.put(COUNT, count.append(from).append(where).toString());
@@ -3036,7 +3049,7 @@ public class PropertyService {
     }
 
     public Map<String, Object> getAssessmentAndOwnerDetailsQuery(final String oldMuncipalNum, final String ownerName,
-                                                                 final String doorNo) {
+            final String doorNo) {
 
         final Map<String, Object> map = new HashMap<>();
         final List params = new ArrayList();
@@ -3292,7 +3305,7 @@ public class PropertyService {
      * @return
      */
     public Map<String, BigDecimal> getCurrentTaxAndBalance(final Map<String, BigDecimal> propertyTaxDetails,
-                                                           final Date currDate) {
+            final Date currDate) {
         final Map<String, BigDecimal> taxValues = new HashMap<>();
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
         final Installment currInstFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
@@ -3313,7 +3326,7 @@ public class PropertyService {
     }
 
     public Map<String, BigDecimal> getCurrentTaxAndBalanceIncludingPenalty(final Map<String, BigDecimal> propertyTaxDetails,
-                                                                           final Date currDate) {
+            final Date currDate) {
         final Map<String, BigDecimal> taxValues = new HashMap<>();
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
         final Installment currInstFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
@@ -3323,8 +3336,8 @@ public class PropertyService {
             taxValues.put(CURR_BAL_STR,
                     (propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR)
                             .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_DMD_STR)))
-                            .subtract((propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR))
-                                    .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_COLL_STR))));
+                                    .subtract((propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR))
+                                            .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_COLL_STR))));
         } else {
             taxValues.put(CURR_DMD_STR,
                     propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR));
@@ -3333,10 +3346,10 @@ public class PropertyService {
                             .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_DMD_STR))
                             .add(propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR))
                             .add(propertyTaxDetails.get(CURR_SECONDHALF_PENALTY_DMD_STR)))
-                            .subtract((propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR))
-                                    .add(propertyTaxDetails.get(CURR_SECONDHALF_PENALTY_COLL_STR))
-                                    .add(propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR))
-                                    .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_COLL_STR))));
+                                    .subtract((propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR))
+                                            .add(propertyTaxDetails.get(CURR_SECONDHALF_PENALTY_COLL_STR))
+                                            .add(propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR))
+                                            .add(propertyTaxDetails.get(CURR_FIRSTHALF_PENALTY_COLL_STR))));
         }
         return taxValues;
     }
@@ -3350,7 +3363,7 @@ public class PropertyService {
      * @return
      */
     public Map<String, BigDecimal> getCurrentTaxDetails(final Map<String, Map<String, BigDecimal>> propertyTaxDetails,
-                                                        final Date currDate) {
+            final Date currDate) {
         final Map<String, BigDecimal> taxValues = new HashMap<>();
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
         final Installment currInstFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
@@ -3371,8 +3384,8 @@ public class PropertyService {
      * @param currInstFirstHalf
      */
     private void getTaxDetails(final Map<String, Map<String, BigDecimal>> propertyTaxDetails,
-                               final Map<String, BigDecimal> taxValues, final String installmentHalf,
-                               final Installment currInstFirstHalf) {
+            final Map<String, BigDecimal> taxValues, final String installmentHalf,
+            final Installment currInstFirstHalf) {
         if (currInstFirstHalf != null) {
             taxValues.put(CURR_DMD_STR,
                     propertyTaxDetails.get(installmentHalf).get(CURR_FIRSTHALF_DMD_STR));
@@ -3480,7 +3493,7 @@ public class PropertyService {
      * @param excessPenalty
      */
     private void adjustExcessPenalty(final EgDemand currentDemand, final List<Installment> installments,
-                                     BigDecimal excessPenalty) {
+            BigDecimal excessPenalty) {
         final List<EgDemandDetails> demandDetailsList = new ArrayList<>(currentDemand.getEgDemandDetails());
         final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetAsMap(
                 demandDetailsList, installments);
@@ -3489,7 +3502,8 @@ public class PropertyService {
             for (final String demandReason : DEMAND_REASONS) {
                 final EgDemandDetails demandDetails = getEgDemandDetailsForReason(demandDetailsSet, demandReason);
                 if (demandDetails != null) {
-                    final BigDecimal balance = propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected());
+                    final BigDecimal balance = propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails)
+                            .subtract(demandDetails.getAmtCollected());
                     if (balance.compareTo(BigDecimal.ZERO) > 0)
                         if (excessPenalty.compareTo(BigDecimal.ZERO) > 0 && excessPenalty.compareTo(balance) <= 0) {
                             demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(excessPenalty));
@@ -3534,7 +3548,8 @@ public class PropertyService {
                     installmentWiseDemand.put(installment, propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
                 else
                     installmentWiseDemand.put(installment,
-                            installmentWiseDemand.get(installment).add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)));
+                            installmentWiseDemand.get(installment)
+                                    .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)));
 
             }
         }
@@ -3597,8 +3612,8 @@ public class PropertyService {
      * @param propTypeId
      */
     public void updatePropertyDetail(final Property property, final Long floorTypeId, final Long roofTypeId,
-                                     final Long wallTypeId, final Long woodTypeId, final String areaOfPlot, final String propertyCategory,
-                                     final String nonResPlotArea, final String propUsageId, final String propOccId, final String propTypeId) {
+            final Long wallTypeId, final Long woodTypeId, final String areaOfPlot, final String propertyCategory,
+            final String nonResPlotArea, final String propUsageId, final String propOccId, final String propTypeId) {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (floorTypeId != null && floorTypeId != -1) {
             final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
@@ -3758,12 +3773,12 @@ public class PropertyService {
 
         final PropertyStatusValues propStatVal = (PropertyStatusValues) propPerServ.find(
                 "from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
-       if(parentPropId !=null && !parentPropId.isEmpty()){
-        final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
-                .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
-        if (referenceBasicProperty != null)
-            propStatVal.setReferenceBasicProperty(referenceBasicProperty);
-       }
+        if (parentPropId != null && !parentPropId.isEmpty()) {
+            final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
+                    .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
+            if (referenceBasicProperty != null)
+                propStatVal.setReferenceBasicProperty(referenceBasicProperty);
+        }
     }
 
     /**
@@ -3805,7 +3820,7 @@ public class PropertyService {
             }
         return waterConnDtls;
     }
-    
+
     /**
      * Method to get total property tax due
      *
@@ -3888,20 +3903,20 @@ public class PropertyService {
 
     @Transactional
     public void saveDocumentTypeDetails(final BasicProperty basicProperty,
-                                        final DocumentTypeDetails documentTypeDetails) {
+            final DocumentTypeDetails documentTypeDetails) {
         documentTypeDetails.setBasicPropertyId(basicProperty.getId());
         documentTypeDetailsService.persist(documentTypeDetails);
     }
 
     @Transactional
     public void updateDocumentTypeDetails(final BasicProperty basicProperty,
-                                          final DocumentTypeDetails documentTypeDetails) {
+            final DocumentTypeDetails documentTypeDetails) {
         documentTypeDetails.setBasicPropertyId(basicProperty.getId());
         documentTypeDetailsService.update(documentTypeDetails);
     }
 
     public void clearOldDocumentAttachments(final List<Document> documents,
-                                            final DocumentTypeDetails documentTypeDetails) {
+            final DocumentTypeDetails documentTypeDetails) {
         final List<DocumentType> excludedDocumentTypes = excludeOldDocumentAttachments(documentTypeDetails);
         documents.forEach(document -> {
             if (excludedDocumentTypes.contains(document.getType()) && !document.getFiles().isEmpty())
@@ -3921,7 +3936,7 @@ public class PropertyService {
             } else if (documentTypeDetails.getDocumentName()
                     .equals(DOCUMENT_NAME_REGD_WILL_DOCUMENT)
                     || documentTypeDetails.getDocumentName()
-                    .equals(DOCUMENT_NAME_UNREGD_WILL_DOCUMENT)) {
+                            .equals(DOCUMENT_NAME_UNREGD_WILL_DOCUMENT)) {
                 if (dt.getName().equals(DOCUMENT_TYPE_WILL_DEED))
                     documentTypeIterator.remove();
             } else if (documentTypeDetails.getDocumentName()
@@ -3939,7 +3954,7 @@ public class PropertyService {
     }
 
     public void amalgamateWaterConnections(final String assessmentNo, final List<String> childAssessments,
-                                           final HttpServletRequest request) {
+            final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
         final String wtmsRestURL = format(WTMS_AMALGAMATE_WATER_CONNECTIONS_URL,
                 WebUtils.extractRequestDomainURL(request, false));
@@ -3956,7 +3971,7 @@ public class PropertyService {
         // this condition is required because, after rejection the validation shouldn't happen for the same houseNo
         return !basicPropByDoorNo.list().isEmpty()
                 && (basicProperty == null || !(basicProperty.getAddress().getHouseNoBldgApt() == null ? ""
-                : basicProperty.getAddress().getHouseNoBldgApt()).equals(houseNo));
+                        : basicProperty.getAddress().getHouseNoBldgApt()).equals(houseNo));
     }
 
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
@@ -4211,7 +4226,8 @@ public class PropertyService {
         else if (!applicationType.isEmpty() && (applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
             updateRevisionPetitionPortalmessage(stateAware, applicationType);
-        else if (!applicationType.isEmpty() && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applicationType))
+        else if (!applicationType.isEmpty()
+                && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applicationType))
             updatePropertyMutationPortalmessage(stateAware, applicationType);
         else if (!applicationType.isEmpty() && applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
             updateVacancyRemissionPortalmessage(stateAware, applicationType);
@@ -4340,8 +4356,9 @@ public class PropertyService {
                 format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
     }
 
-    private void updateVacancyRemissionIndex(final StateAware stateAwareObject, final String applictionType,
-                                             final User stateOwner, final int sla) {
+    @Transactional
+    public void updateVacancyRemissionIndex(final StateAware stateAwareObject, final String applictionType,
+            final User stateOwner, final int sla) {
         final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
         final ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(vacancyRemission.getApplicationNumber());
@@ -4353,8 +4370,9 @@ public class PropertyService {
             updateVacancyRemissionApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemission);
     }
 
-    private void createVacancyRemissionApplicationIndex(final String applictionType, final User stateOwner,
-                                                        final int sla, final VacancyRemission vacancyRemission, final User owner, final String source) {
+    @Transactional
+    public void createVacancyRemissionApplicationIndex(final String applictionType, final User stateOwner,
+            final int sla, final VacancyRemission vacancyRemission, final User owner, final String source) {
         ApplicationIndex applicationIndex;
         final Date applicationDate = vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate()
                 : new Date();
@@ -4373,14 +4391,15 @@ public class PropertyService {
                 .withApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
                         : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
-                        || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                                || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
 
-    private void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
-                                                        final User owner, final VacancyRemission vacancyRemission) {
+    @Transactional
+    public void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
+            final User owner, final VacancyRemission vacancyRemission) {
         applicationIndex.setStatus(vacancyRemission.getState().getValue());
         applicationIndex.setApplicantName(owner.getName());
         applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
@@ -4388,12 +4407,12 @@ public class PropertyService {
         applicationIndex.setAadharNumber(owner.getAadhaarNumber());
         applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
                 : ClosureStatus.NO);
-        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
+                || vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED))
             applicationIndex.setApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                     ? ApprovalStatus.APPROVED
-                    : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
-                    || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                    ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+                    : vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                            ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
         applicationIndexService.updateApplicationIndex(applicationIndex);
     }
 
@@ -4428,10 +4447,10 @@ public class PropertyService {
         for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails()) {
             if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
                     || secondInstStartDate.equals(demandDetail.getInstallmentStartDate())
-                    && !DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
-                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
-                    && !DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
-                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                            && !DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+                                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                            && !DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+                                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                 totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
         return totalTax;

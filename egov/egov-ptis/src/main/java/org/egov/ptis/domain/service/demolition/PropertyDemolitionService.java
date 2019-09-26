@@ -227,8 +227,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         for (final Ptdemand ptDemand : modProperty.getPtDemandSet())
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
         adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
-        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_DEMOLITION);
         propertyPerService.update(basicProperty);
+        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_DEMOLITION);
         getSession().flush();
         return basicProperty;
     }

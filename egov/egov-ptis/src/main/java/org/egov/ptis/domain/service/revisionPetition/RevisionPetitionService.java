@@ -1186,7 +1186,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         updateRevisionPetitionStatus(null, objection, PropertyTaxConstants.CANCELLED);
         objection.transition().end().withOwner(objection.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
-
+    
+    @Transactional
     public void updateIndexAndPushToPortalInbox(final RevisionPetition objection) {
         if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
             propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);

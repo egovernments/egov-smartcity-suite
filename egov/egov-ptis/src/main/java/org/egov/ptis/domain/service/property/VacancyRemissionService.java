@@ -339,7 +339,6 @@ public class VacancyRemissionService {
                     buildSMS(vacancyRemission, workFlowAction);
             }
         }
-        propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()) && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) != null) {
             propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
@@ -656,7 +655,6 @@ public class VacancyRemissionService {
 
             }
         }
-        propertyService.updateIndexes(vacancyRemissionApproval, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
 
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
                 && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
@@ -665,6 +663,7 @@ public class VacancyRemissionService {
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
         vacancyRemissionApprovalRepository.save(vacancyRemissionApproval);
+        propertyService.updateIndexes(vacancyRemissionApproval, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
     }
 
     private void wFApprove(final VacancyRemissionApproval vacancyRemissionApproval) {

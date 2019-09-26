@@ -255,7 +255,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
                 propertyByEmployee);
-        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
             propertyService.pushPortalMessage(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString())) {
@@ -272,10 +271,10 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
                 propertyByEmployee);
-        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(newProperty.getSource()))
             propertyService.updatePortal((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         propertyPerService.update(newProperty.getBasicProperty());
+        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
     }
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments,

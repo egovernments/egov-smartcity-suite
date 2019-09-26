@@ -539,7 +539,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private void applyAuditingAndUpdateIndex() {
         basicPropertyService.applyAuditing(propertyModel.getState());
-        propService.updateIndexes(propertyModel, getApplicationType());
         if (basicProp.getWFProperty() != null && basicProp.getWFProperty().getPtDemandSet() != null
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
@@ -553,6 +552,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             basicProp.getWFProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
             basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
         }
+        propService.updateIndexes(propertyModel, getApplicationType());
 
     }
 
@@ -667,8 +667,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
-        propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, getApplicationType());
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         addActionMessage(getText(PROPERTY_FORWARD_SUCCESS,
@@ -955,7 +955,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         createPropertyStatusValues();
-        propertyService.copyCollection(oldProperty, propertyModel);        
+        propertyService.copyCollection(oldProperty, propertyModel);
         propertyModel.setStatus(STATUS_ISACTIVE);
         oldProperty.setStatus(STATUS_ISHISTORY);
         for (final PropertyStatusValues statusValues : basicProp.getPropertyStatusValuesSet())
@@ -967,9 +967,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         else
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
 
-        propService.updateIndexes(propertyModel, getApplicationType());
-
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, getApplicationType());
         setBasicProp(basicProp);
         setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { AMALGAMATION_OF_ASSESSMENT,
                 propertyModel.getBasicProperty().getUpicNo() }));
@@ -1031,8 +1030,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         onCancelSetOldValues();
 
-        propService.updateIndexes(propertyModel, getApplicationType());
         propertyImplService.update(propertyModel);
+        propService.updateIndexes(propertyModel, getApplicationType());
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         final String username = getInitiator();
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
