@@ -270,7 +270,7 @@ div.floors-tbl-freeze-column-div {
 													<spring:message code="lbl.cv.hlfyearcharg" />
 												</div>
 												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${sc.currentInstDemand}"></c:out>
+													<c:out value="${sc.halfYearlyTax}"></c:out>
 												</div>
 												<div class="col-xs-3 add-margin">
 													<spring:message code="lbl.cv.sewchrgdue" />

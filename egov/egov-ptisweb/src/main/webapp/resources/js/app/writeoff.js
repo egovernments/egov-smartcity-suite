@@ -49,16 +49,12 @@ $( document ).ready(function() {
 	$("#viewlink").hide();
 	var frominstallment;
 	var toinstallment;
+	displaydemand();
 	instString = $("#instString").val();
-	var statevalue = $("#state").val();
 	var typevalue = $( "#writeOffType option:selected" ).text();
-	if (typevalue == 'Full WriteOff' && statevalue == 'Rejected') {
-		var flagvalue = $("#propertyDeactivateFlag").val();
+	if (typevalue == 'Full WriteOff') {
 		$("#frominstallments").attr('disabled', true);
 		$("#toinstallments").attr('disabled', true);
-		displaydemand();
-		if(flagvalue==true)
-			document.getElementById("check").style.display = "block";
 	}
 	$("writeOffType").change(function()
 			{
@@ -130,6 +126,8 @@ function getselectedinstallments(val){
 	
 	function displaydemand()
 	{
+		var fromValue = $("#frominstallments").val();
+		var  toValue = $("#toinstallments").val();
 		var writeofftypes = $( "#writeOffType option:selected" ).text();
 		for(var i=0; i < $(".demandDetailBeanList").length; i++){
 		var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
@@ -141,16 +139,20 @@ function getselectedinstallments(val){
 			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
 			document.getElementById(actualCollection).value;
 		if(document.getElementById(revisedAmount).value ==0)
-		document.getElementById(revisedAmount).disabled = true;
+			document.getElementById(revisedAmount).readOnly = true;
 		}
 		else {
+			if(document.getElementById(revisedAmount).value >0 && fromValue != '' && toValue != '')
+				document.getElementById(revisedAmount).readOnly = false;
+			else{
 			 document.getElementById(revisedAmount).value = '';
-			 document.getElementById(revisedAmount).disabled = false;
+			 document.getElementById(revisedAmount).readOnly = false;
+			}
 		 }
 		if(writeofftypes  == 'Full WriteOff'){
 		document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
 		document.getElementById(actualCollection).value;
-		document.getElementById(revisedAmount).disabled = true;
+		document.getElementById(revisedAmount).readOnly = true;
 		}
 			
 	}

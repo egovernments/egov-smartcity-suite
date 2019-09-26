@@ -580,12 +580,9 @@ public class WriteOffService extends GenericWorkFlowController {
                             revisedAmount = demandDetailVariation.getDramount().setScale(0, BigDecimal.ROUND_DOWN);
                             break;
                         }
-
-                    final BigDecimal revisedCollection = demandDetail.getAmtCollected();
                     final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster,
                             oldDemandDetail.getAmount().setScale(0, BigDecimal.ROUND_DOWN), revisedAmount,
-                            oldDemandDetail.getAmtCollected().setScale(0, BigDecimal.ROUND_DOWN),
-                            revisedCollection);
+                            oldDemandDetail.getAmtCollected().setScale(0, BigDecimal.ROUND_DOWN));
                     demandDetailList.add(i, dmdDtl);
 
                     break;
@@ -596,8 +593,7 @@ public class WriteOffService extends GenericWorkFlowController {
     }
 
     private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
-            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected,
-            final BigDecimal revisedCollection) {
+            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into createDemandDetailBean");
             LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
@@ -610,7 +606,6 @@ public class WriteOffService extends GenericWorkFlowController {
         demandDetail.setActualAmount(amount);
         demandDetail.setRevisedAmount(revisedAmount);
         demandDetail.setActualCollection(amountCollected);
-        demandDetail.setRevisedCollection(revisedCollection);
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;
     }
@@ -779,8 +774,7 @@ public class WriteOffService extends GenericWorkFlowController {
                     demandDetailBean.getActualAmount().setScale(0, BigDecimal.ROUND_DOWN),
                     demandDetailBean.getRevisedAmount() != null
                             ? demandDetailBean.getRevisedAmount().setScale(0, BigDecimal.ROUND_DOWN) : BigDecimal.ZERO,
-                    demandDetailBean.getActualCollection().setScale(0, BigDecimal.ROUND_DOWN),
-                    BigDecimal.ZERO);
+                    demandDetailBean.getActualCollection().setScale(0, BigDecimal.ROUND_DOWN));
             demandDetailBeanList.add(dmdDtl);
         }
         return demandDetailBeanList;
