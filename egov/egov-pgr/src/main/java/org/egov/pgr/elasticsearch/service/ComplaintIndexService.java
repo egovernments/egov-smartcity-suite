@@ -449,7 +449,7 @@ public class ComplaintIndexService {
             complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
             complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
             // update status related fields in index
-            updateComplaintIndexStatusRelatedFields(complaintIndex);
+            complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
             complaintIndexRepository.save(complaintIndex);
         }
     }
