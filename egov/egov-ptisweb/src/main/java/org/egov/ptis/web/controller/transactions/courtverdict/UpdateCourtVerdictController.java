@@ -79,6 +79,7 @@ import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -106,6 +107,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertyService propertyService;
 
     @ModelAttribute
     public CourtVerdict courtVerdictModel(@PathVariable Long id) {
@@ -156,7 +159,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         } else {
             if (!courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
-                courtVerdict.getProperty().getPropertyDetail().setFloorDetailsProxy(courtVerdict.getProperty().getPropertyDetail().getFloorDetails());
+                courtVerdict.getProperty().getPropertyDetail()
+                        .setFloorDetailsProxy(courtVerdict.getProperty().getPropertyDetail().getFloorDetails());
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 model.addAttribute("caseStatus", status);
                 model.addAttribute("caseDate", date);
@@ -218,6 +222,10 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
                 courtVerdictDCBService.updateDemand(courtVerdict);
             }
+            if (request.getParameter(ACTION).equalsIgnoreCase(RE_ASSESS)) {
+
+                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
+            }
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());
@@ -251,43 +259,43 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS) && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
                 errorMessages = courtVerdictService.validate(courtVerdict, plotAreaId, layoutAuthorityId);
                 if (errorMessages.isEmpty()) {
-                courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
-                PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(),
-                        courtVerdict.getBasicProperty().getActiveProperty());
+                    courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
+                    PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(),
+                            courtVerdict.getBasicProperty().getActiveProperty());
 
-                if (modProperty == null)
-                    courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-                else
-                    courtVerdict.getBasicProperty().addProperty(modProperty);
-                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
-                }
-                else
-                    target=courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
+                    if (modProperty == null)
+                        courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                    else
+                        courtVerdict.getBasicProperty().addProperty(modProperty);
+                    target = successWorkflow(courtVerdict, approvalPosition, approvalComent, workFlowAction, loggedUserIsEmployee,
+                            model);
+                } else
+                    target = courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
             } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)
                     && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
                 errorMessages = courtVerdictDCBService.validateDemand(courtVerdict.getDemandDetailBeanList());
                 if (errorMessages.isEmpty()) {
-                courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
-                courtVerdictDCBService.updateDemandDetails(courtVerdict);
-                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
-                }
-                else
-                    target=courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
+                    courtVerdictDCBService.updateDemandDetailVariation(courtVerdict);
+                    target = successWorkflow(courtVerdict, approvalPosition, approvalComent, workFlowAction, loggedUserIsEmployee,
+                            model);
+                } else
+                    target = courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
             } else if (courtVerdict.getAction().equalsIgnoreCase("CANCEL_PROP") && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
                 courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 courtVerdictService.setPtDemandSet(courtVerdict);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
+                target = successWorkflow(courtVerdict, approvalPosition, approvalComent, workFlowAction, loggedUserIsEmployee,
+                        model);
             }
 
-
-       }
+        }
 
         return target;
 
     }
-    public String successWorkflow(CourtVerdict courtVerdict, Long approvalPosition, String approvalComent, String workFlowAction, Boolean loggedUserIsEmployee, Model model){
+
+    public String successWorkflow(CourtVerdict courtVerdict, Long approvalPosition, String approvalComent, String workFlowAction,
+            Boolean loggedUserIsEmployee, Model model) {
         String successMessage = null;
         courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                 loggedUserIsEmployee, courtVerdict.getAction());

@@ -47,14 +47,14 @@
  */
 package org.egov.demand.model;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * EgDemandDetails entity.
@@ -78,13 +78,13 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private BigDecimal amtRebate = BigDecimal.ZERO;
     private EgDemand egDemand;
     private Long version;
-    private transient Set<DemandDetailVariation> demandDetailVariation =new HashSet<>();
+    private transient Set<DemandDetailVariation> demandDetailVariation = new HashSet<>();
 
     /**
      * Factory method for convenient creation.
      */
     public static EgDemandDetails fromReasonAndAmounts(BigDecimal demandAmount,
-                                                       EgDemandReason egDemandReason, BigDecimal collectedAmount) {
+            EgDemandReason egDemandReason, BigDecimal collectedAmount) {
         EgDemandDetails dd = new EgDemandDetails();
         dd.setAmount(demandAmount);
         dd.setEgDemandReason(egDemandReason);
@@ -125,9 +125,8 @@ public class EgDemandDetails implements Serializable, Cloneable {
     }
 
     /**
-     * Returns a copy that can be associated with another EgDemand. The copy has
-     * the same amounts, reason, time stamp and (cloned) receipts if any. (Note:
-     * making it public instead of protected to allow any class to use it.)
+     * Returns a copy that can be associated with another EgDemand. The copy has the same amounts, reason, time stamp and (cloned)
+     * receipts if any. (Note: making it public instead of protected to allow any class to use it.)
      */
     @Override
     public Object clone() {
@@ -147,8 +146,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     }
 
     /**
-     * Returns <code>true</code> if demand exceeds collection,
-     * <code>false</code> otherwise.
+     * Returns <code>true</code> if demand exceeds collection, <code>false</code> otherwise.
      */
     public boolean hasOutstandingCollection() {
         return getAmtCollected() == null || getAmount().compareTo(getAmtCollected()) > 0;
@@ -271,9 +269,8 @@ public class EgDemandDetails implements Serializable, Cloneable {
     }
 
     /**
-     * Add an amount to the existing collected amount, with a tolerance of one paisa i.e. balance can be
-     * exceeded by 1 paisa. This can be used when split amounts are being calculated by MoneyUtils.allocate(), where
-     * amounts may be off by 1 paisa.
+     * Add an amount to the existing collected amount, with a tolerance of one paisa i.e. balance can be exceeded by 1 paisa. This
+     * can be used when split amounts are being calculated by MoneyUtils.allocate(), where amounts may be off by 1 paisa.
      */
     public void addCollectedWithOnePaisaTolerance(BigDecimal amount) {
         addCollectedWithTolerance(amount, ONE_PAISA_TOLERANCE_FOR_ADDCOLLECTED);
@@ -329,7 +326,6 @@ public class EgDemandDetails implements Serializable, Cloneable {
         this.version = version;
     }
 
-    
     public void addEgDemandDetailVariation(DemandDetailVariation demandDetailVariation) {
         getDemandDetailVariation().add(demandDetailVariation);
     }
@@ -346,4 +342,4 @@ public class EgDemandDetails implements Serializable, Cloneable {
         this.demandDetailVariation = demandDetailVariation;
     }
 
-  }
+}

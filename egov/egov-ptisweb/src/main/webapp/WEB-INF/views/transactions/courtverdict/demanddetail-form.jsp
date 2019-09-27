@@ -55,8 +55,7 @@
 				</div>
 			</div>
 			<div class="panel-body">
-				<div align="center"
-					class="overflow-x-scroll">
+				<div align="center" class="overflow-x-scroll">
 					<table class="table table-bordered" width="100%"
 						id="demandDetailsTable">
 						<tr>
@@ -69,8 +68,6 @@
 									code="lbl.cv.uncolldmndAmt" /></th>
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.collection" /></th>
-							<th class="bluebgheadtd"><spring:message
-									code="lbl.cv.adjustAmt" /></th>
 						</tr>
 						<c:forEach items="${dmndDetails}" var="demandDetails"
 							varStatus="status">
@@ -94,18 +91,13 @@
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].actualAmount"
 										value="${demandDetails.actualAmount}" readonly="true" /></td>
-								<td class="greybox"><form:input id="revisedAmount" align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].revisedAmount"
-										/></td>
+								<td class="greybox"><form:input id="revisedAmount"
+										align="center" type="text" style="width:80%"
+										path="demandDetailBeanList[${status.index }].revisedAmount" /></td>
 								<td class="greybox"><form:input align="center" type="text"
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].actualCollection"
 										value="${demandDetails.actualCollection}" readonly="true" /></td>
-								<td class="greybox"><form:input id="revisedCollection"
-										align="center" type="text" style="width:80%"
-										path="demandDetailBeanList[${status.index }].revisedCollection"
-										/></td>
 
 							</tr>
 						</c:forEach>

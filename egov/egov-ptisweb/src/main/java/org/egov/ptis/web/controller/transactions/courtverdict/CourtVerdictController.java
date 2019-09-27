@@ -109,6 +109,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CourtVerdictController extends GenericWorkFlowController {
 
     private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String CREATED = "Created";
+    private static final String PROPERTY_ID = "propertId";
+    private static final String CV_SUCCESS_MSG = "Court Verdict Saved Successfully in the System and forwarded to :";
+    private CourtVerdict oldCourtVerdict;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -116,7 +121,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PropertyService propertyService;
-
     @Autowired
     private PropertyCourtCaseService propCourtCaseService;
     @Autowired
@@ -129,13 +133,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    private static final String ERROR_MSG = "errorMsg";
-    private static final String CREATED = "Created";
-    private static final String PROPERTY_ID = "propertId";
-    private static final String CV_SUCCESS_MSG = "Court Verdict Saved Successfully in the System and forwarded to :";
-
-    private CourtVerdict oldCourtVerdict;
     @Autowired
     private PtDemandDao ptDemandDAO;
 
@@ -201,7 +198,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
             courtVerdictService.addModelAttributes(model, property, request);
 
-            Set<EgDemandDetails> demandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty()))
+            Set<EgDemandDetails> demandDetails = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty())
                     .getEgDemandDetails();
 
             List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
@@ -366,7 +363,5 @@ public class CourtVerdictController extends GenericWorkFlowController {
         }
         return target;
     }
-
-
 
 }

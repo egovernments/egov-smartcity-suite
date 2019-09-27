@@ -69,8 +69,6 @@
 									code="lbl.cv.uncolldmndAmt" /></th>
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.collection" /></th>
-							<th class="bluebgheadtd"><spring:message
-									code="lbl.cv.adjustAmt" /></th>
 						</tr>
 						<c:forEach items="${demandDetailList}" var="demandDetails"
 							varStatus="status">
@@ -99,10 +97,6 @@
 								<td class="greybox"><c:out
 										value="${demandDetails.actualCollection}">
 									</c:out></td>
-								<td class="greybox"><c:out
-										value="${demandDetails.revisedCollection}">
-									</c:out></td>
-
 							</tr>
 						</c:forEach>
 					</table>

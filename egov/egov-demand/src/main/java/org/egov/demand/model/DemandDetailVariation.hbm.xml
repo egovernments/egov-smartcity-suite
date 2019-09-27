@@ -50,59 +50,34 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.egov.demand.model.EgDemandDetails" table="EG_DEMAND_DETAILS">
+    <class name="org.egov.demand.model.DemandDetailVariation" table="EG_DEMAND_DETAIL_VARIATION">
         <id name="id" type="java.lang.Long">
             <column name="ID"/>
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="sequence_name">SEQ_EG_DEMAND_DETAILS</param>
+                <param name="sequence_name">SEQ_EG_DEMAND_DETAIL_VARIATION</param>
             </generator>
         </id>
-        <version name="version" type="long"/>
-        <property name="modifiedDate" type="timestamp">
-            <column name="MODIFIED_DATE" not-null="true"/>
-        </property>
-        <many-to-one name="egDemandReason" class="org.egov.demand.model.EgDemandReason">
-            <column name="ID_DEMAND_REASON" not-null="true"/>
+        <!-- <version name="version" type="long"/> -->
+        
+        <many-to-one name="demandreasonMaster" class="org.egov.demand.model.EgDemandReasonMaster">
+            <column name="DEMAND_REASON_MASTER" not-null="true"/>
         </many-to-one>
 
-        <many-to-one name="egwStatus" class="org.egov.commons.EgwStatus">
-            <column name="ID_STATUS"/>
-        </many-to-one>
-        <property name="createDate" type="java.util.Date">
-            <column name="CREATE_DATE" not-null="true"/>
-        </property>
-
-        <property name="fileReferenceNo" type="java.lang.String">
-            <column name="FILE_REFERENCE_NO"/>
-        </property>
         <property name="remarks" type="java.lang.String">
             <column name="REMARKS"/>
         </property>
-        <property name="amount" type="java.math.BigDecimal">
-            <column name="AMOUNT" not-null="true"/>
+        
+        <property name="dramount" type="java.math.BigDecimal">
+            <column name="DRAMOUNT"/>
         </property>
-        <property name="amtCollected" type="java.math.BigDecimal">
-            <column name="AMT_COLLECTED"/>
+        <property name="cramount" type="java.math.BigDecimal">
+            <column name="CRAMOUNT"/>
         </property>
 
-        <set name="egdmCollectedReceipts" cascade="all" table="EGDM_COLLECTED_RECEIPTS">
-            <key>
-                <column name="ID_DEMAND_DETAIL" not-null="true"/>
-            </key>
-            <one-to-many class="org.egov.demand.model.EgdmCollectedReceipt"/>
-        </set>
-
-		<set name="demandDetailVariation" inverse="true" cascade="all" table="EG_DEMAND_DETAIL_VARIATION">
-			<key>
-				<column name="DEMAND_DETAIL" not-null="true"/>
-			</key>
-			<one-to-many class="org.egov.demand.model.DemandDetailVariation" />
-		</set>
-        <property name="amtRebate" type="java.math.BigDecimal">
-            <column name="AMT_REBATE"/>
-        </property>
-        <many-to-one name="egDemand"
-                     class="org.egov.demand.model.EgDemand" column="ID_DEMAND"
-                     insert="false" update="false"/>
+		<many-to-one name="demandDetail" class="org.egov.demand.model.EgDemandDetails" update="false">
+            <column name="DEMAND_DETAIL" not-null="true"/>
+        </many-to-one>
+        
     </class>
 </hibernate-mapping>
+

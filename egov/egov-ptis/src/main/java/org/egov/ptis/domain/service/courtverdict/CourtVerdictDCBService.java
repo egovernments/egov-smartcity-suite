@@ -48,10 +48,10 @@
 package org.egov.ptis.domain.service.courtverdict;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.COURTCASE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.COURTCASE;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -104,8 +104,6 @@ public class CourtVerdictDCBService extends TaxCollection {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @Autowired
     private PropertyService propertyService;
     @Autowired
     StructureClassificationRepository structureDAO;
@@ -128,6 +126,8 @@ public class CourtVerdictDCBService extends TaxCollection {
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private ModuleService moduleDao;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
 
@@ -146,61 +146,53 @@ public class CourtVerdictDCBService extends TaxCollection {
 
     public void updateDemandDetails(CourtVerdict courtVerdict) {
 
+        updateDemandDetailVariation(courtVerdict);
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(courtVerdict.getProperty()).getEgDemandDetails();
-        for (final EgDemandDetails dmdDetails : demandDetails)
+        List<Ptdemand> currPtdemand = courtVerdictService.getCurrPtDemand(courtVerdict);
+        if (currPtdemand != null) {
+            final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+            ptdemand.setBaseDemand(getTotalDemand(demandDetails));
+            ptdemand.setEgDemandDetails(demandDetails);
+            ptdemand.setEgptProperty(courtVerdict.getProperty());
+            ptdemand.getDmdCalculations().setCreatedDate(new Date());
+            persistenceService.applyAuditing(ptdemand.getDmdCalculations());
+            courtVerdict.getProperty().getPtDemandSet().clear();
+            courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
+
+        }
+    }
+
+    public void updateDemandDetailVariation(CourtVerdict courtVerdict) {
+        Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(courtVerdict.getProperty()).getEgDemandDetails();
+        for (final EgDemandDetails demandDetail : demandDetails) {
             for (final DemandDetail dmdDetailBean : courtVerdict.getDemandDetailBeanList()) {
-                Boolean isUpdateAmount = Boolean.FALSE;
-                Boolean isUpdateCollection = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-                if (dmdDetailBean.getRevisedAmount() != null
+                if (dmdDetailBean.getRevisedAmount() != null && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
                         && dmdDetailBean.getInstallment()
-                                .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
-                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster()))
-                    isUpdateAmount = true;
-
-                if (dmdDetailBean.getRevisedCollection() != null
-                        && dmdDetails.getEgDemand().getEgInstallmentMaster()
-                                .equals(propertyTaxCommonUtils.getCurrentInstallment())
-                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster())
-                        && dmdDetails.getEgDemandReason().getEgInstallmentMaster()
-                                .equals(dmdDetailBean.getInstallment()))
-                    isUpdateCollection = true;
-
-                if (isUpdateAmount) {
-                    DemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getActualAmount().subtract(dmdDetailBean.getRevisedAmount()),
-                            COURTCASE);
-                    Set<DemandDetailVariation> variationSet = new HashSet<>();
-                    variationSet.add(dmdVar);
-                    dmdDetails.setDemandDetailVariation(variationSet);
-                }
-                if (isUpdateCollection)
-                    dmdDetails.setAmtCollected(
-                            dmdDetailBean.getRevisedCollection() != null ? dmdDetailBean.getRevisedCollection()
-                                    : BigDecimal.ZERO);
-
-                if (isUpdateAmount || isUpdateCollection) {
-                    dmdDetails.setModifiedDate(new Date());
+                                .equals(demandDetail.getEgDemandReason().getEgInstallmentMaster())
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
+                    if (!demandDetail.getDemandDetailVariation().isEmpty()) {
+                        for (DemandDetailVariation dmdVar : demandDetail.getDemandDetailVariation()) {
+                            dmdVar.setDramount(dmdDetailBean.getRevisedAmount());
+                        }
+                    } else {
+                        DemandDetailVariation dmdVar = persistDemandDetailVariation(demandDetail,
+                                dmdDetailBean.getRevisedAmount(),
+                                COURTCASE);
+                        Set<DemandDetailVariation> variationSet = new HashSet<>();
+                        variationSet.add(dmdVar);
+                        demandDetail.setDemandDetailVariation(variationSet);
+                    }
+                    demandDetail.setModifiedDate(new Date());
                     break;
                 }
-            }
-        if (courtVerdict.getState() != null) {
-            for (Ptdemand ptdemand : courtVerdict.getProperty().getPtDemandSet()) {
-
-                ptdemand.setEgDemandDetails(demandDetails);
-            }
-        } else {
-            List<Ptdemand> currPtdemand = courtVerdictService.getCurrPtDemand(courtVerdict);
-            if (currPtdemand != null) {
-                final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
-                ptdemand.setBaseDemand(getTotalDemand(demandDetails));
-                ptdemand.setEgDemandDetails(demandDetails);
-                ptdemand.setEgptProperty(courtVerdict.getProperty());
-                ptdemand.getDmdCalculations().setCreatedDate(new Date());
-                persistenceService.applyAuditing(ptdemand.getDmdCalculations());
-                courtVerdict.getProperty().getPtDemandSet().clear();
-                courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
+                if ((dmdDetailBean.getRevisedAmount() == null || dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) < 1)
+                        && !demandDetail.getDemandDetailVariation().isEmpty()) {
+                    for (DemandDetailVariation dmdVar : demandDetail.getDemandDetailVariation()) {
+                        dmdVar.setDramount(BigDecimal.ZERO);
+                    }
+                }
             }
         }
     }
@@ -223,16 +215,8 @@ public class CourtVerdictDCBService extends TaxCollection {
 
         for (final DemandDetail dd : demandDetailBeanList) {
             dd.setInstallment(installmentDao.findById(dd.getInstallment().getId(), false));
-            if (dd.getRevisedCollection() != null && dd.getRevisedAmount() != null) {
-                if (dd.getRevisedCollection().compareTo(dd.getActualAmount().subtract(dd.getRevisedAmount())) > 0) {
-                    errors.put("revisedCollection",
-                            "revised.collection.greater");
-                }
-                if (dd.getRevisedAmount().compareTo(dd.getActualAmount()) > 0)
-                    errors.put("revisedDemand", "reviseddmd.gt.actualdmd");
-            }
-            if (dd.getRevisedCollection() == null && dd.getRevisedAmount() != null)
-                errors.put("revisedCollAmt", "mandatory.revised.collection");
+            if (dd.getRevisedAmount() != null && dd.getRevisedAmount().compareTo(dd.getActualAmount()) > 0)
+                errors.put("revisedDemand", "reviseddmd.gt.actualdmd");
         }
         return errors;
     }
@@ -247,7 +231,13 @@ public class CourtVerdictDCBService extends TaxCollection {
     private List<DemandDetail> setDemandBeanList(List<EgDemandDetails> newDmndDetails, List<EgDemandDetails> oldDmndDetails) {
 
         List<DemandDetail> demandDetailList = new ArrayList<>();
+        BigDecimal totalCollectionAmt = BigDecimal.ZERO;
+        for (EgDemandDetails demandDetail : oldDmndDetails)
+            totalCollectionAmt = totalCollectionAmt.add(demandDetail.getAmtCollected());
+        for (EgDemandDetails egDemandDetails : newDmndDetails) {
 
+            totalCollectionAmt = updateCollection(totalCollectionAmt, egDemandDetails);
+        }
         int i = 0;
         for (final EgDemandDetails demandDetail : newDmndDetails) {
             for (final EgDemandDetails oldDemandDetail : oldDmndDetails) {
@@ -268,9 +258,9 @@ public class CourtVerdictDCBService extends TaxCollection {
                     }
 
                     final BigDecimal revisedCollection = demandDetail.getAmtCollected();
-                    final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, oldDemandDetail.getAmount(),
+                    final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
                             revisedAmount,
-                            oldDemandDetail.getAmtCollected(), revisedCollection);
+                            demandDetail.getAmtCollected(), revisedCollection);
                     demandDetailList.add(i, dmdDtl);
 
                     break;
@@ -296,7 +286,6 @@ public class CourtVerdictDCBService extends TaxCollection {
         demandDetail.setActualAmount(amount);
         demandDetail.setRevisedAmount(revisedAmount);
         demandDetail.setActualCollection(amountCollected);
-        demandDetail.setRevisedCollection(revisedCollection);
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;
     }
@@ -305,12 +294,8 @@ public class CourtVerdictDCBService extends TaxCollection {
 
         List<DemandDetail> demandDetailList = getDemandDetails(courtVerdict);
         BigDecimal totalCollectionAmt = BigDecimal.ZERO;
-        for (DemandDetail demandDetail : demandDetailList) {
-            if (demandDetail.getActualCollection().compareTo(demandDetail.getRevisedCollection()) >= 0)
-                totalCollectionAmt = totalCollectionAmt.add(demandDetail.getActualCollection());
-            else
-                totalCollectionAmt = totalCollectionAmt.add(demandDetail.getRevisedCollection());
-        }
+        for (DemandDetail demandDetail : demandDetailList)
+            totalCollectionAmt = totalCollectionAmt.add(demandDetail.getActualCollection());
 
         Ptdemand ptDemandNew = propertyService.getCurrrentDemand(courtVerdict.getProperty());
 
@@ -342,14 +327,14 @@ public class CourtVerdictDCBService extends TaxCollection {
         if (newDemandDetail != null) {
             newDemandDetail.setAmtCollected(ZERO);
             if (remaining.compareTo(BigDecimal.ZERO) > 0) {
-                if (remaining.compareTo(newDemandDetail.getAmount()) <= 0) {
+                if (remaining.compareTo(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail)) <= 0) {
                     newDemandDetail.setAmtCollected(remaining);
                     newDemandDetail.setModifiedDate(new Date());
                     remaining = BigDecimal.ZERO;
                 } else {
-                    newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+                    newDemandDetail.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail));
                     newDemandDetail.setModifiedDate(new Date());
-                    remaining = remaining.subtract(newDemandDetail.getAmount());
+                    remaining = remaining.subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail));
                 }
             }
         }
@@ -382,7 +367,8 @@ public class CourtVerdictDCBService extends TaxCollection {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                     .getReasonMaster();
-            final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+            final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster,
+                    demandDetail.getAmount(),
                     demandDetail.getAmtCollected());
             demandDetailList.add(dmdDtl);
         }
