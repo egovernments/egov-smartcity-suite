@@ -112,6 +112,7 @@ public class AssignmentService {
         return assignmentRepository.getAllActiveAssignmentsByEmpId(empId);
     }
 
+    @Transactional
     public List<Assignment> getAssignmentsForPosition(final Long posId, final Date givenDate) {
         return assignmentRepository.getAssignmentsForPosition(posId, givenDate);
     }

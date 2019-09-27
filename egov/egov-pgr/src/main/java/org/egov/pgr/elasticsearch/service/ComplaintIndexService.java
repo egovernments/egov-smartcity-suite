@@ -368,7 +368,7 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
-    
+    @Transactional
     public List<Assignment> getAssisnmentsForPosition(final Position position) {
         return assignmentService.getAssignmentsForPosition(position.getId(), new Date());
     }
