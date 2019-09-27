@@ -134,8 +134,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class ComplaintIndexService {
 
     private static final String SOURCE = "source";
@@ -230,6 +232,7 @@ public class ComplaintIndexService {
     @Autowired
     private ReceivingModeService receivingModeService;
 
+    @Transactional
     public void createComplaintIndex(final Complaint complaint) {
         final ComplaintIndex complaintIndex = new ComplaintIndex();
         beanMapperConfiguration.map(complaint, complaintIndex);
@@ -249,7 +252,7 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintDuration(0);
         complaintIndex.setDurationRange("");
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         complaintIndex.setComplaintPeriod(0);
         complaintIndex.setComplaintSLADays(complaint.getComplaintType().getSlaHours());
@@ -289,6 +292,7 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
+    @Transactional
     public void updateComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
@@ -304,7 +308,7 @@ public class ComplaintIndexService {
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         // If complaint is forwarded
         if (complaint.nextOwnerId() != null && !complaint.nextOwnerId().equals(0L)) {
@@ -364,7 +368,14 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
+    
+    public List<Assignment> getAssisnmentsForPosition(final Position position) {
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        return assignments;
+    }
+
     // This method is used to populate PGR index during complaint escalation
+    @Transactional
     public void updateComplaintEscalationIndexValues(final Complaint complaint) {
 
         // fetch the complaint from index and then update the new fields
@@ -372,7 +383,7 @@ public class ComplaintIndexService {
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCityCode(city.getCode());
@@ -440,6 +451,7 @@ public class ComplaintIndexService {
             updateOpenComplaintIndex(complaint);
     }
 
+    @Transactional
     public void updateOpenComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
@@ -513,9 +525,10 @@ public class ComplaintIndexService {
         return complaintIndex;
     }
 
+    
     private void setCurrentOwnerDetails(Position currentOwner, ComplaintIndex complaintIndex) {
         if (currentOwner != null) {
-            final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(currentOwner.getId(), new Date());
+            final List<Assignment> assignments = getAssisnmentsForPosition(currentOwner);
             final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
             complaintIndex.setCurrentFunctionaryName(assignedUser == null
                     ? NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName()
