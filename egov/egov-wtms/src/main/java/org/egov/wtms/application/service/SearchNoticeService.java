@@ -122,7 +122,7 @@ public class SearchNoticeService {
         selectQuery.append("select propertytype.name as propertyType, applicationtype.name as applicationType, ")
                 .append("connection.consumercode as hscNo, connectionaddress.ownername as ownerName, connection.propertyIdentifier as assessmentNo, ")
                 .append("conndetails.workordernumber as workOrderNumber, conndetails.workorderdate as workOrderDate, connectionaddress.doornumber as houseNumber, ")
-                .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype ");
+                .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype, conndetails.applicationnumber as applicationNumber ");
         if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
                 || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             selectQuery.append(", en.estimationnumber as estimationNumber, en.estimationnoticedate as estimationDate");
@@ -293,8 +293,9 @@ public class SearchNoticeService {
         searchNoticeDetails.setHouseNumber(object[7] == null ? EMPTY : object[7].toString());
         searchNoticeDetails.setLocality(object[8] == null ? EMPTY : object[8].toString());
         searchNoticeDetails.setConnectionType(object[9] == null ? EMPTY : object[9].toString());
-        searchNoticeDetails.setEstimationNumber(object[10] == null ? EMPTY : object[10].toString());
-        searchNoticeDetails.setEstimationDate(object[11] == null ? EMPTY : object[11].toString());
+        searchNoticeDetails.setApplicationNumber(object[10] == null ? EMPTY : object[10].toString());
+        searchNoticeDetails.setEstimationNumber(object[11] == null ? EMPTY : object[11].toString());
+        searchNoticeDetails.setEstimationDate(object[12] == null ? EMPTY : object[12].toString());
         return searchNoticeDetails;
     }
 

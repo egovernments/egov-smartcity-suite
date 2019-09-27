@@ -81,7 +81,6 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -98,7 +97,6 @@ import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.reports.entity.SearchNoticeAdaptor;
@@ -251,11 +249,11 @@ public class SearchNoticeController {
 	@RequestMapping(value = "/result", method = GET)
 	public void getBillBySearchParameter(final HttpServletRequest request, final HttpServletResponse response,
 			@RequestParam("consumerCode") final String consumerCode, @RequestParam(NOTICE_TYPE) final String noticeType,
-			@RequestParam("billNo") final String billNo,
-			@RequestParam("workOrderNumber") final String workOrderNumber) {
+			@RequestParam("applicationNumber") final String applicationNumber) {
 		List<Long> waterChargesDocumentslist;
 		final List<String> waterChargesFileStoreId = new ArrayList<>();
-		final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode, noticeType);
+		final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findByApplicationNumber(applicationNumber);
 		EstimationNotice estimationNotice = estimationNoticeService
 				.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
 		if (SANCTION_ORDER.equals(noticeType) && waterConnectionDetails != null) {
@@ -420,8 +418,8 @@ public class SearchNoticeController {
 
 		for (final SearchNoticeDetails noticeDetail : noticeList)
 			try {
-				final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo(),
-						StringUtils.EMPTY);
+				final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+						.findByApplicationNumber(noticeDetail.getApplicationNumber());
 				EstimationNotice estimationNotice = estimationNoticeService
 						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
 				if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
@@ -452,8 +450,8 @@ public class SearchNoticeController {
 		final List<InputStream> pdfs = new ArrayList<>();
 		for (final SearchNoticeDetails noticeDetail : searchResultList)
 			try {
-				final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo(),
-						StringUtils.EMPTY);
+				final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+						.findByApplicationNumber(noticeDetail.getApplicationNumber());
 				EstimationNotice estimationNotice = estimationNoticeService
 						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
 				if (waterConnectionDetails != null) {
@@ -518,34 +516,5 @@ public class SearchNoticeController {
 			}
 		else
 			throw new ValidationException("err.demand.notice");
-	}
-
-	public WaterConnectionDetails getWaterConnectionDetails(final String consumerCode, String noticeType) {
-		WaterConnectionDetails waterConnectionDetails = null;
-		if (consumerCode != null) {
-			waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-					ConnectionStatus.ACTIVE);
-			if (waterConnectionDetails == null)
-				waterConnectionDetails = waterConnectionDetailsService
-						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.INPROGRESS);
-			if (waterConnectionDetails == null)
-				waterConnectionDetails = waterConnectionDetailsService
-						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.CLOSED);
-			if (waterConnectionDetails != null && (waterConnectionDetails.getStatus().getCode()
-					.equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
-					|| waterConnectionDetails.getStatus().getCode()
-							.equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
-					|| waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED)
-					|| waterConnectionDetails.getStatus().getCode()
-							.equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-					|| waterConnectionDetails.getStatus().getCode()
-							.equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
-					|| (StringUtils.isNotBlank(noticeType) && ((PROCEEDING_FOR_RECONNECTION.equals(noticeType)
-							&& ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
-							|| (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equals(noticeType)
-									&& ConnectionStatus.CLOSED.equals(waterConnectionDetails.getConnectionStatus()))))))
-				return waterConnectionDetails;
-		}
-		return null;
 	}
 }
