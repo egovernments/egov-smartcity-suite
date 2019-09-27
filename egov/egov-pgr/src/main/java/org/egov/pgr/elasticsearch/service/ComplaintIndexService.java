@@ -370,8 +370,7 @@ public class ComplaintIndexService {
 
     
     public List<Assignment> getAssisnmentsForPosition(final Position position) {
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
-        return assignments;
+        return assignmentService.getAssignmentsForPosition(position.getId(), new Date());
     }
 
     // This method is used to populate PGR index during complaint escalation
