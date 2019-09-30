@@ -257,10 +257,9 @@ public class CourtVerdictDCBService extends TaxCollection {
                         }
                     }
 
-                    final BigDecimal revisedCollection = demandDetail.getAmtCollected();
                     final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
                             revisedAmount,
-                            demandDetail.getAmtCollected(), revisedCollection);
+                            demandDetail.getAmtCollected());
                     demandDetailList.add(i, dmdDtl);
 
                     break;
@@ -272,8 +271,7 @@ public class CourtVerdictDCBService extends TaxCollection {
     }
 
     private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
-            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected,
-            final BigDecimal revisedCollection) {
+            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into createDemandDetailBean");
             LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
@@ -368,28 +366,11 @@ public class CourtVerdictDCBService extends TaxCollection {
             final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                     .getReasonMaster();
             final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster,
-                    demandDetail.getAmount(),
+                    demandDetail.getAmount(), getTotalRevisedAmount(demandDetail),
                     demandDetail.getAmtCollected());
             demandDetailList.add(dmdDtl);
         }
         return demandDetailList;
-    }
-
-    private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
-            final BigDecimal amount, final BigDecimal amountCollected) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into createDemandDetailBean");
-            LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
-                    + ", amount=" + amount + ", amountCollected=" + amountCollected);
-        }
-
-        final DemandDetail demandDetail = new DemandDetail();
-        demandDetail.setInstallment(installment);
-        demandDetail.setReasonMaster(reasonMaster);
-        demandDetail.setActualAmount(amount);
-        demandDetail.setActualCollection(amountCollected);
-        demandDetail.setIsCollectionEditable(true);
-        return demandDetail;
     }
 
     public List<EgDemandDetails> sortDemandDetails(List<EgDemandDetails> demandDetails) {
@@ -435,5 +416,14 @@ public class CourtVerdictDCBService extends TaxCollection {
     public void updateDemandDetails(BillReceiptInfo bri) {
         // TODO Auto-generated method stub
 
+    }
+
+    public BigDecimal getTotalRevisedAmount(final EgDemandDetails demandDetails) {
+        BigDecimal revisedAmount = BigDecimal.ZERO;
+        if (!demandDetails.getDemandDetailVariation().isEmpty()) {
+            for (final DemandDetailVariation demandDetailVariation : demandDetails.getDemandDetailVariation())
+                revisedAmount = revisedAmount.add(demandDetailVariation.getDramount());
+        }
+        return revisedAmount;
     }
 }
