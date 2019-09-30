@@ -88,6 +88,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.City;
@@ -134,11 +135,15 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintIndexService {
+    
+    private static final Logger LOGGER = Logger.getLogger(ComplaintIndexService.class);
 
     private static final String SOURCE = "source";
 
@@ -231,6 +236,9 @@ public class ComplaintIndexService {
 
     @Autowired
     private ReceivingModeService receivingModeService;
+    
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Transactional
     public void createComplaintIndex(final Complaint complaint) {
@@ -446,8 +454,18 @@ public class ComplaintIndexService {
 
     public void updateAllOpenComplaintIndex() {
         final List<Complaint> openComplaints = complaintService.getOpenComplaints();
-        for (final Complaint complaint : openComplaints)
-            updateOpenComplaintIndex(complaint);
+        for (final Complaint complaint : openComplaints) {
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            try {
+                txTemplate.execute(result -> {
+                    updateOpenComplaintIndex(complaint);
+                    return Boolean.TRUE;
+                });
+            } catch (final Exception e) {
+                LOGGER.error("Error while pushing complaint to Elastic Search for " + complaint.getCrn(), e);
+            }
+        }
     }
 
     @Transactional
