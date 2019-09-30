@@ -51,7 +51,7 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyMutationMaster" table="EGPT_MUTATION_MASTER">
+	<class name="org.egov.ptis.domain.entity.property.PropertyMutationMaster" table="EGPT_MUTATION_MASTER" mutable="false">
 		<id
 			name="id" column="ID" type="long">
 			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">

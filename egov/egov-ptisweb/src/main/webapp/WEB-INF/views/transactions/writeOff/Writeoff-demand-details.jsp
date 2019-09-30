@@ -63,10 +63,10 @@
 				<div class="col-md-12">
 					<div class="panel-body">
 						<div class="row add-border">
-							<div class="col-xs-2 add-margin">
+							<div class="col-xs-2 add-margin postion">
 								<spring:message code="lbl.installmnt.start" />
 							</div>
-							<div class="col-xs-2 add-margin view-content">
+							<div class="col-xs-2 add-margin view-content" style="padding-right: 0px;">
 								<form:select path="fromInstallment" id="frominstallments"
 									cssClass="form-control">
 									<form:option value="">
@@ -74,11 +74,13 @@
 									</form:option>
 									<form:options items="${installments}" />
 								</form:select>
+								<form:errors path="fromInstallment"
+									cssClass="add-margin error-msg" />
 							</div>
 							<div class="col-xs-2 add-margin postion">
 								<spring:message code="lbl.installmnt.end" />
 							</div>
-							<div class="col-xs-2 add-margin view-content ">
+							<div class="col-xs-2 add-margin view-content" style="padding-right: 0px;">
 								<form:select path="toInstallment" id="toinstallments"
 									cssClass="form-control ">
 									<form:option value="">
@@ -86,6 +88,8 @@
 									</form:option>
 									<form:options items="${installments}" />
 								</form:select>
+								<form:errors path="toInstallment"
+									cssClass="add-margin error-msg" />
 							</div>
 						</div>
 					</div>

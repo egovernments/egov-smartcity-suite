@@ -303,7 +303,7 @@ div.floors-tbl-freeze-column-div {
 								</div>
 								<div class="panel-body">
 									<div class="row add-border">
-										<div class="col-xs-2 add-margin">
+										<div class="col-xs-2 add-margin" style="padding-left: 50px;">
 											<spring:message code="lbl.writeOffTypes" />
 										</div>
 										<div class="col-xs-2 add-margin view-content">
@@ -319,7 +319,7 @@ div.floors-tbl-freeze-column-div {
 											<form:errors path="writeOffType.mutationDesc"
 												cssClass="add-margin error-msg" />
 										</div>
-										<div class="col-xs-2 add-margin" style="padding-left: 100px;">
+										<div class="col-xs-3 add-margin" style="padding-left: 150px;">
 											<spring:message code="lbl.writeOff.reasons" />
 										</div>
 										<div class="col-xs-3 add-margin view-content">
@@ -396,7 +396,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<div class="col-xs-2 add-margin">
 											<form:input id="resolutionDate" path="resolutionDate"
-												value="${resolutionDate}" cssClass="form-control" />
+												value="${resolutionDate}" cssClass="form-control" readonly="true" />
 										</div>
 										<div class="col-xs-3 add-margin" id="viewlink">
 											<a id="url" href="#" target="_blank">Council management

@@ -247,8 +247,7 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
                     return target;
                 }
                 writeOffService.processAndStoreApplicationDocuments(writeOff);
-                writeOffService.updateProperty(writeOff);
-                writeOff.getBasicProperty().addProperty(writeOff.getProperty());
+                writeOffService.updateDemandDetailVariation(writeOff);
             }
             writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
             successMessage = "write Off Saved Successfully in the System and forwarded to : "

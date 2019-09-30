@@ -47,10 +47,8 @@
  */
 $( document ).ready(function() {
 	$("#viewlink").hide();
-	var frominstallment;
-	var toinstallment;
 	displaydemand();
-	instString = $("#instString").val();
+	var instString = $("#instString").val();
 	var typevalue = $( "#writeOffType option:selected" ).text();
 	if (typevalue == 'Full WriteOff') {
 		$("#frominstallments").attr('disabled', true);
@@ -75,8 +73,8 @@ $( document ).ready(function() {
 
 function getselectedinstallments(val){
 	   
-	  fromVal = $("#frominstallments").val();
-	  toVal = $("#toinstallments").val();
+	  var fromVal = $("#frominstallments").val();
+	  var toVal = $("#toinstallments").val();
 	  instString = $("#instString").val();
 	  if(fromVal && toVal){
 		  var fromValIndex = instString.split(",").indexOf(fromVal);
@@ -110,16 +108,13 @@ function getselectedinstallments(val){
 			$("#frominstallments").val('');
 			$("#toinstallments").val('');
 			$("#demandDetailsTable").removeAttr('style');
-			  instString.split(",").forEach((val,index)=> {
-				  var queryIdentifier = ".row-"+val;
-				  $(queryIdentifier).removeAttr('style');
-
-			  });
 			  displaydemand();
 		}else {
 			document.getElementById("check").style.display = "none";
 			$("#frominstallments").attr('disabled', false);
 			$("#toinstallments").attr('disabled', false);
+			$("#frominstallments").val('');
+			$("#toinstallments").val('');
 			displaydemand();
 		}
 	}
@@ -145,8 +140,10 @@ function getselectedinstallments(val){
 			if(document.getElementById(revisedAmount).value >0 && fromValue != '' && toValue != '')
 				document.getElementById(revisedAmount).readOnly = false;
 			else{
+				if(writeofftypes  != 'Full WriteOff'){
 			 document.getElementById(revisedAmount).value = '';
 			 document.getElementById(revisedAmount).readOnly = false;
+				}
 			}
 		 }
 		if(writeofftypes  == 'Full WriteOff'){
@@ -230,7 +227,18 @@ function getselectedinstallments(val){
 		var revisedAmount = jQuery(obj).val();
 		var collectionvalue = document.getElementById('demandDetailBeanList'+ index + '.actualCollection').value;
 		var actualAmountValue = document.getElementById('demandDetailBeanList'+ index + '.actualAmount').value;
+		var fromInstallment = jQuery('#frominstallments').val();
+		var toInstallment = jQuery('#toinstallments').val();
 		if (revisedAmount) {
+			if(!fromInstallment && !toInstallment){
+				bootbox.alert("Please select From Installment and To Installment.");
+				document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';
+			}
+			if(Number(revisedAmount) < 0){
+				bootbox.alert("Please enter valid Writeoff Amount.");
+				document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';
+				return false;
+			}
 		if(Number(revisedAmount) >Number(actualAmountValue)){
 				bootbox.alert("Writeoff Amount should be less than or equal to Demand Amount.");
 					document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';

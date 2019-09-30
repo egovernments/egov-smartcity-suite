@@ -433,35 +433,52 @@ public class WriteOffService extends GenericWorkFlowController {
 
     public void updateDemandDetails(WriteOff writeOff) {
 
-        Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty())
-                .getEgDemandDetails();
-        DemandDetailVariation dmdVar = null;
+        updateDemandDetailVariation(writeOff);
+        Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty()).getEgDemandDetails();
+        List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
+        if (currPtdemand != null) {
+            final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+            ptdemand.setBaseDemand(getTotalDemand(demandDetails));
+            ptdemand.setEgDemandDetails(demandDetails);
+            ptdemand.setEgptProperty(writeOff.getProperty());
+            ptdemand.getDmdCalculations().setCreatedDate(new Date());
+            persistenceService.applyAuditing(ptdemand.getDmdCalculations());
+            writeOff.getProperty().getPtDemandSet().clear();
+            writeOff.getProperty().getPtDemandSet().add(ptdemand);
+
+        }
+    }
+
+    public void updateDemandDetailVariation(WriteOff writeOff) {
         List<Installment> install = new ArrayList<>();
-        for (final EgDemandDetails dmdDetails : demandDetails)
+        Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty()).getEgDemandDetails();
+        for (final EgDemandDetails demandDetail : demandDetails)
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
-                Boolean isUpdateAmount = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-                if (dmdDetails.getEgDemandReason().getEgInstallmentMaster().getId()
-                        .equals(dmdDetailBean.getInstallment().getId()))
-                    if (dmdDetailBean.getRevisedAmount() != null
-                            && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
-                            && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                    .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
-                        install.add(dmdDetailBean.getInstallment());
-                        isUpdateAmount = true;
+                if (dmdDetailBean.getRevisedAmount() != null && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
+                        && dmdDetailBean.getInstallment()
+                                .equals(demandDetail.getEgDemandReason().getEgInstallmentMaster())
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
+                    install.add(dmdDetailBean.getInstallment());
+                    if (!demandDetail.getDemandDetailVariation().isEmpty())
+                        for (DemandDetailVariation dmdVar : demandDetail.getDemandDetailVariation())
+                            dmdVar.setDramount(dmdDetailBean.getRevisedAmount());
+                    else {
+                        DemandDetailVariation dmdVar = persistDemandDetailVariation(demandDetail,
+                                dmdDetailBean.getRevisedAmount(),
+                                WRITE_OFF);
+                        Set<DemandDetailVariation> variationSet = new HashSet<>();
+                        variationSet.add(dmdVar);
+                        demandDetail.setDemandDetailVariation(variationSet);
                     }
-                if (isUpdateAmount) {
-                    BigDecimal balance = dmdDetailBean.getActualAmount().subtract(
-                            dmdDetailBean.getActualCollection() != null ? dmdDetailBean.getActualCollection() : BigDecimal.ZERO);
-                    if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF))
-                        dmdVar = persistDemandDetailVariation(dmdDetails, balance, WRITE_OFF);
-                    else
-                        dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(), WRITE_OFF);
-                    Set<DemandDetailVariation> variationSet = new HashSet<>();
-                    variationSet.add(dmdVar);
-                    dmdDetails.setDemandDetailVariation(variationSet);
-                    dmdDetails.setModifiedDate(new Date());
+                    demandDetail.setModifiedDate(new Date());
+                    break;
                 }
+                if ((dmdDetailBean.getRevisedAmount() == null || dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) < 1)
+                        && !demandDetail.getDemandDetailVariation().isEmpty())
+                    for (DemandDetailVariation dmdVar : demandDetail.getDemandDetailVariation())
+                        dmdVar.setDramount(BigDecimal.ZERO);
             }
         if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
             install.sort(Comparator.comparing(Installment::getId));
@@ -469,23 +486,6 @@ public class WriteOffService extends GenericWorkFlowController {
             DemandDetail maxInstallment = writeOff.getDemandDetailBeanList().get(writeOff.getDemandDetailBeanList().size() - 1);
             writeOff.setToInstallment(maxInstallment.getInstallment().getDescription());
         }
-        if (writeOff.getState() != null)
-            for (Ptdemand ptdemand : writeOff.getProperty().getPtDemandSet())
-                ptdemand.setEgDemandDetails(demandDetails);
-        else {
-            List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
-            if (currPtdemand != null) {
-                final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
-                ptdemand.setBaseDemand(getTotalDemand(demandDetails));
-                ptdemand.setEgDemandDetails(demandDetails);
-                ptdemand.setEgptProperty(writeOff.getProperty());
-                ptdemand.getDmdCalculations().setCreatedDate(new Date());
-                persistenceService.applyAuditing(ptdemand.getDmdCalculations());
-                writeOff.getProperty().getPtDemandSet().clear();
-                writeOff.getProperty().getPtDemandSet().add(ptdemand);
-            }
-        }
-
     }
 
     public DemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount,
@@ -676,7 +676,7 @@ public class WriteOffService extends GenericWorkFlowController {
         if (errorMessages.isEmpty())
             errorMessages = validateCouncil(writeOff, request);
         if (errorMessages.isEmpty())
-            errorMessages = validateDemand(writeOff.getDemandDetailBeanList());
+            errorMessages = validateDemand(writeOff.getDemandDetailBeanList(), writeOff);
         if (errorMessages.isEmpty() && writeOff.getState() == null) {
             List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(),
                     writeOff.getResolutionNo(),
@@ -697,6 +697,13 @@ public class WriteOffService extends GenericWorkFlowController {
             errors.rejectValue("resolutionNo", "writeoff.resolution.no");
         if (!StringUtils.isNotBlank(writeOff.getResolutionType()))
             errors.rejectValue("resolutionType", "writeoff.resolution.type");
+        if (StringUtils.isNotBlank(writeOff.getWriteOffType().getCode())
+                && !writeOff.getWriteOffType().getCode().equalsIgnoreCase("FULL WRITEOFF")) {
+            if (!StringUtils.isNotBlank(writeOff.getFromInstallment()))
+                errors.rejectValue("fromInstallment", "writeoff.frominstallment");
+            if (!StringUtils.isNotBlank(writeOff.getToInstallment()))
+                errors.rejectValue("toInstallment", "writeoff.toinstallment");
+        }
         if (writeOff.getDemandDetailBeanList() != null)
             for (final DemandDetail demanddetail : writeOff.getDemandDetailBeanList()) {
                 demanddetail.setInstallment(installmentDao.findById(demanddetail.getInstallment().getId(), false));
@@ -780,7 +787,7 @@ public class WriteOffService extends GenericWorkFlowController {
         return demandDetailBeanList;
     }
 
-    public Map<String, String> validateDemand(List<DemandDetail> demandDetailBeanList) {
+    public Map<String, String> validateDemand(List<DemandDetail> demandDetailBeanList, final WriteOff writeoff) {
 
         HashMap<String, String> errors = new HashMap<>();
 
@@ -789,6 +796,11 @@ public class WriteOffService extends GenericWorkFlowController {
             if (demandDetail.getActualCollection() != null && demandDetail.getRevisedAmount() != null && demandDetail
                     .getActualCollection().add(demandDetail.getRevisedAmount()).compareTo(demandDetail.getActualAmount()) > 0)
                 errors.put(ERROR, "writeoff.revised.amount.is.greater.than.sum");
+            if (demandDetail.getInstallment().getDescription().equalsIgnoreCase(writeoff.getFromInstallment()))
+                if (demandDetail.getRevisedAmount() == null)
+                    errors.put(ERROR, "writeoff.revised.amount.is.less.than.zero");
+            if (demandDetail.getRevisedAmount() != null && demandDetail.getRevisedAmount().compareTo(BigDecimal.ZERO) < 0)
+                errors.put(ERROR, "writeoff.revised.amount.is.less.than.zero");
         }
         return errors;
     }

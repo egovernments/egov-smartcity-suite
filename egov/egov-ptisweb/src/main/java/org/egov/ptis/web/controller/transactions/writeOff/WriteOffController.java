@@ -224,7 +224,6 @@ public class WriteOffController extends GenericWorkFlowController {
                 + " with application number : " + writeOff.getApplicationNumber();
         LOGGER.error("Write off saved successfully");
         model.addAttribute("successMessage", successMsg);
-        model.addAttribute("showAckBtn", Boolean.TRUE);
         model.addAttribute("propertyId", assessmentNo);
         target = WO_SUCCESS_FORM;
         return target;
