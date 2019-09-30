@@ -252,7 +252,7 @@
 										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF') }">
 										<th class="bluebgheadtd" width="10%" align="center"
 											colspan="3"><s:text
-												name="Covered by Court Case/Write Off" /></th>
+												name="court_writeoff" /></th>
 									</s:if>
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Collection" />
