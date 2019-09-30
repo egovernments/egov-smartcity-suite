@@ -796,9 +796,9 @@ public class WriteOffService extends GenericWorkFlowController {
             if (demandDetail.getActualCollection() != null && demandDetail.getRevisedAmount() != null && demandDetail
                     .getActualCollection().add(demandDetail.getRevisedAmount()).compareTo(demandDetail.getActualAmount()) > 0)
                 errors.put(ERROR, "writeoff.revised.amount.is.greater.than.sum");
-            if (demandDetail.getInstallment().getDescription().equalsIgnoreCase(writeoff.getFromInstallment()))
-                if (demandDetail.getRevisedAmount() == null)
-                    errors.put(ERROR, "writeoff.revised.amount.is.less.than.zero");
+            if (demandDetail.getInstallment().getDescription().equalsIgnoreCase(writeoff.getFromInstallment())
+                    && demandDetail.getRevisedAmount() == null)
+                errors.put(ERROR, "writeoff.revised.amount.is.less.than.zero");
             if (demandDetail.getRevisedAmount() != null && demandDetail.getRevisedAmount().compareTo(BigDecimal.ZERO) < 0)
                 errors.put(ERROR, "writeoff.revised.amount.is.less.than.zero");
         }
