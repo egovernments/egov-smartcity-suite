@@ -530,7 +530,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(courtVerdict.getState().getOwnerPosition());
-                courtVerdict.setStatus(STATUS_CANCELLED);
+                courtVerdict.getProperty().setStatus(STATUS_CANCELLED);
                 courtVerdict.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 final Assignment assignmentOnreject = getUserAssignmentOnReject(courtVerdict);
