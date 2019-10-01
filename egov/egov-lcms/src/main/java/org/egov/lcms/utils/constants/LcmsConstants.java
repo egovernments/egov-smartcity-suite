@@ -245,10 +245,17 @@ public class LcmsConstants {
 
     public static final String STANDINGCOUNSEL_ROLES = "STANDINGCOUNSEL_ROLES";
     public static final String VIEW_LEGALCASE_LINK = "/lcms/application/view/?lcNumber=";
-    
+
     public static final String LCMS_VIEW_ACCESS_ROLE = "LCMS VIEW ACCESS";
     public static final String STANDING_COUNSEL_ROLE = "STANDING_COUNSEL";
-    
+
     public static final String MODE = "mode";
+
+    public static final String DATETIME_FORMAT_YYYYMMDDTHHMMSSZ = "yyyyMMdd'T'HHmmss'Z'";
+    public static final SimpleDateFormat DATEFORMATTER_YYYYMMDDTHHMMSSZ = new SimpleDateFormat(DATETIME_FORMAT_YYYYMMDDTHHMMSSZ);
+    public static final String COURT_STARTTIME_HOUR = "2";
+    public static final String COURT_STARTTIME_MINUTE = "30";
+    public static final String COURT_WORKING_HOUR = "9";
+    public static final String BLANK = "";
 
 }

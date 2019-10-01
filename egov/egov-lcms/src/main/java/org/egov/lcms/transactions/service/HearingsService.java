@@ -96,6 +96,9 @@ public class HearingsService {
     @Autowired
     private HearingsDocumentService hearingsDocumentService;
 
+    @Autowired
+    private LegalCaseMailService legalCaseMailService;
+
     @Transactional
     public Hearings persist(final Hearings hearings) throws ParseException {
         buildEmplyeeList(hearings);
@@ -108,6 +111,7 @@ public class HearingsService {
         legalCaseSmsService.sendSmsToOfficerInchargeForHearings(hearings);
         legalCaseSmsService.sendSmsToHearingEmployee(hearings);
         legalCaseSmsService.sendSmsToStandingCounselForHearings(hearings);
+        legalCaseMailService.sendCalendarInviteOnHearing(hearings);
         legalCaseService.persistLegalCaseIndex(hearings.getLegalCase(), null,
                 null, null, null);
         hearingsRepository.save(hearings);

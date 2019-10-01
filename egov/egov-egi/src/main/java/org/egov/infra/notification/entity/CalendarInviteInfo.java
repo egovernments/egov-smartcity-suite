@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,32 +45,108 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.infra.notification.entity;
 
-package org.egov.infra.notification;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.LinkedList;
 
-public final class NotificationConstants {
+public final class CalendarInviteInfo implements Serializable {
 
-    public static final String MESSAGE = "message";
-    public static final String EMAIL = "email";
-    public static final String SUBJECT = "subject";
-    public static final String MOBILE = "mobile";
-    public static final String PRIORITY = "priority";
-    public static final String ATTACHMENT = "attachment";
-    public static final String FILETYPE = "filetype";
-    public static final String FILENAME = "filename";
-    // Calendar invite constants
-    public static final String REQUESTMETHOD = "method=REQUEST";
-    public static final String CHARSET = "charset=UTF-8";
-    public static final String COMPONENT = "component=VEVENT";
-    public static final String CONTENTCLASS_KEY = "Content-Class";
-    public static final String CONTENTCLASS_VALUE = "urn:content-  classes:calendarmessage";
-    public static final String MAILBODYMESSAGE_CONTENT = "text/html; charset=utf-8";
-    public static final String CONTENTID_KEY = "Content-ID";
-    public static final String CONTENTID_VALUE = "calendar_message";
-    public static final String DATASOURCETYPE = "text/calendar";
-    public static final String DATETIME_FORMAT_YYYYMMDDTHHMMSSZ = "yyyyMMdd'T'HHmmss'Z'";
+    private static final long serialVersionUID = 1L;
+    private Date startDate;
+    private Date endDate;
+    private String startDateTime;
+    private String endDateTime;
+    private String location;
+    private String summary;
+    private String participant = "";
+    private String description;
+    private String mailBodyMessage;
+    private LinkedList<String> mailList = new LinkedList<>();
 
-    private NotificationConstants() {
-        // only constants
+    public Date getStartDate() {
+        return startDate;
     }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(String participant) {
+        this.participant = participant;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(String startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public String getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public String getMailBodyMessage() {
+        return mailBodyMessage;
+    }
+
+    public void setMailBodyMessage(String mailBodyMessage) {
+        this.mailBodyMessage = mailBodyMessage;
+    }
+
+    public LinkedList<String> getMailList() {
+        return mailList;
+    }
+
+    public void setMailList(LinkedList<String> mailList) {
+        this.mailList = mailList;
+    }
+
+    public void addMailList(String mail) {
+        this.mailList.add(mail);
+    }
+
 }

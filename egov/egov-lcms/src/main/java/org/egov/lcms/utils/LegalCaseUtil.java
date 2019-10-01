@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.notification.entity.CalendarInviteInfo;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.lcms.transactions.entity.AppealDocuments;
@@ -197,6 +198,14 @@ public class LegalCaseUtil {
         return assignment != null ? assignment.getEmployee().getMobileNumber() : "";
     }
 
+    public String getOfficerInchargeMailId(final LegalCase legalcase) {
+        Assignment assignment = null;
+        if (legalcase != null)
+            assignment = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
+        return assignment == null ? LcmsConstants.BLANK : assignment.getEmployee().getEmailId();
+    }
+
     public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
         notificationService.sendSMS(mobileNumber, smsBody);
     }
@@ -232,5 +241,9 @@ public class LegalCaseUtil {
 
     public void sendEmailOnLegalCase(final String email, final String emailBody, final String emailSubject) {
         notificationService.sendEmail(email, emailSubject, emailBody);
+    }
+
+    public void sendCalendarInviteOnLegalCase(final String email, final String subject, CalendarInviteInfo calendarInfo) {
+        notificationService.sendCalendarInvite(email, subject, calendarInfo);
     }
 }

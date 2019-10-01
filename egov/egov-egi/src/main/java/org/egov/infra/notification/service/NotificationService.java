@@ -50,6 +50,7 @@ package org.egov.infra.notification.service;
 
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.notification.entity.CalendarInviteInfo;
 import org.egov.infra.notification.entity.NotificationPriority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,6 +60,7 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
 import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
 
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.egov.infra.notification.NotificationConstants.ATTACHMENT;
@@ -100,7 +102,7 @@ public class NotificationService {
     private boolean smsEnabled;
 
     public void sendEmail(User user, String subject, String templateName,
-                          Object... messageValues) {
+            Object... messageValues) {
         sendEmail(user.getEmailId(), subject, messageTemplateService.realizeMessage(
                 messageTemplateService.getByTemplateName(templateName), messageValues));
     }
@@ -117,7 +119,7 @@ public class NotificationService {
     }
 
     public void sendEmailWithAttachment(String email, String subject, String message,
-                                        String fileType, String fileName, byte[] attachment) {
+            String fileType, String fileName, byte[] attachment) {
         if (mailEnabled && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
                 MapMessage mapMessage = session.createMapMessage();
@@ -147,6 +149,20 @@ public class NotificationService {
                 mapMessage.setString(MOBILE, mobileNo);
                 mapMessage.setString(MESSAGE, message);
                 mapMessage.setString(PRIORITY, priority.name());
+                return mapMessage;
+            });
+    }
+
+    public void sendCalendarInvite(String email, String subject, CalendarInviteInfo calendarInfo) {
+        if (mailEnabled && calendarInfo != null && calendarInfo.getStartDateTime() != null
+                && calendarInfo.getEndDateTime() != null
+                && isNoneBlank(email, subject, calendarInfo.getLocation(), calendarInfo.getSummary(),
+                        calendarInfo.getDescription(), calendarInfo.getSummary()))
+            jmsTemplate.send(emailQueue, session -> {
+                ObjectMessage mapMessage = session.createObjectMessage();
+                mapMessage.setStringProperty(EMAIL, email);
+                mapMessage.setStringProperty(SUBJECT, subject);
+                mapMessage.setObject(calendarInfo);
                 return mapMessage;
             });
     }
