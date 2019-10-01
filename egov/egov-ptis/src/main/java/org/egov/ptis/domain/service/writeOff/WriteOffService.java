@@ -517,14 +517,14 @@ public class WriteOffService extends GenericWorkFlowController {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
             final DemandDetail dmdDtl = setDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
-                    demandDetail.getAmtCollected());
+                    getTotalRevisedAmount(demandDetail), demandDetail.getAmtCollected());
             demandDetailList.add(dmdDtl);
         }
         return demandDetailList;
     }
 
     private DemandDetail setDemandDetailBean(final Installment installment, final String reasonMaster,
-            final BigDecimal amount, final BigDecimal amountCollected) {
+            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into setDemandDetailBean");
             LOGGER.debug("setDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
@@ -535,6 +535,7 @@ public class WriteOffService extends GenericWorkFlowController {
         demandDetail.setInstallment(installment);
         demandDetail.setReasonMaster(reasonMaster);
         demandDetail.setActualAmount(amount);
+        demandDetail.setRevisedAmount(revisedAmount);
         demandDetail.setActualCollection(amountCollected);
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;
@@ -826,6 +827,15 @@ public class WriteOffService extends GenericWorkFlowController {
                 for (Document document : writeoff.getDocuments())
                     if (document.getType().getName().equals(applicationDocument.getType().getName()))
                         document.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+    }
+
+    public BigDecimal getTotalRevisedAmount(final EgDemandDetails demandDetails) {
+        BigDecimal revisedAmount = BigDecimal.ZERO;
+        if (!demandDetails.getDemandDetailVariation().isEmpty()) {
+            for (final DemandDetailVariation demandDetailVariation : demandDetails.getDemandDetailVariation())
+                revisedAmount = revisedAmount.add(demandDetailVariation.getDramount().setScale(0, BigDecimal.ROUND_DOWN));
+        }
+        return revisedAmount;
     }
 
 }

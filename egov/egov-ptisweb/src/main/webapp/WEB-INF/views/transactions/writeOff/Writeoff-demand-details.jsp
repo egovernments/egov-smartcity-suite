@@ -66,7 +66,8 @@
 							<div class="col-xs-2 add-margin postion">
 								<spring:message code="lbl.installmnt.start" />
 							</div>
-							<div class="col-xs-2 add-margin view-content" style="padding-right: 0px;">
+							<div class="col-xs-2 add-margin view-content"
+								style="padding-right: 0px;">
 								<form:select path="fromInstallment" id="frominstallments"
 									cssClass="form-control">
 									<form:option value="">
@@ -80,7 +81,8 @@
 							<div class="col-xs-2 add-margin postion">
 								<spring:message code="lbl.installmnt.end" />
 							</div>
-							<div class="col-xs-2 add-margin view-content" style="padding-right: 0px;">
+							<div class="col-xs-2 add-margin view-content"
+								style="padding-right: 0px;">
 								<form:select path="toInstallment" id="toinstallments"
 									cssClass="form-control ">
 									<form:option value="">
@@ -140,6 +142,7 @@
 											id="demandDetailBeanList${status.index}.revisedAmount"
 											align="center" type="text" style="width:80%"
 											path="demandDetailBeanList[${status.index }].revisedAmount"
+											value="${demandDetails.revisedAmount}"
 											onblur="checkRevisedAmount(this,${status.index})" /> <form:errors
 											path="demandDetailBeanList[${status.index }].revisedAmount"
 											cssClass="add-margin error-msg" /></td>

@@ -137,13 +137,11 @@ function getselectedinstallments(val){
 			document.getElementById(revisedAmount).readOnly = true;
 		}
 		else {
-			if(document.getElementById(revisedAmount).value >0 && fromValue != '' && toValue != '')
+			if(writeofftypes  == 'Partial WriteOff' && fromValue != '' && toValue != '')
 				document.getElementById(revisedAmount).readOnly = false;
-			else{
-				if(writeofftypes  != 'Full WriteOff'){
-			 document.getElementById(revisedAmount).value = '';
-			 document.getElementById(revisedAmount).readOnly = false;
-				}
+			else if(writeofftypes  == 'Partial WriteOff' && fromValue == '' && toValue == ''){
+			document.getElementById(revisedAmount).value = "0";
+			document.getElementById(revisedAmount).readOnly = false;
 			}
 		 }
 		if(writeofftypes  == 'Full WriteOff'){
@@ -229,8 +227,9 @@ function getselectedinstallments(val){
 		var actualAmountValue = document.getElementById('demandDetailBeanList'+ index + '.actualAmount').value;
 		var fromInstallment = jQuery('#frominstallments').val();
 		var toInstallment = jQuery('#toinstallments').val();
+		var type = $( "#writeOffType option:selected" ).text();
 		if (revisedAmount) {
-			if(!fromInstallment && !toInstallment){
+			if(!fromInstallment && !toInstallment && type != 'Full WriteOff'){
 				bootbox.alert("Please select From Installment and To Installment.");
 				document.getElementById('demandDetailBeanList'+ index + '.revisedAmount').value = '';
 			}
