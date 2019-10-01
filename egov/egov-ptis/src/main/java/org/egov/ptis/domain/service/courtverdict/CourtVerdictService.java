@@ -140,6 +140,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -151,6 +152,7 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.repository.courtverdict.CourtVerdictRepository;
@@ -682,12 +684,10 @@ public class CourtVerdictService extends GenericWorkFlowController {
     }
 
     public CourtVerdict updatePropertyDetails(CourtVerdict courtVerdict, Long plotAreaId, Long layoutAuthorityId) {
-        final Character status = STATUS_WORKFLOW;
         courtVerdict.getBasicProperty().setUnderWorkflow(true);
         courtVerdict.getProperty().setPropertyModifyReason("COURTVERDICT");
         Date propCompletionDate;
-        PropertyImpl newProperty;
-        newProperty = courtVerdict.getProperty();
+        PropertyImpl newProperty = courtVerdict.getProperty();
         PropertyTypeMaster propTypeMaster = propTypeMasterDAO.getPropertyTypeMasterByCode(
                 courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         newProperty.getPropertyDetail().setPropertyTypeMaster(propTypeMaster);
@@ -707,7 +707,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
         newProperty = propertyService.createProperty(newProperty,
                 newProperty.getPropertyDetail().getSitalArea().getArea().toString(),
                 newProperty.getPropertyDetail().getPropertyMutationMaster().getCode(),
-                propTypeMaster.getId().toString(), null, null, status, newProperty.getPropertyDetail().getDocNumber(),
+                propTypeMaster.getId().toString(), null, null, STATUS_WORKFLOW, newProperty.getPropertyDetail().getDocNumber(),
                 null,
                 newProperty.getPropertyDetail().getFloorType() != null
                         ? newProperty.getPropertyDetail().getFloorType().getId() : null,
@@ -728,12 +728,16 @@ public class CourtVerdictService extends GenericWorkFlowController {
             propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         newProperty.getBasicProperty().setPropOccupationDate(propCompletionDate);
         newProperty.setEffectiveDate(propCompletionDate);
-
-        if (newProperty != null && !newProperty.getDocuments().isEmpty())
-            propertyService.processAndStoreDocument(newProperty.getDocuments());
-        if (propTypeMaster != null && propTypeMaster.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-            newProperty.setPropertyDetail(propertyService
-                    .changePropertyDetail(newProperty, newProperty.getPropertyDetail(), 0).getPropertyDetail());
+        PropertyTypeMaster oldPropertyTypeMaster = newProperty.getBasicProperty().getActiveProperty().getPropertyDetail().getPropertyTypeMaster();
+        if (propTypeMaster != null && !propTypeMaster.getCode().equals(oldPropertyTypeMaster.getCode())) {
+            if (propTypeMaster.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+                newProperty.setPropertyDetail(propertyService
+                        .changePropertyDetail(newProperty, new VacantProperty(), 0).getPropertyDetail());
+            else
+                newProperty.setPropertyDetail(propertyService
+                        .changePropertyDetail(newProperty, new BuiltUpProperty(), newProperty.getPropertyDetail().getNoofFloors())
+                        .getPropertyDetail());
+        }
         if (newProperty.getPropertyDetail().getLayoutApprovalAuthority() != null
                 && "No Approval".equals(newProperty.getPropertyDetail().getLayoutApprovalAuthority().getName())) {
             newProperty.getPropertyDetail().setLayoutPermitNo(null);
@@ -741,7 +745,6 @@ public class CourtVerdictService extends GenericWorkFlowController {
         }
         newProperty.getPropertyDetail().setStructure(false);
 
-        courtVerdict.setBasicProperty((BasicPropertyImpl) newProperty.getBasicProperty());
         courtVerdict.setProperty(newProperty);
         courtVerdict.setApplicationNumber(applicationNo.generate());
 
@@ -839,7 +842,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-        addModelAttributes(model, courtVerdict.getBasicProperty().getActiveProperty(), request);
+        addModelAttributes(model, courtVerdict.getProperty(), request);
         prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
         return CV_FORM;

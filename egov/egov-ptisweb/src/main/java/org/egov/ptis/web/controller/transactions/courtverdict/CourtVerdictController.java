@@ -139,13 +139,12 @@ public class CourtVerdictController extends GenericWorkFlowController {
     @ModelAttribute
     public CourtVerdict courtVerdict(@PathVariable("assessmentNo") String assessmentNo) {
         CourtVerdict courtVerdict = new CourtVerdict();
+        PropertyImpl propertyImpl = new PropertyImpl();
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null) {
             courtVerdict.setBasicProperty((BasicPropertyImpl) basicProperty);
-
-            PropertyImpl property = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
-            courtVerdict.setProperty(property);
-
+            propertyImpl = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
+            courtVerdict.setProperty(propertyImpl);
         }
         return courtVerdict;
     }
@@ -251,7 +250,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
         final Boolean loggedUserIsEmployee = Boolean.valueOf(request.getParameter(LOGGED_IN_USER));
         User loggedInUser = securityUtils.getCurrentUser();
         Map<String, String> errorMessages = new HashMap<>();
-        propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, false);
         if (action.isEmpty()) {
             errorMessages.put(ACTION, "action.required");
             model.addAttribute(ERROR_MSG, errorMessages);

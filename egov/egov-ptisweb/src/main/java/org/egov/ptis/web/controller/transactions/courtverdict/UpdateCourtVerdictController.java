@@ -55,6 +55,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CV_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_VIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.RE_ASSESS;
@@ -201,13 +202,6 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         String currentDesg = courtVerdictService.getLoggedInUserDesignation(
                 courtVerdict.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
-        if (courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
-                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)
-                && courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea() != null
-                && courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null) {
-            plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
-            layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
-        }
         if (request.getParameter(APPROVAL_COMMENT) != null)
             approvalComent = request.getParameter(APPROVAL_COMMENT);
         if (request.getParameter(WF_ACTION) != null)
@@ -255,6 +249,18 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
             target = CV_SUCCESS_FORM;
         } else {
+            if (courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                    .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+                if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
+                    plotAreaId = Long.valueOf(request.getParameter("plotId"));
+                    layoutAuthorityId = Long.valueOf(request.getParameter("layoutId"));
+                } else if (courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea() != null
+                        && courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null) {
+                    plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
+                    layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
+
+                }
+            }
 
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS) && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
                 errorMessages = courtVerdictService.validate(courtVerdict, plotAreaId, layoutAuthorityId);

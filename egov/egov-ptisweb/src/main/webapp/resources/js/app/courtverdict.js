@@ -182,6 +182,8 @@ function populatePropTypeCategory() {
 						"<option value='" + index + "'>" + propCat
 								+ "</option>");
 			});
+			var category = jQuery('#propTypeCategory').val();
+			jQuery("#propTypeCategoryId").val(category);
 		},
 
 		error : function() {
@@ -358,11 +360,6 @@ function addFloors()
 {
 	var tbl = document.getElementById('floorDetailsTable');
 	var rowO = tbl.rows.length;
-	/*var today = document.getElementById('instStartDtId').value;
-	var dd = today.getDate();
-	var mm = today.getMonth()+1; 
-	var yyyy = today.getFullYear();
-	today = dd+'/'+mm+'/'+yyyy;*/
 	
 	if (rowO <= 50 && document.getElementById('floorDetailsRow') != null) {
 		// get Next Row Index to Generate
