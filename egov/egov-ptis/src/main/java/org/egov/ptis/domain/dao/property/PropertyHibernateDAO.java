@@ -463,8 +463,8 @@ public class PropertyHibernateDAO implements PropertyDAO {
         new ArrayList();
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append(
-                " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date "
-                        + "from eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
+                " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date, sum(ddv.dramount) as variation_amt "
+                        + "from eg_demand_details dmdDet left outer join eg_demand_detail_variation ddv on ddv.demand_detail = dmdDet.id, eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
                         + "where dmdDet.id_demand_reason=dmdRes.id "
                         + "and dmdDet.id_demand =:dmdId "
                         + "and dmdRes.id_installment = inst.id "
@@ -630,13 +630,13 @@ public class PropertyHibernateDAO implements PropertyDAO {
     @Override
     public List<?> getInstallmentAndReasonWiseDemandDetails(final EgDemand egDemand) {
         final StringBuilder strBul = new StringBuilder(2000);
-        strBul.append(" select dmdRes.id_installment,  dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date "
-                + "from eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
+        strBul.append(" select dmdRes.id_installment,  dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date, ddv.dramount  "
+                + "from eg_demand_details dmdDet left outer join eg_demand_detail_variation ddv on ddv.demand_detail = dmdDet.id, eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
                 + "where dmdDet.id_demand_reason=dmdRes.id "
                 + "and dmdDet.id_demand =:dmdId "
                 + "and dmdRes.id_installment = inst.id "
                 + "and dmdresmas.id = dmdres.id_demand_reason_master "
-                + "group by dmdRes.id_installment,dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date "
+                + "group by dmdRes.id_installment,dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date, ddv.dramount "
                 + "order by inst.start_date ");
         final Query qry = getCurrentSession().createSQLQuery(strBul.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();

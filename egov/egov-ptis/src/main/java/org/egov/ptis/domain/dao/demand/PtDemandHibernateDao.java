@@ -348,6 +348,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal demand;
         BigDecimal collection;
         final Map<String, BigDecimal> retMap = new HashMap<>();
+        BigDecimal demandVariation = BigDecimal.ZERO;
 
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
@@ -357,9 +358,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
+            demandVariation = listObj[5] != null ? new BigDecimal((Double) listObj[5]) : BigDecimal.ZERO;
+            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]).subtract(demandVariation) : BigDecimal.ZERO;
             collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
-
             installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
                 if (collection.compareTo(BigDecimal.ZERO) > 0)
@@ -407,6 +408,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal arrPenaltyCollection = BigDecimal.ZERO;
         BigDecimal arrPenalty = BigDecimal.ZERO;
         BigDecimal advance = BigDecimal.ZERO;
+        BigDecimal demandVariation = BigDecimal.ZERO;
 
         final Map<String, BigDecimal> retMap = new HashMap<>();
 
@@ -419,7 +421,8 @@ public class PtDemandHibernateDao implements PtDemandDao {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
             code = listObj[1].toString();
-            demand = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+            demandVariation = listObj[5] != null ? new BigDecimal((Double) listObj[5]) : BigDecimal.ZERO;
+            demand = listObj[2] != null ? new BigDecimal((Double) listObj[2]).subtract(demandVariation) : BigDecimal.ZERO;
             collection = listObj[3] != null ? new BigDecimal((Double) listObj[3]) : BigDecimal.ZERO;
             installment = installmentDao.findById(instId, false);
 
