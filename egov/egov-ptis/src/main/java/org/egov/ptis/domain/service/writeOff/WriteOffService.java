@@ -678,13 +678,6 @@ public class WriteOffService extends GenericWorkFlowController {
             errorMessages = validateCouncil(writeOff, request);
         if (errorMessages.isEmpty())
             errorMessages = validateDemand(writeOff.getDemandDetailBeanList(), writeOff);
-        if (errorMessages.isEmpty() && writeOff.getState() == null) {
-            List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(),
-                    writeOff.getResolutionNo(),
-                    writeOff.getBasicProperty().getUpicNo());
-            if (councilresult != null && !councilresult.isEmpty())
-                errorMessages.put("resolutionError", "writeoff.resolution.error");
-        }
         return errorMessages;
     }
 
@@ -831,10 +824,9 @@ public class WriteOffService extends GenericWorkFlowController {
 
     public BigDecimal getTotalRevisedAmount(final EgDemandDetails demandDetails) {
         BigDecimal revisedAmount = BigDecimal.ZERO;
-        if (!demandDetails.getDemandDetailVariation().isEmpty()) {
+        if (!demandDetails.getDemandDetailVariation().isEmpty())
             for (final DemandDetailVariation demandDetailVariation : demandDetails.getDemandDetailVariation())
                 revisedAmount = revisedAmount.add(demandDetailVariation.getDramount().setScale(0, BigDecimal.ROUND_DOWN));
-        }
         return revisedAmount;
     }
 

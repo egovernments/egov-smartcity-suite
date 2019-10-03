@@ -117,7 +117,8 @@ div.floors-tbl-freeze-column-div {
 		<form:hidden path="" name="state" id="state"
 			value="${writeOff.getState().getValue()}" />
 		<form:hidden path="" name="propertyDeactivateFlag"
-			id="propertyDeactivateFlag" value="${writeOff.propertyDeactivateFlag}" />
+			id="propertyDeactivateFlag"
+			value="${writeOff.propertyDeactivateFlag}" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
@@ -305,6 +306,7 @@ div.floors-tbl-freeze-column-div {
 									<div class="row add-border">
 										<div class="col-xs-2 add-margin" style="padding-left: 50px;">
 											<spring:message code="lbl.writeOffTypes" />
+											<span class="mandatory"></span>
 										</div>
 										<div class="col-xs-2 add-margin view-content">
 											<form:select path="writeOffType.code" id="writeOffType"
@@ -321,6 +323,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<div class="col-xs-3 add-margin" style="padding-left: 150px;">
 											<spring:message code="lbl.writeOff.reasons" />
+											<span class="mandatory"></span>
 										</div>
 										<div class="col-xs-3 add-margin view-content">
 											<form:select id="reasons" path="writeOffReasons.code"
@@ -369,6 +372,7 @@ div.floors-tbl-freeze-column-div {
 									<div class="row add-border">
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.type" />
+											<span class="mandatory"></span>
 										</div>
 										<div class="col-xs-2 add-margin view-content">
 											<form:select cssClass="form-control" path="resolutionType"
@@ -383,6 +387,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.no" />
+											<span class="mandatory"></span>
 										</div>
 										<div class="col-xs-2 add-margin view-content">
 											<form:input id="resolutionNo" path="resolutionNo" type="text"
@@ -396,7 +401,8 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<div class="col-xs-2 add-margin">
 											<form:input id="resolutionDate" path="resolutionDate"
-												value="${resolutionDate}" cssClass="form-control" readonly="true" />
+												value="${resolutionDate}" cssClass="form-control"
+												readonly="true" />
 										</div>
 										<div class="col-xs-3 add-margin" id="viewlink">
 											<a id="url" href="#" target="_blank">Council management
