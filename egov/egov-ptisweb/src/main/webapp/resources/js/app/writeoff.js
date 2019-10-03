@@ -46,6 +46,8 @@
  *
  */
 $( document ).ready(function() {
+	jQuery.noConflict();
+	jQuery("#loadingMask").remove();
 	$("#viewlink").hide();
 	displaydemand();
 	var instString = $("#instString").val();
