@@ -128,27 +128,27 @@ public class EmailService {
      */
 
     public void sendCalendarInvite(String toEmail, String subject, CalendarInviteInfo calendarInviteInfo) {
-        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessage calendarMail = mailSender.createMimeMessage();
         try {
-            message.addHeaderLine(REQUESTMETHOD);
-            message.addHeaderLine(CHARSET);
-            message.addHeaderLine(COMPONENT);
-            MimeMessageHelper mimeMessage = new MimeMessageHelper(message, true);
-            mimeMessage.setFrom(mailSender.getUsername());
-            mimeMessage.setSubject(subject);
+            calendarMail.addHeaderLine(REQUESTMETHOD);
+            calendarMail.addHeaderLine(CHARSET);
+            calendarMail.addHeaderLine(COMPONENT);
+            MimeMessageHelper mailMessage = new MimeMessageHelper(calendarMail, true);
+            mailMessage.setFrom(mailSender.getUsername());
+            mailMessage.setSubject(subject);
             if (null == calendarInviteInfo.getMailList() || calendarInviteInfo.getMailList().isEmpty())
-                mimeMessage.setTo(toEmail);
+                mailMessage.setTo(toEmail);
             else
-                mimeMessage.setTo(calendarInviteInfo.getMailList().toArray(new String[calendarInviteInfo.getMailList().size()]));
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(buildBodyPart(calendarInviteInfo));
+                mailMessage.setTo(calendarInviteInfo.getMailList().toArray(new String[calendarInviteInfo.getMailList().size()]));
+            Multipart mailContent = new MimeMultipart();
+            mailContent.addBodyPart(constructCalendarMail(calendarInviteInfo));
             if (StringUtils.isNotBlank(calendarInviteInfo.getMailBodyMessage()))
-                multipart.addBodyPart(buildBodyPart(calendarInviteInfo.getMailBodyMessage()));
-            message.setContent(multipart);
+                mailContent.addBodyPart(constructMailMessage(calendarInviteInfo.getMailBodyMessage()));
+            calendarMail.setContent(mailContent);
         } catch (MessagingException | IllegalArgumentException e) {
             throw new ApplicationRuntimeException("Error occurred while sending calendar email notification", e);
         }
-        mailSender.send(message);
+        mailSender.send(calendarMail);
     }
 
     /**
@@ -157,20 +157,20 @@ public class EmailService {
      * @return Calendar invitation format mail body.
      */
 
-    private BodyPart buildBodyPart(CalendarInviteInfo calendarInviteInfo) {
-        BodyPart messageBodyPart = new MimeBodyPart();
+    private BodyPart constructCalendarMail(CalendarInviteInfo calendarInviteInfo) {
+        BodyPart calendarMail = new MimeBodyPart();
         try {
-            messageBodyPart.setHeader(CONTENTCLASS_KEY, CONTENTCLASS_VALUE);
-            messageBodyPart.setHeader(CONTENTID_KEY, CONTENTID_VALUE);
-            messageBodyPart.setDataHandler(new DataHandler(
-                    new ByteArrayDataSource(buildCalendarText(calendarInviteInfo), DATASOURCETYPE)));
+            calendarMail.setHeader(CONTENTCLASS_KEY, CONTENTCLASS_VALUE);
+            calendarMail.setHeader(CONTENTID_KEY, CONTENTID_VALUE);
+            calendarMail.setDataHandler(new DataHandler(
+                    new ByteArrayDataSource(constructCalendarInvite(calendarInviteInfo), DATASOURCETYPE)));
         } catch (MessagingException | IOException e) {
             throw new ApplicationRuntimeException("Error occurred while preparing calendar invitation", e);
         }
-        return messageBodyPart;
+        return calendarMail;
     }
 
-    private String buildCalendarText(CalendarInviteInfo calendarInviteInfo) {
+    private String constructCalendarInvite(CalendarInviteInfo calendarInviteInfo) {
         final SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_FORMAT_YYYYMMDDTHHMMSSZ);
 
         return messageSource.getMessage("calendar.invite.message", new String[] { calendarInviteInfo.getParticipant(),
@@ -184,19 +184,20 @@ public class EmailService {
     }
 
     /**
-     * 
+     * API is to add calendar invite mail details. In calendar invitation with mailbodyMessage param can provide notification
+     * details.
      * @param mailbodyMessage
      * @return Calendar invitation mail message body.
      */
-    private MimeBodyPart buildBodyPart(String mailbodyMessage) {
-        MimeBodyPart mailBodyMessage = new MimeBodyPart();
+    private MimeBodyPart constructMailMessage(String mailbodyMessage) {
+        MimeBodyPart mailMessage = new MimeBodyPart();
         try {
-            mailBodyMessage.setContent(
+            mailMessage.setContent(
                     messageSource.getMessage("calendar.invite.mailbody.message", new String[] { mailbodyMessage }, null),
                     MAILBODYMESSAGE_CONTENT);
         } catch (MessagingException e) {
             throw new ApplicationRuntimeException("Error occurred while preparing calendar notification", e);
         }
-        return mailBodyMessage;
+        return mailMessage;
     }
 }
