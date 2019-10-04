@@ -746,7 +746,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
         newProperty.getPropertyDetail().setStructure(false);
 
         courtVerdict.setProperty(newProperty);
-        if (courtVerdict.getApplicationNumber() != null)
+        if (courtVerdict.getApplicationNumber() == null)
             courtVerdict.setApplicationNumber(applicationNo.generate());
 
         return courtVerdict;
