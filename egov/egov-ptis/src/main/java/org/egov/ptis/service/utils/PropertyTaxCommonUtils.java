@@ -48,6 +48,7 @@
 package org.egov.ptis.service.utils;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
+import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_MAUD_INTEGRATION_REQUIRED;
@@ -82,6 +83,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_WATER_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.INPROGRESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.LCMS_LEGALCASE_DETAILS_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
@@ -962,7 +964,7 @@ public class PropertyTaxCommonUtils {
         final String host = url.substring(0, url.indexOf(uri));
         final String stmsRestURL = String.format(STMS_TAXDUE_RESTURL, host, assessmentNo);
         final String dtls = simpleRestClient.getRESTResponse(stmsRestURL);
-        JSONObject jsonObj = new JSONObject() ;
+        JSONObject jsonObj = new JSONObject();
         try {
             jsonObj = new JSONObject(dtls);
         } catch (final JSONException e1) {
@@ -980,7 +982,7 @@ public class PropertyTaxCommonUtils {
                             ccMap.put(e, ccObject.getString(e));
                         });
                         newMap.put(key, ccMap);
-                    } 
+                    }
                 } else if (!"propertyID".equals(key))
                     newMap.put(key, jsonObj.get(key).toString().toLowerCase());
             sewerageConnDtls.add(newMap);
@@ -1085,6 +1087,16 @@ public class PropertyTaxCommonUtils {
             totalDemandVariationAmt = totalDemandVariationAmt.add(demandDeatilVariation.getDramount());
 
         return demandDetail.getAmount().subtract(totalDemandVariationAmt);
+
+    }
+
+    public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
+        boolean connStatus = false;
+        for (Map<String, Object> status : wcDetails)
+            for (Object state : status.values())
+                if (ACTIVE.equalsIgnoreCase(state.toString()) || INPROGRESS.equalsIgnoreCase(state.toString()))
+                    connStatus = true;
+        return connStatus;
 
     }
 }

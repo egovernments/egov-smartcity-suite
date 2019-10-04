@@ -1,7 +1,6 @@
 package org.egov.ptis.domain.service.writeOff;
 
 import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
@@ -636,16 +635,6 @@ public class WriteOffService extends GenericWorkFlowController {
         }
     }
 
-    public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
-        boolean connStatus = false;
-        for (Map<String, Object> status : wcDetails)
-            for (Object state : status.values())
-                if (ACTIVE.equalsIgnoreCase(state.toString()))
-                    connStatus = true;
-        return connStatus;
-
-    }
-
     public boolean checkActiveSewage(List<Map<String, Object>> sewConnDetails) {
         boolean connStatus = true;
         for (Map<String, Object> error : sewConnDetails)
@@ -714,7 +703,7 @@ public class WriteOffService extends GenericWorkFlowController {
         Map<String, String> errorMessages = new HashMap<>();
         List<Map<String, Object>> activeWCDetails = propertyService.getWCDetails(writeOff.getBasicProperty().getUpicNo(),
                 request);
-        boolean hasActiveWC = checkActiveWC(activeWCDetails);
+        boolean hasActiveWC = propertyTaxCommonUtils.checkActiveWC(activeWCDetails);
         if (hasActiveWC) {
             errorMessages.put(ERROR, "writeoff.wc.error");
             return errorMessages;

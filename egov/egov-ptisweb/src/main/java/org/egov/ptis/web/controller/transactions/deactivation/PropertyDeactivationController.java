@@ -47,6 +47,17 @@
  */
 package org.egov.ptis.web.controller.transactions.deactivation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -64,6 +75,7 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.deactivation.PropertyDeactivationService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -76,16 +88,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author rafeek
@@ -120,6 +122,8 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
     public PropertyDeactivation propertyDeactivation() {
@@ -139,7 +143,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
         return DEACT_FORM;
     }
 
-    @RequestMapping(value = "/search/{assessmentNo}", method =RequestMethod.POST )
+    @RequestMapping(value = "/search/{assessmentNo}", method = RequestMethod.POST)
     public String deactivationSearchForm(@ModelAttribute final PropertyDeactivation propertyDeactivation,
             final Model model, final BindingResult resultBinder,
             @PathVariable("assessmentNo") final String assessmentNo, final HttpServletRequest request,
@@ -176,11 +180,11 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
                     model.addAttribute("orgPropWCDetails", orgPropWCDetails);
 
                 }
-            } 
+            }
         }
         Map<String, String> propDetails = propertyDeactivationService.getPropertyDetails(basicProperty);
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(basicProperty.getUpicNo(), request);
-        hasActiveWC = propertyDeactivationService.checkActiveWC(wcDetails);
+        hasActiveWC = propertyTaxCommonUtils.checkActiveWC(wcDetails);
         model.addAttribute("propDetails", propDetails);
         model.addAttribute("wcDetails", wcDetails);
         model.addAttribute("hasActiveWC", hasActiveWC);

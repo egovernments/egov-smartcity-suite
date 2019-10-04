@@ -48,6 +48,14 @@
 
 package org.egov.ptis.domain.service.deactivation;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_DEACT_RSN;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -60,23 +68,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_DEACT_RSN;
-
 @Service
 @Transactional(readOnly = true)
 public class PropertyDeactivationService {
-
-    private static final String ACTIVE = "ACTIVE";
 
     @Autowired
     private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
@@ -94,9 +88,8 @@ public class PropertyDeactivationService {
         List<String> rsnList = new ArrayList<>();
         List<PropertyMutationMaster> reasons = propertyMutationMasterHibDAO
                 .getAllPropertyMutationMastersByType(PROP_DEACT_RSN);
-        for (PropertyMutationMaster rsn : reasons) {
+        for (PropertyMutationMaster rsn : reasons)
             rsnList.add(rsn.getMutationDesc());
-        }
         return rsnList;
     }
 
@@ -118,19 +111,6 @@ public class PropertyDeactivationService {
     private BigDecimal getCurrentPTTaxDue(BasicProperty basicproperty) {
         return propertyService
                 .getTotalPropertyTaxDueIncludingPenalty(basicproperty);
-    }
-
-    public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
-        boolean connStatus = false;
-        for (Map<String, Object> status : wcDetails) {
-            for (Object state : status.values()) {
-                if (ACTIVE.equalsIgnoreCase(state.toString())) {
-                    connStatus = true;
-                }
-            }
-        }
-        return connStatus;
-
     }
 
     @Transactional
