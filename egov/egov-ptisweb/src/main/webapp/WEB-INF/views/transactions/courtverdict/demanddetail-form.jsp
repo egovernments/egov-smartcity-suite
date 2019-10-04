@@ -91,8 +91,10 @@
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].actualAmount"
 										value="${demandDetails.actualAmount}" readonly="true" /></td>
-								<td class="greybox"><form:input id="revisedAmount"
-										align="center" type="text" style="width:80%"
+								<td class="greybox"><form:input
+										onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"
+										id="revisedAmount" align="center" type="text"
+										style="width:80%"
 										path="demandDetailBeanList[${status.index }].revisedAmount" /></td>
 								<td class="greybox"><form:input align="center" type="text"
 										style="width:80%"
