@@ -293,6 +293,10 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 target = successWorkflow(courtVerdict, approvalPosition, approvalComent, workFlowAction, loggedUserIsEmployee,
                         model);
             }
+            else {
+                target = successWorkflow(courtVerdict, approvalPosition, approvalComent, workFlowAction, loggedUserIsEmployee,
+                        model);
+            }
 
         }
 
