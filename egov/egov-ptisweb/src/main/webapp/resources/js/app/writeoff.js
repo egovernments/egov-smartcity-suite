@@ -46,8 +46,6 @@
  *
  */
 $( document ).ready(function() {
-	jQuery.noConflict();
-	jQuery("#loadingMask").remove();
 	$("#viewlink").hide();
 	displaydemand();
 	var instString = $("#instString").val();
@@ -141,6 +139,10 @@ function getselectedinstallments(val){
 		else {
 			if(writeofftypes  == 'Partial WriteOff' && fromValue != '' && toValue != '')
 				document.getElementById(revisedAmount).readOnly = false;
+			else if(writeofftypes  == 'Partial WriteOff' && document.getElementById(revisedAmount).value > '0' 
+			&& $("#state").val()!='Rejected'){
+				document.getElementById(revisedAmount).readOnly = false;
+				}
 			else if(writeofftypes  == 'Partial WriteOff' && fromValue == '' && toValue == ''){
 			document.getElementById(revisedAmount).value = "0";
 			document.getElementById(revisedAmount).readOnly = false;
