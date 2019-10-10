@@ -56,8 +56,10 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.utils.OwnerNameComparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -669,9 +671,11 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.underWorkflow = underWorkflow;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public String getFullOwnerName() {
         final StringBuilder ownerName = new StringBuilder();
+        Collections.sort(getPropertyOwnerInfo(), new OwnerNameComparator());
         for (final PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo())
             ownerName.append(ownerInfo.getOwner().getName()).append(", ");
         if (ownerName.length() > 2)
