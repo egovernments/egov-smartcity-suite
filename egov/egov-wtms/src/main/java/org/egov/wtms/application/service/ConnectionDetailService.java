@@ -331,18 +331,19 @@ public class ConnectionDetailService {
         WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
         WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails == null) {
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
+                    ConnectionStatus.INPROGRESS);
+            if (waterConnectionDetails == null)
+                waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
+                        ConnectionStatus.INACTIVE);
+        }
         if (waterConnectionDetails != null)
             waterChargesDetails = getWatertaxDetails(waterConnectionDetails, consumerNumber, propertyIdentifier,
                     ulbCode);
-        else {
-            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
-                    ConnectionStatus.INACTIVE);
-            if (waterConnectionDetails != null)
-                waterChargesDetails = getWatertaxDetails(waterConnectionDetails, consumerNumber, propertyIdentifier,
-                        ulbCode);
-        }
         return waterChargesDetails;
     }
+    
 
     public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
             final String consumerCode, final String propertyIdentifier, final String ulbCode) {
