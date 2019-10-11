@@ -50,6 +50,27 @@ package org.egov.ptis.domain.entity.property;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Transient;
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -60,25 +81,7 @@ import org.egov.pims.commons.Position;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import org.egov.ptis.domain.model.demandvoucher.PropertyDemandVoucher;
 
 public class PropertyImpl extends StateAware<Position> implements Property {
 
@@ -111,7 +114,7 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private String remarks;
 
     private Date effectiveDate;
-    
+
     private Date exemptionDate;
 
     private transient PropertyDetail propertyDetail;
@@ -138,10 +141,8 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private GisDetails gisDetails;
 
     /**
-     * @Size(min=1) is not working when we modify a migrated property, Reason is
-     * because for the migrated property the tax xml is not there
-     * so when we try to modify the migrated property the active
-     * property will not be having the unitCalculationDetails
+     * @Size(min=1) is not working when we modify a migrated property, Reason is because for the migrated property the tax xml is
+     * not there so when we try to modify the migrated property the active property will not be having the unitCalculationDetails
      */
     @Valid
     private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<>();
@@ -150,6 +151,8 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private List<Document> assessmentDocuments = new ArrayList<>();
     private List<Document> taxExemptionDocuments = new ArrayList<>();
     private List<Document> taxExemptionDocumentsProxy = new ArrayList<>();
+    @Transient
+    private PropertyDemandVoucher demandVoucher;
 
     @Override
     public String getDocNumber() {
@@ -233,17 +236,17 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     public void setEffectiveDate(final Date effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
-    
+
     @Override
     public Date getExemptionDate() {
         return exemptionDate;
     }
-    
+
     @Override
     public void setExemptionDate(final Date exemptionDate) {
         this.exemptionDate = exemptionDate;
     }
-    
+
     @Override
     public Character getIsDefaultProperty() {
         return isDefaultProperty;
@@ -498,7 +501,8 @@ public class PropertyImpl extends StateAware<Position> implements Property {
                     getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(), getPropertyDetail()
-                    .getOccupancyCertificationNo(), getPropertyDetail().getOccupancyCertificationDate(),
+                            .getOccupancyCertificationNo(),
+                    getPropertyDetail().getOccupancyCertificationDate(),
                     getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff(),
                     getPropertyDetail().getPropertyDepartment(), getPropertyDetail().getVacantLandPlotArea(),
                     getPropertyDetail().getLayoutApprovalAuthority(), getPropertyDetail().getLayoutPermitNo(),
@@ -669,8 +673,8 @@ public class PropertyImpl extends StateAware<Position> implements Property {
         String url = "";
         if (getState() != null && getState().getValue() != null
                 && (getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER)
-                || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)
-                || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
+                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)
+                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_NAME_CREATE))
@@ -852,5 +856,12 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     public void setGisDetails(GisDetails gisDetails) {
         this.gisDetails = gisDetails;
     }
-    
+
+    public PropertyDemandVoucher getDemandVoucher() {
+        return demandVoucher;
+    }
+
+    public void setDemandVoucher(PropertyDemandVoucher demandVoucher) {
+        this.demandVoucher = demandVoucher;
+    }
 }

@@ -49,9 +49,7 @@ package org.egov.ptis.client.util;
 
 import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMANDRSN_GLCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
@@ -84,16 +82,14 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author subhash Provides API to create Voucher in financials whenever there
- *         is change(increase/decrease) in demand in PTIS. Use this API to
- *         create Voucher in the case of demand change ( either increment or
- *         decrement )
+ * @author subhash Provides API to create Voucher in financials whenever there is change(increase/decrease) in demand in PTIS. Use
+ * this API to create Voucher in the case of demand change ( either increment or decrement )
  */
 
 public class FinancialUtil {
     private static final String AMOUNT = "amount";
 
-	private static final Logger LOGGER = Logger.getLogger(FinancialUtil.class);
+    private static final Logger LOGGER = Logger.getLogger(FinancialUtil.class);
 
     private static final String VOUCHERNAME = "JVoucher";
 
@@ -114,42 +110,28 @@ public class FinancialUtil {
     /**
      * This method creates a Voucher
      * 
-     * @param indexNum
-     *            Property id for which the voucher is creating.
-     * @param amounts
-     *            Map of Glcode wise demand map --
-     *            (key-Glcode, val - Map of amounts and flag to denote increase/decrease)
-     * @param transaction
-     *            Reason for voucher creation ( Property creation or
-     *            modification etc )
+     * @param indexNum Property id for which the voucher is creating.
+     * @param amounts Map of Glcode wise demand map -- (key-Glcode, val - Map of amounts and flag to denote increase/decrease)
+     * @param transaction Reason for voucher creation ( Property creation or modification etc )
      */
-    public void createVoucher(String indexNum, Map<String, Map<String, Object>> amountsMap, String transaction) {
+    public CVoucherHeader createVoucher(String indexNum, Map<String, Map<String, Object>> amountsMap, String transaction) {
 
         LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amountsMap ==>" + amountsMap + "actionName==>"
                 + transaction);
 
         HashMap<String, Object> headerdetails = createHeaderDetails(indexNum, transaction);
         List<HashMap<String, Object>> accountDetList = new ArrayList<>();
-        BigDecimal amount = BigDecimal.ZERO;
         try {
-            
-            for(Map.Entry<String, Map<String, Object>> amounts : amountsMap.entrySet()){
-                    if(CURRENT_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey()) 
-                            || ARREAR_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey())){
-                        if(amounts.getValue().get(AMOUNT_TYPE).equals(VoucherConstant.DEBITAMOUNT))
-                            accountDetList.add(createAccDetailmap(amounts.getKey(),
-                                    ((BigDecimal)amounts.getValue().get(AMOUNT)).abs(), BigDecimal.ZERO)); // Debit
-                        else
-                            accountDetList.add(createAccDetailmap(amounts.getKey(),
-                                    BigDecimal.ZERO, ((BigDecimal)amounts.getValue().get(AMOUNT)).abs())); // Credit
-                    } else {
-                        amount = (BigDecimal)amounts.getValue().get(AMOUNT);
-                        if(amounts.getValue().get(AMOUNT_TYPE).equals(VoucherConstant.DEBITAMOUNT))
-                            accountDetList.add(createAccDetailmap(amounts.getKey(), amount.abs(), BigDecimal.ZERO)); // Debit
-                        else 
-                            accountDetList.add(createAccDetailmap(amounts.getKey(), BigDecimal.ZERO, amount.abs())); // Credit
-                    }
-                            
+
+            for (Map.Entry<String, Map<String, Object>> amounts : amountsMap.entrySet()) {
+
+                if (amounts.getValue().get(AMOUNT_TYPE).equals(VoucherConstant.DEBITAMOUNT))
+                    accountDetList.add(createAccDetailmap(amounts.getKey(),
+                            ((BigDecimal) amounts.getValue().get(AMOUNT)).abs(), BigDecimal.ZERO)); // Debit
+                else
+                    accountDetList.add(createAccDetailmap(amounts.getKey(),
+                            BigDecimal.ZERO, ((BigDecimal) amounts.getValue().get(AMOUNT)).abs())); // Credit
+
             }
 
             CVoucherHeader cvh = createVoucher.createVoucher(headerdetails, accountDetList,
@@ -160,6 +142,7 @@ public class FinancialUtil {
             }
             LOGGER.info("createVoucherForPTIS(): Voucher is created for PTIS with the voucher number : "
                     + cvh.getVoucherNumber());
+            return cvh;
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
             throw new ApplicationRuntimeException("Unable to create a voucher.", t);
@@ -169,12 +152,9 @@ public class FinancialUtil {
     /**
      * Creates Account Details map
      * 
-     * @param glcode
-     *            GLCode for the account head.
-     * @param debitAmount
-     *            Debit amount for the account head
-     * @param creditAmount
-     *            Credit amount for the account head
+     * @param glcode GLCode for the account head.
+     * @param debitAmount Debit amount for the account head
+     * @param creditAmount Credit amount for the account head
      * @return Map Map contains account details.
      */
     private HashMap<String, Object> createAccDetailmap(String glcode, BigDecimal debitAmount, BigDecimal creditAmount) {
@@ -189,11 +169,8 @@ public class FinancialUtil {
     /**
      * Creates Voucher Header details
      * 
-     * @param indexNumber
-     *            Property id
-     * @param transaction
-     *            Voucher creation reason ( Property creation or modification
-     *            etc)
+     * @param indexNumber Property id
+     * @param transaction Voucher creation reason ( Property creation or modification etc)
      * @return Map Contains voucher header details
      */
     private HashMap<String, Object> createHeaderDetails(String indexNumber, String transaction) {
@@ -224,11 +201,8 @@ public class FinancialUtil {
     /**
      * Creates a map of map contains GLCODE and the aggregate amount for GLCODE
      * 
-     * @param amounts
-     *            Map of Installment and reason wise demand map demand map --
-     *            (key-demand reason, val-respective demand)
-     * @return Map Map of map contains demand reason and the aggregate amount
-     *         for demand reason
+     * @param amounts Map of Installment and reason wise demand map demand map -- (key-demand reason, val-respective demand)
+     * @return Map Map of map contains demand reason and the aggregate amount for demand reason
      * @throws IOException
      */
     @SuppressWarnings("unused")

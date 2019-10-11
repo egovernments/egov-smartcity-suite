@@ -746,6 +746,7 @@ public interface PropertyTaxConstants {
 
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String CURRENT_DEMANDRSN_GLCODE = "4311001";
+    public static final String PRIOR_INCOME ="PRIOR_INCOME";
     // HashMap for GLCodes for Current Taxes
     public static final ImmutableMap<String, String> GLCODEMAP_FOR_CURRENTTAX = ImmutableMap.<String, String> builder()
 

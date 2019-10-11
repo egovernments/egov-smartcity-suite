@@ -1112,10 +1112,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
     }
 
-    public String getDemandVoucherAppConfigValue() {
-        return propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
-    }
-
     public void validateEffectiveDate(final List<Floor> floorList) {
         Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
         boolean allSameDate = floorList.stream()
