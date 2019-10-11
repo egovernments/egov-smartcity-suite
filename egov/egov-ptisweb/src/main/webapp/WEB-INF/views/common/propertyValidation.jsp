@@ -68,9 +68,18 @@ body {
 			</div>
 			<div class="panel-body"
 				style="text-align: center; color: red; font-size: 20px">
-				<div class="mandatory" style="text-align: center;">
-					<strong>${errorMsg}</strong>
-				</div>
+                <c:if test="${not empty errorMsgList}">
+                    <c:forEach items="${errorMsgList}" var="error">
+                        <div class="mandatory" style="text-align: center;">
+                            <strong>${error.getMessage()}</strong>
+                        </div>
+                    </c:forEach>
+                </c:if>
+                <c:if test="${not empty errorMsg}">
+                     <div class="mandatory" style="text-align: center;">
+                        <strong>${errorMsg}</strong>
+                     </div>
+                </c:if>
 			</div>
 		</div>
 	</div>

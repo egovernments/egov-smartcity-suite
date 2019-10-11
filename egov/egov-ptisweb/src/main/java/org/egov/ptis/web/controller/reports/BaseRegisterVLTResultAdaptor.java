@@ -131,7 +131,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("oldAssessmentNo",
                     StringUtils.isNotBlank(baseRegisterResultObj.getOldMuncipalNum())
                             ? baseRegisterResultObj.getOldMuncipalNum() : "NA");
-            jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea().setScale(2, BigDecimal.ROUND_HALF_UP));
+			jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea() != null
+					? baseRegisterResultObj.getSitalArea().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
             jsonObject.addProperty("ward", baseRegisterResultObj.getWard().getBoundaryNum());
             jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
             jsonObject.addProperty("surveyNo", StringUtils.isNotBlank(baseRegisterResultObj.getSurveyNo())
@@ -143,6 +144,7 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("isExempted", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
             jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
                     ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrFirstHalfDmd());
+            jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
 
             if (!valuesMap.isEmpty()) {
                 jsonObject.addProperty("libraryCessTaxFirstHlf", valuesMap.get(CURR_FIRST_HALF_LIB_CESS) == null

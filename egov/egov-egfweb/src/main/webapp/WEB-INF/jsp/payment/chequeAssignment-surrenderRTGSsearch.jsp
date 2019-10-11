@@ -142,12 +142,12 @@
 		</div>
 		<s:hidden name="bankbranch" id="bankbranch" />
 	</s:form>
-	<%--<s:if test="%{!validateUser('chequeassignment')}">
+	<%-- <s:if test="%{!validateUser('chequeassignment')}">
 		<script>
 			document.getElementById('searchBtn').disabled = true;
 			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
 		</script>
-	</s:if>--%>
+	</s:if> --%>
 	<script>
 		function onSubmit() {
 			document.chequeAssignment.action = '/EGF/payment/chequeAssignment-searchForRTGSSurrender.action';

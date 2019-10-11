@@ -67,6 +67,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -86,6 +87,9 @@ public class UpdateWaterConnectionValidator implements Validator {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -103,7 +107,7 @@ public class UpdateWaterConnectionValidator implements Validator {
 
     public boolean validateRegularizationAmount(WaterConnectionDetails waterConnectionDetails) {
         return connectionDemandService.getTotalDemandAmountDue(
-                waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()).compareTo(BigDecimal.ZERO) > 0 ? true : false;
+        		waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand()).compareTo(BigDecimal.ZERO) > 0 ? true : false;
     }
 
     public boolean applicationInProgress(WaterConnectionDetails waterConnectionDetails, String stateValue,

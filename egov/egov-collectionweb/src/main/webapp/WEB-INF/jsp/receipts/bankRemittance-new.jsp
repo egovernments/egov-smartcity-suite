@@ -56,7 +56,6 @@
 	jQuery(document)
 			.ready(
 					function($) {
-						
 						if(jQuery("#finYearId").val()!=-1){
 							$("#dateDiv").hide();
 							$("#fromDate").val("");
@@ -175,6 +174,8 @@
 						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
+				document.getElementsByName('approverIdArray')[i].value = document
+						.getElementsByName('approverIdTempArray')[i].value;
 			} else if (isSelected[i].checked == false) {
 				document.bankRemittanceForm.serviceNameArray[i].value = "";
 				document.bankRemittanceForm.fundCodeArray[i].value = "";
@@ -183,7 +184,8 @@
 				document.bankRemittanceForm.totalChequeAmountArray[i].value = "";
 				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
 				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
-				document.bankRemittanceForm.receiptDateArray[i].value = "";
+				document.bankRemittanceForm.receiptDateArray[i].value = "";			
+				document.bankRemittanceForm.approverIdArray[i].value = "";
 			}
 			j++;
 		}
@@ -445,7 +447,7 @@
 	}
 </script>
 </head>
-<body  onload="onBodyLoad();">
+<body onload="onBodyLoad();">
 	<div class="errorstyle" id="error_area" style="display: none;"></div>
 	<span align="center" style="display: none" id="selectremittanceerror">
 		<li><font size="2" color="red"><b><s:text
@@ -468,7 +470,7 @@
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
-	<s:form theme="simple" name="bankRemittanceForm" >
+	<s:form theme="simple" name="bankRemittanceForm">
 		<s:push value="model">
 			<s:token />
 			<s:if test="%{hasErrors()}">
@@ -490,8 +492,8 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.bank" /> : <span
-									class="mandatory1">*</span></td>
+							<td class="bluebox"><s:text name="bankremittance.bank" /> :
+								<span class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.bankBranchList" listKey="id"
 									id="bankBranchMaster" listValue="branchname"
@@ -503,7 +505,7 @@
 									selectedValue="%{accountNumberId}" /></td>
 							<td class="bluebox"><s:text
 									name="bankremittance.accountnumber" />: <span
-				                       class="mandatory1">*</span></td>
+								class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.accountNumberList"
 									listKey="id" id="accountNumberId" listValue="accountnumber"
@@ -514,12 +516,26 @@
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text
 									name="bankremittance.financialyear" />:</td>
-							<td class="bluebox"><s:select headerKey="-1" headerValue="--Select--"
-									list="dropdownData.financialYearList" listKey="id"
-									id="finYearId" listValue="finYearRange" label="finYearRange"
-									name="finYearId" value="%{finYearId}" /></td>
+							<td class="bluebox"><s:select headerKey="-1"
+									headerValue="--Select--" list="dropdownData.financialYearList"
+									listKey="id" id="finYearId" listValue="finYearRange"
+									label="finYearRange" name="finYearId" value="%{finYearId}" />
+							</td>
+
+						    <s:if test="%{!isBankCollectionRemitter}">
+                                <td class="bluebox"><s:text name="bankremittance.approver" />:</td>
+                                <td class="bluebox">
+                                    <s:select
+                                        headerKey="-1" headerValue="--Select--"
+                                        name="approverId" id="approverId" cssClass="select"
+                                        list="dropdownData.approverList" listKey="approver.id" listValue="approver.name" value="%{approverId}"
+                                    />
+                                </td>
+                            </s:if>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">&nbsp;</td>
+
+
 						</tr>
 						<tr id="dateDiv">
 							<td width="4%" class="bluebox">&nbsp;</td>
@@ -535,140 +551,147 @@
 									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
-					</div>
-					<div class="buttonbottom">
-						<input name="search" type="submit" class="buttonsubmit"
-							id="search" value="Search" onclick="return searchDataToRemit()" />
-					</div>
-					<s:if test="%{!paramList.isEmpty()}">
-						<display:table name="paramList" uid="currentRow"
-							pagesize="${pageSize}" style="border:1px;width:100%"
-							cellpadding="0" cellspacing="0" export="false" requestURI=""
-							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd"
-								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
-								style="width:5%; text-align: center">
-								<s:checkbox name="receiptIds" id="receiptIds"
-									value="#currentRow.id" onClick="handleReceiptSelectionEvent()" />
-								<input type="hidden" name="serviceNameTempArray"
-									disabled="disabled" id="serviceNameTempArray"
-									value="${currentRow.SERVICENAME}" />
-								<input type="hidden" name="fundCodeTempArray"
-									disabled="disabled" id="fundCodeTempArray"
-									value="${currentRow.FUNDCODE}" />
-								<input type="hidden" name="departmentCodeTempArray"
-									id="departmentCodeTempArray" disabled="disabled"
-									value="${currentRow.DEPARTMENTCODE}" />
-								<input type="hidden" name="totalCashAmountTempArray"
-									disabled="disabled" id="totalCashAmountTempArray"
-									value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-								<input type="hidden" name="totalChequeAmountTempArray"
-									disabled="disabled" id="totalChequeAmountTempArray"
-									value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-								<input type="hidden" name="totalCardAmountTempArray"
-									disabled="disabled" id="totalCardAmountTempArray"
-									value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-								<input type="hidden" name="totalOnlineAmountTempArray"
-									disabled="disabled" id="totalOnlineAmountTempArray"
-									value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-								<input type="hidden" name="receiptDateTempArray"
-									disabled="disabled" id="receiptDateTempArray"
-									value="${currentRow.RECEIPTDATE}" />
-								<input type="hidden" name="serviceNameArray"
-									id="serviceNameArray"
-									value="${serviceNameArray[currentRow_rowNum-1]}" />
-								<input type="hidden" name="fundCodeArray" id="fundCodeArray"
-									value="${fundCodeArray[currentRow_rowNum-1]}" />
-								<input type="hidden" name="departmentCodeArray"
-									id="departmentCodeArray"
-									value="${departmentCodeArray[currentRow_rowNum-1]}" />
-								<input type="hidden" name="totalCashAmountArray"
-									id="totalCashAmountArray"
-									value="${totalCashAmountArray[currentRow_rowNum-1]}" />
-								<input type="hidden" name="totalChequeAmountArray"
-									id="totalChequeAmountArray"
-									value="${totalChequeAmountArray[currentRow_rowNum-1]}" />
-								<input type="hidden" name="totalCardAmountArray"
-									disabled="disabled" id="totalCardAmountArray" />
-								<input type="hidden" name="totalOnlineAmountArray"
-									disabled="disabled" id="totalOnlineAmountArray" />
-								<input type="hidden" name="receiptDateArray"
-									id="receiptDateArray"
-									value="${receiptDateArray[currentRow_rowNum-1]}" />
-							</display:column>
-
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Date"
-								style="width:10%;text-align: center"
-								value="${currentRow.RECEIPTDATE}" format="{0,date,dd/MM/yyyy}" />
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Service Name"
-								style="width:20%;text-align: center"
-								value="${currentRow.SERVICENAME}" />
-
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Fund"
-								style="width:10%;text-align: center"
-								value="${currentRow.FUNDNAME}" />
-
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Department"
-								style="width:10%;text-align: center"
-								value="${currentRow.DEPARTMENTNAME}" />
-							<display:column headerClass="bluebgheadtd"
-									class="blueborderfortd" title="Total Cash Collection"
-									style="width:10%;text-align: center">
-									<div align="center">
-										<c:if test="${not empty currentRow.SERVICETOTALCASHAMOUNT}">
-											<c:out value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-										</c:if>
-										&nbsp;
-									</div>
-							</display:column>
-							
-						</display:table>
-				
-				<br />
-				<div id="loadingMask"
-					style="display: none; overflow: hidden; text-align: center">
-					<img src="/collection/resources/images/bar_loader.gif" alt="" /> <span
-						style="color: red">Please wait....</span>
-				</div>
-
-				<div align="center">
-					<table>
-						<tr>					
-							<s:if test="showRemittanceDate">
-								<td class="bluebox" colspan="3">&nbsp;</td>
-								<td class="bluebox"><s:text
-										name="bankremittance.remittancedate" /><span
-									class="mandatory" /></td>
-								<td class="bluebox"><s:textfield id="remittanceDate"
-										name="remittanceDate" readonly="true"
-										data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>
-							</s:if>
-							<td class="bluebox"><s:text
-									name="bankremittance.remittanceamount" /></td>
-							<td class="bluebox"><s:textfield id="remittanceAmount"
-									name="remittanceAmount" readonly="true" /></td>								
-							<td class="bluebox"><s:text
-									name="bankremittance.accountnumber" /></td>
-							<td class="bluebox"><s:textfield id="remitAccountNumber"
-									name="remitAccountNumber" readonly="true" /></td>		
-						</tr>
-					</table>
-				</div>
-
-				<div align="left" class="mandatorycoll">
-					<s:text name="common.mandatoryfields" />
 				</div>
 				<div class="buttonbottom">
-					<input name="button32" type="submit" class="buttonsubmit"
-						id="button32" value="Remit to Bank" onclick="return validate();" />
-					&nbsp; <input name="buttonClose" type="button" class="button"
-						id="button" value="Close" onclick="window.close()" />
+					<input name="search" type="submit" class="buttonsubmit" id="search"
+						value="Search" onclick="return searchDataToRemit()" />
 				</div>
+				<s:if test="%{!paramList.isEmpty()}">
+					<display:table name="paramList" uid="currentRow"
+						pagesize="${pageSize}" style="border:1px;width:100%"
+						cellpadding="0" cellspacing="0" export="false" requestURI=""
+						excludedParams="approverIdArray serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray approverIdTempArray">
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
+							style="width:5%; text-align: center">
+							<s:checkbox name="receiptIds" id="receiptIds"
+								value="#currentRow.id" onClick="handleReceiptSelectionEvent()" />
+							<input type="hidden" name="serviceNameTempArray"
+								disabled="disabled" id="serviceNameTempArray"
+								value="${currentRow.SERVICENAME}" />
+							<input type="hidden" name="fundCodeTempArray" disabled="disabled"
+								id="fundCodeTempArray" value="${currentRow.FUNDCODE}" />
+							<input type="hidden" name="departmentCodeTempArray"
+								id="departmentCodeTempArray" disabled="disabled"
+								value="${currentRow.DEPARTMENTCODE}" />
+							<input type="hidden" name="totalCashAmountTempArray"
+								disabled="disabled" id="totalCashAmountTempArray"
+								value="${currentRow.SERVICETOTALCASHAMOUNT}" />
+							<input type="hidden" name="totalChequeAmountTempArray"
+								disabled="disabled" id="totalChequeAmountTempArray"
+								value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
+							<input type="hidden" name="totalCardAmountTempArray"
+								disabled="disabled" id="totalCardAmountTempArray"
+								value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
+							<input type="hidden" name="totalOnlineAmountTempArray"
+								disabled="disabled" id="totalOnlineAmountTempArray"
+								value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
+							<input type="hidden" name="receiptDateTempArray"
+								disabled="disabled" id="receiptDateTempArray"
+								value="${currentRow.RECEIPTDATE}" />
+							
+							<input type="hidden" name="approverIdTempArray"
+								disabled="disabled" id="approverIdTempArray"
+								value="${currentRow.APPROVERID}" />
+								
+							<input type="hidden" name="serviceNameArray"
+								id="serviceNameArray"
+								value="${serviceNameArray[currentRow_rowNum-1]}" />
+							<input type="hidden" name="fundCodeArray" id="fundCodeArray"
+								value="${fundCodeArray[currentRow_rowNum-1]}" />
+							<input type="hidden" name="departmentCodeArray"
+								id="departmentCodeArray"
+								value="${departmentCodeArray[currentRow_rowNum-1]}" />
+							<input type="hidden" name="totalCashAmountArray"
+								id="totalCashAmountArray"
+								value="${totalCashAmountArray[currentRow_rowNum-1]}" />
+							<input type="hidden" name="totalChequeAmountArray"
+								id="totalChequeAmountArray"
+								value="${totalChequeAmountArray[currentRow_rowNum-1]}" />
+							<input type="hidden" name="totalCardAmountArray"
+								disabled="disabled" id="totalCardAmountArray" />
+							<input type="hidden" name="totalOnlineAmountArray"
+								disabled="disabled" id="totalOnlineAmountArray" />
+							<input type="hidden" name="receiptDateArray"
+								id="receiptDateArray"
+								value="${receiptDateArray[currentRow_rowNum-1]}" />
+								
+							<input type="hidden" name="approverIdArray"
+								id="approverIdArray"
+								value="${approverIdArray[currentRow_rowNum-1]}" />
+						</display:column>
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Date" style="width:10%;text-align: center"
+							value="${currentRow.RECEIPTDATE}" format="{0,date,dd/MM/yyyy}" />
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Service Name" style="width:20%;text-align: center"
+							value="${currentRow.SERVICENAME}" />
+
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Fund" style="width:10%;text-align: center"
+							value="${currentRow.FUNDNAME}" />
+
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Department" style="width:10%;text-align: center"
+							value="${currentRow.DEPARTMENTNAME}" />
+
+                            <display:column headerClass="bluebgheadtd" class="blueborderfortd"
+                                title="Approver" style="width:10%;text-align: center"
+                                value="${currentRow.APPROVERNAME}" />
+							
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Total Cash Collection"
+							style="width:10%;text-align: center">
+							<div align="center">
+								<c:if test="${not empty currentRow.SERVICETOTALCASHAMOUNT}">
+									<c:out value="${currentRow.SERVICETOTALCASHAMOUNT}" />
+								</c:if>
+								&nbsp;
+							</div>
+						</display:column>
+
+					</display:table>
+
+					<br />
+					<div id="loadingMask"
+						style="display: none; overflow: hidden; text-align: center">
+						<img src="/collection/resources/images/bar_loader.gif" alt="" />
+						<span style="color: red">Please wait....</span>
+					</div>
+
+					<div align="center">
+						<table>
+							<tr>
+								<s:if test="showRemittanceDate">
+									<td class="bluebox" colspan="3">&nbsp;</td>
+									<td class="bluebox"><s:text
+											name="bankremittance.remittancedate" /><span
+										class="mandatory" /></td>
+									<td class="bluebox"><s:textfield id="remittanceDate"
+											name="remittanceDate" readonly="true"
+											data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>
+								</s:if>
+								<td class="bluebox"><s:text
+										name="bankremittance.remittanceamount" /></td>
+								<td class="bluebox"><s:textfield id="remittanceAmount"
+										name="remittanceAmount" readonly="true" /></td>
+								<td class="bluebox"><s:text
+										name="bankremittance.accountnumber" /></td>
+								<td class="bluebox"><s:textfield id="remitAccountNumber"
+										name="remitAccountNumber" readonly="true" /></td>
+							</tr>
+						</table>
+					</div>
+
+					<div align="left" class="mandatorycoll">
+						<s:text name="common.mandatoryfields" />
+					</div>
+					<div class="buttonbottom">
+						<input name="button32" type="submit" class="buttonsubmit"
+							id="button32" value="Remit to Bank" onclick="return validate();" />
+						&nbsp; <input name="buttonClose" type="button" class="button"
+							id="button" value="Close" onclick="window.close()" />
+					</div>
 				</s:if>
 				<s:if test="%{isListData}">
 					<s:if test="%{paramList.isEmpty()}">

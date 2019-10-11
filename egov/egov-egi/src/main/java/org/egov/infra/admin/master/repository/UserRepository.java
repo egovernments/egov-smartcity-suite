@@ -68,7 +68,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
 
-    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsername(String userName);
 
     @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
@@ -95,6 +95,9 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name IN (:roleName)")
     Set<User> findUsersByRoleNames(@Param("roleName") String [] roleName);
 
+    @Query("select distinct usr from User usr, IN (usr.roles) role where role.name IN (:roleNameList)")
+    Set<User> findUsersByRoles(@Param("roleNameList") List<String> roleNameList);
+    
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName and usr.username = :usrName ")
     List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 

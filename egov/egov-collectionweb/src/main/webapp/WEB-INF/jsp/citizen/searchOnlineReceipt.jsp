@@ -62,7 +62,7 @@ function onBodyLoad(){
 	var el = document.forms[0].elements;
 	
 	for (i = 0; i < cnt.length; i++){
-		if(paymentstatus[i].value=='Success' || paymentstatus[i].value=='Failure' || paymentstatus[i].value=='Refunded'){  
+		if(paymentstatus[i].value=='Success' || paymentstatus[i].value=='Refunded'){  
 		    statuscode[i].setAttribute('disabled',true);
 		    txId[i].setAttribute('disabled',true);
 		    txDate[i].setAttribute('disabled',true);
@@ -76,9 +76,24 @@ function onBodyLoad(){
 
 function validate()
 {
+	dom.get("mandatorysearchcriteria").style.display='none';
 	var fromdate=document.getElementById('fromDate').value;
 	var todate=document.getElementById('toDate').value;
 	var valSuccess = true;
+	if(null!= document.getElementById('serviceType') && document.getElementById('serviceType').value == '-1'){
+		dom.get("mandatorysearchcriteria").style.display='block';
+		dom.get("mandatorysearchcriteria").innerHTML = '<s:text name="searchOnlineReceipts.servicetype.select" />' + '<br>';
+		window.scroll(0,0);
+		return false
+	}
+	
+	if(null== document.getElementById('consumerCode') || document.getElementById('consumerCode').value == ""){
+		dom.get("mandatorysearchcriteria").style.display='block';
+		dom.get("mandatorysearchcriteria").innerHTML = '<s:text name="searchOnlineReceipts.consumercode.mandatory" />' + '<br>';
+		window.scroll(0,0);
+		return false;
+	} 
+	
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
@@ -140,10 +155,23 @@ function transitionStates(){
 	       		document.getElementById("stateerror"+(i+1)).style.display = "none";
 	       }
 	    }
-	    if(paymentstatus[i].value=='Pending'){
+	    if(paymentstatus[i].value=='Failure'){
+	    	if(!(statuscode[i].value==-1 || statuscode[i].value=='ONLINE_STATUS_SUCCESS')){
+	    		if(valErrorMsg1==""){
+	    		    valErrorMsg1='<s:text name="onlinereceipt.manualrecon.failure.errormsg" />' + '<br>';
+	    		}
+	    	    // dom.get("stateerror"+(i+1)).style.display='';
+	    	    document.getElementById("stateerror"+(i+1)).style.display = "block";
+	    	    validation=false;
+	    	}
+	    	else{
+	    		document.getElementById("stateerror"+(i+1)).style.display = "none";
+	    	}
+	    }
+	    if(paymentstatus[i].value=='Pending' || paymentstatus[i].value=='Failure'){
 	    	if(!(statuscode[i].value==-1 || statuscode[i].value=='ONLINE_STATUS_SUCCESS' || 
 	    	    statuscode[i].value=='ONLINE_STATUS_REFUNDED' || 
-	    	    statuscode[i].value=='TO_BE_REFUNDED')){
+	    	    statuscode[i].value=='TO_BE_REFUNDED' || statuscode[i].value=='ONLINE_STATUS_FAILURE')){
 	    			if(valErrorMsg3==""){ 
 	    		    	valErrorMsg3='<s:text name="onlinereceipt.manualrecon.pending.errormsg" />' + '<br>';
 	    			}
@@ -230,6 +258,8 @@ function transitionStates(){
 	</b></font>
   </li>
 </span>
+<div class="errorstyle" id="mandatorysearchcriteria" style="display:none;"></div>
+
 <s:form theme="simple" name="searchOnlineReceiptForm" action="searchOnlineReceipt-search">
 <div class="formmainbox"><div class="subheadnew"><s:text name="searchOnlineReceipts.title"/>
 </div>
@@ -238,10 +268,10 @@ function transitionStates(){
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	    <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>
-	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.servicetype"/></td>
+	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.servicetype"/><span class="mandatory"/></td>
 	      <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchOnlineReceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
-	      <td width="21%" class="bluebox2">&nbsp;</td>
-	      <td width="30%" class="bluebox2">&nbsp;</td>
+	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.consumercode"/><span class="mandatory"/></td>
+	      <td width="30%" class="bluebox2"><s:textfield id="consumerCode" type="text" name="consumerCode"/></td>
 	    </tr>
 	     <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
@@ -292,7 +322,7 @@ function transitionStates(){
 	 </display:column>  
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" property="receiptHeader.referencenumber"  format="{0,date,dd/MM/yyyy}" style="width:6%;text-align: center" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Reference ID" property="receiptHeader.id" style="width:8%;text-align:center"  />
-	
+	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Consumer Code" property="receiptHeader.consumerCode" style="width:8%;text-align:center"  />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" property="receiptHeader.receiptMisc.department.name" style="width:8%;text-align:center"  />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Amount (Rs.)" property="receiptHeader.totalAmount" style="width:4%;text-align: center" format="{0, number, #,##0.00}" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" property="receiptHeader.service.name" style="width:10%; text-align: right" />

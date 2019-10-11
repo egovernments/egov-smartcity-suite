@@ -57,22 +57,25 @@ import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NO_OF_INSTALLMENTS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_MATERIAL_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -85,6 +88,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
@@ -121,22 +125,41 @@ public class WaterEstimationChargesPaymentService {
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
-    public BigDecimal getEstimationDueAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        BigDecimal estimationAmount = ZERO;
-        List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
-                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
-        if (currentDemand != null)
-            for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
-                if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    estimationAmount = estimationAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtRebate()
-                            .add(demandDetails.getAmtCollected())));
-                }
-            }
-        return estimationAmount;
-    }
+	public BigDecimal getEstimationDueAmount(WaterConnectionDetails waterConnectionDetails) {
+		BigDecimal balance = BigDecimal.ZERO;
+		Map<String, BigDecimal> amountsMap = getEstimationDueDetails(waterConnectionDetails);
+		if (!amountsMap.isEmpty())
+			balance = amountsMap.get("balance");
 
+		return balance;
+	}
+
+	public Map<String, BigDecimal> getEstimationDueDetails(WaterConnectionDetails waterConnectionDetails) {
+		Map<String, BigDecimal> amountsMap = new HashMap<>();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+		BigDecimal estimationAmount = ZERO;
+		List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
+				DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
+		if (currentDemand != null) {
+			BigDecimal materialCharges = BigDecimal.ZERO;
+			for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
+				if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+					if (WATER_MATERIAL_CHARGES_REASON_CODE
+							.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+						materialCharges = demandDetails.getAmount();
+					estimationAmount = estimationAmount.add(demandDetails.getAmount()
+							.subtract(demandDetails.getAmtRebate().add(demandDetails.getAmtCollected())));
+				}
+			}
+			amountsMap.put("balance", estimationAmount);
+			amountsMap.put("materialCharges", materialCharges);
+		}
+		return amountsMap;
+	}
 
     @Transactional
     public String generateBill(String applicationNumber) {
@@ -185,7 +208,7 @@ public class WaterEstimationChargesPaymentService {
     }
 
     public BigDecimal getEstimationAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal estimationAmount = BigDecimal.ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
                 DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
@@ -199,12 +222,26 @@ public class WaterEstimationChargesPaymentService {
     }
     
     public BigDecimal setBPLMinimumAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         if(currentDemand!=null)
             for(EgDemandDetails demandDetail: currentDemand.getEgDemandDetails()) {
                 if(WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     return demandDetail.getAmount();
             }
         return ZERO;
+    }
+    
+    public BigDecimal getCollectedEstimationCharges(WaterConnectionDetails waterConnectionDetails) {
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+        BigDecimal collectedEstimationCharges = ZERO;
+        List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
+                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
+        if (currentDemand != null)
+            for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
+                if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                	collectedEstimationCharges = collectedEstimationCharges.add(demandDetails.getAmtCollected());
+                }
+            }
+        return collectedEstimationCharges;
     }
 }

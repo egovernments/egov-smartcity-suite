@@ -52,8 +52,10 @@ import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CANCELLED;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -169,6 +171,13 @@ public class ReconnectionController extends GenericConnectionController {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(RECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
+        List<String> validActions =  (List<String>) model.asMap().get("validActionList");
+        if("CSCUSER".equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()) 
+                && WF_STATE_CANCELLED.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())){
+            if (validActions.isEmpty())
+            validActions = Arrays.asList("Forward");
+            model.addAttribute("validActionList", validActions);    
+        }
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);

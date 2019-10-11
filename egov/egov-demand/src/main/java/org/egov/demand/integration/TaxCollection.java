@@ -47,6 +47,13 @@
  */
 package org.egov.demand.integration;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
@@ -65,22 +72,17 @@ import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.DemandDetailVariation;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.demand.repository.demanddetailvariation.DemandDetailVariationRepository;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class is used to persist Bills with Collection Details(i.e received from ErpCollection) .This is used for the integration
@@ -107,6 +109,9 @@ public abstract class TaxCollection implements BillingIntegrationService {
     
     @Autowired
     private InstallmentHibDao installmentHibDao;
+    
+    @Autowired
+    private DemandDetailVariationRepository demandDetailVariationRepo;
 
     public TaxCollection() {
 
@@ -586,6 +591,17 @@ public abstract class TaxCollection implements BillingIntegrationService {
         egDmCollectedReceipt.setEgdemandDetail(egDemandDetails);
         egdmCollectedReceiptDAO.create(egDmCollectedReceipt);
         return egDmCollectedReceipt;
+    }
+    
+    public DemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount, String code) {
+        DemandDetailVariation demandDetailVariation = new DemandDetailVariation();
+        demandDetailVariation.setDemandDetail(dmdDetails);
+        demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
+        if(revisedAmount!=null && revisedAmount.compareTo(BigDecimal.ZERO)>0)
+            demandDetailVariation.setDramount(revisedAmount);
+        else
+            demandDetailVariation.setDramount(BigDecimal.ZERO);
+        return demandDetailVariation;
     }
 
     /**

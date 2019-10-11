@@ -79,6 +79,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.text.ParseException;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 public class UpdateAssessmentController {
 
@@ -150,6 +155,7 @@ public class UpdateAssessmentController {
             ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
             newPropertyDetails = propertyExternalService.updateProperty(viewPropertyDetails);
         }
+
         return newPropertyDetails;
     }
 

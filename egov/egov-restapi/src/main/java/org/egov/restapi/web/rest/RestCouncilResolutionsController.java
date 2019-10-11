@@ -51,8 +51,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.List;
 
+import org.egov.council.entity.CouncilResolutionsResponse;
 import org.egov.restapi.model.CouncilMeetingRequest;
-import org.egov.restapi.model.CouncilResolutionsResponse;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.CouncilResolutionsService;
 import org.springframework.beans.factory.annotation.Autowired;

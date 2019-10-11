@@ -47,22 +47,13 @@
  */
 package org.egov.ptis.web.controller.common;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.Address;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.master.service.PropertyUsageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -70,11 +61,29 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.Address;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.WriteOffReasons;
+import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/common")
@@ -88,6 +97,10 @@ public class AjaxCommonController {
 
     @Autowired
     private PropertyUsageService propertyUsageService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private WriteOffReasonRepository writeOffReasonRepository;
 
     /**
      * Provides the details of the property for amalgamation
@@ -96,7 +109,8 @@ public class AjaxCommonController {
      */
     @RequestMapping(value = "/amalgamation/getamalgamatedpropdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo,@RequestParam("retainerAssessmentNo") final String retainerAssessmentNo) {
+    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo,
+            @RequestParam("retainerAssessmentNo") final String retainerAssessmentNo) {
         final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
         amalgamatedProp.setValidationMsg("");
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -107,20 +121,19 @@ public class AjaxCommonController {
         String retainerPropType = retainerBasicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         if (basicProp == null)
             amalgamatedProp.setValidationMsg("Assessment does not exist!");
+        else if (basicProp.isUnderWorkflow())
+            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
+        else if (retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && !amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)
+                || !retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)
+                        && amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR))
+            amalgamatedProp.setValidationMsg("Vacant Land cannot be amalgamated with Non Vacant Land");
         else {
-            if (basicProp.isUnderWorkflow())
-                amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
-            else if ((retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && !amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)) || (!retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)))
-                amalgamatedProp.setValidationMsg("Vacant Land cannot be amalgamated with Non Vacant Land");
-            else {
-                final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
-                final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
-                if (hasDues)
-                    amalgamatedProp.setValidationMsg("This property has dues!");
-                else {
-                    getChildPropertyDetails(assessmentNo, amalgamatedProp, basicProp, totalDue);
-                }
-            }
+            final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
+            final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
+            if (hasDues)
+                amalgamatedProp.setValidationMsg("This property has dues!");
+            else
+                getChildPropertyDetails(assessmentNo, amalgamatedProp, basicProp, totalDue);
         }
         return amalgamatedProp;
     }
@@ -178,6 +191,33 @@ public class AjaxCommonController {
         else if (propTypeCategory.equals(CATEGORY_NON_RESIDENTIAL))
             propUsageList = propertyUsageService.getNonResidentialPropertyUsages();
         return propUsageList;
+    }
+
+    @RequestMapping(value = "/getcategorybypropertytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, String> getCategoryByPropertyType(@RequestParam("propType") final String propType) {
+        Map<String, String> propTypeCategoryMap = new TreeMap<>();
+
+        if (propType.equals(OWNERSHIP_TYPE_VAC_LAND))
+            propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+        else
+            propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+
+        return propTypeCategoryMap;
+    }
+
+    @RequestMapping(value = "/getwriteoffreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<WriteOffReasons> getreasons(@RequestParam("typevalue") final String typevalue) {
+        return writeOffReasonRepository.findByTypeOrderByIdAsc(typevalue);
+
+    }
+
+    @RequestMapping(value = "/getcouncildetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Map<String, String>> getCouncilDetails(@RequestParam("resolutionNo") final String resolutionNo,
+            @RequestParam("resolutionType") final String resolutionType, HttpServletRequest request) {
+        return propertyTaxCommonUtils.getCouncilDetails(resolutionNo, resolutionType, request);
     }
 
 }

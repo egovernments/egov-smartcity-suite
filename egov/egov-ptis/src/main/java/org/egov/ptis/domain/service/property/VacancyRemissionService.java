@@ -339,7 +339,6 @@ public class VacancyRemissionService {
                     buildSMS(vacancyRemission, workFlowAction);
             }
         }
-        propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()) && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) != null) {
             propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
@@ -373,7 +372,7 @@ public class VacancyRemissionService {
                 final EgDemandDetails dmdDet = propertyService.getEgDemandDetailsForReason(
                         effectiveInstDemandDetails, demandReason);
                 if (dmdDet != null) {
-                    dmdDet.setAmount(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                    dmdDet.setAmount(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
                             BigDecimal.ROUND_HALF_UP));
                     excess = adjustCollection(excess, dmdDet);
                 }
@@ -386,10 +385,10 @@ public class VacancyRemissionService {
     }
 
     private BigDecimal adjustCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
-        if (dmdDet.getAmtCollected().compareTo(dmdDet.getAmount()) > 0) {
+        if (dmdDet.getAmtCollected().compareTo(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)) > 0) {
             excess = excess
-                    .add(dmdDet.getAmtCollected().subtract(dmdDet.getAmount()));
-            dmdDet.setAmtCollected(dmdDet.getAmount());
+                    .add(dmdDet.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)));
+            dmdDet.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
         } else if (excess.compareTo(BigDecimal.ZERO) > 0) {
             excess = adjustExcessToCollection(excess, dmdDet);
         }
@@ -397,9 +396,9 @@ public class VacancyRemissionService {
     }
 
     private BigDecimal adjustExcessToCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
-        if (excess.compareTo((dmdDet.getAmount().subtract(dmdDet.getAmtCollected()))) > 0) {
-            excess = excess.subtract(dmdDet.getAmount().subtract(dmdDet.getAmtCollected()));
-            dmdDet.setAmtCollected(dmdDet.getAmount());
+        if (excess.compareTo((propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).subtract(dmdDet.getAmtCollected()))) > 0) {
+            excess = excess.subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).subtract(dmdDet.getAmtCollected()));
+            dmdDet.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
         } else {
             dmdDet.setAmtCollected(dmdDet.getAmtCollected().add(excess));
             excess = BigDecimal.ZERO;
@@ -656,7 +655,6 @@ public class VacancyRemissionService {
 
             }
         }
-        propertyService.updateIndexes(vacancyRemissionApproval, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
 
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
                 && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
@@ -665,6 +663,7 @@ public class VacancyRemissionService {
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
         vacancyRemissionApprovalRepository.save(vacancyRemissionApproval);
+        propertyService.updateIndexes(vacancyRemissionApproval, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
     }
 
     private void wFApprove(final VacancyRemissionApproval vacancyRemissionApproval) {
@@ -674,8 +673,8 @@ public class VacancyRemissionService {
         /*
          * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
          */
-        if (DateUtils.between(new Date(),
-                installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+        if (DateUtils.between(vacancyRemissionApproval.getApprovalDate(),
+                installmentFirstHalf.getFromDate(), installmentSecondHalf.getToDate()))
             updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf,
                     installmentSecondHalf);
     }
@@ -741,6 +740,15 @@ public class VacancyRemissionService {
         return reportOutput;
     }
 
+    public VacancyRemissionApproval getLatestVacancyRemissionApproval(VacancyRemission vacancyRemission){
+    	final List<VacancyRemissionApproval> approvedList = vacancyRemissionRepository
+                .getLatestVacancyApproval(vacancyRemission);
+    	VacancyRemissionApproval vacancyRemissionApproval=null;
+         if (!approvedList.isEmpty())
+        	 vacancyRemissionApproval = approvedList.get(0);
+         return vacancyRemissionApproval;
+
+    }
     public ReportRequest generateVRReportRequest(VacancyRemission vacancyRemission,
                                                  String noticeNo, HttpServletRequest request, final String approvedUser) {
         ReportRequest reportInput = null;
@@ -784,7 +792,7 @@ public class VacancyRemissionService {
             BigDecimal halfYearTax = currentDemand.get(CURR_SECONDHALF_DMD_STR);
             BigDecimal newTax = BigDecimal.ZERO;
             financialYear = propertyTaxUtil.getFinancialYearforDate(new Date());
-            final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(vacancyRemission.getVacancyRemissionApproval().get(0).getApprovalDate());
+            final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(getLatestVacancyRemissionApproval(vacancyRemission).getApprovalDate());
             final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
             final Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
             Ptdemand currPtDemand = getCurrentPTDemand(installmentFirstHalf, vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet());
@@ -812,14 +820,14 @@ public class VacancyRemissionService {
         if(currPtDemand!=null)
         for (final EgDemandDetails dmdDet : currPtDemand.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().equals(installmentHalf.getFromDate()) && !DEMANDRSN_CODE_PENALTY_FINES.equals(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode())){
-                newTax = newTax.add(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                newTax = newTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
                         BigDecimal.ROUND_HALF_UP));
             }
         return newTax;
     }
 
     private boolean isApprovedInFirstHalf(VacancyRemission vacancyRemission, final Installment installmentFirstHalf) {
-        return DateUtils.between(vacancyRemission.getVacancyRemissionApproval().get(0).getApprovalDate(),
+        return DateUtils.between(getLatestVacancyRemissionApproval(vacancyRemission).getApprovalDate(),
                 installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate());
     }
 

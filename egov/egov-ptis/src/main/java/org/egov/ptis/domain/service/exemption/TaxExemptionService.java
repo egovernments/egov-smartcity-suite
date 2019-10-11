@@ -256,7 +256,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
                 propertyByEmployee);
-        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
             propertyService.pushPortalMessage(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString())) {
@@ -273,10 +272,10 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
                 propertyByEmployee);
-        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(newProperty.getSource()))
             propertyService.updatePortal((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         propertyPerService.update(newProperty.getBasicProperty());
+        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
     }
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments,
@@ -521,18 +520,18 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         return propertyService.getWorkflowInitiator(property);
     }
 
-    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
-                ? BigDecimal.ZERO
-                : BigDecimal.valueOf(
-                        (Double) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES));
+    public BigDecimal getWaterTaxDues(final String assessmentNo,Date effectiveDate, final HttpServletRequest request) {
+        return propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+                ? BigDecimal.ZERO : new BigDecimal(
+                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request)
+                                .get(PropertyTaxConstants.WATER_TAX_DUES)));
     }
 
-    public Boolean isUnderWtmsWF(final String assessmentNo, final HttpServletRequest request) {
-		return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
-				? FALSE
-				: (Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
-						.get(PropertyTaxConstants.UNDER_WTMS_WF);
+    public Boolean isUnderWtmsWF(final String assessmentNo,Date effectiveDate, final HttpServletRequest request) {
+        return propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request)
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
     public List<DocumentType> getDocuments(final TransactionType transactionType) {
@@ -602,7 +601,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
         boolean isDemandExist = false;
         final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        Installment effectiveInst = getEffectiveInst(effectiveDate);
+        Installment effectiveInst = getEffectiveInst(getExemptionEffectivedDate(effectiveDate));
 
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getActiveProperty());
         List dmdCollList = new ArrayList();
@@ -634,7 +633,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (!isDemandExist) {
             return NO_DEMAND;
         }
-        final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(), request);
+        final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(),effectiveDate, request);
         model.addAttribute("assessementNo", basicProperty.getUpicNo());
         model.addAttribute("ownerName", basicProperty.getFullOwnerName());
         model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());

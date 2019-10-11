@@ -350,8 +350,8 @@ public class SewerageIndexService {
     public BoolQueryBuilder getActiveApplications(final SewerageConnSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = commonSearchCriteria(searchRequest);
         boolQuery.filter(matchQuery(ACTIVE, true));
-        if (searchRequest.getLegacy() != null)
-            boolQuery = boolQuery.filter(matchQuery("islegacy", searchRequest.getLegacy()));
+        if (searchRequest.isLegacy() != null)
+            boolQuery = boolQuery.filter(matchQuery("islegacy", searchRequest.isLegacy()));
         return boolQuery;
     }
 
@@ -830,6 +830,7 @@ public class SewerageIndexService {
                 executionResult.setApplicationType(searchResult.getApplicationType());
                 executionResult.setApplicationDate(DateUtils.getDefaultFormattedDate(searchResult.getApplicationDate()));
                 executionResult.setApplicationNumber(searchResult.getApplicationNumber());
+                executionResult.setPropertyIdentifier(searchResult.getPropertyIdentifier());
                 executionResult.setShscNumber(searchResult.getShscNumber());
                 executionResult.setRevenueWard(searchResult.getWard());
                 executionResult.setStatus(searchResult.getApplicationStatus());

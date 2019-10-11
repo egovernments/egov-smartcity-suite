@@ -49,6 +49,7 @@ package org.egov.wtms.masters.service;
 
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.repository.ApplicationTypeRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -112,6 +113,10 @@ public class ApplicationTypeService {
 
     public List<ApplicationType> getActiveApplicationTypes() {
         return applicationTypeRepository.findByActiveTrue();
+    }
+
+    public List<ApplicationType> findActiveApplicationsTypesByCodes() {
+        return applicationTypeRepository.findApplicationTypesByCodes(WaterTaxConstants.APPLICATION_TYPE_LIST);
     }
 
 }

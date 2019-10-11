@@ -57,6 +57,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -66,8 +67,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.ApproverRemitterMapService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -92,6 +95,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = BankRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
 @ParentPackage("egov")
 public class ChequeRemittanceAction extends BaseFormAction {
+    private static final String APPROVER_LIST = "approverList";
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ChequeRemittanceAction.class);
@@ -128,6 +132,8 @@ public class ChequeRemittanceAction extends BaseFormAction {
     private transient FinancialYearDAO financialYearDAO;
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
+    @Autowired
+    ApproverRemitterMapService approverRemitterMapService;
 
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -146,6 +152,9 @@ public class ChequeRemittanceAction extends BaseFormAction {
     private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
     private Boolean isBankCollectionRemitter;
     private String remitAccountNumber;
+
+    // Approver Dropdown
+    private String approverId = "-1";
 
     /**
      * @param collectionsUtil the collectionsUtil to set
@@ -167,14 +176,13 @@ public class ChequeRemittanceAction extends BaseFormAction {
         ajaxBankRemittanceAction.setCollectionsUtil(collectionsUtil);
         ajaxBankRemittanceAction.bankBranchListOfService();
         addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
-        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
+        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser()))
             if (ajaxBankRemittanceAction.getBankBranchArrayList().isEmpty())
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "The user is not mapped to any bank branch, please contact system administrator.",
                         "bankremittance.error.bankcollectionoperator")));
             else
                 branchId = ((Bankbranch) ajaxBankRemittanceAction.getBankBranchArrayList().get(0)).getId();
-        }
 
         if (branchId != null) {
             ajaxBankRemittanceAction.setBranchId(branchId);
@@ -183,6 +191,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
+        addDropdownData(APPROVER_LIST, approverRemitterMapService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
     @Action(value = "/receipts/chequeRemittance-listData")
@@ -198,8 +207,23 @@ public class ChequeRemittanceAction extends BaseFormAction {
         }
 
         populateRemittanceList();
+
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
+
+        String approverIdList = CollectionConstants.BLANK;
+        if (!isBankCollectionRemitter) {
+            if (getDropdownData().get(APPROVER_LIST).isEmpty())
+                addActionError(getText("remittance.noapprovermapped"));
+            if (approverId == null || Integer.parseInt(approverId) < 0) {
+                approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get(APPROVER_LIST))
+                        .stream()
+                        .map(m -> m.getApprover().getId().toString())
+                        .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
+            } else
+                approverIdList = approverId;
+        }
+
         if (!hasErrors() && accountNumberId != null) {
 
             final Query serviceQuery = persistenceService.getSession().createNativeQuery(SERVICE_QUERY);
@@ -211,7 +235,8 @@ public class ChequeRemittanceAction extends BaseFormAction {
             final String fundCode = fundQuery.list().get(0).toString();
 
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-            paramList = remittanceService.findChequeRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(),
+            paramList = remittanceService.findChequeRemittanceDetailsForServiceAndFund(approverIdList,
+                    collectionsUtil.getJurisdictionBoundary(),
                     "'" + StringUtils.join(serviceCodeList, "','") + "'", "'" + fundCode + "'",
                     fromDate == null ? financialYear.getStartingDate() : fromDate,
                     toDate == null ? financialYear.getEndingDate() : toDate);
@@ -641,6 +666,14 @@ public class ChequeRemittanceAction extends BaseFormAction {
 
     public void setRemittedReceiptHeaderList(List<ReceiptHeader> remittedReceiptHeaderList) {
         this.remittedReceiptHeaderList = remittedReceiptHeaderList;
+    }
+
+    public void setApproverId(String approverId) {
+        this.approverId = approverId;
+    }
+
+    public String getApproverId() {
+        return approverId;
     }
 
 }

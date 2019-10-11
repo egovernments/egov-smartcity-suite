@@ -52,8 +52,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.council.entity.CouncilResolutionsResponse;
 import org.egov.restapi.model.CouncilMeetingRequest;
-import org.egov.restapi.model.CouncilResolutionsResponse;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;

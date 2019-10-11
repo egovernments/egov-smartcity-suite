@@ -47,6 +47,15 @@
  */
 package org.egov.collection.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
@@ -56,14 +65,6 @@ import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class CollectionReportHeadWiseService {
@@ -121,7 +122,7 @@ public class CollectionReportHeadWiseService {
         StringBuilder creditWhereQueryStr = new StringBuilder("  AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0 ");
         StringBuilder debitWhereQueryStr = new StringBuilder(
                 "  AND EGCL_COLLECTIONDETAILS.DRAMOUNT>0 AND CAO.purposeid in (select id from EGF_ACCOUNTCODE_PURPOSE where name ='"
-                        + CollectionConstants.PURPOSE_NAME_REBATE+ "')");    
+                        + CollectionConstants.PURPOSE_NAME_REBATE + "')");
         final StringBuilder queryStrGroup = new StringBuilder(" GROUP BY source,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE ");
         final StringBuilder finalSelectQueryStr = new StringBuilder(
                 "SELECT sum(cashCount) AS cashCount,sum(chequeddCount) AS chequeddCount,sum(onlineCount) AS onlineCount,SOURCE,glCode,sum(cashAmount) AS cashAmount, sum(chequeddAmount) AS chequeddAmount,  "
@@ -284,8 +285,9 @@ public class CollectionReportHeadWiseService {
                 collectionSummaryHeadWiseReport.setCardAmount(0.0);
             collectionSummaryHeadWiseReport.getOnlineAmount();
             collectionSummaryHeadWiseReport.setTotalAmount(Double.sum(collectionSummaryHeadWiseReport.getCardAmount(),
-                    Double.sum(collectionSummaryHeadWiseReport.getChequeddAmount(),
-                            collectionSummaryHeadWiseReport.getCashAmount())));
+                    Double.sum(collectionSummaryHeadWiseReport.getOnlineAmount(),
+                            Double.sum(collectionSummaryHeadWiseReport.getChequeddAmount(),
+                                    collectionSummaryHeadWiseReport.getCashAmount()))));
         }
         return queryResults;
     }

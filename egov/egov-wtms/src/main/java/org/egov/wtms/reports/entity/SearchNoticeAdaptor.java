@@ -63,6 +63,8 @@ public class SearchNoticeAdaptor implements JsonSerializer<SearchNoticeDetails> 
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("hscNo", searchNoticeDetails.getHscNo());
+        if(searchNoticeDetails.getApplicationNumber()!=null)
+        	jsonObject.addProperty("applicationNumber", searchNoticeDetails.getApplicationNumber());
         jsonObject.addProperty("ownerName", searchNoticeDetails.getOwnerName());
         jsonObject.addProperty("propertyId", searchNoticeDetails.getAssessmentNo());
         jsonObject.addProperty("connectionType", searchNoticeDetails.getConnectionType());

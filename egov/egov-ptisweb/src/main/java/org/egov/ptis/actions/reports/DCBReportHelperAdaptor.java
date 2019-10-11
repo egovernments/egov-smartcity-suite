@@ -84,6 +84,7 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
             jsonObject.addProperty("clctn_currentPT", dCBReportObj.getClctn_currentPT());
             jsonObject.addProperty("clctn_currentPFT", dCBReportObj.getClctn_currentPFT()); 
             jsonObject.addProperty("clctn_currentTotal", dCBReportObj.getClctn_currentTotal()); 
+            jsonObject.addProperty("waivedOffPT", dCBReportObj.getWaivedOffPT());
             jsonObject.addProperty("totalCollection", dCBReportObj.getTotalCollection());
 
             jsonObject.addProperty("bal_arrearPT", dCBReportObj.getBal_arrearPT());

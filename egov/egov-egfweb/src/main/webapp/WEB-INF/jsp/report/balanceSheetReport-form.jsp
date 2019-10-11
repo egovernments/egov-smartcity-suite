@@ -64,18 +64,22 @@ function showDetails(glcode){
 		 var todayDay = todayDate.getDate();
 		 var todayYear = todayDate.getFullYear();
 		 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
-		
-			if(endDate > todayDateText)
+			 
+		/* if(endDate > todayDateText)
 				{ 
 				endDate=todayDateText;
-				}
+				} */
 		 var functionCode1=functionName+"~"+functionId;
 		if(functionId==0){
 			functionCode1="";
 			functionId="";
 			}                   
 		
-		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		if(asOnDate == null || asOnDate == ""){
+			window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		}else{
+			window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		}
 	}
 	
 function showPreviousYearDetails(glcode)
@@ -96,16 +100,21 @@ function showPreviousYearDetails(glcode)
 		 var todayYear = todayDate.getFullYear();
 		 var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
 		
-			if(endDate > todayDateText)
+			/* if(endDate > todayDateText)
 				{ 
 				endDate=todayDateText;
-				}
+				} */
          
  		if(functionId==0){
 			functionCode1="";
 			functionId="";
-			}                   
-		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+			}  
+ 		if(asOnDate == null || asOnDate == ""){
+ 			window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		}else{
+			window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		}
+		
 
 }
 	

@@ -58,8 +58,19 @@ public final class NotificationConstants {
     public static final String ATTACHMENT = "attachment";
     public static final String FILETYPE = "filetype";
     public static final String FILENAME = "filename";
+    // Calendar invite constants
+    public static final String REQUESTMETHOD = "method=REQUEST";
+    public static final String CHARSET = "charset=UTF-8";
+    public static final String COMPONENT = "component=VEVENT";
+    public static final String CONTENTCLASS_KEY = "Content-Class";
+    public static final String CONTENTCLASS_VALUE = "urn:content-  classes:calendarmessage";
+    public static final String MAILBODYMESSAGE_CONTENT = "text/html; charset=utf-8";
+    public static final String CONTENTID_KEY = "Content-ID";
+    public static final String CONTENTID_VALUE = "calendar_message";
+    public static final String DATASOURCETYPE = "text/calendar";
+    public static final String DATETIME_FORMAT_YYYYMMDDTHHMMSSZ = "yyyyMMdd'T'HHmmss'Z'";
 
     private NotificationConstants() {
-        //only constants
+        // only constants
     }
 }

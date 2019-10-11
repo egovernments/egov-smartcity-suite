@@ -47,28 +47,32 @@
   --%>
 
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><s:text name="onlineReceipts.title"/></title>
+<title><s:text name="onlineReceipts.title" /></title>
 <script type="text/javascript">
-function onBodyLoad(){
-	
-}
+	function onBodyLoad() {
 
+	}
 </script>
 </head>
 <body>
-<s:if test="%{hasErrors()}">
-    <div class="errorstyle">
-      <s:actionerror/>
-      <s:fielderror/>
-    </div>
-</s:if>
-<div class="text-center">
-<s:else>
-	<!-- <tr>RECEIVED SUCCESS RESPONSE FROM PAYMENT GATEWAY</tr>
+	<s:if test="%{hasErrors() || hasActionMessages()}">
+		<div class="errorstyle">
+			<s:actionerror />
+			<s:fielderror />
+			<s:actionmessage />
+		</div>
+		<div class="buttonsearch" align="center">
+			<input type="button" value="Close" class="button"
+				onClick="window.close()" />
+		</div>
+	</s:if>
+	<div class="text-center">
+		<s:else>
+			<!-- <tr>RECEIVED SUCCESS RESPONSE FROM PAYMENT GATEWAY</tr>
 	<tr>
 			<td>Bill Number : <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" /> </td>
 	</tr>
@@ -81,28 +85,51 @@ function onBodyLoad(){
 	<tr>
 			<td>Transaction Number : <s:property value="%{onlinePaymentReceiptHeader.onlinePayment.transactionNumber}" /></td>
 	</tr> -->
-	
-	<div id="paymentInfo" style="text-align: center;padding-bottom: 15px;">Your payment of Amount &#8377; <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />. Please click on <span>Generate Receipt to print the receipt</span></div>
-    <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>' class="btn btn-primary" id="btnGenerateReceipt">Generate Receipt</a>&nbsp;
-</s:else>
-</div>
+			<s:if test="%{onlinePaymentReceiptHeader.id !=null
+			 && onlinePaymentReceiptHeader.status!=null 
+			 && onlinePaymentReceiptHeader.status.code=='APPROVED'}">
 
-<script>
+				<div id="paymentInfo"
+					style="text-align: center; padding-bottom: 15px;">
+					Your payment of Amount &#8377;
+					<s:property value="%{onlinePaymentReceiptHeader.totalAmount}" />
+					has been received. The Reference Number is
+					<s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />
+					. Please click on <span>Generate Receipt to print the
+						receipt</span>
+				</div>
+				<a
+					href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>'
+					class="btn btn-primary" id="btnGenerateReceipt">Generate
+					Receipt</a>&nbsp; 
+					
+			</s:if>
+				<input type="button" value="Close" class="button"
+					onClick="window.close()" />
+		</s:else>
+	</div>
 
-if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-	if(CitizenApp)
-	{
-		jQuery('#btnGenerateReceipt').text('Download Receipt');
-		jQuery('#btnGenerateReceipt').attr('href','javascript:void(0);');
-		jQuery('#paymentInfo').find('span').html('Download Receipt');
-		CitizenApp.showSnackBar('Your payment of Amount Rs.<s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />.');
-		jQuery('#btnGenerateReceipt').click(function(e){
-			CitizenApp.downloadReceipt('<s:property value="%{onlinePaymentReceiptHeader.receiptnumber}" />', '<s:property value="%{onlinePaymentReceiptHeader.consumerCode}" />');
-		});
-	}
-}
-
-</script>
+	<script>
+		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+				.test(navigator.userAgent)) {
+			if (CitizenApp) {
+				jQuery('#btnGenerateReceipt').text('Download Receipt');
+				jQuery('#btnGenerateReceipt').attr('href',
+						'javascript:void(0);');
+				jQuery('#paymentInfo').find('span').html('Download Receipt');
+				CitizenApp
+						.showSnackBar('Your payment of Amount Rs.<s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />.');
+				jQuery('#btnGenerateReceipt')
+						.click(
+								function(e) {
+									CitizenApp
+											.downloadReceipt(
+													'<s:property value="%{onlinePaymentReceiptHeader.receiptnumber}" />',
+													'<s:property value="%{onlinePaymentReceiptHeader.consumerCode}" />');
+								});
+			}
+		}
+	</script>
 
 </body>
 </html>

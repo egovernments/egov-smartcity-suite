@@ -52,6 +52,7 @@ public class SewerageExecutionResult {
 
     private String applicationNumber;
     private String shscNumber;
+    private String propertyIdentifier;
     private String isChecked;
     private String executionDate;
     private Long id;
@@ -78,6 +79,14 @@ public class SewerageExecutionResult {
 
     public void setShscNumber(String shscNumber) {
         this.shscNumber = shscNumber;
+    }
+
+    public String getPropertyIdentifier() {
+        return propertyIdentifier;
+    }
+
+    public void setPropertyIdentifier(String propertyIdentifier) {
+        this.propertyIdentifier = propertyIdentifier;
     }
 
     public String getIsChecked() {
@@ -167,5 +176,4 @@ public class SewerageExecutionResult {
     public void setToDate(String toDate) {
         this.toDate = toDate;
     }
-
 }

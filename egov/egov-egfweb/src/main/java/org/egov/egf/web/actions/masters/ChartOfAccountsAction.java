@@ -364,13 +364,13 @@ public class ChartOfAccountsAction extends BaseFormAction {
         final List<Accountdetailtype> rowsToBeDeleted = getAccountDetailTypeToBeDeleted(accountDetailType, accounts);
         final List<Accountdetailtype> rowsToBeAdded = getAccountDetailTypeToBeAdded(accountDetailType, accounts);
         String accountDetailTypeName = "";
-        if (accounts.getChartOfAccountDetails().isEmpty() && !accountDetailType.isEmpty() && updateOnly) {
-            if (!validAddtition(model.getGlcode())) {
-                final String message = getText("chartOfAccount.accDetail.uncancelled.bills");
-                throw new ValidationException(Arrays.asList(new ValidationError(message, message)));
-            }
-        }
-
+        
+		if (!rowsToBeDeleted.isEmpty() || (accounts.getChartOfAccountDetails().isEmpty() && !rowsToBeAdded.isEmpty())) {
+			if (!validAddtition(model.getGlcode())) {
+				final String message = getText("chartOfAccount.accDetail.uncancelled.bills");
+				throw new ValidationException(Arrays.asList(new ValidationError(message, message)));
+			}
+		}
         else if (accounts.getChartOfAccountDetails().size() == rowsToBeDeleted.size() && rowsToBeAdded.isEmpty())
             deleteAccountDetailType(rowsToBeDeleted, accounts);
         for (final Accountdetailtype entry : rowsToBeAdded) {

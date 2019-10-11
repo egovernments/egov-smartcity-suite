@@ -79,12 +79,14 @@ import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.query.Query;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +128,9 @@ public class ConnectionDetailService {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -137,7 +142,7 @@ public class ConnectionDetailService {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         if (null != waterConnectionDetails) {
-            getDueInfo(waterConnectionDetails);
+            getDueInfo(waterConnectionDetails, null);
             consumerCodes.add(waterConnectionDetails.getConnection().getConsumerCode());
             waterTaxDue.setConsumerCode(consumerCodes);
             waterTaxDue.setPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
@@ -154,7 +159,7 @@ public class ConnectionDetailService {
         return waterTaxDue;
     }
 
-    public WaterTaxDue getDueDetailsByPropertyId(final String propertyIdentifier) {
+    public WaterTaxDue getDueDetailsByPropertyId(final String propertyIdentifier, final String effectiveDate) {
         BigDecimal arrDmd = new BigDecimal(0);
         BigDecimal arrColl = new BigDecimal(0);
         BigDecimal currDmd = new BigDecimal(0);
@@ -181,7 +186,7 @@ public class ConnectionDetailService {
                             .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(),
                                     ConnectionStatus.ACTIVE);
                     if (waterConnectionDetails != null) {
-                        waterTaxDue = getDueInfo(waterConnectionDetails);
+                        waterTaxDue = getDueInfo(waterConnectionDetails, effectiveDate);
                         waterTaxDue.setPropertyID(propertyIdentifier);
                         if (connection.getConsumerCode() != null && waterConnectionDetailsService
                                 .getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0)
@@ -342,7 +347,7 @@ public class ConnectionDetailService {
     public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
             final String consumerCode, final String propertyIdentifier, final String ulbCode) {
         final WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
-        waterChargesDetails.setTotalTaxDue(getDueInfo(waterConnectionDetails).getTotalTaxDue());
+        waterChargesDetails.setTotalTaxDue(getDueInfo(waterConnectionDetails, null).getTotalTaxDue());
         waterChargesDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
         waterChargesDetails.setConsumerCode(consumerCode);
         waterChargesDetails.setPropertyID(propertyIdentifier);
@@ -358,6 +363,9 @@ public class ConnectionDetailService {
         waterChargesDetails.setUsageType(waterConnectionDetails.getUsageType().getDescription());
         waterChargesDetails.setPropertytype(waterConnectionDetails.getPropertyType().getName());
         waterChargesDetails.setConnectionStatus(waterConnectionDetails.getConnectionStatus().toString());
+        WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        if(waterRatesDetails!=null)
+        waterChargesDetails.setHalfYearlyTax(BigDecimal.valueOf(waterRatesDetails.getMonthlyRate() * 6));
         if (waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
             waterChargesDetails.setIsPrimaryConnection(true);
@@ -366,8 +374,8 @@ public class ConnectionDetailService {
         return waterChargesDetails;
     }
 
-    private WaterTaxDue getDueInfo(final WaterConnectionDetails waterConnectionDetails) {
-        final Map<String, BigDecimal> resultmap = getDemandCollMap(waterConnectionDetails);
+    private WaterTaxDue getDueInfo(final WaterConnectionDetails waterConnectionDetails, final String effectiveDate) {
+        final Map<String, BigDecimal> resultmap = getDemandCollMap(waterConnectionDetails, effectiveDate);
         final WaterTaxDue waterTaxDue = new WaterTaxDue();
         if (null != resultmap && !resultmap.isEmpty()) {
             final BigDecimal currDmd = resultmap.get(WaterTaxConstants.CURR_DMD_STR);
@@ -388,8 +396,8 @@ public class ConnectionDetailService {
         return waterTaxDue;
     }
 
-    public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+    public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails, final String effectiveDate) {
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
         Installment currFirstHalf;
@@ -401,7 +409,7 @@ public class ConnectionDetailService {
         BigDecimal arrCollection = BigDecimal.ZERO;
         final Map<String, BigDecimal> retMap = new HashMap<>(0);
         if (currDemand != null)
-            dmdCollList = connectionDemandService.getDmdCollAmtInstallmentWise(currDemand);
+            dmdCollList = connectionDemandService.getDmdCollAmtInstallmentWise(currDemand, effectiveDate);
         currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
                 .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
@@ -433,7 +441,7 @@ public class ConnectionDetailService {
 
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(
             final WaterConnectionDetails waterConnectionDetails, final String moduleName) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
         Installment currInst;
@@ -468,7 +476,7 @@ public class ConnectionDetailService {
 
     public Map<String, BigDecimal> getDemandCollMapForBill(final WaterConnectionDetails waterConnectionDetails,
             final String moduleName, final String installmentType) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         List<Object> dmdCollList = new ArrayList<>(0);
         Integer instId;
         Double balance;

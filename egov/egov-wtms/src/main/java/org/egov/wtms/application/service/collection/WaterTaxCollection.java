@@ -112,6 +112,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -166,6 +167,9 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     public WaterTaxCollection(final WaterTaxUtils waterTaxUtils) {
@@ -289,7 +293,7 @@ public class WaterTaxCollection extends TaxCollection {
                     && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                     || APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
                             connectionDemandService.getTotalDemandAmountDue(
-                                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
+                            		waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand())
                                     .compareTo(BigDecimal.ZERO) == 0)
                 waterConnectionDetails
                         .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));

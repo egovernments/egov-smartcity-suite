@@ -55,63 +55,62 @@
 <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url  value='/resources/css/or-divider.css?rnd=${app_release_no}'/>">
 <div class="row">
-    <div class="col-md-12" style="position:relative;">
-        <div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="fa fa-question" aria-hidden="true"></i></div>
-        <form:form role="form" modelAttribute="complaint" id="complaintform"
-                   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <strong><spring:message code="lbl.contact.info"/></strong>
-                    </div>
-                </div>
-                <div class="panel-body custom-form ">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
-                        <div class="col-sm-6 add-margin">
-                            <form:input class="form-control patternvalidation" path="complainant.name" id="f-name" maxlength="100" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
-                            <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
-                        <div class="col-sm-2 add-margin">
-                            <div class="input-group">
-                                <span class="input-group-addon">+91</span>
-                                <form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number" required="required"/>
-                            </div>
-                            <form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
-                        </div>
-                        <div class="col-sm-1">
-                            <label class="control-label"><spring:message code="lbl.email"/></label>
-                        </div>
-                        <div class="col-sm-3">
-                            <form:input path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
-                            <form:errors path="complainant.email" cssClass="add-margin error-msg"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.address"/></label>
-                        <div class="col-sm-6">
-                            <form:textarea path="complainant.address" id="address" placeholder="" maxlength="256" cssClass="form-control autogrow"/>
-                            <form:errors path="complainant.address" cssClass="add-margin error-msg"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <spring:message code="lbl.hdr.complaintInfo"/>
-                    </div>
-                </div>
-                <div class="panel-body custom-form ">
-                    <c:if test="${not empty complaintTypes}">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label"><spring:message code="lbl.top.grievance.types"/></label>
-                            <div class="col-sm-6 add-margin" id="topcomplaint">
-                                <c:forEach items="${complaintTypes}" var="complaintType">
-                                    <a data-id="${complaintType.id}" data-name="${complaintType.name}"
+	<div class="col-md-12" style="position:relative;">
+	<div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="fa fa-question" aria-hidden="true"></i></div>
+		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong><spring:message code="lbl.contact.info"/></strong>
+					</div>
+				</div>
+				<div class="panel-body custom-form ">
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
+						<div class="col-sm-6 add-margin">
+							<form:input  class="form-control patternvalidation" path="complainant.name" id="f-name" maxlength="100" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
+							 <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
+						<div class="col-sm-2 add-margin">
+							<div class="input-group">
+								<span class="input-group-addon">+91</span>
+								  	<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" type="tel" data-nomask="true" id="mob-no" placeholder="Mobile Number" required="required"/>
+							</div>
+							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
+						</div>
+						<div class="col-sm-1">
+							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
+						</div>
+						<div class="col-sm-3">
+							<form:input  path="complainant.email"  class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
+							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.address"/></label>
+						<div class="col-sm-6">
+							<form:textarea path="complainant.address" id="address" placeholder="" maxlength="256" cssClass="form-control autogrow" />
+							<form:errors path="complainant.address" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message code="lbl.hdr.complaintInfo"/>
+					</div>
+				</div>
+				<div class="panel-body custom-form ">
+					<c:if test="${not empty complaintTypes}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label"><spring:message code="lbl.top.grievance.types" /></label>
+							<div class="col-sm-6 add-margin" id="topcomplaint">
+								<c:forEach items="${complaintTypes}" var="complaintType">
+									<a data-id="${complaintType.id}" data-name="${complaintType.name}"
                                        onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')"
                                        href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"
                                        data-toggle="popover" title='<spring:message code="lbl.top.grievance.toggle"/>'>
@@ -299,3 +298,64 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
+<script>
+    var $inputPhone = jQuery('[data-nomask]');
+    var PHONE_REGEX = /^[0-9]+$/;
+    var currentPhone = inputPhone.val();
+    function handlePhoneChange(event) {
+        var value = inputPhone.val(); 
+        if (value.length === 0 || PHONE_REGEX.test(value)){
+            currentPhone = $inputPhone.val();
+        } else {
+            $inputPhone.val(currentPhone);
+        }
+    }
+    $inputPhone.on('change', handlePhoneChange);
+    $inputPhone.on('keyup', handlePhoneChange);
+</script>
+<style>
+.or-spacer {
+  margin: 17px auto 12px auto;
+  width: 75%;
+  position: relative;
+}
+.or-spacer .mask {
+  overflow: hidden;
+  height: 20px;
+}
+.or-spacer .mask:after {
+  content: '';
+  display: block;
+  margin: -20px auto 0;
+  width: 100%;
+  height: 21px;
+  background: -moz-linear-gradient(left, rgba(255,0,0,0) 0%, rgba(255,0,0,0) 15%, rgba(60, 60, 60, 0.65) 50%, rgba(255,0,0,0) 85%, rgba(255,0,0,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,0,0,0)), color-stop(15%,rgba(255,0,0,0)), color-stop(50%,rgba(60, 60, 60, 0.65)), color-stop(85%,rgba(255,0,0,0)), color-stop(100%,rgba(255,0,0,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, rgba(255,0,0,0) 0%,rgba(255,0,0,0) 15%,rgba(60, 60, 60, 0.65) 50%,rgba(255,0,0,0) 85%,rgba(255,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, rgba(255,0,0,0) 0%,rgba(255,0,0,0) 15%,rgba(60, 60, 60, 0.65) 50%,rgba(255,0,0,0) 85%,rgba(255,0,0,0) 100%);
+}
+.or-spacer span {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -21px;
+  left: 50%;
+  margin-left: -25px;
+  border-radius: 100%;
+  border:1px solid #999;
+  background: white;
+}
+.or-spacer span i {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 31px;
+  font-style: normal;
+  color: #999;
+}
+</style>

@@ -92,6 +92,12 @@
             <one-to-many class="org.egov.demand.model.EgdmCollectedReceipt"/>
         </set>
 
+		<set name="demandDetailVariation" inverse="true" cascade="all" table="EG_DEMAND_DETAIL_VARIATION">
+			<key>
+				<column name="DEMAND_DETAIL" not-null="true"/>
+			</key>
+			<one-to-many class="org.egov.demand.model.DemandDetailVariation" />
+		</set>
         <property name="amtRebate" type="java.math.BigDecimal">
             <column name="AMT_REBATE"/>
         </property>
@@ -100,4 +106,3 @@
                      insert="false" update="false"/>
     </class>
 </hibernate-mapping>
-

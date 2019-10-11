@@ -64,8 +64,12 @@ public class VoucherRequest {
     private Long originalVhId;
     private Long refVhId;
     private String cgvn;
+    @Deprecated
     private Long moduleId;
-    private Long department;
+    private String module;
+    @Deprecated
+    private Long departmentId;
+    private String department;
     private String source;
     private SchemeContract scheme;
     private SchemeContract subScheme;
@@ -177,14 +181,6 @@ public class VoucherRequest {
         this.ledgers = ledgers;
     }
 
-    public Long getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Long department) {
-        this.department = department;
-    }
-
     public Long getId() {
         return id;
     }
@@ -232,5 +228,30 @@ public class VoucherRequest {
     public void setSubScheme(final SchemeContract subScheme) {
         this.subScheme = subScheme;
     }
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public Long getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(Long departmentId) {
+		this.departmentId = departmentId;
+	}
+
 
 }

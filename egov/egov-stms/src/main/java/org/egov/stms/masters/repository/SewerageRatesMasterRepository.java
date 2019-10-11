@@ -66,7 +66,7 @@ public interface SewerageRatesMasterRepository extends JpaRepository<SewerageRat
 
     SewerageRatesMaster findByPropertyTypeAndActive(PropertyType propertyType, boolean active);
 
-    @Query("select srm.amount from SewerageRatesMasterDetails srm where srm.sewerageratemaster.propertyType =:propertyType and srm.noOfClosets =:noofclosets and srm.sewerageratemaster.active = true and srm.sewerageratemaster.fromDate <=current_date and (srm.sewerageratemaster.toDate >= current_date or srm.sewerageratemaster.toDate is null)")
+    @Query("select srm.amount from SewerageRatesMasterDetails srm where srm.sewerageRateMaster.propertyType =:propertyType and srm.noOfClosets =:noofclosets and srm.sewerageRateMaster.active = true and srm.sewerageRateMaster.fromDate <=current_date and (srm.sewerageRateMaster.toDate >= current_date or srm.sewerageRateMaster.toDate is null)")
     Double getSewerageMonthlyRatesBytNoOfClosetsAndPropertytype(@Param("noofclosets") Integer noofclosets,
                                                                 @Param("propertyType") PropertyType propertyType);
 

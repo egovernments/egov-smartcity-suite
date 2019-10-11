@@ -55,15 +55,36 @@ import com.exilant.exility.common.TaskFailedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.*;
-import org.egov.commons.dao.*;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FiscalPeriodHibernateDAO;
+import org.egov.commons.dao.FunctionDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.dao.SchemeHibernateDAO;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
+import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.commons.exception.TooManyValuesException;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.*;
-import org.egov.infra.admin.master.service.*;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
@@ -105,8 +126,13 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.TemporalType;
 
 /**
@@ -1694,6 +1720,10 @@ public class CreateVoucher {
                 cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(
                         VoucherConstant.MODULEID).toString()));
                 cVoucherHeader.setIsConfirmed(Integer.valueOf(1));
+			} else if(headerdetails.containsKey(VoucherConstant.MODULE) && headerdetails.get(VoucherConstant.MODULE) != null){
+				String moduleCode =  (String) headerdetails.get(VoucherConstant.MODULE);
+				List<BigInteger> moduleId = getMouldeIdByCode(moduleCode);
+				cVoucherHeader.setModuleId(moduleId.get(0).intValue());	
             } else {
                 // Fix Me
                 /*
@@ -3024,4 +3054,12 @@ public class CreateVoucher {
         Cheque, Cash, Bank;
     }
 
+    // we cannot provide enum for all names so we need to find a way
+    // or code it for all standard type like CJV,SJV,PJV,EJV
+    private List<BigInteger> getMouldeIdByCode(final String moduleCode) {
+            final Query qry = persistenceService.getSession().createSQLQuery("select id from eg_modules where code =:code");
+            qry.setParameter("code", moduleCode);
+            List<BigInteger> result = qry.list();
+    return result;
+    }
 }

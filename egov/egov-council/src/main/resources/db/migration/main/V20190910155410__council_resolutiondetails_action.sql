@@ -1,0 +1,2 @@
+INSERT into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'CouncilResolutionDetails','/councilresolutiondetails',(select id from eg_module where name='Council MOM' and parentmodule=(select id from eg_module where name='Council Management Transaction')),5,'CouncilResolutionDetails',false,'council',(select id from eg_module where name='Council Management' and parentmodule is null));
+

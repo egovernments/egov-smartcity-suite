@@ -140,10 +140,10 @@ public class SeweragePaginationService {
     private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap,
             final SewerageConnSearchRequest searchRequest) {
         for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-            if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && searchRequest.getLegacy() == null)
+            if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && (searchRequest.isLegacy() == null || !searchRequest.isLegacy()))
                 actionMap.remove(entry.getKey(), entry.getValue());
-            else if ((searchRequest.getLegacy() != null && searchRequest.getLegacy().equals(Boolean.TRUE)
-                    && entry.getValue().equals(COLLECTDONATIONCHARHGES)) || !entry.getValue().equals(COLLECTDONATIONCHARHGES))
+            else if ((searchRequest.isLegacy() != null && searchRequest.isLegacy() && entry.getValue().equals(COLLECTDONATIONCHARHGES))
+                    || !entry.getValue().equals(COLLECTDONATIONCHARHGES))
                 actionMap.put(entry.getKey(), entry.getValue());
     }
 

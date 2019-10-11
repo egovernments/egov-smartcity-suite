@@ -88,7 +88,7 @@ public class ApplicationProcessTimeController {
         final ApplicationProcessTime applicationProcessTime = new ApplicationProcessTime();
         model.addAttribute("applicationProcessTime", applicationProcessTime);
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
         model.addAttribute("reqAttr", "false");
         model.addAttribute("mode", "create");
         return "application-process-time-master";
@@ -100,7 +100,7 @@ public class ApplicationProcessTimeController {
             final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-            model.addAttribute("applicationTypes", applicationTypeService.findAll());
+            model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
             return "application-process-time-master";
         } else
 
@@ -131,7 +131,7 @@ public class ApplicationProcessTimeController {
                 .findOne(Long.parseLong(applicationProcessId));
         model.addAttribute("applicationProcessTime", applicationProcessTime);
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
         model.addAttribute("reqAttr", "true");
         return "application-process-time-master";
     }
@@ -142,7 +142,7 @@ public class ApplicationProcessTimeController {
             final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long applicationProcessId) {
         if (errors.hasErrors()) {
             model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-            model.addAttribute("applicationTypes", applicationTypeService.findAll());
+            model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
             return "application-process-time-master";
         } else
             applicationProcessTimeService.updateApplicationProcessTime(applicationProcessTime);

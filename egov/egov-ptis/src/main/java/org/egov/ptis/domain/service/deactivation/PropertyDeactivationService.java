@@ -48,6 +48,14 @@
 
 package org.egov.ptis.domain.service.deactivation;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_DEACT_RSN;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -72,8 +80,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_DEACT_RSN;
 @Transactional(readOnly = true)
 public class PropertyDeactivationService {
 
-    private static final String ACTIVE = "ACTIVE";
-
     @Autowired
     private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
 
@@ -90,9 +96,8 @@ public class PropertyDeactivationService {
         List<String> rsnList = new ArrayList<>();
         List<PropertyMutationMaster> reasons = propertyMutationMasterHibDAO
                 .getAllPropertyMutationMastersByType(PROP_DEACT_RSN);
-        for (PropertyMutationMaster rsn : reasons) {
+        for (PropertyMutationMaster rsn : reasons)
             rsnList.add(rsn.getMutationDesc());
-        }
         return rsnList;
     }
 
@@ -114,19 +119,6 @@ public class PropertyDeactivationService {
     private BigDecimal getCurrentPTTaxDue(BasicProperty basicproperty) {
         return propertyService
                 .getTotalPropertyTaxDueIncludingPenalty(basicproperty);
-    }
-
-    public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
-        boolean connStatus = false;
-        for (Map<String, Object> status : wcDetails) {
-            for (Object state : status.values()) {
-                if (ACTIVE.equalsIgnoreCase(state.toString())) {
-                    connStatus = true;
-                }
-            }
-        }
-        return connStatus;
-
     }
 
     @Transactional

@@ -138,9 +138,9 @@ function submit() {
 							data : 'shscnumber',
 							"render" : function(data, type,
 									row, meta) {
-								return '<a onclick="openPopup(\'/stms/existing/sewerage/view/'
+								return '<a onclick="openPopup(\'/stms/application/view/'
 										+ row.applicationnumber +'/'
-										+ row.shscnumber
+										+ row.propertyIdentifier
 										+ '\')" href="javascript:void(0);">'+ data + '</a>';
 							}
 						},

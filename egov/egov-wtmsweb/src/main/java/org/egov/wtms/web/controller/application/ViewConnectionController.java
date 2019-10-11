@@ -47,12 +47,15 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.EstimationNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.service.WaterEstimationChargesPaymentService;
@@ -86,6 +89,8 @@ public class ViewConnectionController {
     private SecurityUtils securityUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EstimationNoticeService estimationNoticeService;
 
     @GetMapping(value = "/view/{applicationNumber}")
     public String view(@PathVariable String applicationNumber, Model model) {
@@ -97,6 +102,10 @@ public class ViewConnectionController {
                     ConnectionStatus.CLOSED);
         if (connectionDetails == null)
             connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
+		
+		EstimationNotice estimationNotice = null;
+		if (connectionDetails != null)
+			estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(connectionDetails));
         model.addAttribute("waterConnectionDetails", connectionDetails);
@@ -109,6 +118,7 @@ public class ViewConnectionController {
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         BigDecimal estimationAmount = estimationChargesPaymentService.getEstimationDueAmount(connectionDetails);
         model.addAttribute("estimationAmount", estimationAmount.signum() >= 0 ? estimationAmount : BigDecimal.ZERO);
+        model.addAttribute("estimationNumber", estimationNotice != null? estimationNotice.getEstimationNumber() : StringUtils.EMPTY);
         model.addAttribute("mode", "search");
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(connectionDetails));
         model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(getUserId() == null

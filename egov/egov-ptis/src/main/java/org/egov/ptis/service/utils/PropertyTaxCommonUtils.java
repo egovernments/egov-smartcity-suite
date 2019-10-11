@@ -48,6 +48,7 @@
 package org.egov.ptis.service.utils;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
+import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_MAUD_INTEGRATION_REQUIRED;
@@ -59,6 +60,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COUNCIL_RESOLUTION_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -81,7 +83,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_WATER_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.INPROGRESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.LCMS_LEGALCASE_DETAILS_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
@@ -98,6 +102,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
@@ -106,17 +111,23 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STMS_TAXDUE_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -124,14 +135,19 @@ import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.DemandDetailVariation;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -147,8 +163,10 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -156,11 +174,13 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -171,10 +191,20 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class PropertyTaxCommonUtils {
+    private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -205,15 +235,18 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private DepartmentService departmentService;
-        
+
     @Autowired
     private NotificationService notificationService;
-    
+
     @Autowired
     private PropertyMutationDAO propertyMutationDAO;
     
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private SimpleRestClient simpleRestClient;
 
     /**
      * Gives the first half of the current financial year
@@ -319,7 +352,7 @@ public class PropertyTaxCommonUtils {
                 APPCONFIG_DIGITAL_SIGNATURE);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
-    
+
     public boolean isMuadIntegrationRequired() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_MAUD_INTEGRATION_REQUIRED);
@@ -436,8 +469,22 @@ public class PropertyTaxCommonUtils {
         return wfInitiatorAssignment;
     }
 
+    public Assignment getWorkflowInitiatorAsRO(final Long userId) {
+        Assignment wfInitiatorAssignment = null;
+        if (userId != null) {
+            final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
+            for (final Assignment assignment : assignmentList)
+                if (assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_OFFICER_DESGN)
+                        && assignment.getEmployee().isActive()) {
+                    wfInitiatorAssignment = assignment;
+                    break;
+                }
+        }
+        return wfInitiatorAssignment;
+    }
+
     public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
-                                        final PropertyTypeMaster propTypeMstr) {
+            final PropertyTypeMaster propTypeMstr) {
         final Installment currentInstall = getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -472,10 +519,10 @@ public class PropertyTaxCommonUtils {
     }
 
     private String preparResponeString(final PropertyTypeMaster propTypeMstr, final BigDecimal annualValue,
-                                       final BigDecimal totalPropertyTax,
-                                       final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
-                                       final BigDecimal libCess,
-                                       final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
+            final BigDecimal totalPropertyTax,
+            final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
+            final BigDecimal libCess,
+            final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
         final StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
@@ -504,14 +551,14 @@ public class PropertyTaxCommonUtils {
      */
     public String getDateWithSufix(final int dayOfMonth) {
         switch (dayOfMonth < 20 ? dayOfMonth : dayOfMonth % 10) {
-            case 1:
-                return dayOfMonth + "st";
-            case 2:
-                return dayOfMonth + "nd";
-            case 3:
-                return dayOfMonth + "rd";
-            default:
-                return dayOfMonth + "th";
+        case 1:
+            return dayOfMonth + "st";
+        case 2:
+            return dayOfMonth + "nd";
+        case 3:
+            return dayOfMonth + "rd";
+        default:
+            return dayOfMonth + "th";
         }
     }
 
@@ -665,13 +712,12 @@ public class PropertyTaxCommonUtils {
 
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
-        if (userId != null && userId.intValue() != 0) {
-            for(Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
+        if (userId != null && userId.intValue() != 0)
+            for (Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
                 positionIds.add(position.getId());
-        }
         return positionIds;
     }
-    
+
     public void buildMailAndSMS(final Property property) {
         String transactionType;
         String modifyReason = property.getPropertyModifyReason();
@@ -752,18 +798,20 @@ public class PropertyTaxCommonUtils {
             noticeType = NOTICE_TYPE_EXEMPTION;
         else if (workFlowAction.equalsIgnoreCase(NATURE_VACANCY_REMISSION))
             noticeType = NOTICE_TYPE_VRPROCEEDINGS;
-		PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
-				.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())
-				.getSingleResult();
+	else if (workFlowAction.equalsIgnoreCase(WRITE_OFF))
+            noticeType = NOTICE_TYPE_WRITEOFFROCEEDINGS;
+	PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+		.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())
+		.getSingleResult();
         return notice.getNoticeNo();
     }
 
     @SuppressWarnings("unchecked")
-	public List<PtNotice> getEndorsementNotices(final String applicationNo) {
-		return (List<PtNotice>) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
-				.setParameter("applicationNumber", applicationNo)
-				.setParameter("noticeType", "Endorsement Notice".toUpperCase()).getResultList();
-	}
+    public List<PtNotice> getEndorsementNotices(final String applicationNo) {
+	return (List<PtNotice>) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+		.setParameter("applicationNumber", applicationNo)
+		.setParameter("noticeType", "Endorsement Notice".toUpperCase()).getResultList();
+    }
 
     public Boolean getEndorsementGenerate(final Long userId, final State state) {
         String loggedInUserDesignation;
@@ -778,22 +826,22 @@ public class PropertyTaxCommonUtils {
 
     private Boolean isValidDesignationForEndorsement(String loggedInUserDesignation, State state) {
         return loggedInUserDesignation.equalsIgnoreCase(REVENUE_INSPECTOR_DESGN) ||
-                ((loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
+                (loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
                         loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT))
-                        && (state.getOwnerPosition() != null));
+                        && state.getOwnerPosition() != null;
     }
 
     private Boolean isPrintPendingAction(State state) {
-        return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
-                !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
+        return !state.getNextAction().equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
+                !state.getNextAction().equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
     }
-    
+
     public boolean isEndorsementEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PropertyTaxConstants.APPCONFIG_ENDORSEMENT);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue());
     }
-    
+
     /**
      * Returns whether the logged in user is the current owner of the application
      *
@@ -820,7 +868,7 @@ public class PropertyTaxCommonUtils {
         } else
             return Boolean.FALSE;
     }
-    
+
     public List<String> validationForInactiveProperty(BasicProperty basicProperty) {
         String noOfDays;
         String reason = null;
@@ -835,14 +883,14 @@ public class PropertyTaxCommonUtils {
                 reason = "New Assessment";
             else if ("ADD_OR_ALTER".equals(basicProperty.getProperty().getPropertyModifyReason()))
                 reason = "Addition/Alteration";
-            else if("BIFURCATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
-            	reason = "Bifurcation";
+            else if ("BIFURCATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
+                reason = "Bifurcation";
             list.add(reason);
             list.add(DateUtils.getFormattedDate(basicProperty.getModifiedDate(), "dd/MM/yyyy"));
         }
         return list;
     }
-    
+
     public SurroundingsAudit setSurroundingDetails(final BasicProperty basicProperty) {
         SurroundingsAudit oldSurroundings = new SurroundingsAudit();
         PropertyID propertyId = basicProperty.getPropertyID();
@@ -853,10 +901,15 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
     }
-    
 
     public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
         return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
+    }
+
+    public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
+        final Query query = getSession().createQuery("from PropertyStatusValues where basicProperty = :basicPropertyId");
+        query.setParameter("basicPropertyId", basicProperty);
+        return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
     }
 
     /**
@@ -865,7 +918,7 @@ public class PropertyTaxCommonUtils {
      * @return BigDecimal
      */
     public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
-        
+
         return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
                 .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
                 .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
@@ -873,7 +926,6 @@ public class PropertyTaxCommonUtils {
                 .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
 
     }
-    
 
     /**
      * Returns zero if value is null otherwise value
@@ -905,5 +957,155 @@ public class PropertyTaxCommonUtils {
                     break;
             }
         return underWorkFlow;
+    }
+
+    /**
+     * Returns Sewerage connection details of an assessment
+     *
+     * @param assessmentNo
+     * @param request
+     * @return
+     */
+    public List<Map<String, Object>> getSewConnDetails(final String assessmentNo, final HttpServletRequest request) {
+        final List<Map<String, Object>> sewerageConnDtls = new ArrayList<>();
+        final String url = request.getRequestURL().toString();
+        final String uri = request.getRequestURI();
+        final String host = url.substring(0, url.indexOf(uri));
+        final String stmsRestURL = String.format(STMS_TAXDUE_RESTURL, host, assessmentNo);
+        final String dtls = simpleRestClient.getRESTResponse(stmsRestURL);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj = new JSONObject(dtls);
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        try {
+            final Map<String, Object> newMap = new HashMap<>();
+            for (String key : jsonObj.keySet())
+                if ("consumerCode".equals(key)) {
+                    final Map<String, Object> ccMap = new HashMap<>();
+                    if (!jsonObj.isNull(key)) {
+                        JSONObject ccObject = jsonObj.getJSONObject(key);
+                        ccObject.keySet().forEach(e -> {
+                            ccMap.put(e, ccObject.getString(e));
+                        });
+                        newMap.put(key, ccMap);
+                    }
+                } else if (!"propertyID".equals(key))
+                    newMap.put(key, jsonObj.get(key).toString().toLowerCase());
+            sewerageConnDtls.add(newMap);
+        } catch (final JSONException e) {
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
+        return sewerageConnDtls;
+    }
+
+    public List<Map<String, String>> getLegalCaseDetails(final String caseNo, final HttpServletRequest request) {
+        final List<Map<String, String>> legalcaseDtls = new ArrayList<>();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = String.format(LCMS_LEGALCASE_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        URI targetUrl = UriComponentsBuilder.fromUriString(url)
+                .queryParam("caseNumber", caseNo)
+                .build()
+                .encode()
+                .toUri();
+
+        Cookie[] cookies = request.getCookies();
+        String cookie = "";
+
+        for (Cookie cookie2 : cookies)
+            cookie = cookie + cookie2.getName() + "=" + cookie2.getValue() + ";";
+
+        final List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.ALL);
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.set(HttpHeaders.COOKIE, cookie);
+        requestHeaders.setPragma("no-cache");
+        requestHeaders.setConnection("keep-alive");
+        requestHeaders.setCacheControl("no-cache");
+        requestHeaders.setAccept(mediaTypes);
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        final HttpEntity requestEntity = new HttpEntity<>(requestHeaders);
+
+        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
+                LinkedHashMap.class);
+
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(result.getBody());
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        try {
+            final Map<String, String> newMap = new HashMap<>();
+            for (String key : jsonObj.keySet())
+                newMap.put(key, jsonObj.get(key).toString());
+            legalcaseDtls.add(newMap);
+        } catch (final JSONException e) {
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
+        return legalcaseDtls;
+    }
+
+    public Boolean validateEffectiveDate(final List<Floor> floorList) {
+        Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
+        return floorList.stream()
+                .filter(floor -> floor != null)
+                .filter(floor -> floor.getOccupancyDate() != null)
+                .allMatch(floor -> floor.getOccupancyDate().equals(firstFloorEffectiveDate));
+
+    }
+
+    public List<Map<String, String>> getCouncilDetails(final String resolutionNo, final String resolutionType,
+            HttpServletRequest request) {
+        final List<Map<String, String>> councilDetails = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        try {
+            builder = builder.append("resolutionNo=").append(URLEncoder.encode(resolutionNo, "UTF-8")).append("&committeeType=")
+                    .append(URLEncoder.encode(resolutionType, "UTF-8"));
+        } catch (UnsupportedEncodingException e2) {
+            LOGGER.error("Error while encoding the parameters " + e2);
+        }
+        String urlvalue = builder.toString();
+        String resturl = null;
+        resturl = String.format(COUNCIL_RESOLUTION_RESTURL, WebUtils.extractRequestDomainURL(request, false), urlvalue);
+        String dtls = simpleRestClient.getRESTResponse(resturl);
+        JSONObject jsonObject = new JSONObject(dtls);
+        try {
+
+            final Map<String, String> newMap = new HashMap<>();
+            for (String key : jsonObject.keySet())
+                newMap.put(key, jsonObject.get(key).toString());
+            councilDetails.add(newMap);
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        return councilDetails;
+    }
+
+    public BigDecimal getTotalDemandVariationAmount(EgDemandDetails demandDetail) {
+
+        BigDecimal totalDemandVariationAmt = BigDecimal.ZERO;
+        for (DemandDetailVariation demandDeatilVariation : demandDetail.getDemandDetailVariation())
+            totalDemandVariationAmt = totalDemandVariationAmt.add(demandDeatilVariation.getDramount());
+
+        return demandDetail.getAmount().subtract(totalDemandVariationAmt);
+
+    }
+
+    public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
+        boolean connStatus = false;
+        for (Map<String, Object> status : wcDetails)
+            for (Object state : status.values())
+                if (ACTIVE.equalsIgnoreCase(state.toString()) || INPROGRESS.equalsIgnoreCase(state.toString()))
+                    connStatus = true;
+        return connStatus;
+
     }
 }

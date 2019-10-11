@@ -124,6 +124,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "arrearTotal", "title": "ArrearTotal"},
 						  { "data" : "arrearColl", "title": "Arrear Collection"},
 						  { "data" : "currentColl", "title": "Current Collection"},
+						  { "data" : "waivedOffPT", "title": "Penalty Waiver"},
 						  { "data" : "totalColl", "title": "Total Collection"},
 						  ],
 						  "aaSorting": [] 

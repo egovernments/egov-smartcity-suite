@@ -420,9 +420,9 @@ function onChangeServiceClass(obj)
 	      <td width="24%" class="bluebox">
 	      <div class="yui-skin-sam"><s:textfield id="receiptNumber" type="text" name="receiptNumber"/></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
-	   
-	    </tr>	    
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" 
+	      id="user" cssClass="selectwk" list="userMap" listKey="key" listValue="value" value="%{userId}" /> </td>
+		</tr>
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.status"/></td>

@@ -128,7 +128,9 @@
   					<br/>
   					<div class="form-group">
   						<div class="text-center">
+  						<c:if test="${waterConnectionDetails.ulbMaterial==null}">
   							<button type="submit" id="submit" class="btn btn-primary" value="Save"><spring:message code="lbl.save.button"/></button>
+  						</c:if>
   							<a href="javascript:void(0)" onclick="self.close()" class="btn btn-default">
   								<spring:message code="lbl.close"/>
   							</a>

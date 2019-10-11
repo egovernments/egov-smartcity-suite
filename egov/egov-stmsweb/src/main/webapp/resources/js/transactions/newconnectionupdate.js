@@ -288,6 +288,85 @@ $('#noOfClosetsNonResidential').blur(function(){
 	
 });
 
+$("form").submit(function() {
+    if($('form').valid())	{
+        $('.loader-class').modal('show', {backdrop: 'static'});
+    }
+    else
+        $('.loader-class').modal('hide');
+});
+
+$(".btnWorkflow").click(function() {
+    var action = document.getElementById("2").value;
+    var status=$('#statuscode').val();
+    if(action != 'Reject' && (status=='INSPECTIONFEEPAID' || status=='CREATED')){
+        if(!validateInspectionDetailsOnSubmit()){
+            return false;
+        }
+
+        if(!validateEstimationDetailsOnSubmit()){
+            return false;
+        }
+    }
+
+    if(action=='Approve'){
+        $('#approvalDepartment').removeAttr('required');
+        $('#approvalDesignation').removeAttr('required');
+        $('#approvalPosition').removeAttr('required');
+    }
+
+    if(action == 'Reject' && (status=='INITIALAPPROVED' || status=='INSPECTIONFEEPAID' || status=='CREATED')) {
+        $('#Reject').attr('formnovalidate','true');
+        bootbox.confirm("Do you really want to Reject the application?", function(result){
+            if(result){
+                var approvalComent=$('#approvalComent').val();
+                if(approvalComent == "") {
+                    bootbox.alert("Please enter rejection comments!");
+                    $('#approvalComent').focus();
+                    return true;
+                }
+                else if ($('form').valid()){
+                    validateWorkFlowApprover(action);
+                    document.forms[0].submit();
+                }
+            }
+
+        });
+        return false;
+    }
+
+    if(action == 'Cancel') {
+        $('#Cancel').attr('formnovalidate','true');
+        bootbox.confirm("Do you really want to Cancel the application?", function(result){
+            if(result){
+                var approvalComent=$('#approvalComent').val();
+                if(approvalComent == "") {
+                    bootbox.alert("Please enter cancellation comments!");
+                    return true;
+                }
+                else {
+                    validateWorkFlowApprover(action);
+                    document.forms[0].submit();
+                }
+            }
+
+        });
+        return false;
+    }
+
+    if((action == 'Generate Estimation Notice')) {
+        document.forms[0].submit();
+    }
+    else if(status=='WORKORDERGENERATED') {
+        if(!validateTapExecutionDate())
+            return false;
+    }
+
+    validateWorkFlowApprover(action);
+    if($('form').valid())
+        document.forms[0].submit();
+    return;
+});
 
 function validateClosets(propertyType,noOfClosets,flag)
 {

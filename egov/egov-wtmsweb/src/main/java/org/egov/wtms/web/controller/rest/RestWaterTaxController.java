@@ -115,9 +115,16 @@ public class RestWaterTaxController {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDetailService.getDueDetailsByPropertyId(assessmentNumber);
-
+        return connectionDetailService.getDueDetailsByPropertyId(assessmentNumber, null);
     }
+    
+	@RequestMapping(value = {
+			"rest/watertax/due/byptnoanddate/{assessmentNumber},{effectiveDate}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+	public WaterTaxDue getWaterTaxDueByPropertyIdAndDate(@PathVariable final String assessmentNumber,
+			@PathVariable final String effectiveDate)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		return connectionDetailService.getDueDetailsByPropertyId(assessmentNumber, effectiveDate);
+	}
 
     @RequestMapping(value = {
             "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)

@@ -73,6 +73,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,6 +93,8 @@ public class EditDemandForDataEntryController {
     private final ConnectionDemandService connectionDemandService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     public EditDemandForDataEntryController(final WaterConnectionDetailsRepository waterConnectionDetailsRepository,
@@ -144,7 +147,7 @@ public class EditDemandForDataEntryController {
                         .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
                 if (demandReasonObj != null) {
                     EgDemandDetails demanddet = null;
-                    if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+                    if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                         demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
                     if (demanddet != null)
                         dmdDtl = createDemandDetailBean(installObj, demandReasonObj.getEgDemandReasonMaster().getCode(),
@@ -176,7 +179,7 @@ public class EditDemandForDataEntryController {
     private EgDemandDetails getDemandDetailsExist(final WaterConnectionDetails waterConnectionDetails,
             final EgDemandReason demandReasonObj) {
         EgDemandDetails demandDet = null;
-        for (final EgDemandDetails dd : waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()
+        for (final EgDemandDetails dd : waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand()
                 .getEgDemandDetails())
             if (dd.getEgDemandReason().equals(demandReasonObj)) {
                 demandDet = dd;

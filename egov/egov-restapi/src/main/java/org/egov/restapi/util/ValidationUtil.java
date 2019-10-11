@@ -72,6 +72,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -106,6 +107,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 @Service
 public class ValidationUtil {
     private static final String NO_APPROVAL = "No Approval";
@@ -133,10 +137,13 @@ public class ValidationUtil {
 
     @Autowired
     private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
-    
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final Pattern DATE_PATTERN = Pattern.compile("([0-3][0-9])-((0[0-9])|(1[0-2]))-(\\d\\d\\d\\d)");
+
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PINCODE_PATTERN = "^[1-9][0-9]{5}$";
@@ -144,9 +151,13 @@ public class ValidationUtil {
     private static final String CAMEL_CASE_PATTERN = "([A-Z]+[a-z]+\\w+)+";
     private static final String DIGITS_FLOAT_INT_DBL = "[-+]?[0-9]*\\.?[0-9]+";
 
+    static {
+        DATE_FORMAT.setLenient(false);
+    }
+
     /**
      * Validates Property Transfer request
-     * 
+     *
      * @param propertyTransferDetails
      * @return
      */
@@ -459,7 +470,7 @@ public class ValidationUtil {
                         final BasicProperty basicProperty = basicPropertyDAO
                                 .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
                         zoneNo = basicProperty.getPropertyID().getZone().getBoundaryNum().toString();
-                        if(!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
+                        if (!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
                                 REVENUE_HIERARCHY_TYPE)) {
                             errorDetails.setErrorCode(INACTIVE_ZONE_CODE);
                             errorDetails.setErrorMessage(INACTIVE_ZONE_REQ_MSG);
@@ -607,8 +618,8 @@ public class ValidationUtil {
                     }
             }
         }
-        
-        if(electionWard != null){
+
+        if (electionWard != null) {
             PropertyID propertyID = new PropertyID();
             propertyID.setElectionBoundary(electionWard);
             PropertyImpl property = new PropertyImpl();
@@ -622,20 +633,55 @@ public class ValidationUtil {
         return errorDetails;
     }
 
-    private ErrorDetails validateAssignment(PropertyImpl property){
+    private ErrorDetails validateAssignment(PropertyImpl property) {
         ErrorDetails errorDetails = new ErrorDetails();
         PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         Assignment assignment = propertyExternalService.getAssignment(property, propService);
-        if(assignment == null){
+        if (assignment == null) {
             errorDetails.setErrorCode(ASSIGNMENT_NULL_ERROR_CODE);
             errorDetails.setErrorMessage(ASSIGNMENT_NULL_ERROR_MSG);
         }
         return errorDetails;
-        
+
     }
+
+    /*
+     * @param errorList Appends ValidationError to errorList
+     */
+    public void validateRequiredFields(final List<ValidationError> errorList, final JsonElement object, final String... keys) {
+        if (!object.isJsonObject()) {
+            errorList.add(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Expected a Object."));
+            return;
+        }
+        JsonObject jsonObject = object.getAsJsonObject();
+        for (final String key : keys)
+            if (jsonObject.has(key)) {
+                JsonElement valueElement = jsonObject.get(key);
+                if (valueElement.isJsonNull() || StringUtils.isEmpty(valueElement.getAsString()))
+                    errorList.add(new ValidationError("NO_NULL_KEY", "Key \"" + key + "\" must not be null or blank"));
+            } else
+                errorList.add(new ValidationError("MISSING_KEY", "Required \"" + key + "\""));
+    }
+
+    /**
+     * Validate using regex and parse the date
+     * @param dateInString
+     * @return Date
+     * @throws ParseException
+     */
     public Date convertStringToDate(final String dateInString) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        return sdf.parse(dateInString);
+
+        Matcher matcher = DATE_PATTERN.matcher(dateInString);
+        if (!matcher.matches())
+            throw new ParseException("Invalid date", 0);
+        return DATE_FORMAT.parse(dateInString);
+    }
+
+    /**
+     * Convert date to string in dd-MM-yyyy format
+     */
+    public String convertDateToString(final Date date) {
+        return DATE_FORMAT.format(date);
     }
 
     /**
@@ -1064,7 +1110,7 @@ public class ValidationUtil {
             PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
             String errorMessage = propService.validationForBifurcation(null, bp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
-            if (StringUtils.isNotBlank(errorMessage)){
+            if (StringUtils.isNotBlank(errorMessage)) {
                 errorDetails.setErrorCode(BIFURCATION_ERROR_CODE);
                 errorDetails.setErrorMessage(BIFURCATION_ERROR_MSG);
                 return errorDetails;
@@ -1266,21 +1312,21 @@ public class ValidationUtil {
         }
         return errorDetails;
     }
-    
-    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo){
-    	ErrorDetails errorDetails = new ErrorDetails();
-    	Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
-    	if(property == null){
-    		errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
+
+    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
+        if (property == null) {
+            errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
             errorDetails.setErrorMessage(APPLICATION_NO_INVALID_MSG);
             return errorDetails;
-    	}
-    	if(documentDetail.getPhotoFile() == null){
-    		errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
+        }
+        if (documentDetail.getPhotoFile() == null) {
+            errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
             errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_REQ_MSG);
             return errorDetails;
-    	}
-    	return errorDetails;
+        }
+        return errorDetails;
     }
 
 }

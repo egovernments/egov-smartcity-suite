@@ -166,7 +166,7 @@
 						<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="bluebox"><s:textfield id="name" name="name"
 								value="%{subScheme.name}" cssStyle="width: 250px"
-								onblur="checkuniquenessname();" /></td>
+								onblur="checkuniquenessname();" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()" /></td>
 						<egov:uniquecheck id="uniquename" name="uniquename"
 							fieldtoreset="name" fields="['Value']"
 							url='masters/subScheme-nameUniqueCheck.action' />
@@ -178,7 +178,8 @@
 							class="mandatory1"> *</span></td>
 						<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="greybox"><s:textfield id="code" name="code"
-								value="%{subScheme.code}" onblur="checkuniquenesscode();" /></td>
+								value="%{subScheme.code}" onblur="checkuniquenesscode();" onkeypress="return replaceSpecialChar(event)"
+								onkeyup="isSpecialCharCode()"/></td>
 						<egov:uniquecheck id="codeuniquecode" name="codeuniquecode"
 							fieldtoreset="code" fields="['Value']"
 							url='masters/subScheme-codeUniqueCheck.action' />
@@ -350,6 +351,21 @@
 					document.getElementById('govtAdminSanctionNumber').value = "";
 					document.getElementById('govtAdminSanctionDate').value = "";
 				}
+				function replaceSpecialChar(e) {
+			        var k;
+			        document.all ? k = e.keyCode : k = e.which;
+			        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+			    }
+				function isSpecialChar(){
+			        var valueEntered = document.getElementById('name').value;
+			        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+			        document.getElementById('name').value = replacedValue;
+			    }
+				function isSpecialCharCode(){
+			        var valueEntered = document.getElementById('code').value;
+			        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+			        document.getElementById('code').value = replacedValue;
+			    }
 			</script>
 </body>
 </html>

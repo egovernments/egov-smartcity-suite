@@ -62,6 +62,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,6 +101,7 @@ public class FinancialUtil {
     private static final String VOUCHERTYPE = "Journal Voucher";
 
     private static final String URL_FOR_DCB = "/ptis/view/viewDCBProperty-displayPropInfo.action?propertyId=";
+    private static final String AMOUNT_TYPE = "amountType";
 
     @Autowired
     private ModuleService moduleDao;
@@ -127,7 +130,6 @@ public class FinancialUtil {
 
         LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amountsMap ==>" + amountsMap + "actionName==>"
                 + transaction);
-        boolean demandIncreased = (boolean) amountsMap.get("demandIncreased").get("isIncreased");
 
         HashMap<String, Object> headerdetails = createHeaderDetails(indexNum, transaction);
         List<HashMap<String, Object>> accountDetList = new ArrayList<>();
@@ -135,24 +137,22 @@ public class FinancialUtil {
         try {
             
             for(Map.Entry<String, Map<String, Object>> amounts : amountsMap.entrySet()){
-                if(!"demandIncreased".equalsIgnoreCase(amounts.getKey())){
                     if(CURRENT_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey()) 
                             || ARREAR_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey())){
-                        if(demandIncreased)
+                        if(amounts.getValue().get(AMOUNT_TYPE).equals(VoucherConstant.DEBITAMOUNT))
                             accountDetList.add(createAccDetailmap(amounts.getKey(),
-                                    ((BigDecimal)amounts.getValue().get(AMOUNT)).abs(), BigDecimal.ZERO));
+                                    ((BigDecimal)amounts.getValue().get(AMOUNT)).abs(), BigDecimal.ZERO)); // Debit
                         else
                             accountDetList.add(createAccDetailmap(amounts.getKey(),
-                                    BigDecimal.ZERO, ((BigDecimal)amounts.getValue().get(AMOUNT)).abs()));
+                                    BigDecimal.ZERO, ((BigDecimal)amounts.getValue().get(AMOUNT)).abs())); // Credit
                     } else {
                         amount = (BigDecimal)amounts.getValue().get(AMOUNT);
-                        if(amount.compareTo(BigDecimal.ZERO) < 0)
-                            accountDetList.add(createAccDetailmap(amounts.getKey(), amount.abs(), BigDecimal.ZERO));
+                        if(amounts.getValue().get(AMOUNT_TYPE).equals(VoucherConstant.DEBITAMOUNT))
+                            accountDetList.add(createAccDetailmap(amounts.getKey(), amount.abs(), BigDecimal.ZERO)); // Debit
                         else 
-                            accountDetList.add(createAccDetailmap(amounts.getKey(), BigDecimal.ZERO, amount.abs()));
+                            accountDetList.add(createAccDetailmap(amounts.getKey(), BigDecimal.ZERO, amount.abs())); // Credit
                     }
                             
-                }
             }
 
             CVoucherHeader cvh = createVoucher.createVoucher(headerdetails, accountDetList,
@@ -202,15 +202,22 @@ public class FinancialUtil {
     private HashMap<String, Object> createHeaderDetails(String indexNumber, String transaction) {
         String description = "PTIS / " + indexNumber + " / " + transaction;
         String sourceURL = URL_FOR_DCB + indexNumber;
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = format.format(new Date());
 
         HashMap<String, Object> headerdetails = new HashMap<>();
         headerdetails.put(VoucherConstant.VOUCHERNAME, VOUCHERNAME);
         headerdetails.put(VoucherConstant.VOUCHERTYPE, VOUCHERTYPE);
         headerdetails.put(VoucherConstant.DESCRIPTION, description);
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, VOUCHERNUMBER);
-        headerdetails.put(VoucherConstant.VOUCHERDATE, new Date());
+        try {
+            headerdetails.put(VoucherConstant.VOUCHERDATE, format.parse(dateString));
+        } catch (final ParseException e) {
+            LOGGER.error("Exception while parsing voucher date", e);
+            throw new ApplicationRuntimeException(e.getMessage());
+        }
         headerdetails.put(VoucherConstant.STATUS, 0);
-        headerdetails.put(VoucherConstant.MODULEID, moduleService.getModuleByName(FILESTORE_MODULE_NAME));
+        headerdetails.put(VoucherConstant.MODULEID, moduleDao.getModuleByName(PTMODULENAME).getId());
         headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
         headerdetails.put(VoucherConstant.FUNDCODE, getFundCode());
         headerdetails.put(VoucherConstant.SOURCEPATH, sourceURL);
@@ -227,6 +234,7 @@ public class FinancialUtil {
      *         for demand reason
      * @throws IOException
      */
+    @SuppressWarnings("unused")
     private Map<String, Map<String, BigDecimal>> prepareDemandForGlcode(
             Map<Installment, Map<String, BigDecimal>> amounts) {
 

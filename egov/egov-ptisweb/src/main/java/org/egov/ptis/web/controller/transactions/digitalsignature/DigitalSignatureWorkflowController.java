@@ -47,6 +47,37 @@
  */
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FileUtils;
 import org.egov.commons.entity.Source;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -61,10 +92,13 @@ import org.egov.ptis.domain.entity.property.Amalgamation;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
+import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
@@ -76,36 +110,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 
 /**
  * @author subhash
@@ -171,6 +175,8 @@ public class DigitalSignatureWorkflowController {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private PropertySurveyService propertySurveyService;
+    @Autowired
+    private WriteOffRepository writeOffRepository;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -200,52 +206,62 @@ public class DigitalSignatureWorkflowController {
     private void updateProperty(final PropertyImpl property) {
         final BasicProperty basicProperty = property.getBasicProperty();
         final String applicationType = transition(property);
-        propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(property);
             propertySurveyService.updateSurveyIndex(getApplicationTypes().get(applicationType), surveyBean);
         }
         basicPropertyService.update(basicProperty);
+        propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
         propertyTaxCommonUtils.buildMailAndSMS(property);
     }
 
     private void updateOthers(final String applicationNumber) {
         final RevisionPetition revisionPetition = getRevisionPetitionByApplicationNo(applicationNumber);
+        final WriteOff writeOff = getWriteOffByApplicationNo(applicationNumber);
         if (revisionPetition != null)
             updateRevisionPetition(revisionPetition);
         else {
             final PropertyMutation propertyMutation = getPropertyMutationByApplicationNo(applicationNumber);
             if (propertyMutation != null)
                 updatePropertyMutation(propertyMutation);
+            else if (writeOff != null)
+                updateWriteOff(writeOff);
             else
                 updateVacanyRemission(applicationNumber);
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private void updateWriteOff(final WriteOff writeOff) {
+        final BasicProperty basicProperty = writeOff.getBasicProperty();
+        transition(writeOff);
+        writeOffRepository.save(writeOff);
+        basicPropertyService.persist(basicProperty);
+    }
+
     private void updateRevisionPetition(final RevisionPetition revisionPetition) {
         transition(revisionPetition);
+        revisionPetitionService.updateRevisionPetition(revisionPetition);
         propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
                 ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-        revisionPetitionService.updateRevisionPetition(revisionPetition);
-        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(revisionPetition.getSource())) {
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(revisionPetition.getSource()))
             propertyService.updatePortal(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
                     ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-        }
         propertyTaxCommonUtils.buildMailAndSMS(revisionPetition);
     }
 
     private void updatePropertyMutation(final PropertyMutation propertyMutation) {
         final BasicProperty basicProperty = propertyMutation.getBasicProperty();
         transition(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
-                .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
             propertyService.updatePortal(propertyMutation, propertyMutation.getType()
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                    ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
+                            ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
+        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
+                .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         propertyTaxCommonUtils.buildMailAndSMS(propertyMutation);
     }
 
@@ -254,11 +270,12 @@ public class DigitalSignatureWorkflowController {
         if (vacancyRemission != null) {
             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             transition(vacancyRemission);
-            propertyService.updateIndexes(vacancyRemission.getVacancyRemissionApproval().get(0), APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
             vacancyRemissionApprovalRepository.save(vacancyRemission.getVacancyRemissionApproval().get(0));
             if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()))
                 propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             basicPropertyService.persist(basicProperty);
+            propertyService.updateIndexes(vacancyRemission.getVacancyRemissionApproval().get(0),
+                    APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
             propertyTaxCommonUtils.buildMailAndSMS(getVacancyRemissionByApplicationNo(applicationNumber));
         }
     }
@@ -287,6 +304,12 @@ public class DigitalSignatureWorkflowController {
                 .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
     }
 
+    private WriteOff getWriteOffByApplicationNo(final String applicationNumber) {
+        return (WriteOff) getCurrentSession()
+                .createQuery("from WriteOff where applicationNo = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+
     private Map<String, String> getApplicationTypes() {
         final Map<String, String> applicationTypes = new HashMap<>();
         applicationTypes.put(CREATE, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -305,9 +328,8 @@ public class DigitalSignatureWorkflowController {
             for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
         property.transition().end().withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(null);
-        if (propertyService.isLatestPropertyMutationClosed(property.getBasicProperty().getUpicNo())) {
+        if (propertyService.isLatestPropertyMutationClosed(property.getBasicProperty().getUpicNo()))
             property.getBasicProperty().setUnderWorkflow(false);
-        }
         return applicationType;
     }
 
@@ -330,6 +352,20 @@ public class DigitalSignatureWorkflowController {
         vacancyRemissionApproval.transition().end().withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition())
                 .withNextAction(null);
         vacancyRemission.getBasicProperty().setUnderWorkflow(false);
+    }
+
+    private void transition(final WriteOff writeOff) {
+        writeOff.transition().end().withOwner(writeOff.getCurrentState().getOwnerPosition()).withNextAction(null);
+        writeOff.getBasicProperty().setUnderWorkflow(false);
+        if (writeOff.getPropertyDeactivateFlag()) {
+            PropertyStatusValues propStatusValues = propertyService.createPropStatVal(writeOff.getBasicProperty(),
+                    PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
+            writeOff.getBasicProperty().setActive(false);
+            writeOff.getBasicProperty().setModifiedDate(new Date());
+            writeOff.getBasicProperty().addPropertyStatusValues(propStatusValues);
+            basicPropertyService.persist(writeOff.getBasicProperty());
+            writeOff.getBasicProperty().setActive(false);
+        }
     }
 
     private Session getCurrentSession() {

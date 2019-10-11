@@ -63,6 +63,7 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_APPROVAL_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONPDFNAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
@@ -130,6 +131,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_AE_APPROVAL_PENDING;
@@ -171,6 +173,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -181,9 +184,11 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -221,6 +226,7 @@ import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -256,6 +262,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -290,6 +298,7 @@ public class WaterConnectionDetailsService {
 	private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
 	private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 	private static final String INVALID_EXECUTION_DATE = "InvalidExecutionDate";
+	private static final String MATERIAL_FLAGGING_NOT_DONE = "MaterialsFlaggingNotDone";
 
 	@Autowired
 	@Qualifier("fileStoreService")
@@ -373,7 +382,13 @@ public class WaterConnectionDetailsService {
 
 	@Autowired
 	private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
+	
+	@Autowired
+	private WaterDemandConnectionService waterDemandConnectionService;
 
+	@Autowired
+    private AppConfigService appConfigService;
+	
 	@Autowired
 	@Qualifier("workflowService")
 	private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
@@ -473,17 +488,28 @@ public class WaterConnectionDetailsService {
 	public List<DocumentNames> getAllActiveDocumentNames(ApplicationType applicationType) {
 		return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
 	}
-	
-	public String getconnectionStatusForPropertyidentifier(String PropertyIdentifier){
-	       return waterConnectionDetailsRepository.getconnectionStatusForPropertyidentifier(PropertyIdentifier);
-	}
-	
 
 	public WaterConnectionDetails findByApplicationNumberOrConsumerCodeAndStatus(String number,
 			ConnectionStatus connectionStatus) {
 		return waterConnectionDetailsRepository
 				.findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(number, number,
 						connectionStatus);
+	}
+	
+	public WaterConnectionDetails findActiveConnectionDetailsByConsumerCodeAndApplicationNumber(String consumerNumber,
+			String applicationNumber) {
+		WaterConnectionDetails waterConnectionDetails = null;
+		if (StringUtils.isNotBlank(consumerNumber) && StringUtils.isNotBlank(applicationNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findConnectionDetailsByConsumerCodeAndApplicationNumberAndConnectionStatus(consumerNumber,
+							applicationNumber, ACTIVE);
+		else if (StringUtils.isNotBlank(consumerNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findConnectionDetailsByConsumerCodeAndConnectionStatus(consumerNumber, ACTIVE);
+		else if (StringUtils.isNotBlank(applicationNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findByApplicationNumberAndConnectionStatus(applicationNumber, ACTIVE);
+		return waterConnectionDetails;
 	}
 
 	public WaterConnectionDetails findByApplicationNumberOrConsumerCode(String number) {
@@ -553,13 +579,6 @@ public class WaterConnectionDetailsService {
 		State<Position> state = waterConnectionDetails.getState();
 		HashMap<String, Object> map = new HashMap<>(0);
 		if (state != null) {
-			map.put("date", state.getDateInfo());
-			map.put("comments", state.getComments() == null ? EMPTY : state.getComments());
-			map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-			map.put(STATUS, state.getValue());
-			getUserAndDepartmentHistory(state.getOwnerUser(), null, map, state.getOwnerPosition());
-			historyTable.add(map);
-
 			if (!waterConnectionDetails.getStateHistory().isEmpty())
 				Collections.reverse(waterConnectionDetails.getStateHistory());
 			for (StateHistory<Position> stateHistory : waterConnectionDetails.getStateHistory()) {
@@ -574,6 +593,12 @@ public class WaterConnectionDetailsService {
 				getUserAndDepartmentHistory(user, stateHistory, historyMap, owner);
 				historyTable.add(historyMap);
 			}
+			map.put("date", state.getDateInfo());
+                        map.put("comments", state.getComments() == null ? EMPTY : state.getComments());
+                        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+                        map.put(STATUS, state.getValue());
+                        getUserAndDepartmentHistory(state.getOwnerUser(), null, map, state.getOwnerPosition());
+                        historyTable.add(map);
 		}
 		return historyTable;
 	}
@@ -1158,17 +1183,17 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmount(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
-			List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+			List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand, null);
 			balance = getAmountByInstallment(instVsAmt);
 		}
 		return balance;
 	}
 
 	public BigDecimal getWaterTaxDueAmount(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal waterTaxAmount = ZERO;
 		List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
 				DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
@@ -1181,7 +1206,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmountTillCurrentFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1193,7 +1218,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getCurrentDue(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1255,7 +1280,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmountTillPreviousFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1283,7 +1308,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getArrearsDemand(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1294,7 +1319,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalDemandTillCurrentFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1462,10 +1487,19 @@ public class WaterConnectionDetailsService {
 		JSONObject jsonObject = new JSONObject(executionDetailsResponse);
 		JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
 		String status = EMPTY;
+		StringBuilder consumerCodes = new StringBuilder();
 		for (int i = 0; i < jsonArray.length(); ++i) {
 			JSONObject jsonObj = jsonArray.getJSONObject(i);
 			WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-			if (connectionDetails != null && validateDonationDetails(connectionDetails)
+			if ((NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())
+					|| ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
+					&& ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
+					&& !CATEGORY_BPL.equals(connectionDetails.getCategory().getName())
+					&& connectionDetails.getCreatedDate()
+							.compareTo(DateUtils.toDateUsingDefaultPattern(getGOEffectiveDate())) >= 0
+					&& connectionDetails.getUlbMaterial() == null) {
+				consumerCodes = consumerCodes.append(connectionDetails.getConnection().getConsumerCode()).append(",");
+			} else if (connectionDetails != null && validateDonationDetails(connectionDetails)
 					&& isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
 				connectionDetails
 						.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
@@ -1480,20 +1514,24 @@ public class WaterConnectionDetailsService {
 			} else
 				status = ERR_WATER_RATES_NOT_DEFINED;
 		}
+		if (StringUtils.isNotBlank(consumerCodes))
+			status = MATERIAL_FLAGGING_NOT_DONE.concat("~").concat(consumerCodes.toString());
 
 		return status;
 	}
 
 	@Transactional
 	public Boolean updateStatus(List<WaterConnectionDetails> connectionDetailsList) {
+	    Installment executionInstallment;
 		if (!connectionDetailsList.isEmpty()) {
 			for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
 				waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
 				if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
-						&& APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-					connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,
+						&& APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())){
+				    executionInstallment = connectionDemandService.getCurrentInstallment(PROPERTY_MODULE_NAME, null, waterConnectionDetails.getExecutionDate());
+					connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, executionInstallment, null,
 							WF_STATE_TAP_EXECUTION_DATE_BUTTON);
-
+				}
 				waterConnectionDetailsRepository.save(waterConnectionDetails);
 				waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
 				updatePortalMessage(waterConnectionDetails);
@@ -1823,6 +1861,51 @@ public class WaterConnectionDetailsService {
 		if (waterConnExecutionDetails.getToDate() != null)
 			connectionAddressCriteria
 					.add(Restrictions.le("connectionDetails.applicationDate", waterConnExecutionDetails.getToDate()));
+		connectionAddressCriteria.add(Restrictions.isNull("connectionDetails.ulbMaterial"));
 		return connectionAddressCriteria.list();
+	}
+	
+	public EstimationNotice addEstimationNoticeToConnectionDetails(WaterConnectionDetails waterConnectionDetails,
+			String estimationNumber) {
+		EstimationNotice estimationNotice = new EstimationNotice();
+		estimationNotice.setEstimationNumber(estimationNumber);
+		estimationNotice.setEstimationNoticeDate(new Date());
+		if (waterConnectionDetails.getEstimationNotices().isEmpty()) {
+			estimationNotice.setOrderNumber(1L);
+			estimationNotice.setHistory(false);
+		} else {
+			estimationNotice.setOrderNumber(waterConnectionDetails.getEstimationNotices().size() + 1L);
+			for (EstimationNotice notice : waterConnectionDetails.getEstimationNotices())
+				notice.setHistory(true);
+			estimationNotice.setHistory(false);
+		}
+		estimationNotice.setInstallment(waterTaxUtils.getInstallmentForDate(new Date()));
+		estimationNotice.setWaterConnectionDetails(waterConnectionDetails);
+		waterConnectionDetails.addEstimationNotices(estimationNotice);
+		return estimationNotice;
+	}
+
+	@Transactional
+	public void updateConnectionDetailsWithEstimationNotice(WaterConnectionDetails waterConnectionDetails, EstimationNotice estimationNotice,
+			ReportOutput reportOutput) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
+		headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+		String fileName;
+		fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
+		InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+		FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
+				FILESTORE_MODULECODE);
+		estimationNotice.setEstimationNoticeFileStore(fileStore);
+		updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+	}
+	
+	public String getGOEffectiveDate() {
+		String value = EMPTY;
+		AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
+				WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE);
+		if (appConfig != null && !appConfig.getConfValues().isEmpty())
+			value = appConfig.getConfValues().get(0).getValue().toString();
+		return value;
 	}
 }

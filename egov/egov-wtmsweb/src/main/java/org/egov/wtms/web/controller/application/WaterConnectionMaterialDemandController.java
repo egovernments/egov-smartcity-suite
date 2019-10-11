@@ -53,7 +53,10 @@ import static org.egov.infra.utils.ApplicationConstant.YES;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,6 +67,7 @@ import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionAddress;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.reports.entity.ExecuteWaterConnectionAdaptor;
@@ -95,13 +99,16 @@ public class WaterConnectionMaterialDemandController {
     private ConnectionDemandService connectionDemandService;
 
     @GetMapping(value = "/search")
-    public String searchApplications(final Model model) {
-        model.addAttribute("waterApplicationDetails", new WaterConnExecutionDetails());
-        model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
-        model.addAttribute("revenueWardList",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
-        return "material-demand-search-form";
-    }
+	public String searchApplications(final Model model) {
+		List<ApplicationType> applicationTypes = new ArrayList<>();
+		applicationTypes.add(applicationTypeService.findByCode(NEWCONNECTION));
+		applicationTypes.add(applicationTypeService.findByCode(ADDNLCONNECTION));
+		model.addAttribute("waterApplicationDetails", new WaterConnExecutionDetails());
+		model.addAttribute("applicationTypeList", applicationTypes);
+		model.addAttribute("revenueWardList", boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
+		return "material-demand-search-form";
+	}
 
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody

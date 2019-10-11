@@ -46,8 +46,25 @@
  *
  */
 
+var jsonObjForCheckedinApplication = [];
+
+
 jQuery(document).ready(function() {
 	$('.updation').hide();
+	 
+	$('#search-result-table').on( 'draw.dt', function () {
+		console.log("draw event triggered");
+		var all = $('#search-result-table')
+		.find('> tbody > tr > td:first-child > input[type="checkbox"]');
+		
+		$('#global_checkbox').prop('checked', all.prop('checked'));
+			
+//		all.each(function(value){
+//			$(this)..prop('checked')
+//		});
+		
+	} );
+	
 });
 
 $('#metered-search-result-table').on('click', 'td button', function() {
@@ -144,7 +161,7 @@ $('#search').on('click', function() {
 	        	  "data" : "id",
 	        	  "title" : '<input type="checkbox" id="global_checkbox" class="checkbox" onclick="checkbox_change(this);"/>',
 	        	  "render" : function(data, type, full, meta) {
-	        		  return '<input type="checkbox"  class="check_box" name="id" value="'
+	        		  return '<input type="checkbox"  class="check_box" name="id" onclick="each_checkbox_change(this);" value="'
 						+ $('<div/>').text(data).html()
 						+ '">';
 	        	  }
@@ -200,49 +217,141 @@ $('#search-result-table').on('draw.dt', function () {
 });
 
  
-function checkbox_change(obj){
-	if($(obj).is(':checked')) {
-		$('#search-result-table')
-		.find('> tbody > tr > td:first-child > input[type="checkbox"]')
-		.prop('checked', true);
+function checkbox_change(obj) {
+
+	var isError = false;
+	var all = $('#search-result-table').find(
+			'> tbody > tr > td:first-child > input[type="checkbox"]')
+	var tempJson = [];
+
+	if ($(obj).is(':checked')) {
+
+		all
+				.each(function(value) {
+
+					var myObj = {};
+					var parentTR = $(this).parent().parent();
+					var executionDate = parentTR.find('.execDate').val();
+					var currentDate = formatCurrentDate();
+
+					if (executionDate == "" || executionDate == undefined) {
+						bootbox
+								.alert("Execution date is not entered. Please check once.");
+						isError = true;
+						return false;
+					}
+
+					if (compareDate(executionDate, currentDate) == -1) {
+						bootbox
+								.alert("Execution date can not be greater than current date : "
+										+ currentDate);
+						isError = true;
+						return false;
+					}
+
+					myObj = {
+						"id" : "" + parentTR.find('.check_box').val(),
+						"executionDate" : "" + executionDate,
+						"applicationNumber" : ""
+								+ parentTR.find("td:eq(1)")[0].innerText,
+						"pipeSizeId" : ""
+								+ parentTR.find("td:eq(2)")[0].innerText
+					};
+
+					tempJson.push(myObj);
+				});
+
+		if (!isError) {
+
+			all.prop('checked', true);
+			jsonObjForCheckedinApplication = jsonObjForCheckedinApplication
+					.concat(tempJson);
+		}else{
+			$(obj).prop('checked', false);
+		}
 	} else {
-		$('#search-result-table')
-		.find(' > tbody > tr > td:first-child > input[type="checkbox"]')
-		.prop('checked', false);
+		
+		
+		all
+		.each(function(value) {
+
+			var myObj = {};
+			var parentTR = $(this).parent().parent();
+			var executionDate = parentTR.find('.execDate').val();
+
+			
+			myObj = {
+				"id" : "" + parentTR.find('.check_box').val(),
+				"executionDate" : "" + executionDate,
+				"applicationNumber" : ""
+						+ parentTR.find("td:eq(1)")[0].innerText,
+				"pipeSizeId" : ""
+						+ parentTR.find("td:eq(2)")[0].innerText
+			};
+
+			tempJson.push(myObj);
+		});
+
+		
+		all.prop('checked', false);
+		jsonObjForCheckedinApplication = $.grep(jsonObjForCheckedinApplication,
+				function(e) {
+
+					var found = true;
+
+					tempJson.forEach(function(v) {
+
+						if (e.applicationNumber == v.applicationNumber)
+							found = false;
+
+					});
+
+				});
+	}
+
+}
+
+function each_checkbox_change(obj){
+	
+	var myObj= {};
+	var parentTR = jQuery(obj).parent().parent();
+	var executionDate  = parentTR.find('.execDate').val();
+	var currentDate = formatCurrentDate();
+	
+	if(executionDate=="" || executionDate==undefined) {
+		bootbox.alert("Execution date is not entered. Please check once.");
+		$(obj).prop('checked', false);
+		return false;
+	}
+	
+	if(compareDate(executionDate, currentDate)==-1) {
+	    bootbox.alert("Execution date can not be greater than current date : "+currentDate);
+	    $(obj).prop('checked', false);
+	    return false;
+	 }
+	
+	myObj = { 	
+				"id" : ""+parentTR.find('.check_box').val(),
+				"executionDate" : "" + executionDate,
+				"applicationNumber" : "" +parentTR.find("td:eq(1)")[0].innerText,
+				"pipeSizeId" : "" +parentTR.find("td:eq(2)")[0].innerText
+			};
+	
+	if($(obj).is(':checked')) {
+		jsonObjForCheckedinApplication.push(myObj)
+	} else {
+		jsonObjForCheckedinApplication = $.grep(jsonObjForCheckedinApplication, function(e){ 
+		     return e.applicationNumber != parentTR.find("td:eq(1)")[0].innerText; 
+		});
 	}
 }
 
-
 $('#update').on('click', function(){
 	
-	var jsonObj = [];
+	var jsonObj = jsonObjForCheckedinApplication;
 	var myObj = {};
 	var isError = false;
 	
-	$('.check_box:checked').each(function() {
-		var $tr = jQuery(this).closest('tr');
-		if($tr.find('.execDate').val()=="" || $tr.find('.execDate').val()==undefined) {
-			bootbox.alert("Execution date is not entered. Please check once.");
-			isError =true;
-			return false;
-		}
-		var currentDate = formatCurrentDate();
-		    var validDate = compareDate($tr.find('.execDate').val(), currentDate);
-		    if(validDate==-1) {
-		    	bootbox.alert("Execution date can not be greater than current date : "+currentDate);
-		    	isError =true;
-		    	return false;
-		    }
-			myObj = { "id" : ""+$tr.find('.check_box').val(),
-					"executionDate" : "" + $tr.find('.execDate').val(),
-					"applicationNumber" : "" +$tr.find("td:eq(1)")[0].innerText,
-					"pipeSizeId" : "" +$tr.find("td:eq(2)")[0].innerText
-			}
-			
-			jsonObj.push(myObj);
-		});
-	if(isError)
-		return false;
 		
 		var obj = {"executeWaterApplicationDetails" : jsonObj};
 		var o = JSON.stringify(obj);
@@ -290,6 +399,13 @@ $('#update').on('click', function(){
 				}
 				else if(response.includes("Application Process Time not defined")) {
 					bootbox.alert(" Application process time is not defined for this application type and category. Please define using create application process time master and then update execution date.")
+					return false;
+				}
+				
+				else if(response.includes("MaterialsFlaggingNotDone")) {
+					var str = response.split(/[~ ]+/).pop();
+					var res = str.slice(0, str.length - 1) ;
+					bootbox.alert("Non-Metered and Non-BPL Consumers "+res+" have not been flagged on whether ULB has supplied Material or Citizen has Procured on his own. Please flag and then continue to execute.")
 					return false;
 				}
 				else {

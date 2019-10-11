@@ -56,9 +56,9 @@
 	 jQuery('#locality').change(function() {
 		 populateBoundaries();
 	 });
-	 var lat = parseFloat('<s:property value="%{basicProperty.latitude}"/>');
+/* 	 var lat = parseFloat('<s:property value="%{basicProperty.latitude}"/>');
 	 var lng = parseFloat('<s:property value="%{basicProperty.longitude}"/>');
-	 jQuery('#show-map').on('click',initialize(lat, lng));
+	 jQuery('#show-map').on('click',initialize(lat, lng)); */
 });
 
 function populateBoundaries() {

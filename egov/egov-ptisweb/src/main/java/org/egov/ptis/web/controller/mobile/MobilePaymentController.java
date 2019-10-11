@@ -47,76 +47,61 @@
  */
 package org.egov.ptis.web.controller.mobile;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
-import org.egov.collection.integration.models.BillInfoImpl;
-import org.egov.collection.integration.pgi.PaymentRequest;
-import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.integration.utils.CollectionHelper;
-import org.egov.ptis.client.integration.utils.SpringBeanUtil;
-import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.ParseException;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CHECK_PROPERTY_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CHECK_PROPERTY_CATEGORY;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.mobile.MobilePaymentService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = {"/public/mobile", "/mobile"})
+@RequestMapping(value = { "/public/mobile", "/mobile" })
 public class MobilePaymentController {
 
     private static final String PAYTAX_FORM = "mobilePayment-form";
-    private static final String ERROR_MSG="errorMsg";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String ERROR_MSG_LIST="errorMsgList";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
-    @Qualifier("propertyTaxBillable")
-    private PropertyTaxBillable propertyTaxBillable;
-
-    @Autowired
-    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-
-    @Autowired
-    private EgBillDao egBillDAO;
-
-    @Autowired
-    private PTBillServiceImpl ptBillServiceImpl;
-
-    @Autowired
     private PtDemandDao ptDemandDAO;
+
+    @Autowired
+    private MobilePaymentService mobilePaymentService;
+    
+    @Autowired
+    PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * API to process payments from Mobile App
@@ -131,13 +116,13 @@ public class MobilePaymentController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping(value = "/paytax/{assessmentNo},{ulbCode},{amountToBePaid},{mobileNumber},{emailId},{category}", method = RequestMethod.GET)
+    @PostMapping(value = "/paytax/{assessmentNo},{ulbCode},{amountToBePaid},{mobileNumber},{emailId},{category}")
     public String newform(final Model model, @PathVariable final String assessmentNo,
-                          @PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
-                          @PathVariable final String mobileNumber, @PathVariable final String emailId,
-                          @PathVariable final String category, final HttpServletRequest request) {
+            @PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
+            @PathVariable final String mobileNumber, @PathVariable final String emailId,
+            @PathVariable final String category, final HttpServletRequest request) {
         String redirectUrl = "";
-        if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+        if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo) || !ApplicationThreadLocals.getCityCode().equals(ulbCode)) {
             model.addAttribute(ERROR_MSG, THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             return PROPERTY_VALIDATION;
         }
@@ -152,23 +137,19 @@ public class MobilePaymentController {
                 final Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
                 BigDecimal totalTaxDue = BigDecimal.ZERO;
                 final String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
-                String propCategory=checkPropertyCategory(propType);
+                String propCategory = checkPropertyCategory(propType);
                 if (!category.equalsIgnoreCase(propCategory)) {
                     model.addAttribute(ERROR_MSG, CHECK_PROPERTY_CATEGORY);
                     return PROPERTY_VALIDATION;
                 }
                 if (currentPtdemand != null)
                     for (final EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails())
-                        if (demandDetails.getAmount().subtract(demandDetails.getAmtCollected())
+                        if (propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected())
                                 .compareTo(BigDecimal.ZERO) > 0)
                             totalTaxDue = totalTaxDue
-                                    .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                                    .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected()));
                 if (amountToBePaid.compareTo(totalTaxDue) > 0) {
                     model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
-                    return PROPERTY_VALIDATION;
-                }
-                if (amountToBePaid.compareTo(totalTaxDue) < 0) {
-                    model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG);
                     return PROPERTY_VALIDATION;
                 }
                 if (!propType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)
@@ -188,54 +169,26 @@ public class MobilePaymentController {
             }
         }
         try {
-            final BillInfoImpl billInfo = getBillInfo(assessmentNo, amountToBePaid, category);
-            if (billInfo != null) {
-                final PaymentRequest paymentRequest = SpringBeanUtil.getCollectionIntegrationService()
-                        .processMobilePayments(billInfo);
-                if (paymentRequest != null) {
-                    for (final Object obj : paymentRequest.getRequestParameters().values())
-                        redirectUrl = obj.toString();
-                    model.addAttribute("redirectUrl", redirectUrl);
-                }
-            } else {
+            redirectUrl = mobilePaymentService.mobileBillPayment(assessmentNo, amountToBePaid, category);
+            if (!redirectUrl.isEmpty())
+                model.addAttribute("redirectUrl", redirectUrl);
+            else {
                 model.addAttribute(ERROR_MSG, MOBILE_PAYMENT_INCORRECT_BILL_DATA);
                 return PROPERTY_VALIDATION;
             }
         } catch (final ValidationException e) {
-
+            model.addAttribute(ERROR_MSG_LIST, e.getErrors());
             return PROPERTY_VALIDATION;
         } catch (final Exception e) {
 
             return PROPERTY_VALIDATION;
         }
-
         return PAYTAX_FORM;
     }
 
-    /**
-     * API to return BillInfoImpl, used in tax payment through Mobile App
-     *
-     * @param mobilePropertyTaxDetails
-     * @return
-     */
-    public BillInfoImpl getBillInfo(final String assessmentNo, final BigDecimal amountToBePaid, final String category) {
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        propertyTaxBillable.setBasicProperty(basicProperty);
-        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator
-                .generateBillNumber(basicProperty.getPropertyID().getWard().getBoundaryNum().toString()));
-        propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
-        propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
-        if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(CATEGORY_TYPE_VACANTLAND_TAX))
-            propertyTaxBillable.setVacantLandTaxPayment(true);
-
-        final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
-        final CollectionHelper collectionHelper = new CollectionHelper(egBill);
-
-        return collectionHelper.prepareBillInfo(amountToBePaid, COLLECTIONTYPE.O, null);
-    }
-    
     private String checkPropertyCategory(String propType) {
-        if (OWNERSHIP_TYPE_VAC_LAND.equals(propType))
+        // TODO - fix me
+        if (propType == OWNERSHIP_TYPE_VAC_LAND)
             return CATEGORY_TYPE_VACANTLAND_TAX;
         else
             return CATEGORY_TYPE_PROPERTY_TAX;

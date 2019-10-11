@@ -1,0 +1,4 @@
+delete from eg_roleaction where actionid in(select id from eg_action where name='ReceiptRepayOnlinePayment' and contextroot='collection');
+delete from eg_action where name='ReceiptRepayOnlinePayment' and contextroot='collection';
+insert into EG_ACTION (id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'ReceiptRepayOnlinePayment','/citizen/onlineReceipt-repay.action',null, (select id from eg_module where name='Receipt Services'),1,'ReceiptRepayOnlinePayment',false,'collection',0,(select id from eg_user where lower(username) ='system'),now(),(select id from eg_user where lower(username) ='system'),now(),(select id from eg_module where name='Collection'));
+insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where upper(name)='PUBLIC'),(select id from eg_action where name='ReceiptRepayOnlinePayment'));

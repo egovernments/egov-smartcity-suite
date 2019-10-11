@@ -48,8 +48,7 @@
 
 package org.egov.egf.web.controller.contract;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.billsaccounting.services.CreateVoucher;
+import com.fasterxml.jackson.databind.ObjectMapper;import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CFunction;
@@ -152,11 +151,11 @@ public class ContractVoucherController {
 
         for (final VoucherRequest request : voucherRequest.getVouchers()) {
 
-            prepairHeaderDetail(headerDetails, request);
+        	prepareHeaderDetail(headerDetails, request);
 
-            prepairSchemeAndSubScheme(headerDetails, request);
+        	prepareSchemeAndSubScheme(headerDetails, request);
 
-            prepairFunctionaryFundsource(headerDetails, request);
+        	prepareFunctionaryFundsource(headerDetails, request);
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             try {
@@ -167,12 +166,12 @@ public class ContractVoucherController {
 
             if (!request.getLedgers().isEmpty())
                 for (final AccountDetailContract accountDetailContract : request.getLedgers()) {
-                    prepairAccountDetail(accountCodeDetails, accountDetailContract);
+                	prepareAccountDetail(accountCodeDetails, accountDetailContract);
 
                     if (!accountDetailContract.getSubledgerDetails().isEmpty())
                         for (final SubledgerDetailContract subledgerDetailContract : accountDetailContract
                                 .getSubledgerDetails())
-                            prepairSubledgerDetails(subledgerDetails, accountDetailContract, subledgerDetailContract);
+                            prepareSubledgerDetails(subledgerDetails, accountDetailContract, subledgerDetailContract);
                 }
 
             try {
@@ -204,14 +203,14 @@ public class ContractVoucherController {
 
         final VoucherContractResponse voucherContractResponse = new VoucherContractResponse();
         final List<VoucherResponse> vouchers = new ArrayList<>();
-        final VoucherResponse voucherResponse = prepairVoucherResponse(cVoucherHeader);
+        final VoucherResponse voucherResponse = prepareVoucherResponse(cVoucherHeader);
         final List<AccountDetailContract> accountDetailContracts = new ArrayList<>();
         final List<SubledgerDetailContract> subledgerDetailContracts = new ArrayList<>();
         List<CGeneralLedgerDetail> cGeneralLedgerDetails = new ArrayList<>();
         for (final CGeneralLedger cGeneralLedger : generalLedgerService
                 .findCGeneralLedgerByVoucherHeaderId(cVoucherHeader.getId())) {
 
-            final AccountDetailContract accountDetailContract = prepairAccountDetailResponse(cGeneralLedger);
+            final AccountDetailContract accountDetailContract = prepareAccountDetailResponse(cGeneralLedger);
 
             accountDetailContracts.add(accountDetailContract);
 
@@ -219,7 +218,7 @@ public class ContractVoucherController {
                     .findCGeneralLedgerDetailByLedgerId(cGeneralLedger.getId());
             if (!cGeneralLedgerDetails.isEmpty()) {
                 for (final CGeneralLedgerDetail cGeneralLedgerDetail : cGeneralLedgerDetails) {
-                    final SubledgerDetailContract subledgerDetailContract1 = prepairSubledgerDetailResponse(
+                    final SubledgerDetailContract subledgerDetailContract1 = prepareSubledgerDetailResponse(
                             cGeneralLedgerDetail);
                     subledgerDetailContracts.add(subledgerDetailContract1);
                 }
@@ -238,7 +237,7 @@ public class ContractVoucherController {
         return getJSONResponse(voucherContractResponse);
     }
 
-    private AccountDetailContract prepairAccountDetailResponse(final CGeneralLedger cGeneralLedger) {
+    private AccountDetailContract prepareAccountDetailResponse(final CGeneralLedger cGeneralLedger) {
         final AccountDetailContract accountDetailContract = new AccountDetailContract();
         accountDetailContract.setId(cGeneralLedger.getId());
         accountDetailContract.setCreditAmount(cGeneralLedger.getCreditAmount());
@@ -262,7 +261,7 @@ public class ContractVoucherController {
         return accountDetailContract;
     }
 
-    private SubledgerDetailContract prepairSubledgerDetailResponse(final CGeneralLedgerDetail cGeneralLedgerDetail) {
+    private SubledgerDetailContract prepareSubledgerDetailResponse(final CGeneralLedgerDetail cGeneralLedgerDetail) {
         final SubledgerDetailContract subledgerDetailContract1 = new SubledgerDetailContract();
         subledgerDetailContract1.setId(cGeneralLedgerDetail.getId());
         subledgerDetailContract1.setAmount(cGeneralLedgerDetail.getAmount().doubleValue());
@@ -286,15 +285,21 @@ public class ContractVoucherController {
         return subledgerDetailContract1;
     }
 
-    private void prepairHeaderDetail(final HashMap<String, Object> headerDetails, final VoucherRequest request) {
+    private void prepareHeaderDetail(final HashMap<String, Object> headerDetails, final VoucherRequest request) {
         headerDetails.put(VoucherConstant.VOUCHERNAME, request.getName());
         headerDetails.put(VoucherConstant.VOUCHERTYPE, request.getType());
         headerDetails.put(VoucherConstant.DESCRIPTION, request.getDescription());
         headerDetails.put(VoucherConstant.SOURCEPATH, request.getSource());
-        if (request.getDepartment() != null)
+        if (request.getDepartment() != null && !request.getDepartment().isEmpty()) {
+        	headerDetails.put(VoucherConstant.DEPARTMENTCODE,request.getDepartment());
+        }else if (request.getDepartmentId() != null)
             headerDetails.put(VoucherConstant.DEPARTMENTCODE,
-                    departmentService.getDepartmentById(request.getDepartment()).getCode());
-        headerDetails.put(VoucherConstant.MODULEID, request.getModuleId());
+                    departmentService.getDepartmentById(request.getDepartmentId()).getCode());
+        if(request.getModule() != null && !request.getModule().isEmpty()) {
+        	headerDetails.put(VoucherConstant.MODULE, request.getModule());
+        }else {
+        	headerDetails.put(VoucherConstant.MODULEID, request.getModuleId());
+        }        
         headerDetails.put(VoucherConstant.VOUCHERNUMBER, request.getVoucherNumber());
         if (request.getFund() != null && request.getFund().getId() != null)
             headerDetails.put(VoucherConstant.FUNDCODE,
@@ -305,7 +310,7 @@ public class ContractVoucherController {
             headerDetails.put(VoucherConstant.FUNDCODE, fundService.findByName(request.getFund().getName()).getCode());
     }
 
-    private void prepairAccountDetail(final List<HashMap<String, Object>> accountCodeDetails,
+    private void prepareAccountDetail(final List<HashMap<String, Object>> accountCodeDetails,
             final AccountDetailContract accountDetailContract) {
         HashMap<String, Object> accountDetails1;
         accountDetails1 = new HashMap<String, Object>();
@@ -324,7 +329,7 @@ public class ContractVoucherController {
         accountCodeDetails.add(accountDetails1);
     }
 
-    private void prepairSubledgerDetails(final List<HashMap<String, Object>> subledgerDetails,
+    private void prepareSubledgerDetails(final List<HashMap<String, Object>> subledgerDetails,
             final AccountDetailContract accountDetailContract, final SubledgerDetailContract subledgerDetailContract) {
         HashMap<String, Object> subledgerDetails1;
         subledgerDetails1 = new HashMap<String, Object>();
@@ -335,7 +340,7 @@ public class ContractVoucherController {
         subledgerDetails.add(subledgerDetails1);
     }
 
-    private VoucherResponse prepairVoucherResponse(final CVoucherHeader cVoucherHeader) {
+    private VoucherResponse prepareVoucherResponse(final CVoucherHeader cVoucherHeader) {
         final VoucherResponse voucherResponse = new VoucherResponse();
         voucherResponse.setFund(cVoucherHeader.getFundId());
 
@@ -402,7 +407,7 @@ public class ContractVoucherController {
         return jsonResponse;
     }
 
-    private void prepairSchemeAndSubScheme(final HashMap<String, Object> headerDetails, final VoucherRequest request) {
+    private void prepareSchemeAndSubScheme(final HashMap<String, Object> headerDetails, final VoucherRequest request) {
         if (request.getScheme() != null && request.getScheme().getId() != null)
             headerDetails.put(VoucherConstant.SCHEMECODE,
                     schemeService.findById(request.getScheme().getId().intValue(), false) != null
@@ -420,7 +425,7 @@ public class ContractVoucherController {
             headerDetails.put(VoucherConstant.SUBSCHEMECODE, request.getSubScheme().getCode());
     }
 
-    private void prepairFunctionaryFundsource(final HashMap<String, Object> headerDetails,
+    private void prepareFunctionaryFundsource(final HashMap<String, Object> headerDetails,
             final VoucherRequest request) {
         if (request.getFundsource() != null && request.getFundsource().getId() != null)
             headerDetails.put(VoucherConstant.FUNDSOURCECODE,

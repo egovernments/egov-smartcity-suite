@@ -88,7 +88,8 @@ public class SewerageEstimationNoticeController {
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     @RequestMapping(value = "/estimationnotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request) {
+    public @ResponseBody
+    ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         return generateReport(sewerageApplicationDetails);
@@ -111,53 +112,54 @@ public class SewerageEstimationNoticeController {
         final ServletContext context = request.getServletContext();
         final File downloadFile = fileStoreService.fetch(sewerageApplicationDetails.getFieldInspections().get(0)
                 .getFileStore().getFileStoreId(), SewerageTaxConstants.FILESTORE_MODULECODE);
-        final FileInputStream inputStream = new FileInputStream(downloadFile);
+        OutputStream outStream;
+        try (FileInputStream inputStream = new FileInputStream(downloadFile)) {
 
-        // get MIME type of the file
-        String mimeType = context.getMimeType(downloadFile.getAbsolutePath());
-        if (mimeType == null)
-            // set to binary type if MIME mapping not found
-            mimeType = "application/octet-stream";
+            // get MIME type of the file
+            String mimeType = context.getMimeType(downloadFile.getAbsolutePath());
+            if (mimeType == null)
+                // set to binary type if MIME mapping not found
+                mimeType = "application/octet-stream";
 
-        // set content attributes for the response
-        response.setContentType(mimeType);
-        response.setContentLength((int) downloadFile.length());
+            // set content attributes for the response
+            response.setContentType(mimeType);
+            response.setContentLength((int) downloadFile.length());
 
-        // set headers for the response
-        final String headerKey = "Content-Disposition";
-        final String headerValue = String.format("attachment; filename=\"%s\"", sewerageApplicationDetails
-                .getFieldInspections().get(0).getFileStore().getFileName());
-        response.setHeader(headerKey, headerValue);
+            // set headers for the response
+            final String headerKey = "Content-Disposition";
+            final String headerValue = String.format("attachment; filename=\"%s\"", sewerageApplicationDetails
+                    .getFieldInspections().get(0).getFileStore().getFileName());
+            response.setHeader(headerKey, headerValue);
 
-        // get output stream of the response
-        final OutputStream outStream = response.getOutputStream();
+            // get output stream of the response
+            outStream = response.getOutputStream();
 
-        final byte[] buffer = new byte[BUFFER_SIZE];
-        int bytesRead = -1;
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = -1;
 
-        // write bytes read from the input stream into the output stream
-        while ((bytesRead = inputStream.read(buffer)) != -1)
-            outStream.write(buffer, 0, bytesRead);
-
-        inputStream.close();
+            // write bytes read from the input stream into the output stream
+            while ((bytesRead = inputStream.read(buffer)) != -1)
+                outStream.write(buffer, 0, bytesRead);
+        }
         outStream.close();
     }
 
     @RequestMapping(value = "/closeConnectionNotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateCloserNotice(final HttpServletRequest request,
-            final HttpSession session) {
+    public @ResponseBody
+    ResponseEntity<byte[]> generateCloserNotice(final HttpServletRequest request,
+                                                final HttpSession session) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         return generateCloseConnectionReport(sewerageApplicationDetails, session);
     }
 
     private ResponseEntity<byte[]> generateCloseConnectionReport(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session) {
+                                                                 final HttpSession session) {
         final HttpHeaders headers = new HttpHeaders();
         ReportOutput reportOutput = null;
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CloseConnectionNotice.pdf");
         reportOutput = sewerageNoticeService.generateReportOutputForSewerageCloseConnection(sewerageApplicationDetails, session);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

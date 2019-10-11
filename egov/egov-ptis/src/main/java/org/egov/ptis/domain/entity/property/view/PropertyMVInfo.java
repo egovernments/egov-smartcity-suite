@@ -170,6 +170,18 @@ public class PropertyMVInfo implements Serializable {
     @Column(name = "ARREAR_COLLECTION")
     private BigDecimal arrearCollection = BigDecimal.ZERO;
 
+    @Column(name = "exempted_amount")
+    private  BigDecimal exemptedAmount = BigDecimal.ZERO;
+
+    @Column(name = "waivedoff_amount")
+    private  BigDecimal waivedoffAmount = BigDecimal.ZERO;
+
+    @Column(name = "writeoff_amount")
+    private  BigDecimal writedoffAmount = BigDecimal.ZERO;
+
+    @Column(name = "courtcase_amount")
+    private  BigDecimal courtcaseAmount = BigDecimal.ZERO;
+
     private String gisRefNo;
 
     @OneToMany(targetEntity = InstDmdCollInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
@@ -542,6 +554,39 @@ public class PropertyMVInfo implements Serializable {
     public void setArrearCollection(final BigDecimal arrearCollection) {
         this.arrearCollection = arrearCollection;
     }
+
+    public BigDecimal getExemptedAmount() {
+        return exemptedAmount;
+    }
+
+    public void setExemptedAmount(BigDecimal exemptedAmount) {
+        this.exemptedAmount = exemptedAmount;
+    }
+
+    public BigDecimal getWaivedoffAmount() {
+        return waivedoffAmount;
+    }
+
+    public void setWaivedoffAmount(BigDecimal waivedoffAmount) {
+        this.waivedoffAmount = waivedoffAmount;
+    }
+
+    public BigDecimal getWritedoffAmount() {
+        return writedoffAmount;
+    }
+
+    public void setWritedoffAmount(BigDecimal writedoffAmount) {
+        this.writedoffAmount = writedoffAmount;
+    }
+
+    public BigDecimal getCourtcaseAmount() {
+        return courtcaseAmount;
+    }
+
+    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
+        this.courtcaseAmount = courtcaseAmount;
+    }
+
 
     public Boolean getIsUnderCourtCase() {
         return isUnderCourtCase;

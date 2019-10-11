@@ -118,7 +118,8 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
                 .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
                 .append(PROPERTY_TYPE_CATEGORIES
-                        .get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+                        .get(getBasicProperty().getProperty() != null
+                                ? getBasicProperty().getProperty().getPropertyDetail().getCategoryType() : ""))
                 .append(", ").append(getBasicProperty().getPropertyID().getLocality().getName());
         return stateDetails.toString();
     }

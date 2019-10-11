@@ -74,10 +74,8 @@ import java.util.List;
 @SequenceGenerator(name = SewerageRatesMaster.SEQ_SEWERAGERATESMASTER, sequenceName = SewerageRatesMaster.SEQ_SEWERAGERATESMASTER, allocationSize = 1)
 public class SewerageRatesMaster extends AbstractAuditable {
 
-    private static final long serialVersionUID = -4254428973515064704L;
-
     public static final String SEQ_SEWERAGERATESMASTER = "SEQ_EGSWTAX_SEWERAGE_RATES_MASTER";
-
+    private static final long serialVersionUID = -4254428973515064704L;
     @Id
     @GeneratedValue(generator = SEQ_SEWERAGERATESMASTER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -98,9 +96,8 @@ public class SewerageRatesMaster extends AbstractAuditable {
     private Date toDate;
 
     private boolean active;
-    
-    @OneToMany(mappedBy = "sewerageratemaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY , orphanRemoval = true)
-    private List<SewerageRatesMasterDetails> sewerageDetailmaster = new ArrayList<SewerageRatesMasterDetails>(0);
+    @OneToMany(mappedBy = "sewerageRateMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<SewerageRatesMasterDetails> sewerageDetailMaster = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -152,20 +149,21 @@ public class SewerageRatesMaster extends AbstractAuditable {
         this.active = active;
     }
 
-    public List<SewerageRatesMasterDetails> getSewerageDetailmaster() {
-        return sewerageDetailmaster;
+    public List<SewerageRatesMasterDetails> getSewerageDetailMaster() {
+        return sewerageDetailMaster;
     }
 
-    public void setSewerageDetailmaster(List<SewerageRatesMasterDetails> sewerageDetailmaster) {
-        this.sewerageDetailmaster = sewerageDetailmaster;
+    public void setSewerageDetailMaster(List<SewerageRatesMasterDetails> sewerageDetailMaster) {
+        this.sewerageDetailMaster = sewerageDetailMaster;
     }
-    
-    public void deleteSewerageRateDetail(final  SewerageRatesMasterDetails sewerageRateDetail) {
-        if(this.sewerageDetailmaster!=null)
-                this.sewerageDetailmaster.remove(sewerageRateDetail) ;
+
+    public void deleteSewerageRateDetail(final SewerageRatesMasterDetails sewerageRateDetail) {
+        if (this.sewerageDetailMaster != null)
+            this.sewerageDetailMaster.remove(sewerageRateDetail);
     }
-    public void addSewerageRateDetail(final  SewerageRatesMasterDetails sewerageRateDetail) {
-        if(this.sewerageDetailmaster!=null)
-        this.sewerageDetailmaster.add(sewerageRateDetail) ;
+
+    public void addSewerageRateDetail(final SewerageRatesMasterDetails sewerageRateDetail) {
+        if (this.sewerageDetailMaster != null)
+            this.sewerageDetailMaster.add(sewerageRateDetail);
     }
 }

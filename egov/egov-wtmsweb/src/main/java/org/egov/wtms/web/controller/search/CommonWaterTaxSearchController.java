@@ -58,6 +58,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,6 +124,9 @@ public class CommonWaterTaxSearchController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDtlsService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -316,16 +320,7 @@ public class CommonWaterTaxSearchController {
             }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE))
             
-            if (waterConnectionDetailsService.getconnectionStatusForPropertyidentifier(waterConnectionDetails.getConnection().getPropertyIdentifier()).equals(ConnectionStatus.INPROGRESS.toString()))
-            {
-                model.addAttribute(MODE, ERROR_MODE);
-                model.addAttribute(APPLICATIONTYPE, applicationType);
-                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED, new String[] { waterConnectionDetails.getApplicationType().getName(),
-                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
-                return COMMON_FORM_SEARCH;
-            }
-            else
-            {
+            
             
             if (isNotBlank(waterConnectionDetails.getCloseConnectionType())
                     && waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE)) {
@@ -369,7 +364,6 @@ public class CommonWaterTaxSearchController {
                         ERR_CLOSURE_NOT_ALLOWED);
                 return COMMON_FORM_SEARCH;
               }
-             }
         if (isNotBlank(applicationType) && applicationType.equals(RECONNECTION))
 
             if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE)) {
@@ -450,7 +444,7 @@ public class CommonWaterTaxSearchController {
             }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
             BigDecimal amoutToBeCollected = ZERO;
-            if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+            if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                 amoutToBeCollected = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),

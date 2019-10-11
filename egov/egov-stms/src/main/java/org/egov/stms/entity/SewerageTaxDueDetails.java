@@ -53,122 +53,139 @@ import java.util.Map;
 
 public class SewerageTaxDueDetails {
 
-    private String propertyID;
-    private BigDecimal currentDemand;
-    private BigDecimal currentCollection;
-    private BigDecimal arrearDemand;
-    private BigDecimal arrearCollection;
-    private BigDecimal totalTaxDue;
-    private HashMap<String, String> consumerCode;
-    private Integer connectionCount;
-    private String errorCode;
-    private String errorMessage;
-    private Boolean isSuccess;
-    private Boolean isInWorkFlow;
-    private BigDecimal currentInstDemand;
+	private String propertyID;
+	private BigDecimal currentDemand;
+	private BigDecimal currentCollection;
+	private BigDecimal arrearDemand;
+	private BigDecimal arrearCollection;
+	private BigDecimal totalTaxDue;
+	private BigDecimal halfYearlyTax;
+	private HashMap<String, String> consumerCode;
+	private Integer connectionCount;
+	private String errorCode;
+	private String errorMessage;
+	private Boolean isSuccess;
+	private Boolean isInWorkFlow;
+	private BigDecimal currentInstDemand;
+	private Integer noOfClosets;
 
-    public Boolean getIsInWorkFlow() {
-        return isInWorkFlow;
-    }
+	public Boolean getIsInWorkFlow() {
+		return isInWorkFlow;
+	}
 
-    public void setIsInWorkFlow(Boolean isInWorkFlow) {
-        this.isInWorkFlow = isInWorkFlow;
-    }
+	public void setIsInWorkFlow(Boolean isInWorkFlow) {
+		this.isInWorkFlow = isInWorkFlow;
+	}
 
-    public String getPropertyID() {
-        return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");
-    }
+	public String getPropertyID() {
+		return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");
+	}
 
-    public void setPropertyID(final String propertyID) {
-        this.propertyID = propertyID;
-    }
+	public void setPropertyID(final String propertyID) {
+		this.propertyID = propertyID;
+	}
 
-    public BigDecimal getCurrentDemand() {
-        return currentDemand != null ? currentDemand : BigDecimal.ZERO;
-    }
+	public BigDecimal getCurrentDemand() {
+		return currentDemand != null ? currentDemand : BigDecimal.ZERO;
+	}
 
-    public void setCurrentDemand(final BigDecimal currentDemand) {
-        this.currentDemand = currentDemand;
-    }
+	public void setCurrentDemand(final BigDecimal currentDemand) {
+		this.currentDemand = currentDemand;
+	}
 
-    public BigDecimal getCurrentCollection() {
-        return currentCollection != null ? currentCollection : BigDecimal.ZERO;
-    }
+	public BigDecimal getCurrentCollection() {
+		return currentCollection != null ? currentCollection : BigDecimal.ZERO;
+	}
 
-    public void setCurrentCollection(final BigDecimal currentCollection) {
-        this.currentCollection = currentCollection;
-    }
+	public void setCurrentCollection(final BigDecimal currentCollection) {
+		this.currentCollection = currentCollection;
+	}
 
-    public BigDecimal getArrearDemand() {
-        return arrearDemand != null ? arrearDemand : BigDecimal.ZERO;
-    }
+	public BigDecimal getArrearDemand() {
+		return arrearDemand != null ? arrearDemand : BigDecimal.ZERO;
+	}
 
-    public void setArrearDemand(final BigDecimal arrearDemand) {
-        this.arrearDemand = arrearDemand;
-    }
+	public void setArrearDemand(final BigDecimal arrearDemand) {
+		this.arrearDemand = arrearDemand;
+	}
 
-    public BigDecimal getArrearCollection() {
-        return arrearCollection != null ? arrearCollection : BigDecimal.ZERO;
-    }
+	public BigDecimal getArrearCollection() {
+		return arrearCollection != null ? arrearCollection : BigDecimal.ZERO;
+	}
 
-    public void setArrearCollection(final BigDecimal arrearCollection) {
-        this.arrearCollection = arrearCollection;
-    }
+	public void setArrearCollection(final BigDecimal arrearCollection) {
+		this.arrearCollection = arrearCollection;
+	}
 
-    public BigDecimal getTotalTaxDue() {
-        return totalTaxDue != null ? totalTaxDue : BigDecimal.ZERO;
-    }
+	public BigDecimal getTotalTaxDue() {
+		return totalTaxDue != null ? totalTaxDue : BigDecimal.ZERO;
+	}
 
-    public void setTotalTaxDue(final BigDecimal totalTaxDue) {
-        this.totalTaxDue = totalTaxDue;
-    }
+	public void setTotalTaxDue(final BigDecimal totalTaxDue) {
+		this.totalTaxDue = totalTaxDue;
+	}
 
-    public Boolean getIsSuccess() {
-        return isSuccess;
-    }
+	public Boolean getIsSuccess() {
+		return isSuccess;
+	}
 
-    public void setIsSuccess(final Boolean isSuccess) {
-        this.isSuccess = isSuccess;
-    }
+	public void setIsSuccess(final Boolean isSuccess) {
+		this.isSuccess = isSuccess;
+	}
 
-    public Map<String, String> getConsumerCode() {
-        return consumerCode;
-    }
+	public Map<String, String> getConsumerCode() {
+		return consumerCode;
+	}
 
-    public void setConsumerCode(Map<String, String> consumerCode) {
-        this.consumerCode = (HashMap<String, String>) consumerCode;
-    }
+	public void setConsumerCode(Map<String, String> consumerCode) {
+		this.consumerCode = (HashMap<String, String>) consumerCode;
+	}
 
-    public Integer getConnectionCount() {
-        return connectionCount;
-    }
+	public Integer getConnectionCount() {
+		return connectionCount;
+	}
 
-    public void setConnectionCount(final Integer connectionCount) {
-        this.connectionCount = connectionCount;
-    }
+	public void setConnectionCount(final Integer connectionCount) {
+		this.connectionCount = connectionCount;
+	}
 
-    public String getErrorCode() {
-        return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorCode, "");
-    }
+	public String getErrorCode() {
+		return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorCode, "");
+	}
 
-    public void setErrorCode(final String errorCode) {
-        this.errorCode = errorCode;
-    }
+	public void setErrorCode(final String errorCode) {
+		this.errorCode = errorCode;
+	}
 
-    public String getErrorMessage() {
-        return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorMessage, "");
-    }
+	public String getErrorMessage() {
+		return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorMessage, "");
+	}
 
-    public void setErrorMessage(final String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+	public void setErrorMessage(final String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
-    public BigDecimal getCurrentInstDemand() {
-        return currentInstDemand;
-    }
+	public BigDecimal getCurrentInstDemand() {
+		return currentInstDemand;
+	}
 
-    public void setCurrentInstDemand(BigDecimal currentInstDemand) {
-        this.currentInstDemand = currentInstDemand;
-    }
+	public void setCurrentInstDemand(BigDecimal currentInstDemand) {
+		this.currentInstDemand = currentInstDemand;
+	}
 
+	public Integer getNoOfClosets() {
+		return noOfClosets;
+	}
+
+	public void setNoOfClosets(Integer noOfClosets) {
+		this.noOfClosets = noOfClosets;
+	}
+
+	public BigDecimal getHalfYearlyTax() {
+		return halfYearlyTax != null ? halfYearlyTax : BigDecimal.ZERO;
+	}
+
+	public void setHalfYearlyTax(final BigDecimal halfYearlyTax) {
+		this.halfYearlyTax = halfYearlyTax;
+	}
 }

@@ -13,7 +13,7 @@ java_version: 8
 java_subversion: 131
 java_install_dir: "{{ANSIBLE_WORKSPACE}}"
 java_home: "{{java_install_dir}}/jdk1.{{java_version}}.0_{{java_subversion}}"
-java_download_url: 'https://devops.egovernments.org/downloads/jdk'
+java_download_url: 'https://devops.egovernments.org/Downloads/jdk'
 java_archive: 'jdk-{{java_version}}u{{java_subversion}}-linux-x64.tar.gz'
 
 #Postgres Version details
@@ -27,7 +27,7 @@ postgresql_dbpasswd: phoenix
 elasticsearch_version: 2.4.1
 elasticsearch_install_dir: "{{ANSIBLE_WORKSPACE}}"
 elasticsearch_home: "{{elasticsearch_install_dir}}/elasticsearch-{{elasticsearch_version}}"
-elasticsearch_download_url: 'https://devops.egovernments.org/downloads/es'
+elasticsearch_download_url: 'https://devops.egovernments.org/Downloads/es'
 elasticsearch_archive: 'elasticsearch-{{elasticsearch_version}}.zip'
 #elasticsearch_service_startonboot: yes
 
@@ -35,7 +35,7 @@ elasticsearch_archive: 'elasticsearch-{{elasticsearch_version}}.zip'
 wildfly_version: 11.0.0
 wildfly_install_dir: "{{ANSIBLE_WORKSPACE}}"
 wildfly_home: "{{wildfly_install_dir}}/wildfly-{{wildfly_version}}.Final"
-wildfly_download_url: 'https://devops.egovernments.org/downloads/wildfly'
+wildfly_download_url: 'https://devops.egovernments.org/Downloads/wildfly'
 wildfly_archive: 'wildfly-{{wildfly_version}}.Final.zip'
 
 #Redis Version 

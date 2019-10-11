@@ -6,8 +6,8 @@
 
 # hosts: "{{selected_hosts}}"
   hosts: localhost
-  sudo: yes
-  #become: yes
-  #become_method: sudo
+#  sudo: yes
+  become: true
+  become_method: sudo
   tasks:
     - include: tasks/main.yml

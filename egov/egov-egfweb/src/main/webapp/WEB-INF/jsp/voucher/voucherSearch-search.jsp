@@ -167,11 +167,14 @@
 							<display:column title="Voucher Number" style="text-align:center;">
 
 								<a href="#"
-									onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>','<s:property value="%{#attr.currentRowObject.vouchernumber}" />','<s:date name="%{#attr.currentRowObject.voucherdate}" format="dd/MM/yyyy"/>');"><s:property
+									onclick="openVoucher('<s:property value='%{#attr.currentRowObject.id}'/>',
+									'<s:property value='%{#attr.currentRowObject.vouchernumber}' />',
+									'<s:date name="%{#attr.currentRowObject.voucherdate}" format="dd/MM/yyyy"/>');"><s:property
 										value="%{#attr.currentRowObject.vouchernumber}" />
+								</a>
 							</display:column>
 
-							</a>
+							
 
 							<display:column title="Voucher Type" style="text-align:center;">
 								<s:property value="%{#attr.currentRowObject.type}" />
@@ -296,27 +299,25 @@
 		 document.getElementById('name').value='<s:property value="name"/>' ;   
 			
 		}
-		function openVoucher(vid,url,voucherNumber,voucherDate){
-		
-		var showMode = document.getElementById('showMode').value ;
-		
-		if(showMode=='nonbillPayment')
-		{
-		url="../payment/directBankPayment-nonBillPayment.action?showMode="+showMode+"&voucherHeader.id="+vid;
-		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
-		}
-		else if(showMode == 'sourceLink' ){
-			window.returnValue = voucherNumber+"$"+voucherDate+"$"+vid;
-	        window.close();
-	        return;
-		}
-		else if(showMode == '' ){
-			var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
-		}
-		else{
-
-			var url =  url+'='+ vid+'&showMode='+showMode;
-		}
+		function openVoucher(vid,voucherNumber,voucherDate,url){
+			var showMode = document.getElementById('showMode').value ;
+			if(showMode=='nonbillPayment')
+			{
+				url="../payment/directBankPayment-nonBillPayment.action?showMode="+showMode+"&voucherHeader.id="+vid;
+				window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+			}
+			else if(showMode == 'sourceLink' ){
+				window.returnValue = voucherNumber+"$"+voucherDate+"$"+vid;
+		        window.close();
+		        return;
+			}
+			else if(showMode == '' ){
+				var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vid;
+			}
+			else{
+	
+				var url =  url+'='+ vid+'&showMode='+showMode;
+			}
 		
 			window.open(url,'','width=900, height=700');
 		}

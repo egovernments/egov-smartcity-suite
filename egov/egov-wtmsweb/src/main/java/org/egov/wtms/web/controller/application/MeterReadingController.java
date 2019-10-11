@@ -85,6 +85,7 @@ import org.egov.wtms.masters.service.MeteredRatesDetailService;
 import org.egov.wtms.masters.service.MeteredRatesService;
 import org.egov.wtms.masters.service.UsageSlabService;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -126,6 +127,9 @@ public class MeterReadingController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     private final WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private final ConnectionDemandService connectionDemandService;
@@ -390,7 +394,7 @@ public class MeterReadingController {
         int count = 0;
         Set<EgDemandDetails> demandDtlSet = null;
         BigDecimal meterDemandAmount = BigDecimal.ZERO;
-        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         if (demand != null)
             demandDtlSet = demand.getEgDemandDetails();
         for (final Installment installment : installmentList)
@@ -452,7 +456,7 @@ public class MeterReadingController {
             final WaterConnectionDetails waterConnectionDetails) {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(MODULE_NAME), previousMonthStartDate.toDate(), MONTHLY);
-        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         if (installment != null && demand != null)
             for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                 if (demandDetail.getEgDemandReason().getEgInstallmentMaster().getId() == installment.getId())

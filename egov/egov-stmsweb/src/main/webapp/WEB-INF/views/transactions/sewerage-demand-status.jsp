@@ -63,19 +63,17 @@
 	                <div class="panel-title"></div>
 	            </div>
 	            <div class="panel-body custom-form">
-                  
-                    <div class="form-group">	
+                    <div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">
 						<spring:message code="lbl.financial.year" /><span class="mandatory"></span>
 						</label>	
 						<div class="col-sm-3 add-margin">
-							<form:select path="financialYear" data-first-option="false"	id="financialyear" cssClass="form-control"  >
+							<form:select path="financialYear" data-first-option="false"	id="financialyear" cssClass="form-control" required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${financialYear}" itemLabel="description" itemValue="description"/>
 							</form:select>
-						</div>		
+						</div>
 					</div>		
-       		
 	            </div>
 	        </div>
         	<div class="row">
@@ -118,7 +116,6 @@
 	        	</table>
         	</div>
         </div>
-               
 	</div>
 </div>
 

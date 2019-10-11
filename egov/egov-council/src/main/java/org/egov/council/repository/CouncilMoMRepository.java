@@ -60,4 +60,7 @@ public interface CouncilMoMRepository extends JpaRepository<MeetingMOM, Long> {
     
     @Query("select mom from MeetingMOM mom where mom.resolutionNumber = :resolutionNumber and mom.preamble.id != :preambleId ")
     MeetingMOM findByResolutionNumberAndPreamble(@Param("resolutionNumber") String resolutionNumber, @Param("preambleId") Long preambleId);
+    
+    @Query("select mom from MeetingMOM mom where mom.resolutionNumber = :resolutionNumber and mom.agenda.committeeType.code = :committeeType ")
+    MeetingMOM findByResolutionNumberAndCommitteeType(@Param("resolutionNumber") String resolutionNumber, @Param("committeeType") String committeeType);
 }

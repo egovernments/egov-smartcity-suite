@@ -87,6 +87,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -123,6 +124,9 @@ public class MeterDemandNoticeController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @GetMapping(value = "/meterdemandnotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
@@ -154,7 +158,7 @@ public class MeterDemandNoticeController {
 
             EgBill billObj = null;
             final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(
-                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(),
+            		waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand(),
                     "N", "N");
             if (!billlist.isEmpty())
                 billObj = billlist.get(0);
@@ -281,7 +285,7 @@ public class MeterDemandNoticeController {
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
                 WaterTaxConstants.METERED_CHARGES_REASON_CODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(
-                waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
+        		waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
         if (!demnadDetList.isEmpty()) {
             final int detLength = demnadDetList.size() - 1;
             if (demnadDetList.get(0).getAmount() != null)

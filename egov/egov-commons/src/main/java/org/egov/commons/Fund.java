@@ -55,6 +55,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -70,7 +72,8 @@ import java.util.Date;
 @Entity
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
-@Unique(fields = {"code", "name"}, enableDfltMsg = true)
+@Unique(fields = { "code", "name" }, enableDfltMsg = true)
+@JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
 public class Fund extends AbstractPersistable<Integer> {
 
     public static final String SEQ = "SEQ_Fund";

@@ -48,22 +48,50 @@
 
 package org.egov.infra.notification.service;
 
+import static org.egov.infra.notification.NotificationConstants.CHARSET;
+import static org.egov.infra.notification.NotificationConstants.COMPONENT;
+import static org.egov.infra.notification.NotificationConstants.CONTENTCLASS_KEY;
+import static org.egov.infra.notification.NotificationConstants.CONTENTCLASS_VALUE;
+import static org.egov.infra.notification.NotificationConstants.CONTENTID_KEY;
+import static org.egov.infra.notification.NotificationConstants.CONTENTID_VALUE;
+import static org.egov.infra.notification.NotificationConstants.DATASOURCETYPE;
+import static org.egov.infra.notification.NotificationConstants.DATETIME_FORMAT_YYYYMMDDTHHMMSSZ;
+import static org.egov.infra.notification.NotificationConstants.MAILBODYMESSAGE_CONTENT;
+import static org.egov.infra.notification.NotificationConstants.REQUESTMETHOD;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.activation.DataHandler;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.notification.entity.CalendarInviteInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.mail.util.ByteArrayDataSource;
 
 @Service
 public class EmailService {
 
     @Autowired
     private JavaMailSenderImpl mailSender;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
 
     public void sendEmail(String toEmail, String subject, String mailBody) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -75,7 +103,7 @@ public class EmailService {
     }
 
     public void sendEmail(String toEmail, String subject, String mailBody, String fileType, String fileName,
-                          byte[] attachment) {
+            byte[] attachment) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessage = new MimeMessageHelper(message, true);
@@ -89,5 +117,87 @@ public class EmailService {
             throw new ApplicationRuntimeException("Error occurred while sending email with attachment", e);
         }
         mailSender.send(message);
+    }
+
+    /**
+     * 
+     * @param toEmail
+     * @param subject
+     * @param calendarInviteInfo parameter is used to build calendar invitation.
+     * 
+     */
+
+    public void sendCalendarInvite(String toEmail, String subject, CalendarInviteInfo calendarInviteInfo) {
+        MimeMessage calendarMail = mailSender.createMimeMessage();
+        try {
+            calendarMail.addHeaderLine(REQUESTMETHOD);
+            calendarMail.addHeaderLine(CHARSET);
+            calendarMail.addHeaderLine(COMPONENT);
+            MimeMessageHelper mailMessage = new MimeMessageHelper(calendarMail, true);
+            mailMessage.setFrom(mailSender.getUsername());
+            mailMessage.setSubject(subject);
+            if (null == calendarInviteInfo.getMailList() || calendarInviteInfo.getMailList().isEmpty())
+                mailMessage.setTo(toEmail);
+            else
+                mailMessage.setTo(calendarInviteInfo.getMailList().toArray(new String[calendarInviteInfo.getMailList().size()]));
+            Multipart mailContent = new MimeMultipart();
+            mailContent.addBodyPart(constructCalendarMail(calendarInviteInfo));
+            if (StringUtils.isNotBlank(calendarInviteInfo.getMailBodyMessage()))
+                mailContent.addBodyPart(constructMailMessage(calendarInviteInfo.getMailBodyMessage()));
+            calendarMail.setContent(mailContent);
+        } catch (MessagingException | IllegalArgumentException e) {
+            throw new ApplicationRuntimeException("Error occurred while sending calendar email notification", e);
+        }
+        mailSender.send(calendarMail);
+    }
+
+    /**
+     * 
+     * @param calendarInviteInfo
+     * @return Calendar invitation format mail body.
+     */
+
+    private BodyPart constructCalendarMail(CalendarInviteInfo calendarInviteInfo) {
+        BodyPart calendarMail = new MimeBodyPart();
+        try {
+            calendarMail.setHeader(CONTENTCLASS_KEY, CONTENTCLASS_VALUE);
+            calendarMail.setHeader(CONTENTID_KEY, CONTENTID_VALUE);
+            calendarMail.setDataHandler(new DataHandler(
+                    new ByteArrayDataSource(constructCalendarInvite(calendarInviteInfo), DATASOURCETYPE)));
+        } catch (MessagingException | IOException e) {
+            throw new ApplicationRuntimeException("Error occurred while preparing calendar invitation", e);
+        }
+        return calendarMail;
+    }
+
+    private String constructCalendarInvite(CalendarInviteInfo calendarInviteInfo) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_FORMAT_YYYYMMDDTHHMMSSZ);
+
+        return messageSource.getMessage("calendar.invite.message", new String[] { calendarInviteInfo.getParticipant(),
+                calendarInviteInfo.getParticipant(),
+                calendarInviteInfo.getStartDateTime(),
+                calendarInviteInfo.getEndDateTime(),
+                dateFormat.format(new Date()),
+                calendarInviteInfo.getLocation(),
+                calendarInviteInfo.getDescription(),
+                calendarInviteInfo.getSummary() }, null);
+    }
+
+    /**
+     * API is to add calendar invite mail details. In calendar invitation with mailbodyMessage param can provide notification
+     * details.
+     * @param mailbodyMessage
+     * @return Calendar invitation mail message body.
+     */
+    private MimeBodyPart constructMailMessage(String mailbodyMessage) {
+        MimeBodyPart mailMessage = new MimeBodyPart();
+        try {
+            mailMessage.setContent(
+                    messageSource.getMessage("calendar.invite.mailbody.message", new String[] { mailbodyMessage }, null),
+                    MAILBODYMESSAGE_CONTENT);
+        } catch (MessagingException e) {
+            throw new ApplicationRuntimeException("Error occurred while preparing calendar notification", e);
+        }
+        return mailMessage;
     }
 }

@@ -91,7 +91,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     private static final String EGOV_STATUS = "EGOV_STATUS";
     private static final String EGOV_CLASSIFICATION = "EGOV_CLASSIFICATION";
 
-    private Integer statusId;
+    private Integer statusId = -1;
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();

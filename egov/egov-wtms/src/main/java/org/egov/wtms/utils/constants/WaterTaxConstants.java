@@ -49,6 +49,7 @@ package org.egov.wtms.utils.constants;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -125,6 +126,7 @@ public class WaterTaxConstants {
     public static final String ROLE_CITIZEN = "CITIZEN";
     public static final String ROLE_OPERATOR = "Operator";
     public static final String ROLE_PUBLIC = "PUBLIC";
+    public static final String ROLE_BANKCOLLECTOROPERATOR = "Bank Collection Operator";
     public static final String ROLE_ADMIN = "Property Administrator";
     public static final String ROLE_MEESEVA_OPERATOR = "MeeSeva Operator";
 
@@ -182,14 +184,14 @@ public class WaterTaxConstants {
     public static final String PENDING_DIGI_SIGN = "Pending Digital Signature";
     public static final String COMM_APPROVAL_PENDING = "Commissioner Approval Pending";
     public static final String AE_APPROVAL_PENDING = "Asst.engineer approval pending";
-    public static final String WF_STATE_PENDING_FORWARD_BY_EE="Pending forward by Executive Engineer";
-    public static final String WF_STATE_PENDING_FORWARD_BY_SE="Pending forward by Superintending Engineer";
-    public static final String WF_STATE_PENDING_FORWARD_BY_ME="Pending forward by Municipal Engineer";
-    public static final String PENDING_DIGI_SIGN_BY_COMM="Commissioner digisign pending";
-    public static final String PENDING_DIGI_SIGN_BY_DEE="Pending Digital Sign by DEE";
-    public static final String PENDING_DIGI_SIGN_BY_EE="Pending Digital Sign by EE";
-    public static final String PENDING_DIGI_SIGN_BY_SE="Pending Digital Sign by SE";
-    public static final String PENDING_DIGI_SIGN_BY_ME="Pending Digital Sign by ME";
+    public static final String WF_STATE_PENDING_FORWARD_BY_EE = "Pending forward by Executive Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_SE = "Pending forward by Superintending Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_ME = "Pending forward by Municipal Engineer";
+    public static final String PENDING_DIGI_SIGN_BY_COMM = "Commissioner digisign pending";
+    public static final String PENDING_DIGI_SIGN_BY_DEE = "Pending Digital Sign by DEE";
+    public static final String PENDING_DIGI_SIGN_BY_EE = "Pending Digital Sign by EE";
+    public static final String PENDING_DIGI_SIGN_BY_SE = "Pending Digital Sign by SE";
+    public static final String PENDING_DIGI_SIGN_BY_ME = "Pending Digital Sign by ME";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -269,7 +271,7 @@ public class WaterTaxConstants {
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
-    public static final String WATER_MATERIAL_CHARGES_REASON_CODE="MATERIALCHARGES";
+    public static final String WATER_MATERIAL_CHARGES_REASON_CODE = "MATERIALCHARGES";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
@@ -446,6 +448,7 @@ public class WaterTaxConstants {
     public static final String SERVICECHARGES = "SERVICECHARGES";
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
+    public static final String ESTIMATION_NOTICE = "Estimation Notice";
     public static final String STATUS = "status";
     public static final int NO_OF_INSTALLMENTS = 8;
     public static final String ESTIMATIONCHARGES_SERVICE_CODE = "WES";
@@ -461,8 +464,23 @@ public class WaterTaxConstants {
     public static final String REGLZN_WATER_TAP_CONNECTION = "Regularization connection Water Tap Connection";
     public static final String MESSAGE = "message";
     public static final String ERROR = "error";
-    public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
-    public static final String SAVE="Save";
-    public static final String CREATE="Create";
-    public static final String DELETE="Delete";
+    public static final String BPL_CATEGORY_DONATION_AMOUNT = "BPL_CATEGORY_DONATION_AMOUNT";
+    public static final String SAVE = "Save";
+    public static final String CREATE = "Create";
+    public static final String DELETE = "Delete";
+    public static final String WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE = "WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE";
+    public static final String PROCEEDING_FOR_CLOSER_OF_CONNECTION = "Proceeding for Closure of Connection";
+    public static final String PROCEEDING_FOR_RECONNECTION = "Proceeding for Re-connection";
+
+    public static final List<String> APPLICATION_TYPE_LIST = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            add(NEWCONNECTION);
+            add(ADDNLCONNECTION);
+            add(CHANGEOFUSE);
+            add(CLOSINGCONNECTION);
+            add(RECONNECTION);
+        }
+    };
+
 }

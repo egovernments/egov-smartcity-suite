@@ -1,10 +1,12 @@
 package org.egov.dao.billpayment;
 
-import org.egov.egf.model.BillPaymentDetails;
-
 import java.util.List;
+
+import org.egov.egf.model.BillPayment.BillPaymentDetails;
 
 
 public interface BillAndPaymentDetailsDAO {
-    List<BillPaymentDetails> getBillAndPaymentDetails(String billNo);
+
+	BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception;
+
 }

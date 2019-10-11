@@ -47,7 +47,17 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.JsonObject;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,13 +65,16 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.egf.expensebill.service.ExpenseBillService;
+import org.egov.egf.model.BillPayment.BillPaymentDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.egf.model.BillPaymentDetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.bills.BillIntegration;
+import org.egov.model.service.BillIntegrationService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
@@ -74,14 +87,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @RestController
 public class CreateBillController {
@@ -93,6 +100,11 @@ public class CreateBillController {
     @Autowired
     private ExpenseBillService expenseBillService;
 
+    @Autowired
+    private BillIntegrationService tpbiService;
+
+    private static final String SOURCE = "source";
+
     /**
      * API to create works contractor bill.
      *
@@ -102,15 +114,15 @@ public class CreateBillController {
      */
 
     @RequestMapping(value = "/egf/bill", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String createContractorBill(@RequestBody final String requestJson,
+    public String createContractorBill(@RequestBody final String requestJson, final HttpServletRequest request,
             final HttpServletResponse response) {
-        return contractorBill(requestJson, response);
+        return contractorBill(requestJson, request, response);
     }
 
     @RequestMapping(value = "/v1.0/egf/bill", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String createSecuredContractorBill(@RequestBody final String requestJson,
+    public String createSecuredContractorBill(@RequestBody final String requestJson, final HttpServletRequest request,
             final HttpServletResponse response, final OAuth2Authentication authentication) {
-        return contractorBill(requestJson, response);
+        return contractorBill(requestJson, request, response);
     }
 
     /**
@@ -118,10 +130,10 @@ public class CreateBillController {
      * @param response
      * @return
      */
-    public String contractorBill(final String requestJson, final HttpServletResponse response) {
+    public String contractorBill(final String requestJson, final HttpServletRequest request, final HttpServletResponse response) {
         if (LOG.isDebugEnabled())
             LOG.debug("Rest API creating bill with the data: " + requestJson);
-        String responseJson;
+        String billNumber;
         EgBillregister egBillregister;
         EgBillregister savedBillregister;
         ApplicationThreadLocals.setUserId(2L);
@@ -149,7 +161,24 @@ public class CreateBillController {
                 billService.createProjectCode(billRegister);
                 billService.populateBillRegister(egBillregister, billRegister);
                 savedBillregister = billService.createBill(egBillregister);
-                responseJson = savedBillregister.getBillnumber();
+                billNumber = savedBillregister.getBillnumber();
+
+                // Save in bill integration table
+
+                HttpSession session = request.getSession();
+                Object source = session != null ? session.getAttribute(SOURCE) : null;
+                String strSource;
+                if (source == null) {
+                	strSource = Source.SOFTTECHWMS.toString();
+                }else {
+                	strSource = source.toString();
+                }
+                BillIntegration tpbi = new BillIntegration();
+                tpbi.setEgBill(savedBillregister);
+                tpbi.setSource(strSource);
+                tpbi.setTpbillno(billRegister.getTpBillNo());
+
+                tpbiService.createBillIntegration(tpbi);
             }
         } catch (final ValidationException e) {
             LOG.error(e.getStackTrace());
@@ -165,7 +194,7 @@ public class CreateBillController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errorList);
         } catch (final Exception e) {
-            LOG.error(e.getStackTrace());
+            LOG.error(e.getMessage());
             final List<RestErrors> errorList = new ArrayList<>(0);
             final RestErrors re = new RestErrors();
             re.setErrorCode(e.getMessage());
@@ -175,9 +204,11 @@ public class CreateBillController {
             return JsonConvertor.convert(errorList);
         }
         jsonObject.addProperty("successMessage", "Works Bill created Successfully");
-        jsonObject.addProperty("billNumber", responseJson);
+        jsonObject.addProperty("billNumber", billNumber);
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(jsonObject); 
         response.setStatus(HttpServletResponse.SC_CREATED);
-        return jsonObject.toString();
+        return jsonArray.toString();
     }
 
     /**
@@ -187,8 +218,7 @@ public class CreateBillController {
      * @return
      * @throws IOException
      */
-    private Object getObjectFromJSONRequest(final String jsonString, final Class cls)
-            throws IOException {
+    private Object getObjectFromJSONRequest(final String jsonString, final Class cls) throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
@@ -239,20 +269,28 @@ public class CreateBillController {
                 return JsonConvertor.convert(restErrors);
             }
             response.setStatus(HttpServletResponse.SC_CREATED);
-            List<BillPaymentDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
-            if (billPaymetDetails.isEmpty()) {
+            BillPaymentDetails billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
+            if (billPaymetDetails == null) {
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MESSAGE_NO_DATA_FOUND);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(restErrors);
             } else {
+                LOG.debug(billPaymetDetails.toString());
                 return JsonConvertor.convert(billPaymetDetails);
             }
 
         } catch (final Exception e) {
+            e.printStackTrace();
+
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_GENERIC_ERROR);
+            restErrors.setErrorMessage(e.getMessage());
+
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return JsonConvertor.convert(StringUtils.EMPTY);
+
+            return JsonConvertor.convert(restErrors);
         }
     }
 

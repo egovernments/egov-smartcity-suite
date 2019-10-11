@@ -79,28 +79,23 @@
 
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value = name;
-		var approverPosId = document.getElementById("approvalPosition");
-		/* if(approverPosId && approverPosId.value != -1) {
-			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
-			document.getElementById("approverName").value= approver.split('~')[0];
-			validateWorkFlowApprover('Forward');
-		}   */
-		var rejectbutton = document.getElementById("workFlowAction").value;
-		if (rejectbutton != null
-				&& (rejectbutton == 'Reject' || rejectbutton == 'Cancel')) {
+		var workflowaction = document.getElementById("workFlowAction").value;
+		if (workflowaction != null && (workflowaction == 'Reject' || workflowaction == 'Cancel')) {
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').attr('required', 'required');
 		}
-		if (rejectbutton != null && rejectbutton == 'Forward') {
+		if (workflowaction != null && workflowaction == 'Forward') {
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
 			$('#approvalComent').removeAttr('required');
 		}
-		if (rejectbutton != null && rejectbutton == 'Approve') {
-			$('#approvalComent').removeAttr('required');
+		if (workflowaction != null && workflowaction == 'Approve') {
+            $('#approvalDepartment').removeAttr('required');
+            $('#approvalDesignation').removeAttr('required');
+            $('#approvalPosition').removeAttr('required');
 		}
         $('form').submit;
 		return true;
@@ -120,8 +115,9 @@
 							onclick="return openReassignWindow();" />
 					</c:if>
 				</c:if> 
-		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary btnWorkflow"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+			<c:forEach items="${validActionList}" var="validButtons">
+				<form:button type="submit" id="${validButtons}" class="btn btn-primary btnWorkflow"  value="${validButtons}"
+							 onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

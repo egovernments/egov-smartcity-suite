@@ -48,22 +48,23 @@
 
 package org.egov.infra.config.notification.listener;
 
-import org.egov.infra.notification.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-
 import static org.egov.infra.notification.NotificationConstants.ATTACHMENT;
 import static org.egov.infra.notification.NotificationConstants.EMAIL;
 import static org.egov.infra.notification.NotificationConstants.FILENAME;
 import static org.egov.infra.notification.NotificationConstants.FILETYPE;
 import static org.egov.infra.notification.NotificationConstants.MESSAGE;
 import static org.egov.infra.notification.NotificationConstants.SUBJECT;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+
+import org.egov.infra.notification.entity.CalendarInviteInfo;
+import org.egov.infra.notification.service.EmailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
 @Component
 public class EmailNotificationListener {
@@ -74,15 +75,24 @@ public class EmailNotificationListener {
     @JmsListener(destination = "java:/jms/queue/email")
     public void onMessage(Message message) {
         try {
-            final MapMessage emailMessage = (MapMessage) message;
-            if (emailMessage.itemExists(FILETYPE))
-                emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
-                        emailMessage.getString(MESSAGE), emailMessage.getString(FILETYPE),
-                        emailMessage.getString(FILENAME), emailMessage.getBytes(ATTACHMENT));
-            else
-                emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
-                        emailMessage.getString(MESSAGE));
-        } catch (final JMSException e) {
+            if (message instanceof ObjectMessage) {
+                final ObjectMessage emailMessage = (ObjectMessage) message;
+                emailService.sendCalendarInvite(emailMessage.getStringProperty(EMAIL),
+                        emailMessage.getStringProperty(SUBJECT),
+                        (CalendarInviteInfo) emailMessage.getObject());
+            } else if (message instanceof MapMessage) {
+                final MapMessage emailMessage = (MapMessage) message;
+                if (emailMessage.itemExists(FILETYPE))
+                    emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                            emailMessage.getString(MESSAGE), emailMessage.getString(FILETYPE),
+                            emailMessage.getString(FILENAME), emailMessage.getBytes(ATTACHMENT));
+                else
+                    emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                            emailMessage.getString(MESSAGE));
+            }
+        } catch (
+
+        final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }
     }

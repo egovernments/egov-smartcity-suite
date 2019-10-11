@@ -1,0 +1,2 @@
+ALTER  TABLE eg_modules ALTER COLUMN code SET NOT NULL;
+

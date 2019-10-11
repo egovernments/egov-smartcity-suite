@@ -600,12 +600,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
                     ? objection.getBasicProperty().getBoundary().getName() : "");
-            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
-            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
-            reportParams.put("AnnualPropertyTaxTo",
-                    currentDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
-            reportParams.put("AnnualPropertyTaxFrom",
-                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
+			reportParams.put("HalfYearPropertyTaxTo",
+					currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2, BigDecimal.ROUND_HALF_UP));
+			reportParams.put("HalfYearPropertyTaxFrom",
+					earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2, BigDecimal.ROUND_HALF_UP));
+			reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR)
+					.multiply(BigDecimal.valueOf(2)).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+			reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_SECONDHALF_DMD_STR)
+					.multiply(BigDecimal.valueOf(2)).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
 
             reportRequest = new ReportRequest(REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT, objection,
                     reportParams);
@@ -686,18 +688,18 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails())
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
                     .equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
-                totalTax = totalTax.add(demandDetail.getAmount());
+                totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX))
-                    propertyTax = propertyTax.add(demandDetail.getAmount());
+                    propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                 setLibraryCess(infoBean, propertyType, demandDetail);
 
                 if (NON_VACANT_TAX_DEMAND_CODES
                         .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(DEMANDRSN_CODE_VACANT_TAX))
-                    propertyTax = propertyTax.add(demandDetail.getAmount());
+                    propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                 setUCPenalty(infoBean, propertyType, demandDetail);
             }
         setTotalTax(infoBean, totalTax, propertyTax, propertyType);
@@ -720,9 +722,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                 .equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)) {
             if (propertyType.equalsIgnoreCase(CURRENT))
-                infoBean.setRevLibraryCess(demandDetail.getAmount());
+                infoBean.setRevLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
             if (propertyType.equalsIgnoreCase(HISTORY))
-                infoBean.setExistingLibraryCess(demandDetail.getAmount());
+                infoBean.setExistingLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
     }
 
@@ -731,9 +733,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                 .equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
             if (propertyType.equalsIgnoreCase(CURRENT))
-                infoBean.setRevUCPenalty(demandDetail.getAmount());
+                infoBean.setRevUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
             if (propertyType.equalsIgnoreCase(HISTORY))
-                infoBean.setExistingUCPenalty(demandDetail.getAmount());
+                infoBean.setExistingUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
     }
 
@@ -1155,7 +1157,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 final EgDemandDetails newDmndDtls = propertyService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),
@@ -1199,7 +1201,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         updateRevisionPetitionStatus(null, objection, PropertyTaxConstants.CANCELLED);
         objection.transition().end().withOwner(objection.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
-
+    
+    @Transactional
     public void updateIndexAndPushToPortalInbox(final RevisionPetition objection) {
         if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
             propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);

@@ -348,6 +348,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal demand;
         BigDecimal collection;
         final Map<String, BigDecimal> retMap = new HashMap<>();
+        BigDecimal demandVariation = BigDecimal.ZERO;
 
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
@@ -357,9 +358,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
+            demandVariation = listObj[5] != null ? new BigDecimal((Double) listObj[5]) : BigDecimal.ZERO;
+            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]).subtract(demandVariation) : BigDecimal.ZERO;
             collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
-
             installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
                 if (collection.compareTo(BigDecimal.ZERO) > 0)
@@ -404,9 +405,10 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal currSecondHalfPenalty = BigDecimal.ZERO;
         final BigDecimal currFirstHalfPenaltyColllection = BigDecimal.ZERO;
         final BigDecimal currSecondHalfPenaltyCollection = BigDecimal.ZERO;
-        final BigDecimal arrPenaltyCollection = BigDecimal.ZERO;
-        final BigDecimal arrPenalty = BigDecimal.ZERO;
+        BigDecimal arrPenaltyCollection = BigDecimal.ZERO;
+        BigDecimal arrPenalty = BigDecimal.ZERO;
         BigDecimal advance = BigDecimal.ZERO;
+        BigDecimal demandVariation = BigDecimal.ZERO;
 
         final Map<String, BigDecimal> retMap = new HashMap<>();
 
@@ -419,18 +421,19 @@ public class PtDemandHibernateDao implements PtDemandDao {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
             code = listObj[1].toString();
-            demand = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+            demandVariation = listObj[5] != null ? new BigDecimal((Double) listObj[5]) : BigDecimal.ZERO;
+            demand = listObj[2] != null ? new BigDecimal((Double) listObj[2]).subtract(demandVariation) : BigDecimal.ZERO;
             collection = listObj[3] != null ? new BigDecimal((Double) listObj[3]) : BigDecimal.ZERO;
             installment = installmentDao.findById(instId, false);
 
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment) && installment.getId().equals(instId)) {
                 if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                        && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                        && !code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                     currFirstHalfDmd = currFirstHalfDmd.add(demand);
                     if (collection.compareTo(BigDecimal.ZERO) > 0)
                         currFirstHalfCollection = currFirstHalfCollection.add(collection);
                 } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                        && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                        && code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                     currFirstHalfPenalty = currFirstHalfPenalty.add(demand);
                     if (collection.compareTo(BigDecimal.ZERO) > 0)
                         currFirstHalfCollection = currFirstHalfCollection.add(collection);
@@ -438,24 +441,27 @@ public class PtDemandHibernateDao implements PtDemandDao {
             } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment) && installment.getId().equals(instId)) {
 
                 if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                        && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                        && !code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                     currSecondHalfDmd = currSecondHalfDmd.add(demand);
                     if (collection.compareTo(BigDecimal.ZERO) > 0)
                         currSecondHalfCollection = currSecondHalfCollection.add(collection);
                     else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                            && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                            && code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                         currSecondHalfPenalty = currSecondHalfPenalty.add(demand);
                         if (collection.compareTo(BigDecimal.ZERO) > 0)
                             currSecondHalfCollection = currSecondHalfCollection.add(collection);
                     }
                 }
             } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                    && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                    && !code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                 arrDmd = arrDmd.add(demand);
                 if (collection.compareTo(BigDecimal.ZERO) > 0)
                     arrColelection = arrColelection.add(collection);
             } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
-                    && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                    && code.equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
+            	arrPenalty = arrPenalty.add(demand);
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
+                	arrPenaltyCollection = arrPenaltyCollection.add(collection);
             }
             if (code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE))
                 advance = advance.add(collection);

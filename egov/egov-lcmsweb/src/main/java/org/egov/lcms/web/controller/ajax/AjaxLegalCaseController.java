@@ -194,6 +194,8 @@ public class AjaxLegalCaseController {
                 map.put("caseStatus", legalCase.getStatus().getDescription());
                 map.put("caseTitle", legalCase.getCaseTitle());
                 map.put("caseType", legalCase.getCaseTypeMaster().getCaseType());
+                map.put("caseStatusCode", legalCase.getStatus().getCode());
+                map.put("caseDate", legalCase.getCaseDate().toString());
                 map.put("viewLegalCase", LcmsConstants.VIEW_LEGALCASE_LINK + legalCase.getLcNumber());
                 if (!legalCase.getJudgment().isEmpty()) {
                     map.put("judgmentType", legalCase.getJudgment().get(0).getJudgmentType().getName());

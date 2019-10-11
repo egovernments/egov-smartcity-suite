@@ -71,193 +71,215 @@ import org.egov.infstr.models.ServiceDetails;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.hibernate.type.StringType;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @ParentPackage("egov")
-@Results({
-        @Result(name = SearchOnlineReceiptAction.SUCCESS, location = "searchOnlineReceipt.jsp")
-})
+@Results({ @Result(name = SearchOnlineReceiptAction.SUCCESS, location = "searchOnlineReceipt.jsp") })
 public class SearchOnlineReceiptAction extends BaseFormAction {
 
-    private static final long serialVersionUID = 1L;
-    private Long serviceTypeId = Long.valueOf(-1);
-    private Long referenceId;
-    private Date fromDate;
-    private Date toDate;
-    private Integer searchTransactionStatus = -1;
-    private List<OnlinePayment> results = new ArrayList<>(0);
-    private String target = NEW;
-    @PersistenceContext
-    private EntityManager entityManager;
+	private static final long serialVersionUID = 1L;
+	private Long serviceTypeId = Long.valueOf(-1);
+	private Long referenceId;
+	private Date fromDate;
+	private Date toDate;
+	private Integer searchTransactionStatus = -1;
+	private List<OnlinePayment> results = new ArrayList<>(0);
+	private String target = NEW;
+	@PersistenceContext
+	private EntityManager entityManager;
+	private String consumerCode;
 
-    @Override
-    public Object getModel() {
-        return null;
-    }
+	@Override
+	public Object getModel() {
+		return null;
+	}
 
-    public SearchOnlineReceiptAction() {
-        super();
-        addRelatedEntity("serviceType", ServiceDetails.class, "name");
-    }
+	public SearchOnlineReceiptAction() {
+		super();
+		addRelatedEntity("serviceType", ServiceDetails.class, "name");
+	}
 
-    @Action(value = "/citizen/searchOnlineReceipt-reset")
-    public String reset() {
-        results = Collections.emptyList();
-        serviceTypeId = Long.valueOf(-1);
-        fromDate = null;
-        toDate = null;
-        searchTransactionStatus = -1;
-        referenceId = null;
-        return SUCCESS;
-    }
+	@Action(value = "/citizen/searchOnlineReceipt-reset")
+	public String reset() {
+		results = Collections.emptyList();
+		serviceTypeId = Long.valueOf(-1);
+		fromDate = null;
+		toDate = null;
+		searchTransactionStatus = -1;
+		referenceId = null;
+		consumerCode = null;
+		return SUCCESS;
+	}
 
-    @Override
-    public void prepare() {
-        super.prepare();
-        setupDropdownDataExcluding();
-        addDropdownData("serviceTypeList", getCurrentSession().createNamedQuery(
-                CollectionConstants.QUERY_SERVICE_CATEGORY_FOR_TYPE, ServiceCategory.class)
-                .setParameter(1, CollectionConstants.SERVICE_TYPE_BILLING)
-                .setParameter(2, Boolean.TRUE).getResultList());
-    }
+	@Override
+	public void prepare() {
+		super.prepare();
+		setupDropdownDataExcluding();
+		addDropdownData("serviceTypeList",
+				getCurrentSession()
+						.createNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_FOR_TYPE, ServiceCategory.class)
+						.setParameter(1, CollectionConstants.SERVICE_TYPE_BILLING).setParameter(2, Boolean.TRUE)
+						.getResultList());
+	}
 
-    @Override
-    @Action(value = "/citizen/searchOnlineReceipt")
-    public String execute() {
-        return SUCCESS;
-    }
+	@Override
+	@Action(value = "/citizen/searchOnlineReceipt")
+	public String execute() {
+		return SUCCESS;
+	}
 
-    public List getOnlineReceiptStatuses() {
-        return getCurrentSession().createNamedQuery(CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE, EgwStatus.class)
-                .setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE).getResultList();
-    }
+	public List getOnlineReceiptStatuses() {
+		return getCurrentSession().createNamedQuery(CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE, EgwStatus.class)
+				.setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE).getResultList();
+	}
 
-    public List getOnlineReceiptTransitionStatuses() {
-        final List<String> statusCodes = new ArrayList<>();
-        statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS);
-        statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED);
-        statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
-        return getCurrentSession().createNamedQuery(CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES, EgwStatus.class)
-                .setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE)
-                .setParameter("param_1", statusCodes).getResultList();
-    }
+	public List getOnlineReceiptTransitionStatuses() {
+		final List<String> statusCodes = new ArrayList<>();
+		statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS);
+		statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED);
+		statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
+		statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
+		return getCurrentSession()
+				.createNamedQuery(CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES, EgwStatus.class)
+				.setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE)
+				.setParameter("param_1", statusCodes).getResultList();
+	}
 
-    @Action(value = "/citizen/searchOnlineReceipt-search")
-    public String search() {
-        Query query = getCurrentSession().createQuery(prepareQuery());
-        setQueryParameters(query);
-        results = query.list();
-        target = "searchresult";
-        return SUCCESS;
-    }
+	@Action(value = "/citizen/searchOnlineReceipt-search")
+	public String search() {
+		Query query = getCurrentSession().createQuery(prepareQuery());
+		setQueryParameters(query);
+		results = query.list();
+		target = "searchresult";
+		return SUCCESS;
+	}
 
-    private String prepareQuery() {
-        final StringBuilder queryString = new StringBuilder(
-                " select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
-        final StringBuilder criteria = new StringBuilder();
-        final ArrayList<Object> params = new ArrayList<>();
-        if (getReferenceId() != null) {
-            criteria.append("onlinePayment.receiptHeader.id =:receiptId ");
-            params.add(getReferenceId());
-        }
-        if (getSearchTransactionStatus() != -1) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.status.id =:statusId ");
-            params.add(getSearchTransactionStatus());
-        }
-        if (getFromDate() != null) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate >=date(:fromDate)");
-            params.add(fromDate);
-        }
-        if (getToDate() != null) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate <=date(:toDate) ");
-            final Calendar newTodate = Calendar.getInstance();
-            newTodate.setTime(toDate);
-            newTodate.add(Calendar.DATE, 1);
-            params.add(newTodate.getTime());
-        }
-        if (getServiceTypeId() != -1) {
-            criteria.append(getJoinOperand(criteria))
-                    .append(" onlinePayment.receiptHeader.service.serviceCategory.id =:serviceTypeId ");
-            params.add(getServiceTypeId());
-        }
-        queryString.append(StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " where ").append(criteria).append(" order by id desc");
-        return queryString.toString();
-    }
+	private String prepareQuery() {
+		final StringBuilder queryString = new StringBuilder(
+				" select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
+		final StringBuilder criteria = new StringBuilder();
+		final ArrayList<Object> params = new ArrayList<>();
+		final StringBuilder joinString = new StringBuilder();
+		final StringBuilder whereString = new StringBuilder(" order by onlinePayment.receiptHeader.id desc");
+		if (getReferenceId() != null) {
+			criteria.append("onlinePayment.receiptHeader.id =:receiptId ");
+			params.add(getReferenceId());
+		}
+		if (getSearchTransactionStatus() != -1) {
+			criteria.append(getJoinOperand(criteria)).append(" onlinePayment.status.id =:statusId ");
+			params.add(getSearchTransactionStatus());
+		}
+		if (getFromDate() != null) {
+			criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate >=date(:fromDate)");
+			params.add(fromDate);
+		}
+		if (getToDate() != null) {
+			criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate <=date(:toDate) ");
+			final Calendar newTodate = Calendar.getInstance();
+			newTodate.setTime(toDate);
+			newTodate.add(Calendar.DATE, 1);
+			params.add(newTodate.getTime());
+		}
+		if (getServiceTypeId() != -1) {
+			criteria.append(getJoinOperand(criteria))
+					.append(" onlinePayment.receiptHeader.service.serviceCategory.id =:serviceTypeId ");
+			params.add(getServiceTypeId());
+		}
+		if (isNotBlank(getConsumerCode())) {
+			criteria.append(getJoinOperand(criteria))
+					.append("onlinePayment.receiptHeader.consumerCode =:consumerCode ");
+			params.add(getConsumerCode());
+		}
+		queryString.append(StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " where ")
+				.append(criteria).append(" order by id desc");
+		return queryString.toString();
+	}
 
-    private void setQueryParameters(Query query) {
+	private void setQueryParameters(Query query) {
+		if (getReferenceId() != null)
+			query.setParameter("receiptId", getReferenceId());
 
-        if (getReferenceId() != null)
-            query.setParameter("receiptId", getReferenceId());
+		if (getSearchTransactionStatus() != -1)
+			query.setParameter("statusId", getSearchTransactionStatus());
 
-        if (getSearchTransactionStatus() != -1)
-            query.setParameter("statusId", getSearchTransactionStatus());
+		if (getFromDate() != null)
+			query.setParameter("fromDate", fromDate, TemporalType.DATE);
 
-        if (getFromDate() != null)
-            query.setParameter("fromDate", fromDate, TemporalType.DATE);
+		if (getToDate() != null) {
+			final Calendar newTodate = Calendar.getInstance();
+			newTodate.setTime(toDate);
+			newTodate.add(Calendar.DATE, 1);
+			query.setParameter("toDate", newTodate.getTime(), TemporalType.DATE);
+		}
+		if (getServiceTypeId() != -1)
+			query.setParameter("serviceTypeId", getServiceTypeId());
 
-        if (getToDate() != null) {
-            final Calendar newTodate = Calendar.getInstance();
-            newTodate.setTime(toDate);
-            newTodate.add(Calendar.DATE, 1);
-            query.setParameter("toDate", newTodate.getTime(), TemporalType.DATE);
-        }
-        if (getServiceTypeId() != -1)
-            query.setParameter("serviceTypeId", getServiceTypeId());
-    }
+		if (isNotBlank(getConsumerCode()))
+			query.setParameter("consumerCode", getConsumerCode());
+	}
 
-    private String getJoinOperand(final StringBuilder criteria) {
-        return StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " and ";
-    }
+	private String getJoinOperand(final StringBuilder criteria) {
+		return StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " and ";
+	}
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    public List<OnlinePayment> getResults() {
-        return results;
-    }
+	public List<OnlinePayment> getResults() {
+		return results;
+	}
 
-    public Integer getSearchTransactionStatus() {
-        return searchTransactionStatus;
-    }
+	public Integer getSearchTransactionStatus() {
+		return searchTransactionStatus;
+	}
 
-    public void setSearchTransactionStatus(final Integer searchTransactionStatus) {
-        this.searchTransactionStatus = searchTransactionStatus;
-    }
+	public void setSearchTransactionStatus(final Integer searchTransactionStatus) {
+		this.searchTransactionStatus = searchTransactionStatus;
+	}
 
-    public Long getServiceTypeId() {
-        return serviceTypeId;
-    }
+	public Long getServiceTypeId() {
+		return serviceTypeId;
+	}
 
-    public void setServiceTypeId(final Long serviceType) {
-        serviceTypeId = serviceType;
-    }
+	public void setServiceTypeId(final Long serviceType) {
+		serviceTypeId = serviceType;
+	}
 
-    public Long getReferenceId() {
-        return referenceId;
-    }
+	public Long getReferenceId() {
+		return referenceId;
+	}
 
-    public void setReferenceId(final Long referenceId) {
-        this.referenceId = referenceId;
-    }
+	public void setReferenceId(final Long referenceId) {
+		this.referenceId = referenceId;
+	}
 
-    public Date getFromDate() {
-        return fromDate;
-    }
+	public Date getFromDate() {
+		return fromDate;
+	}
 
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
+	public void setFromDate(final Date fromDate) {
+		this.fromDate = fromDate;
+	}
 
-    public Date getToDate() {
-        return toDate;
-    }
+	public Date getToDate() {
+		return toDate;
+	}
 
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
+	public void setToDate(final Date toDate) {
+		this.toDate = toDate;
+	}
 
-    public String getTarget() {
-        return target;
-    }
+	public String getTarget() {
+		return target;
+	}
+
+	public String getConsumerCode() {
+		return consumerCode;
+	}
+
+	public void setConsumerCode(String consumerCode) {
+		this.consumerCode = consumerCode;
+	}
 
 }

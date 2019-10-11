@@ -47,6 +47,23 @@
  */
 package org.egov.ptis.web.controller.transactions.exemption;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -89,13 +106,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 /**
  * @author subhash
  */
@@ -116,8 +126,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
-    private boolean citizenPortalUser= false;
-    
+    private boolean citizenPortalUser = false;
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -146,7 +156,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
     public List<TaxExemptionReason> getTaxExemptionReasons() {
         return taxExemptionService.getSession().createQuery("from TaxExemptionReason where isActive = true order by name").list();
     }
-    
+
     @ModelAttribute("documentsEduInst")
     public List<DocumentType> documentsEduInst(TransactionType transactionType) {
         return taxExemptionService.getDocuments(TransactionType.TE_EDU_INST);
@@ -177,6 +187,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @RequestParam(required = false) final String applicationSource,
             @PathVariable("assessmentNo") final String assessmentNo) {
+        Date effectiveDate = new Date();
         BasicProperty basicProperty = property.getBasicProperty();
         boolean isExempted = basicProperty.getActiveProperty().getIsExemptedFromTax();
         User loggedInUser = securityUtils.getCurrentUser();
@@ -204,7 +215,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
+            if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(), effectiveDate, request)) {
                 model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.taxexemption");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             } else if (!isExempted) {
@@ -269,11 +280,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
         } else {
             if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
                     && SOURCE_ONLINE.equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))
-                    && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+                    && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()))
                 property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.TRUE));
-            } else {
+            else
                 property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.FALSE));
-            }
             if (request.getParameter("taxExemptedReason") != null)
                 taxExemptedReason = request.getParameter("taxExemptedReason");
             if (request.getParameter("approvalComent") != null)
@@ -282,31 +292,30 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-            if (property.getTaxExemptedReason() != null && checkCommercialProperty((PropertyImpl)property)) {
+            if (property.getTaxExemptedReason() != null && checkCommercialProperty(property)) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (property.getTaxExemptedReason() != null && hasTenant((PropertyImpl)property)) {
+            if (property.getTaxExemptedReason() != null && hasTenant(property)) {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()) {
-                if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
+            if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax())
+                if (taxExemptionService
+                        .getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
                         .equals(DUE))
                     return TARGET_TAX_DUES;
-                else if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
+                else if (taxExemptionService
+                        .getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
                         .equals(NO_DEMAND)) {
                     model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
                     return PROPERTY_VALIDATION_FOR_SPRING;
                 }
-            }
             if (StringUtils.isNotBlank(taxExemptedReason))
-                taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason, null);
+                taxExemptionService.processAndStoreApplicationDocuments(property, taxExemptedReason, null);
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<>();
-                meesevaParams.put("APPLICATIONNUMBER", (property.getMeesevaApplicationNumber()));
+                meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
 
                 if (StringUtils.isBlank(property.getApplicationNo())) {
                     property.setApplicationNo(property.getMeesevaApplicationNumber());
@@ -317,6 +326,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+            propertyService.updateIndexes(property, APPLICATION_TYPE_TAX_EXEMTION);
             model.addAttribute("showAckBtn", Boolean.TRUE);
             model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));
             model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
@@ -359,7 +369,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
-    
+
     public Boolean checkCommercialProperty(PropertyImpl property) {
         return !checkPrivateResdProperty(property) && (property.getTaxExemptedReason().getCode()
                 .equals(PropertyTaxConstants.EXEMPTION_EXSERVICE)
@@ -371,14 +381,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 && property.getPropertyDetail().getPropertyTypeMaster().getCode()
                         .equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE);
     }
-    
-    public Boolean hasTenant(PropertyImpl property){
-        for(Floor floor : property.getPropertyDetail().getFloorDetails()){
-            if(floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_TENANT)
+
+    public Boolean hasTenant(PropertyImpl property) {
+        for (Floor floor : property.getPropertyDetail().getFloorDetails())
+            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_TENANT)
                     && property.getTaxExemptedReason().getCode()
-                    .equals(PropertyTaxConstants.EXEMPTION_EXSERVICE))
-                    return true;
-        }
+                            .equals(PropertyTaxConstants.EXEMPTION_EXSERVICE))
+                return true;
         return false;
     }
 

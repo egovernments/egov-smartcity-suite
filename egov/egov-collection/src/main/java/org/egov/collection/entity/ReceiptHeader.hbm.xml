@@ -183,7 +183,7 @@
 			<column name="CONSUMERCODE" length="256" />
 		</property>
 		<property name="payeeName" type="string">
-			<column name="payeename" length="256" />
+			<column name="payeename" length="512" />
 		</property>
 		<property name="payeeAddress" type="string">
 			<column name="payeeaddress" length="1024" />
@@ -270,6 +270,9 @@
 	<query name="RECEIPT_BY_ID_AND_STATUSNOTCANCELLED">
 	<![CDATA[
 	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ?1 and rh.status.code<>'CANCELLED']]>
+	</query>
+	<query name="RECEIPTS_BY_ID_LIST_AND_STATUSNOTCANCELLED">
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id in (:param_0) and rh.status.code<>'CANCELLED']]>
 	</query>
   	
   	<query name="DISTINCT_SERVICE_DETAILS">

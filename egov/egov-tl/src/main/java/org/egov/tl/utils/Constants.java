@@ -48,6 +48,10 @@
 
 package org.egov.tl.utils;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
 public final class Constants {
 
     public static final String TL_FILE_STORE_DIR = "TL";
@@ -83,7 +87,11 @@ public final class Constants {
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
     public static final String WARD = "WARD";
     public static final String BEFORE_RENEWAL = "beforeRenew";
-
+    public static final String OWNERSHIP_TYPE_OWN = "Own";
+    public static final String OWNERSHIP_TYPE_RENTED = "Rented";
+    public static final String OWNERSHIP_TYPE_STATEGOVERNMENT = "State Government";
+    public static final String OWNERSHIP_TYPE_CENTRALGOVERNMENT = "Central Government";
+    public static final String OWNERSHIP_TYPE_ULB = "ULB";
     public static final String LOCALITY = "locality";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     public static final String LICENSE_BILLNO_SEQ = "SEQ_BILLNO_";
@@ -167,6 +175,11 @@ public final class Constants {
     public static final String COMPLETED = "Completed";
     public static final String ADMIN_WARD = "Ward";
     public static final String DISABLED_PAYMENT_MODES = "DISABLED_PAYMENT_MODES";
+    public static final String LICENSE_NUMBER = "licenseNumber";
+    public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
+            .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
+            .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)
+            .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
 
     private Constants() {
         // only invariants

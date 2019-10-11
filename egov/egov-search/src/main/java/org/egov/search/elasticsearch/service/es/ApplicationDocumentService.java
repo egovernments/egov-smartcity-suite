@@ -48,6 +48,18 @@
 
 package org.egov.search.elasticsearch.service.es;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.search.elasticsearch.entity.ApplicationIndex;
@@ -1300,8 +1312,9 @@ public class ApplicationDocumentService {
                 .prepareSearch(APPLICATIONS_INDEX)
                 .setQuery(boolQuery).setSize(size)
                 .addSort(APPLICATION_DATE, SortOrder.DESC)
-                .setFetchSource(new String[]{APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
-                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME, "url", CITY_CODE}, null)
+                .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
+                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME, "url",
+                        CITY_CODE }, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())
@@ -1319,7 +1332,9 @@ public class ApplicationDocumentService {
                 appInfo.setSource(details.get(CHANNEL).toString());
                 appInfo.setSla(details.get(SLA) == null ? 0 : (int) details.get(SLA));
                 appInfo.setServiceGroup(details.get(MODULE_NAME).toString());
-                appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
+                appInfo.setAge(
+                        (int) ChronoUnit.DAYS.between(LocalDate.now().minusDays(appInfo.getSla()),
+                                LocalDate.parse(appInfo.getAppDate())));
                 appInfo.setPendingWith(details.get(OWNER_NAME) == null ? "NA" : details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
                 appInfo.setUrl(details.get("url").toString());

@@ -336,7 +336,6 @@ public class TradeLicenseService {
             license.recalculateBaseDemand();
         }
         return license;
-
     }
 
     public void applyPenalty(TradeLicense license, EgDemand demand) {
@@ -865,7 +864,6 @@ public class TradeLicenseService {
         if (isNotBlank(onlineSearchRequest.getTradeOwnerName()))
             searchCriteria.add(Restrictions.like("licc.applicantName", onlineSearchRequest.getTradeOwnerName(), ANYWHERE));
 
-
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
         List<OnlineSearchRequest> searchResult = new ArrayList<>();
@@ -1065,5 +1063,16 @@ public class TradeLicenseService {
 
     public TradeLicense getLicenseByDemand(EgDemand demand) {
         return licenseRepository.findByDemand(demand);
+    }
+
+    public Map<String, String> getLicenseDetailsByLicenseNumberAndStatus(String licenseNumber, String status) {
+        TradeLicense tradeLicense = this.licenseRepository.findByLicenseNumberAndStatusName(licenseNumber, status);
+        HashMap<String, String> licenseDetails = new HashMap<>();
+        licenseDetails.put(LICENSE_NUMBER, tradeLicense.getLicenseNumber());
+        licenseDetails.put("tradeTitle", tradeLicense.getNameOfEstablishment());
+        licenseDetails.put("tradeAddress", tradeLicense.getAddress());
+        licenseDetails.put("applicantName", tradeLicense.getLicensee().getApplicantName());
+        licenseDetails.put("applicantAddress", tradeLicense.getLicensee().getAddress());
+        return licenseDetails;
     }
 }

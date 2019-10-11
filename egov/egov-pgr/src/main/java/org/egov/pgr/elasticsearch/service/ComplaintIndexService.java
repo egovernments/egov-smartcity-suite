@@ -48,6 +48,47 @@
 
 package org.egov.pgr.elasticsearch.service;
 
+import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.startOfToday;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
+import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.City;
@@ -95,6 +136,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -121,10 +163,13 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintIndexService {
+    
+    private static final Logger LOGGER = Logger.getLogger(ComplaintIndexService.class);
 
     private static final String SOURCE = "source";
 
@@ -217,7 +262,11 @@ public class ComplaintIndexService {
 
     @Autowired
     private ReceivingModeService receivingModeService;
+    
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
+    @Transactional
     public void createComplaintIndex(final Complaint complaint) {
         final ComplaintIndex complaintIndex = new ComplaintIndex();
         beanMapperConfiguration.map(complaint, complaintIndex);
@@ -237,7 +286,7 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintDuration(0);
         complaintIndex.setDurationRange("");
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         complaintIndex.setComplaintPeriod(0);
         complaintIndex.setComplaintSLADays(complaint.getComplaintType().getSlaHours());
@@ -277,6 +326,7 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
+    @Transactional
     public void updateComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
@@ -294,7 +344,7 @@ public class ComplaintIndexService {
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         // If complaint is forwarded
         if (complaint.nextOwnerId() != null && !complaint.nextOwnerId().equals(0L)) {
@@ -354,7 +404,13 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
+    @Transactional
+    public List<Assignment> getAssisnmentsForPosition(final Position position) {
+        return assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+    }
+
     // This method is used to populate PGR index during complaint escalation
+    @Transactional
     public void updateComplaintEscalationIndexValues(final Complaint complaint) {
 
         // fetch the complaint from index and then update the new fields
@@ -362,7 +418,7 @@ public class ComplaintIndexService {
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = getAssisnmentsForPosition(position);
         final User assignedUser = assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCityCode(city.getCode());
@@ -426,10 +482,21 @@ public class ComplaintIndexService {
 
     public void updateAllOpenComplaintIndex() {
         final List<Complaint> openComplaints = complaintService.getOpenComplaints();
-        for (final Complaint complaint : openComplaints)
-            updateOpenComplaintIndex(complaint);
+        for (final Complaint complaint : openComplaints) {
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            try {
+                txTemplate.execute(result -> {
+                    updateOpenComplaintIndex(complaint);
+                    return Boolean.TRUE;
+                });
+            } catch (final Exception e) {
+                LOGGER.error("Error while pushing complaint to Elastic Search for " + complaint.getCrn(), e);
+            }
+        }
     }
 
+    @Transactional
     public void updateOpenComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
@@ -439,7 +506,7 @@ public class ComplaintIndexService {
             complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
             complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
             // update status related fields in index
-            updateComplaintIndexStatusRelatedFields(complaintIndex);
+            complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
             complaintIndexRepository.save(complaintIndex);
         }
     }
@@ -503,9 +570,10 @@ public class ComplaintIndexService {
         return complaintIndex;
     }
 
+    
     private void setCurrentOwnerDetails(Position currentOwner, ComplaintIndex complaintIndex) {
         if (currentOwner != null) {
-            final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(currentOwner.getId(), new Date());
+            final List<Assignment> assignments = getAssisnmentsForPosition(currentOwner);
             final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
             complaintIndex.setCurrentFunctionaryName(assignedUser == null
                     ? NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName()

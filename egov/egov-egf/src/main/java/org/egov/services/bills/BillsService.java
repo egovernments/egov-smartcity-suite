@@ -50,7 +50,7 @@ package org.egov.services.bills;
 import org.egov.commons.CVoucherHeader;
 import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPaymentDetails;
+import org.egov.egf.model.BillPayment.BillPaymentDetails;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +89,7 @@ public class BillsService {
         return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
     }
 
-    public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
+    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
         return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
     }
 }

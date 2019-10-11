@@ -48,21 +48,20 @@
 
 package org.egov.collection.utils;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -74,7 +73,6 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
-import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
@@ -85,6 +83,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
@@ -100,7 +99,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Location;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -126,13 +124,12 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CollectionsUtil {
@@ -210,6 +207,11 @@ public class CollectionsUtil {
 
     @Autowired
     private transient EmployeeService employeeService;
+
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
+    @Autowired
+    private MicroserviceBillingUtil microserviceBillingUtil;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -295,13 +297,12 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        final String locationId = sessionMap.get(LOCATION_FIELD) == null ? ""
-                : sessionMap.get(LOCATION_FIELD).toString();
-        if (StringUtils.isNotBlank(locationId))
+        final String locationId = (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID);
+        if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         else
-            throw new ValidationException(Arrays.asList(
-                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
+            throw new ValidationException(Arrays.asList(new ValidationError("Location Not Found",
+                    "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -354,9 +355,9 @@ public class CollectionsUtil {
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
-        final List<AppConfigValues> deptCodesApp = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
         final List<String> deptCodes = new ArrayList<>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
@@ -370,11 +371,10 @@ public class CollectionsUtil {
                     isDeptAllowed = true;
         }
         if (isEmp && !isDeptAllowed)
-            throw new ValidationException(
-                    Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
+            throw new ValidationException(Arrays.asList(new ValidationError("Department",
+                    "billreceipt.counter.deptcode.null")));
         if (isBankCollectionOperator(loggedInUser)) {
-            // Bank Collection Operator cash, cheque, dd and card collection
-            // modes are
+            // Bank Collection Operator cash, cheque, dd and card collection modes are
             // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
@@ -417,9 +417,9 @@ public class CollectionsUtil {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-                        departmentService.getDepartmentByName(dept).getId(),
-                        designationService.getDesignationByName(desg).getId(), boundary.getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -432,7 +432,7 @@ public class CollectionsUtil {
     }
 
     public String getDesignationForThirdPartyUser() {
-        String designation = "";
+        String designation = CollectionConstants.BLANK;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR);
@@ -480,10 +480,13 @@ public class CollectionsUtil {
      * @return an instance of <code></code> representing the financial year for the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
-        return (CFinancialYear) persistenceService.getSession()
-                .createQuery("from CFinancialYear cfinancialyear where ?1 between "
-                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(1, date).list().get(0);
+        return (CFinancialYear) persistenceService
+                .getSession()
+                .createQuery(
+                        "from CFinancialYear cfinancialyear where ? between "
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                .setDate(0, date).list()
+                .get(0);
     }
 
     /**
@@ -564,7 +567,7 @@ public class CollectionsUtil {
         if (appConfValues != null && !appConfValues.isEmpty())
             return appConfValues.get(0).getValue();
         else
-            return "";
+            return CollectionConstants.BLANK;
     }
 
     /**
@@ -669,8 +672,8 @@ public class CollectionsUtil {
     }
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId) {
-        final List<Designation> designations = designationService
-                .getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
+        final List<Designation> designations = designationService.getAllDesignationByDepartment(
+                Long.valueOf(departmentId), new Date());
         final List<Designation> designation = new ArrayList<>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -689,49 +692,13 @@ public class CollectionsUtil {
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             for (final AppConfigValues app : appConfigValue) {
-                final List<Assignment> assignments = assignmentService
-                        .findPrimaryAssignmentForDesignationName(app.getValue());
+                final List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(app
+                        .getValue());
                 for (final Assignment assign : assignments)
                     if (!departments.contains(assign.getDepartment()))
                         departments.add(assign.getDepartment());
             }
         return departments;
-    }
-
-    /**
-     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
-     * The glcodes for such accounts are retrieved from App Config.
-     *
-     * @param glcode The Chart of Accounts Code
-     * @param description Description of the glcode
-     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
-     */
-    public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
-        final List<AppConfigValues> list = appConfigValuesService
-                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        final AppConfigValues penaltyGlCode = appConfigValuesService
-                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
-        boolean retValue;
-        LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
-        if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
-            final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
-            final String currInst = installmentHibDao.getInsatllmentByModuleForGivenDate(module, new Date())
-                    .getDescription();
-            if (currInst.equals(description.substring(16, description.length())))
-                retValue = false;
-            else
-                retValue = true;
-        } else {
-            final ArrayList<String> accValues = new ArrayList<>(0);
-            for (final AppConfigValues value : list)
-                accValues.add(value.getValue());
-            if (accValues.contains(glcode))
-                retValue = true;
-            else
-                retValue = false;
-        }
-
-        return retValue;
     }
 
     public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
@@ -781,71 +748,29 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
-    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(final BillReceiptReq billReceipt,
-            final String serviceCode) {
-        final RestTemplate restTemplate = new RestTemplate();
-        billReceipt.setTenantId(microserviceUtils.getTanentId());
-        final BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
-        billReceiptInfoReq.setBillReceiptInfo(billReceipt);
-        billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
-        final String url = collectionApplicationProperties.getLamsServiceUrl()
-                .concat(collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
-        ReceiptAmountInfo receiptAmountInfo = null;
-        try {
-            receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
-        } catch (final Exception e) {
-            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
-                    + billReceipt.getBillReferenceNum() + "]!";
-            LOGGER.error(errMsg, e);
-            throw new ApplicationRuntimeException(errMsg, e);
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - response" + receiptAmountInfo);
-        return receiptAmountInfo;
-    }
-
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
-        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
-        final ServiceDetails billingService = receiptHeader.getService();
-
-        String instrumentType = "";
-        if (!receiptHeader.getReceiptInstrument().isEmpty())
-            instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
-
-        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-            try {
-                final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
-                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                        persistenceService, null);
-                billReceipts.add(billReceipt);
-                if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
-                            billingService.getCode());
-                else {
-                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(
-                            billingService.getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-                    receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
-                }
-            } catch (final Exception e) {
-                final String errMsg = "Exception while constructing collection index for receipt number ["
-                        + receiptHeader.getReceiptnumber() + "]!";
-                LOGGER.error(errMsg, e);
-                throw new ApplicationRuntimeException(errMsg, e);
-            }
-        return CollectionIndex.builder().withReceiptDate(receiptHeader.getReceiptdate())
-                .withReceiptnumber(receiptHeader.getReceiptnumber()).withBillingservice(billingService.getName())
-                .withPaymentMode(instrumentType).withTotalamount(receiptHeader.getTotalAmount())
-                .withChannel(receiptHeader.getSource()).withStatus(receiptHeader.getStatus().getDescription())
-                .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
-                .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
-                .withPaymentGateway(receiptHeader.getOnlinePayment() != null
-                        ? receiptHeader.getOnlinePayment().getService().getName() : "")
-                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
-                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
+        ReceiptAmountInfo receiptAmountInfo = getReceiptAmountBifurcation(receiptHeader);
+        return CollectionIndex
+                .builder()
+                .withReceiptDate(receiptHeader.getReceiptdate())
+                .withReceiptnumber(receiptHeader.getReceiptnumber())
+                .withBillingservice(receiptHeader.getService().getName())
+                .withPaymentMode(receiptHeader.getReceiptInstrument().isEmpty() ? CollectionConstants.BLANK
+                        : receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType())
+                .withTotalamount(receiptHeader.getTotalAmount())
+                .withChannel(receiptHeader.getSource())
+                .withStatus(receiptHeader.getStatus().getDescription())
+                .withConsumerCode(
+                        receiptHeader.getConsumerCode() == null ? CollectionConstants.BLANK : receiptHeader.getConsumerCode())
+                .withBillNumber(receiptHeader.getReferencenumber() == null ? CollectionConstants.BLANK
+                        : receiptHeader.getReferencenumber())
+                .withPaymentGateway(
+                        receiptHeader.getOnlinePayment() == null ? CollectionConstants.BLANK
+                                : receiptHeader.getOnlinePayment().getService()
+                                        .getName())
+                .withConsumerName(receiptHeader.getPayeeName() == null ? CollectionConstants.BLANK : receiptHeader.getPayeeName())
+                .withReceiptCreator(
+                        receiptHeader.getCreatedBy() == null ? CollectionConstants.BLANK : receiptHeader.getCreatedBy().getName())
                 .withArrearAmount(receiptAmountInfo.getArrearsAmount())
                 .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
                 .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
@@ -855,12 +780,45 @@ public class CollectionsUtil {
                 .withCurrentCess(receiptAmountInfo.getCurrentCess())
                 .withReductionAmount(receiptAmountInfo.getReductionAmount())
                 .withInstallmentFrom(
-                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
+                        receiptAmountInfo.getInstallmentFrom() == null ? CollectionConstants.BLANK
+                                : receiptAmountInfo.getInstallmentFrom())
                 .withInstallmentTo(
-                        receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
+                        receiptAmountInfo.getInstallmentTo() == null ? CollectionConstants.BLANK
+                                : receiptAmountInfo.getInstallmentTo())
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
-                .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
-                .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
+                .withConsumerType(
+                        receiptHeader.getConsumerType() == null ? CollectionConstants.BLANK : receiptHeader.getConsumerType())
+                .withConflict(receiptAmountInfo.getConflict() == null ? 0 : receiptAmountInfo.getConflict()).build();
+    }
+
+    /**
+     * @param receiptHeader
+     * @param billingService
+     * @return
+     */
+    private ReceiptAmountInfo getReceiptAmountBifurcation(final ReceiptHeader receiptHeader) {
+        final ServiceDetails billingService = receiptHeader.getService();
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
+            try {
+                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                        persistenceService, null);
+                if (CollectionConstants.SERVICECODE_LAMS.equals(billingService.getCode()))
+                    receiptAmountInfo = microserviceBillingUtil.updateReceiptDetailsAndGetReceiptAmountInfo(
+                            new BillReceiptReq(billReceipt),
+                            billingService.getCode());
+                else {
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+                    receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
+                }
+            } catch (final Exception e) {
+                final String errMsg = "Exception while getting receiptamount bifurcation for receipt number ["
+                        + receiptHeader.getReceiptnumber() + "]!";
+                LOGGER.error(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
+        return receiptAmountInfo;
     }
 
     public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
@@ -876,9 +834,9 @@ public class CollectionsUtil {
     }
 
     public Designation getDesignationForApprover() {
-        return designationService
-                .getDesignationByName(getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+        return designationService.getDesignationByName(getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
     }
 
     public String getApproverName(final Position position) {
@@ -893,10 +851,16 @@ public class CollectionsUtil {
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
-        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(
-                receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-        return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
-                receiptHeader.getTotalAmount(), receiptDetailList);
+        List<ReceiptDetail> reconstructedReceiptDetail = Collections.EMPTY_LIST;
+        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+            reconstructedReceiptDetail = microserviceBillingUtil.getReconstructReceiptDetails(receiptHeader);
+        else {
+            final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
+                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            reconstructedReceiptDetail = billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
+                    receiptHeader.getTotalAmount(), receiptDetailList);
+        }
+        return reconstructedReceiptDetail;
     }
 
     public Date getRemittanceVoucherDate(final Date receiptDate) {
@@ -932,8 +896,8 @@ public class CollectionsUtil {
     public Boolean getVoucherType() {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
-                        .equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
@@ -978,9 +942,10 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(),
-                receiptHeader.getTotalAmount().toString(), receiptHeader.getService().getName(),
-                receiptHeader.getConsumerCode(), receiptHeader.getReceiptdate().toString(),
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
+                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(),
+                receiptHeader
+                        .getReceiptdate().toString(),
                 ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
@@ -1057,7 +1022,7 @@ public class CollectionsUtil {
         StringBuilder queryString = new StringBuilder(
                 "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
                         + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
-        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
         List<Object[]> queryResult = query.list();
         for (int i = 0; i < queryResult.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResult.get(i);
@@ -1067,6 +1032,21 @@ public class CollectionsUtil {
             bankBranchArrayList.add(newBankbranch);
         }
         return bankBranchArrayList;
+    }
+
+    public TreeMap<Long, String> getUserList() {
+        TreeMap<Long, String> userMap = new TreeMap<>();
+        StringBuilder queryString = new StringBuilder(
+                "select distinct(u.id) as userrid,u.name as name from egcl_collectionheader ch,"
+                        + " eg_user u where ch.createdby=u.id and u.type not in('CITIZEN','SYSTEM') order by u.name");
+
+        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        List<Object[]> queryResult = query.list();
+        for (int i = 0; i < queryResult.size(); i++) {
+            final Object[] result = queryResult.get(i);
+            userMap.put(Long.valueOf(result[0].toString()), result[1].toString());
+        }
+        return userMap;
     }
 
     public String getJurisdictionBoundary() {
@@ -1086,7 +1066,52 @@ public class CollectionsUtil {
             }
             return jurValuesId.toString();
         } else
-            return "";
+            return CollectionConstants.BLANK;
+    }
+
+    /**
+     * Validate if the id is non-negative, has a employee for passed approverEmployeeId
+     * @param approverIdPositionId Id of an employee
+     * @return Empty list if validation passed, or a singleton list of ValidationError with the first validation error it
+     * encounters
+     */
+    public List<ValidationError> validateCollectionApprover(String approverIdPositionId, Long departmentId, Long designationId) {
+        try {
+            if (org.apache.commons.lang.StringUtils.isEmpty(approverIdPositionId) || !approverIdPositionId.contains("~")) {
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
+                        "Please select a approver while submitting collection."));
+            }
+            String ids[] = approverIdPositionId.split("~");
+            Long approverId = Long.parseLong(ids[0]);
+            Long positionId = Long.parseLong(ids[1]);
+
+            if (approverId < 0)
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
+                        "Please select a approver while submitting collection."));
+            Employee approver = employeeService.getEmployeeById(approverId);
+            if (approver == null)
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver.employee",
+                        "Selected approver is not an employee"));
+            List<Assignment> assignmentList = assignmentService.findByDepartmentAndDesignation(departmentId, designationId);
+            for (Assignment assignment : assignmentList) {
+                if (assignment.getPosition().getId().equals(positionId))
+                    return Collections.emptyList();
+            }
+            return Collections.singletonList(new ValidationError("submitcollections.validation.position.dept.desg",
+                    "Position is not valid for selected Department and Designation"));
+        } catch (NumberFormatException nfe) {
+            return Collections.singletonList(
+                    new ValidationError("submitcollections.validation.invalid.approver", "Invalid approver selected"));
+        }
+    }
+
+    public Set<User> getConfiguredRemitters() {
+        List<String> remitterRoleList = getAppConfigValues(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE).stream().map(appconfig -> appconfig.getValue())
+                        .collect(Collectors.toList());
+        if (remitterRoleList.isEmpty())
+            remitterRoleList.add(CollectionConstants.ROLE_COLLECTION_REMITTER);
+        return userService.findUsersByRoles(remitterRoleList);
     }
 
 }

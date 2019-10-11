@@ -48,9 +48,13 @@
 
 package org.egov.council.web.controller;
 
+import static java.lang.String.format;
+import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTION_DETAILS_URL;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import org.egov.council.entity.CouncilPreambleResponse;
+import org.egov.council.entity.CouncilResolutionsResponse;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CouncilMeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +78,25 @@ public class CouncilResolutionController {
         else
             return new CouncilPreambleResponse(meetingMom.getPreamble().getPreambleNumber(),
                     meetingMom.getPreamble().getGistOfPreamble(), HttpStatus.OK.toString(), "Success", true);
+    }
+    
+    @RequestMapping(value = "/councilresolutiondetails", method = GET, produces = APPLICATION_JSON_VALUE)
+    public CouncilResolutionsResponse getResolutionDetails(@RequestParam String resolutionNo,
+            @RequestParam String committeeType) {
+        CouncilResolutionsResponse councilResolutionsResponse;
+        MeetingMOM meetingMom = councilMeetingService.findByResolutionNumberAndCommitteeType(resolutionNo, committeeType);
+        if (meetingMom != null) {
+            councilResolutionsResponse = new CouncilResolutionsResponse();
+            councilResolutionsResponse.setResolutionNo(meetingMom.getResolutionNumber());
+            councilResolutionsResponse.setCommitteeType(meetingMom.getAgenda().getCommitteeType().getCode());
+            councilResolutionsResponse.setResolutionDate(meetingMom.getMeeting().getMeetingDate());
+            councilResolutionsResponse
+                    .setCouncilResolutionUrl(format(COUNCIL_RESOLUTION_DETAILS_URL, meetingMom.getMeeting().getId()));
+        } else {
+            councilResolutionsResponse = new CouncilResolutionsResponse();
+            councilResolutionsResponse.setErrorMessage("COUNCIL RESOLUTION DOES NOT EXIST");
+        }
+        return councilResolutionsResponse;
     }
 
 }

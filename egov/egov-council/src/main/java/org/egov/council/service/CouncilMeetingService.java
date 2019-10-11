@@ -178,6 +178,10 @@ public class CouncilMeetingService {
     public MeetingMOM findByResolutionNumberAndPreamble(String resolutionNumber, Long preambleId) {
         return councilMoMRepository.findByResolutionNumberAndPreamble(resolutionNumber, preambleId);
     }
+    
+    public MeetingMOM findByResolutionNumberAndCommitteeType(String resolutionNumber, String committeeType){
+    	return councilMoMRepository.findByResolutionNumberAndCommitteeType(resolutionNumber, committeeType);
+    }
 
     public CouncilMeeting updateMoMStatus(CouncilMeeting councilMeeting) {
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {

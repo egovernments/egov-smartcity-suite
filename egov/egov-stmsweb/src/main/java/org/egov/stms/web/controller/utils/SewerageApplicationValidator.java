@@ -214,13 +214,13 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
             final BindingResult errors, final String workFlowAction) {
         if ((sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED) ||
                 sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)) &&
-                "Reject".equalsIgnoreCase(workFlowAction) && StringUtils.isBlank(sewerageApplicationDetails.getApprovalComent()))
+                "Reject".equalsIgnoreCase(workFlowAction) && StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getApproverComments()))
             errors.reject(REJECTION_COMMENTS_REQUIRED);
 
         if ((APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) &&
-                workFlowAction.equalsIgnoreCase("Cancel") && StringUtils.isBlank(sewerageApplicationDetails.getApprovalComent()))
+                workFlowAction.equalsIgnoreCase("Cancel") && StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getApproverComments()))
             errors.reject("err.application.cancel.comments.required");
 
         if (sewerageApplicationDetails.getConnectionDetail().getPropertyType() == null)
@@ -372,13 +372,13 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         if ((APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) &&
                 WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction) &&
-                org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getApprovalComent()))
+                org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getApproverComments()))
             errors.reject("err.application.cancel.comments.required");
 
         if ((APPLICATION_STATUS_INSPECTIONFEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_INITIALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) &&
                 WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) &&
-                org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getApprovalComent()))
+                org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getApproverComments()))
             errors.reject(REJECTION_COMMENTS_REQUIRED);
 
         if (workFlowAction != null && WF_STATE_CONNECTION_EXECUTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
@@ -577,7 +577,7 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         if ((APPLICATION_STATUS_INITIALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                 && WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
-                && org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getApprovalComent()))
+                && org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getApproverComments()))
             errors.reject(REJECTION_COMMENTS_REQUIRED);
 
         if (org.apache.commons.lang.StringUtils.isBlank(sewerageApplicationDetails.getCloseConnectionReason())

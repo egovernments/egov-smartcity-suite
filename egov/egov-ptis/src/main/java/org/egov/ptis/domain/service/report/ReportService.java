@@ -52,7 +52,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERA
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -124,7 +123,6 @@ public class ReportService {
     private static final String EWSHS = "EWSHS";
     private static final String PRIVATE = "PRIVATE";
     private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
 
     @Autowired
@@ -640,7 +638,8 @@ public class ReportService {
             commonFromQry = commonFromQry + ", eg_boundary boundary ";
         commonFromQry = commonFromQry + courtCaseTable + " where pi.isactive = true and pi.isexempted = false " + courtCaseQry;
 
-        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
+        finalCommonQry = " cast(COALESCE(sum(pi.waivedoff_amount),0) as numeric) as \"waivedOffPT\","
+                + "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
                 + " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmnd_arrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmnd_currentPT\", "
                 + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmnd_currentPFT\","
                 + " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
@@ -979,6 +978,7 @@ public class ReportService {
             boundaryQry.append(" and pi.wardid = " + boundaryId);
         if (apartmentId != -1 && apartmentId != null && apartmentId != 0)
             whereQry.append(" and pd.apartment = " + apartmentId);
+        finalCommonQry.append(" cast(COALESCE(sum(pi.waivedoff_amount),0) as numeric) as \"waivedOffPT\",");
         finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\",");
         finalCommonQry.append(
                 " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");

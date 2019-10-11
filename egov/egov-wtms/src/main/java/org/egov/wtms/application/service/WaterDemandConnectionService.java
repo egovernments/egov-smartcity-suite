@@ -51,6 +51,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterDemandConnectionRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -96,7 +97,19 @@ public class WaterDemandConnectionService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    
+	public WaterDemandConnection getCurrentDemand(WaterConnectionDetails waterConnectionDetails) {
+		WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+		List<WaterDemandConnection> waterDemandConnectionList = findByWaterConnectionDetails(waterConnectionDetails);
+		for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+			if (waterDemandConnection.getDemand().getIsHistory()
+					.equalsIgnoreCase(WaterTaxConstants.DEMAND_ISHISTORY_N)) {
+				waterdemandConnection = waterDemandConnection;
+				break;
+			}
+		return waterdemandConnection;
+	}
+    
     @Transactional
     public WaterDemandConnection createWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
         return waterDemandConnectionRepository.save(waterDemandConnection);

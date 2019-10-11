@@ -58,4 +58,6 @@ public interface PropertyCourtCaseRepository extends JpaRepository<PropertyCourt
 
 	public List<PropertyCourtCase> findByAssessmentNo(String assessmentNo);
 	
+	public PropertyCourtCase getByAssessmentNo(String assessmentNo);
+	
 }

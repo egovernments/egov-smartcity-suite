@@ -68,6 +68,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.es.CityIndex;
@@ -79,10 +80,13 @@ import org.egov.ptis.bean.dashboard.*;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.service.property.CollectionAchievementsService;
+import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Service to provide APIs for CM Dashboard
@@ -105,9 +109,14 @@ public class PropTaxDashboardService {
 
     @Autowired
     private CityIndexService cityIndexService;
-    
+
     @Autowired
     private CollectionAchievementsService collectionAchievementsService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    private static final Logger LOGGER = Logger.getLogger(CollectionAchievementsJob.class);
 
     /**
      * Gives the State-City information across all ULBs
@@ -217,7 +226,8 @@ public class PropTaxDashboardService {
      * @param collectionDetailsRequest
      * @return CollectionIndexDetails
      */
-    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest, boolean isForMISReports) {
+    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest,
+            boolean isForMISReports) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
         if (!DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
@@ -230,8 +240,8 @@ public class PropTaxDashboardService {
             collectionIndexDetails.setCollTrends(collectionTrends);
         }
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && (collectionDetailsRequest.getType()
-                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE) 
-                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()) 
+                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE)
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
                 || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())))
             collIndexData = collectionIndexElasticSearchService
                     .getResponseTableDataForBillCollector(collectionDetailsRequest);
@@ -279,7 +289,8 @@ public class PropTaxDashboardService {
      * @return
      */
     public TaxPayerResponseDetails getTopTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest) {
-        return propertyTaxElasticSearchIndexService.getTopTenTaxPerformers(collectionDetailsRequest, getCurrentFinancialYear(), false);
+        return propertyTaxElasticSearchIndexService.getTopTenTaxPerformers(collectionDetailsRequest, getCurrentFinancialYear(),
+                false);
 
     }
 
@@ -290,7 +301,8 @@ public class PropTaxDashboardService {
      * @return
      */
     public TaxPayerResponseDetails getBottomTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest) {
-        return propertyTaxElasticSearchIndexService.getBottomTenTaxPerformers(collectionDetailsRequest, getCurrentFinancialYear(), false);
+        return propertyTaxElasticSearchIndexService.getBottomTenTaxPerformers(collectionDetailsRequest, getCurrentFinancialYear(),
+                false);
 
     }
 
@@ -312,7 +324,7 @@ public class PropTaxDashboardService {
     public List<DCBDetails> getDCBDetails(CollectionDetailsRequest collectionDetailsRequest) {
         return propertyTaxElasticSearchIndexService.getDCBDetails(collectionDetailsRequest);
     }
-    
+
     /**
      * Provides city wise collection details
      * @param collectionDetailsRequest
@@ -334,7 +346,7 @@ public class PropTaxDashboardService {
             String intervalType) {
         return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
     }
-    
+
     /**
      * Provides month wise DCB details for all cities
      * @param collectionDetailsRequest
@@ -345,7 +357,7 @@ public class PropTaxDashboardService {
             String intervalType) {
         return collectionIndexElasticSearchService.getMonthwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
     }
-    
+
     /**
      * API provides Daily Target information across all cities
      * @param collectionDetailsRequest
@@ -357,11 +369,11 @@ public class PropTaxDashboardService {
                 .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, true));
         return collectionIndexDetails;
     }
-    
+
     public List<DemandVariance> getDemandVariationDetails(CollectionDetailsRequest collectionDetailsRequest) {
         return propertyTaxElasticSearchIndexService.prepareDemandVariationDetails(collectionDetailsRequest);
     }
-    
+
     /**
      * API is called from CollectionAchievementsJob to push BillCollector wise/RevenueInspector wise/RevenueOfficer wise data into
      * the CollectionAchievements index
@@ -369,11 +381,23 @@ public class PropTaxDashboardService {
      * @param currFinYear
      */
     public void pushAchievements() {
+        LOGGER.error("entering pushAchievements method");
         List<TaxPayerDetails> taxPayersList = prepareDataToLoadAchievementsIndex();
-        for (TaxPayerDetails taxPayerDetails : taxPayersList)
-            collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
+        for (TaxPayerDetails taxPayerDetails : taxPayersList) {
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            try {
+                txTemplate.execute(result -> {
+                    collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
+                    return Boolean.TRUE;
+                });
+            } catch (final Exception e) {
+                LOGGER.error("Error while pushing data to CollectionAchievements index " + e);
+            }
+        }
+
     }
-    
+
     /**
      * API prepares the data to push into CollectionAchievements index
      * @param cities
@@ -381,29 +405,34 @@ public class PropTaxDashboardService {
      * @return list
      */
     public List<TaxPayerDetails> prepareDataToLoadAchievementsIndex() {
-        Iterable<CityIndex> cities = cityIndexService.findAll();
-        CFinancialYear currFinYear = getCurrentFinancialYear();
-
-        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
         List<TaxPayerDetails> finalList = new ArrayList<>();
-        List<TaxPayerDetails> taxPayerDetails;
-        for (CityIndex city : cities) {
-            // For each city, BillCollector wise, RevenueInspector wise and RevenueOfficer wise data will be pushed simultaneously
-            collectionDetailsRequest.setUlbCode(city.getCitycode());
-            collectionDetailsRequest.setType(DASHBOARD_GROUPING_BILLCOLLECTORWISE);
-            taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
-                    currFinYear, city);
-            finalList.addAll(taxPayerDetails);
-            
-            collectionDetailsRequest.setType(DASHBOARD_GROUPING_REVENUEINSPECTORWISE);
-            taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
-                    currFinYear, city);
-            finalList.addAll(taxPayerDetails);
-            
-            collectionDetailsRequest.setType(DASHBOARD_GROUPING_REVENUEOFFICERWISE);
-            taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
-                    currFinYear, city);
-            finalList.addAll(taxPayerDetails);
+        try {
+            Iterable<CityIndex> cities = cityIndexService.findAll();
+            CFinancialYear currFinYear = getCurrentFinancialYear();
+
+            CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+            List<TaxPayerDetails> taxPayerDetails;
+            for (CityIndex city : cities) {
+                // For each city, BillCollector wise, RevenueInspector wise and RevenueOfficer wise data will be pushed
+                // simultaneously
+                collectionDetailsRequest.setUlbCode(city.getCitycode());
+                collectionDetailsRequest.setType(DASHBOARD_GROUPING_BILLCOLLECTORWISE);
+                taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
+                        currFinYear, city);
+                finalList.addAll(taxPayerDetails);
+
+                collectionDetailsRequest.setType(DASHBOARD_GROUPING_REVENUEINSPECTORWISE);
+                taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
+                        currFinYear, city);
+                finalList.addAll(taxPayerDetails);
+
+                collectionDetailsRequest.setType(DASHBOARD_GROUPING_REVENUEOFFICERWISE);
+                taxPayerDetails = propertyTaxElasticSearchIndexService.prepareDataForAchievementsIndex(collectionDetailsRequest,
+                        currFinYear, city);
+                finalList.addAll(taxPayerDetails);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while Data To Load Achievements Index " + e);
         }
         return finalList;
     }
@@ -416,5 +445,5 @@ public class PropTaxDashboardService {
     public Map<String, List<TaxPayerDetails>> getCollectionRankings(CollectionDetailsRequest collectionDetailsRequest) {
         return propertyTaxElasticSearchIndexService.getCollectionRankings(collectionDetailsRequest);
     }
-    
+
 }

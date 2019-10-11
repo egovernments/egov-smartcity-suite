@@ -67,6 +67,7 @@ public class ApartmentDCBReportResult {
     private BigDecimal clctnCurrentPT = BigDecimal.ZERO;
     private BigDecimal clctnCurrentPFT = BigDecimal.ZERO;
     private BigDecimal clctnCurrentVLT = BigDecimal.ZERO;
+	private BigDecimal waivedOffPT = BigDecimal.ZERO;
     private String houseNo;
     private String ownerName;
     private BigInteger assessmentCount;
@@ -179,7 +180,17 @@ public class ApartmentDCBReportResult {
 	public void setAssessmentCount(BigInteger assessmentCount) {
 		this.assessmentCount = assessmentCount;
 	}
-    public BigDecimal getDmndArrearTotal() {
+
+	public BigDecimal getWaivedOffPT() {
+		return waivedOffPT;
+	}
+
+	public void setWaivedOffPT(BigDecimal waivedOffPT) {
+		this.waivedOffPT = waivedOffPT;
+	}
+
+
+	public BigDecimal getDmndArrearTotal() {
         return getDmndArrearPT().add(getDmndArrearPFT());
     }
     public BigDecimal getDmndCurrentTotal() {

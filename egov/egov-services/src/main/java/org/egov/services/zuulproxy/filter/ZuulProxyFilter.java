@@ -60,6 +60,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.config.properties.ServicesApplicationProperties;
 import org.egov.services.wrapper.CustomRequestWrapper;
 import org.egov.services.zuulproxy.models.Role;
@@ -97,7 +98,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String SERVICES_CONTEXTROOT = "/services";
     private static final String REQUEST_URI = "requestURI";
     private static final String SERVICES_APPLICATION_PROPERTIES = "servicesApplicationProperties";
-    private static final String USER_SERVICE = "userService";
+    private static final String SECURITY_UTILS = "securityUtils";
     private static final String ENVIRONMENT = "environment";
     private static final String TENANT_ID = "tenantId";
     private static final String SESSION_ID = "sessionId";
@@ -250,12 +251,10 @@ public class ZuulProxyFilter extends ZuulFilter {
             log.info("userInfo is from the session... " + userInfoJson);
 
         if (StringUtils.isBlank(userInfoJson)) {
-            final UserService userService = (UserService) springContext.getBean(USER_SERVICE);
-            final CurrentUser userDetails = new CurrentUser(
-                    userService.getUserByUsername(request.getRemoteUser()));
+            SecurityUtils securityUtils = (SecurityUtils) springContext.getBean(SECURITY_UTILS);
+            final CurrentUser userDetails = new CurrentUser(securityUtils.getCurrentUser());
 
             final User user = userDetails.getUser();
-
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 

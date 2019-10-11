@@ -185,6 +185,7 @@ public class DCBServiceImpl implements DCBService {
         if (dcbList != null && fieldNames != null && !fieldNames.isEmpty()) {
             Installment installment = null;
             Map<String, BigDecimal> demands = null;
+            Map<String, BigDecimal> demandVariation = null;
             Map<String, BigDecimal> collections = null;
             Map<String, BigDecimal> rebates = null;
             for (int i = 0; i < dcbList.size();) {
@@ -192,13 +193,14 @@ public class DCBServiceImpl implements DCBService {
                 installment = (Installment) installmentDAO.findById(Integer.parseInt(dcbData[0].toString()), false);
                 DCBRecord dcbRecord = null;
                 demands = new HashMap<String, BigDecimal>();
+                demandVariation = new HashMap<String, BigDecimal>();
                 collections = new HashMap<String, BigDecimal>();
                 rebates = new HashMap<String, BigDecimal>();
-                initDemandAndCollectionMap(fieldNames, demands, collections, rebates);
+                initDemandAndCollectionMap(fieldNames, demands, demandVariation, collections, rebates);
                 for (int j = i; j < dcbList.size(); j++, i++) {
                     final Object[] dcbData2 = (Object[]) dcbList.get(i);
                     if (dcbData[0].equals(dcbData2[0]))
-                        dcbRecord = prepareDCMap(dcbData2, dcbRecord, demands, collections, rebates, dmd, fieldNames);
+                        dcbRecord = prepareDCMap(dcbData2, dcbRecord, demands,demandVariation, collections, rebates, dmd, fieldNames);
                     else
                         break;
                     dcbReportMap.put(installment, dcbRecord);
@@ -220,6 +222,7 @@ public class DCBServiceImpl implements DCBService {
      * @param dcbRecord
      * @param demands
      * @param collections
+     * @param demandVariation 
      * @param dmd
      *            - Demand Object which is provided by the caller in Billable
      *            Object
@@ -230,7 +233,7 @@ public class DCBServiceImpl implements DCBService {
      */
 
     DCBRecord prepareDCMap(final Object[] dcbData2, DCBRecord dcbRecord, final Map<String, BigDecimal> demands,
-            final Map<String, BigDecimal> collections, final Map<String, BigDecimal> rebates, final EgDemand dmd,
+            final Map<String, BigDecimal> collections, final Map<String, BigDecimal> rebates, Map<String, BigDecimal> demandVariation, final EgDemand dmd,
             final List<String> fieldNames) {
         if (dcbData2 != null && dmd != null) {
             final String reason = getReason(dcbData2, fieldNames);
@@ -238,8 +241,14 @@ public class DCBServiceImpl implements DCBService {
                 demands.put(reason, demands.get(reason).add(new BigDecimal(dcbData2[1].toString())));
                 collections.put(reason, collections.get(reason).add(new BigDecimal(dcbData2[2].toString())));
                 rebates.put(reason, rebates.get(reason).add(new BigDecimal(dcbData2[5].toString())));
-            }
-            dcbRecord = new DCBRecord(demands, collections, rebates);
+                if(dcbData2[6]!=null){
+                    demandVariation.put(reason, demandVariation.get(reason).add(new BigDecimal(dcbData2[6].toString())));
+                }
+                else
+                    demandVariation.put(reason, demandVariation.get(reason).add(BigDecimal.ZERO));
+            } 
+            
+            dcbRecord = new DCBRecord(demands,demandVariation, collections, rebates);
         }
         return dcbRecord;
     }
@@ -278,12 +287,14 @@ public class DCBServiceImpl implements DCBService {
      * @param prepareFieldNames
      * @param demand
      * @param collection
+     * @param demandVariation 
      */
     void initDemandAndCollectionMap(final List<String> prepareFieldNames, final Map<String, BigDecimal> demand,
-            final Map<String, BigDecimal> collection, final Map<String, BigDecimal> rebates) {
+            final Map<String, BigDecimal> collection, final Map<String, BigDecimal> rebates, Map<String, BigDecimal> demandVariation) {
         if (prepareFieldNames != null && !prepareFieldNames.isEmpty())
             for (final String fieldName : prepareFieldNames) {
                 demand.put(fieldName, BigDecimal.ZERO);
+                demandVariation.put(fieldName, BigDecimal.ZERO);
                 collection.put(fieldName, BigDecimal.ZERO);
                 rebates.put(fieldName, BigDecimal.ZERO);
             }

@@ -80,6 +80,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UpdateWaterConnectionExecutionController {
 
 	private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+	private static final String MATERIAL_FLAGGING_NOT_DONE = "MaterialsFlaggingNotDone";
 
 	@Autowired
 	private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -96,7 +97,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search")
 	public String getSearchScreen(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationsTypesByCodes());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-update-search";
@@ -105,7 +106,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search-form")
 	public String getSearchForm(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationsTypesByCodes());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-search-screen";
@@ -146,6 +147,8 @@ public class UpdateWaterConnectionExecutionController {
 				connectionDetailsList);
 		if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
 			return ERR_WATER_RATES_NOT_DEFINED;
+		else if (validationStatus.startsWith(MATERIAL_FLAGGING_NOT_DONE))
+			return validationStatus;
 		final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
 		return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
 	}

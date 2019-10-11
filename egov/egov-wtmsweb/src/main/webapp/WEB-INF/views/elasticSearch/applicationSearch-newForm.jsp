@@ -193,8 +193,8 @@
 								
 							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset"/></button>
 								<c:if test="${ !citizenRole }">
-							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="window.close()"><spring:message code='lbl.close' /></a>
+							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
+									<spring:message code="lbl.close" /></a>
 								</c:if>
 						</div>
 				</div>

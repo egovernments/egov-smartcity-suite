@@ -200,6 +200,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
 
     @SafeHtml
     private String workOrderNumber;
+
     @SafeHtml
     private String estimationNumber;
 
@@ -229,10 +230,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reconnectionfilestoreid")
     private FileStoreMapper reconnectionFileStore;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "estimationnoticefilestoreid")
-    private FileStoreMapper estimationNoticeFileStoreId;
 
     @ManyToOne
     @JoinColumn(name = "chairPerson")
@@ -268,6 +265,10 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<>(0);
+    
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<EstimationNotice> estimationNotices = new ArrayList<>(0);
 
     @SafeHtml
     private String closeConnectionType;
@@ -580,14 +581,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
         this.workOrderNumber = workOrderNumber;
     }
 
-    public String getEstimationNumber() {
-        return estimationNumber;
-    }
-
-    public void setEstimationNumber(final String estimationNumber) {
-        this.estimationNumber = estimationNumber;
-    }
-
     public ExistingConnectionDetails getExistingConnection() {
         return existingConnection;
     }
@@ -780,22 +773,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
         this.reconnectionFileStore = reconnectionFileStore;
     }
 
-    public FileStoreMapper getEstimationNoticeFileStoreId() {
-        return estimationNoticeFileStoreId;
-    }
-
-    public void setEstimationNoticeFileStoreId(final FileStoreMapper estimationNoticeFileStoreId) {
-        this.estimationNoticeFileStoreId = estimationNoticeFileStoreId;
-    }
-
-    public Date getEstimationNoticeDate() {
-        return estimationNoticeDate;
-    }
-
-    public void setEstimationNoticeDate(final Date estimationNoticeDate) {
-        this.estimationNoticeDate = estimationNoticeDate;
-    }
-
     public enum WorkFlowState {
         CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
     }
@@ -814,6 +791,18 @@ public class WaterConnectionDetails extends StateAware<Position> {
 
     public void setUlbMaterial(Boolean ulbMaterial) {
         this.ulbMaterial = ulbMaterial;
+    }
+
+	public List<EstimationNotice> getEstimationNotices() {
+		return estimationNotices;
+	}
+
+	public void setEstimationNotices(List<EstimationNotice> estimationNotices) {
+		this.estimationNotices = estimationNotices;
+	}
+	
+	public void addEstimationNotices(EstimationNotice estimationNotice) {
+		getEstimationNotices().add(estimationNotice);
     }
 
 }

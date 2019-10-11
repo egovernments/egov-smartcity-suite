@@ -47,94 +47,185 @@
  */
 package org.egov.ptis.web.controller.transactions.writeOff;
 
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.enums.TransactionType;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.DocumentType;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WO_FORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.WO_SUCCESS_FORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.WRITEOFF_CODE;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import org.apache.log4j.Logger;
+import org.egov.commons.Installment;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.ptis.bean.demand.DemandDetail;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
+import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.WriteOff;
+import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.writeOff.WriteOffService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class WriteOffController.
  *
- * @author subhash
+ * @author
  */
 @Controller
-@RequestMapping(value = "/writeOff")
+@RequestMapping(value = "/writeoff")
 public class WriteOffController extends GenericWorkFlowController {
 
-    private static final String WRITE_OFF_FORM = "writeOff-form";
+    private static final Logger LOGGER = Logger.getLogger(WriteOffController.class);
+
+    private static final String CURRENT_STATE = "currentState";
+    private static final String STATE_TYPE = "stateType";
+    private static final String PROPERTY = "property";
+    private static final String CREATED = "Created";
+    private static final String APPROVAL_COMMENT = "approvalComment";
+    private static final String WF_ACTION = "workFlowAction";
+    private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String WRITOFF_DOC = "attachedDocuments";
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
-    private PtDemandDao ptDemandDAO;
+    private WriteOffService writeOffService;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    @Autowired
+    private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
+    @Autowired
+    private WriteOffReasonRepository writeOffReasonRepository;
+    @Autowired
+    private PropertyService propertyService;
 
-    @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
-    public String form(@PathVariable("assessmentNo") String assessmentNo, Model model) {
-        PropertyImpl propertyImpl = null;
+    @ModelAttribute("writeOff")
+    public WriteOff writeOff(@PathVariable("assessmentNo") String assessmentNo) {
+        WriteOff writeOff = new WriteOff();
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null) {
-            propertyImpl = basicProperty.getActiveProperty();
-            if (basicProperty.isUnderWorkflow()) {
-                model.addAttribute("wfPendingMsg", "Could not do Write Off now, property is undergoing some work flow.");
-                return TARGET_WORKFLOW_ERROR;
-            }
-            final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
-                    .getActiveProperty());
-            final BigDecimal currTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
-                    propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
-            final BigDecimal arrearTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
-                    propertyTaxDetails.get(ARR_COLL_STR));
-            final Map<String, BigDecimal> penaltyDetails = ptDemandDAO.getPenaltyDemandCollMap(basicProperty
-                    .getActiveProperty());
-            final BigDecimal currPenaltyDue = penaltyDetails.get(CURR_PENALTY_DMD_STR).subtract(
-                    penaltyDetails.get(CURR_PENALTY_COLL_STR));
-            final BigDecimal arrearPenaltyDue = penaltyDetails.get(ARR_PENALTY_DMD_STR).subtract(
-                    penaltyDetails.get(ARR_PENALTY_COLL_STR));
-            final javax.persistence.Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
-            qry.setParameter("transactionType", TransactionType.WRITEOFF); 
-            
-            model.addAttribute("property", propertyImpl);
-            model.addAttribute("basicProperty", basicProperty);
-            model.addAttribute("currTaxDue", currTaxDue);
-            model.addAttribute("arrearTaxDue", arrearTaxDue);
-            model.addAttribute("currPenaltyDue", currPenaltyDue);
-            model.addAttribute("arrearPenaltyDue", arrearPenaltyDue);
-            model.addAttribute("isCorporation", propertyTaxUtil.isCorporation());
-            model.addAttribute("writeOffReasons", PropertyTaxConstants.WRITEOFF_REASONS);
-            model.addAttribute("installments", propertyTaxUtil.getInstallments(propertyImpl));
-            model.addAttribute("documentTypes", qry.getResultList());
+            writeOff.setBasicProperty((BasicPropertyImpl) basicProperty);
+            PropertyImpl propertyImpl = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
+            writeOff.setProperty(propertyImpl);
         }
-        return WRITE_OFF_FORM;
+        return writeOff;
+    }
+
+    @ModelAttribute("documentsList")
+    public List<DocumentType> documentsList(@ModelAttribute final WriteOff writeOff) {
+        return writeOffService.getDocuments(TransactionType.WRITEOFF);
+    }
+
+    @GetMapping(value = "/viewform/{assessmentNo}")
+    public String view(@ModelAttribute WriteOff writeOff, Model model, final HttpServletRequest request) {
+        BasicProperty basicProperty = writeOff.getBasicProperty();
+        if (basicProperty.isUnderWorkflow()) {
+            model.addAttribute("wfPendingMsg", "Could not do Write-off now, property is undergoing some work flow.");
+            return TARGET_WORKFLOW_ERROR;
+        }
+        if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+            model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+            return PROPERTY_VALIDATION_FOR_SPRING;
+        }
+        List<Installment> installmentList = propertyTaxUtil.getInstallments(basicProperty.getActiveProperty());
+        model.addAttribute(WRITOFF_DOC, "");
+        model.addAttribute("writeOff", writeOff);
+        model.addAttribute(PROPERTY, writeOff.getProperty());
+        model.addAttribute(CURRENT_STATE, CREATED);
+        model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
+        writeOffService.addModelAttributes(model, writeOff.getBasicProperty().getUpicNo(), request, installmentList);
+        model.addAttribute("type", propertyMutationMasterHibDAO
+                .getAllPropertyMutationMastersByType(WRITEOFF_CODE));
+        final BigDecimal totalDue = propertyService.getTotalPropertyTaxDue(writeOff.getBasicProperty());
+        if (totalDue.compareTo(BigDecimal.ZERO) == 0) {
+            model.addAttribute(ERROR_MSG, "writeoff.no.due");
+            return PROPERTY_VALIDATION_FOR_SPRING;
+        }
+        List<DemandDetail> demandDetailBeanList = writeOffService.setDemandBeanList(writeOffService
+                .sortDemandDetails(new ArrayList<>(ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty())
+                        .getEgDemandDetails())));
+        writeOff.setDemandDetailBeanList(demandDetailBeanList);
+        model.addAttribute("dmndDetails", demandDetailBeanList);
+        prepareWorkflow(model, writeOff, new WorkflowContainer());
+        return WO_FORM;
+    }
+
+    @PostMapping(value = "/viewform/{assessmentNo}")
+    public String save(@ModelAttribute("writeOff") @Valid WriteOff writeOff, BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
+            @RequestParam String workFlowAction, @PathVariable String assessmentNo) {
+        String target = "";
+        Long approvalPosition = 0l;
+        String approvalComent = "";
+        new ArrayList<>();
+        Map<String, String> errorMessages = new HashMap<>();
+        if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0)
+            writeOff.setPropertyDeactivateFlag(true);
+        else
+            writeOff.setPropertyDeactivateFlag(false);
+        if (writeOff.getWriteOffType().getCode() != null)
+            writeOff.setWriteOffType(propertyMutationMasterHibDAO
+                    .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode()));
+        if (writeOff.getWriteOffReasons().getCode() != null)
+            writeOff.setWriteOffReasons(writeOffReasonRepository.findByCode(writeOff.getWriteOffReasons().getCode()));
+        resultBinder = writeOffService.validate(writeOff, resultBinder);
+        if (!resultBinder.hasErrors())
+            errorMessages = writeOffService.displayValidation(writeOff, request);
+        if (resultBinder != null && resultBinder.hasErrors() || !errorMessages.isEmpty()) {
+            target = writeOffService.displayErrors(writeOff, model, errorMessages, request);
+            return target;
+        }
+
+        if (request.getParameter(APPROVAL_COMMENT) != null)
+            approvalComent = request.getParameter(APPROVAL_COMMENT);
+        if (request.getParameter(WF_ACTION) != null)
+            workFlowAction = request.getParameter(WF_ACTION);
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+        writeOffService.processAndStoreApplicationDocuments(writeOff);
+        writeOffService.updateProperty(writeOff);
+        writeOffService.updateDemandDetails(writeOff);
+        writeOff.getBasicProperty().addProperty(writeOff.getProperty());
+        writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
+        final String successMsg = "write Off Saved Successfully in the System and forwarded to : "
+                + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
+                + " with application number : " + writeOff.getApplicationNumber();
+        LOGGER.error("Write off saved successfully");
+        model.addAttribute("successMessage", successMsg);
+        model.addAttribute("propertyId", assessmentNo);
+        target = WO_SUCCESS_FORM;
+        return target;
     }
 }

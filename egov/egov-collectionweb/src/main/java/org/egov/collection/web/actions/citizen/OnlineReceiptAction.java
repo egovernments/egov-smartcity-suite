@@ -78,6 +78,7 @@ import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
+import org.egov.collection.integration.services.ReconciliationService;
 import org.egov.collection.service.CollectionService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -111,13 +112,6 @@ public class OnlineReceiptAction extends BaseFormAction {
     protected static final String RECONRESULT = "reconresult";
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
     private static final long serialVersionUID = 1L;
-    private static final String BROKEN_TRANSACTION_ERROR_MESSAGE = new StringBuilder()
-            .append("If the amount has been deducted from ")
-            .append("your account, then no further action is required from you right now. Such transactions are normally ")
-            .append("resolved within 24 hours so you can check and download the receipt then.")
-            .append("\n \nIf the amount has not been deducted from your account, then please check your ")
-            .append("internet connection and try to pay again after some time. If the transaction fails again, ")
-            .append("please contact cell in Corporation.").toString();
     private final List<ValidationError> errors = new ArrayList<>(0);
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
@@ -145,7 +139,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     private Boolean callbackForApportioning;
     private String receiptNumber;
     private String consumerCode;
-    private String receiptResponse = "";
+    private String receiptResponse = CollectionConstants.BLANK;
     private ReceiptHeader receiptHeader;
     private String refNumber;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<>(0);
@@ -159,6 +153,16 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] transactionDate;
     private String[] statusCode;
     private String[] remarks;
+    private BigDecimal minimumAmount;
+    private String displayMsg;
+    private String payeeName;
+    private List<ReceiptHeader> penidngTransaction = new ArrayList<>();
+    private Long repayTransactionId;
+    private static final String REPAY_VALIDATION_KEY = "onlineReceipts.repay.validate";
+    private static final String VIEW_VALIDATION_KEY = "onlineReceipts.view.validate";
+    @Autowired
+    private ReconciliationService reconciliationService;
+
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -169,15 +173,17 @@ public class OnlineReceiptAction extends BaseFormAction {
 
     @Action(value = "/citizen/onlineReceipt-newform")
     public String newform() {
+        pendingOnlineTransactions();
         return NEW;
     }
 
+    @ValidationErrorPage(value = NEW)
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
          * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
-        if (callbackForApportioning && !overrideAccountHeads)
+        if (callbackForApportioning != null && overrideAccountHeads != null && callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
         ServiceDetails paymentService = null;
         if (null != paymentServiceId && paymentServiceId > 0)
@@ -191,11 +197,9 @@ public class OnlineReceiptAction extends BaseFormAction {
     /**
      * @return
      */
-    @ValidationErrorPage(value = "result")
+    @ValidationErrorPage(value = RESULT)
     @Action(value = "/citizen/onlineReceipt-acceptMessageFromPaymentGateway")
     public String acceptMessageFromPaymentGateway() {
-
-        System.currentTimeMillis();
         LOGGER.info("responseMsg:	" + responseMsg);
         ServiceDetails paymentService;
         if (null != paymentServiceId && paymentServiceId > 0)
@@ -243,7 +247,8 @@ public class OnlineReceiptAction extends BaseFormAction {
             } else
                 processFailureMsg();
         } else {
-            errors.add(new ValidationError(BROKEN_TRANSACTION_ERROR_MESSAGE, BROKEN_TRANSACTION_ERROR_MESSAGE));
+            errors.add(
+                    new ValidationError(getText("online.broken.transaction.error"), getText("online.broken.transaction.error")));
             LOGGER.info("onlinePaymentReceiptHeader object is null");
         }
         return RESULT;
@@ -295,7 +300,7 @@ public class OnlineReceiptAction extends BaseFormAction {
 
             onlinePaymentReceiptHeader = receiptHeaderService.createOnlineSuccessPayment(onlinePaymentReceiptHeader,
                     paymentResponse.getTxnDate(), paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(),
-                    paymentResponse.getAuthStatus(), null, null);
+                    paymentResponse.getAuthStatus(), null);
             receiptResponse = "SUCCESS|" + onlinePaymentReceiptHeader.getReceiptnumber();
         }
     }
@@ -352,13 +357,21 @@ public class OnlineReceiptAction extends BaseFormAction {
                         newReceiptDetail.setCramount(receiptDetail.getCramount());
                         newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
                         newReceiptDetail.setDramount(receiptDetail.getDramount());
+                        newReceiptDetail.setPurpose(receiptDetail.getPurpose());
                         existingReceiptDetails.add(newReceiptDetail);
                     }
-                final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
+                final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
                         existingReceiptDetails);
 
+                List<ReceiptDetail> reconstructedList = new ArrayList<ReceiptDetail>();
+                if (reapportionedList != null && !reapportionedList.isEmpty()) {
+                    reconstructedList = reapportionedList;
+                } else {
+                    reconstructedList = existingReceiptDetails;
+                }
+
                 ReceiptDetail debitAccountDetail = null;
-                if (reconstructedList != null) {
+                if (reconstructedList != null && !reconstructedList.isEmpty()) {
                     DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
                             .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
                     debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
@@ -367,31 +380,29 @@ public class OnlineReceiptAction extends BaseFormAction {
                 }
 
                 receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
-                        receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail);
+                        receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail, getRemarks()[i]);
 
                 LOGGER.debug("Manually reconciled a success online payment");
             }
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
-                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
+                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])
+                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE.equals(getStatusCode()[i])) {
                 receipts[i].setStatus(collectionsUtil
                         .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
-
-                receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
-                receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());
-                receipts[i].getOnlinePayment().setTransactionDate(transDate);
                 receipts[i].getOnlinePayment().setRemarks(getRemarks()[i]);
 
-                // set online payment status as TO BE REFUNDED/REFUNDED
-                if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED))
-                    receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED));
-                else
-                    receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED));
+                if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
+                        || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
+                    receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
+                    receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());
+                    receipts[i].getOnlinePayment().setTransactionDate(transDate);
+                }
 
+                // set online payment status as TO BE REFUNDED/REFUNDED/FALURE
+                receipts[i].getOnlinePayment().setStatus(
+                        collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                                getStatusCode()[i]));
                 receiptHeaderService.persist(receipts[i]);
 
                 LOGGER.debug("Manually reconciled an online payment to " + getStatusCode()[i] + " state.");
@@ -400,16 +411,58 @@ public class OnlineReceiptAction extends BaseFormAction {
         return RECONRESULT;
     }
 
+    /**
+     * If the online payment is pending, citizen can manually reconcile the transaction.
+     * @return
+     */
+    @Action(value = "/citizen/onlineReceipt-repay")
+    public String repay() {
+        if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
+                && isNotBlank(receiptHeader.getService().getCode()))
+            penidngTransaction = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
+                    receiptHeader.getService().getCode(),
+                    receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        if (getRepayTransactionId() == null || penidngTransaction == null
+                || (getRepayTransactionId() != null && penidngTransaction
+                        .stream().noneMatch(pendingReceipt -> pendingReceipt.getId().equals(getRepayTransactionId()))))
+            throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
+                    getText(REPAY_VALIDATION_KEY))));
+        ReceiptHeader repayReceipt = receiptHeaderService.findById(getRepayTransactionId(), false);
+        if (repayReceipt == null)
+            throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
+                    REPAY_VALIDATION_KEY)));
+        paymentResponse = collectionCommon.repayReconciliation(repayReceipt.getOnlinePayment().getService(),
+                repayReceipt.getOnlinePayment());
+        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+            reconciliationService.processSuccessMsg(repayReceipt, paymentResponse);
+        else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus())) {
+            addActionMessage(getText("onlineReceipts.pending.validate",
+                    new String[] { repayReceipt.getConsumerCode(),
+                            repayReceipt.getId().toString() }));
+        } else {
+            reconciliationService.processFailureMsg(repayReceipt, paymentResponse);
+            addActionError(getText(repayReceipt.getOnlinePayment().getService().getCode().toLowerCase() + ".pgi." +
+                    paymentResponse.getAuthStatus()));
+        }
+        return RESULT;
+    }
+
     @Action(value = "/citizen/onlineReceipt-view")
     public String view() {
-        setReceipts(new ReceiptHeader[1]);
-        receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
-
-        try {
-            reportId = collectionCommon.generateReport(receipts, true);
-        } catch (final Exception e) {
-            LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
-            throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
+        if (getReceiptId() == null) {
+            LOGGER.error(getText(VIEW_VALIDATION_KEY));
+            throw new ValidationException(Arrays.asList(new ValidationError(VIEW_VALIDATION_KEY,
+                    VIEW_VALIDATION_KEY)));
+        } else {
+            setReceipts(new ReceiptHeader[1]);
+            receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
+            try {
+                reportId = collectionCommon.generateReport(receipts, true);
+            } catch (final Exception e) {
+                LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
+                throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
+            }
         }
         return CollectionConstants.REPORT;
     }
@@ -426,8 +479,8 @@ public class OnlineReceiptAction extends BaseFormAction {
             setReceiptId(receiptHead.getId());
             return view();
         } else
-            throw new ValidationException(Arrays.asList(new ValidationError("No Receipt Data Found",
-                    "No Receipt Data Found")));
+            throw new ValidationException(Arrays.asList(new ValidationError(VIEW_VALIDATION_KEY,
+                    VIEW_VALIDATION_KEY)));
 
     }
 
@@ -460,6 +513,13 @@ public class OnlineReceiptAction extends BaseFormAction {
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
+                setConsumerCode(isNotBlank(receiptHeader.getConsumerCode()) ? receiptHeader.getConsumerCode()
+                        : CollectionConstants.BLANK);
+                setDisplayMsg(isNotBlank(receiptHeader.getDisplayMsg()) ? receiptHeader.getDisplayMsg()
+                        : CollectionConstants.BLANK);
+                setPayeeName(isNotBlank(receiptHeader.getPayeeName()) ? receiptHeader.getPayeeName()
+                        : CollectionConstants.BLANK);
+                minimumAmount = receiptHeader.getMinimumAmount() == null ? BigDecimal.ZERO : receiptHeader.getMinimumAmount();
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
@@ -480,19 +540,33 @@ public class OnlineReceiptAction extends BaseFormAction {
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
         // Fetching pending transaction by consumer code. If transaction is in pending status display message
+        /*
+         * if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode()) &&
+         * isNotBlank(receiptHeader.getService().getCode())) { penidngTransaction = getPersistenceService().findAllByNamedQuery(
+         * CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
+         * receiptHeader.getService().getCode(), receiptHeader.getConsumerCode(),
+         * CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING); if (!penidngTransaction.isEmpty()) { isTransactionPending =
+         * Boolean.TRUE; addActionMessage(getText("onlineReceipts.pending.validate", new String[] {
+         * penidngTransaction.get(0).getConsumerCode(), penidngTransaction.get(0).getId().toString() })); } }
+         */
+    }
+
+    // Fetching pending transaction by consumer code. If transaction is in pending status display message
+    private void pendingOnlineTransactions() {
         if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
                 && isNotBlank(receiptHeader.getService().getCode())) {
-            final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
+            penidngTransaction = getPersistenceService().findAllByNamedQuery(
                     CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
                     receiptHeader.getService().getCode(),
                     receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-            if (!pendingOnlinePayments.isEmpty()) {
+            if (!penidngTransaction.isEmpty()) {
                 isTransactionPending = Boolean.TRUE;
                 addActionMessage(getText("onlineReceipts.pending.validate",
-                        new String[] { pendingOnlinePayments.get(0).getConsumerCode(),
-                                pendingOnlinePayments.get(0).getId().toString() }));
+                        new String[] { penidngTransaction.get(0).getConsumerCode(),
+                                penidngTransaction.get(0).getId().toString() }));
             }
         }
+
     }
 
     private String decodeBillXML() {
@@ -813,8 +887,11 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     private void apportionBillAmount() {
-        receiptDetailList = collectionCommon.apportionBillAmount(paymentAmount,
-                (ArrayList<ReceiptDetail>) getReceiptDetailList());
+        if (callbackForApportioning != null && overrideAccountHeads != null && callbackForApportioning
+                && !overrideAccountHeads) {
+            receiptDetailList = collectionCommon.apportionBillAmount(paymentAmount,
+                    (ArrayList<ReceiptDetail>) getReceiptDetailList());
+        }
     }
 
     /**
@@ -901,4 +978,40 @@ public class OnlineReceiptAction extends BaseFormAction {
         this.isTransactionPending = isTransactionPending;
     }
 
+    public BigDecimal getMinimumAmount() {
+        return minimumAmount;
+    }
+
+    public String getDisplayMsg() {
+        return displayMsg;
+    }
+
+    public void setDisplayMsg(String displayMsg) {
+        this.displayMsg = displayMsg;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
+    }
+
+    public List<ReceiptHeader> getPenidngTransaction() {
+        return penidngTransaction;
+    }
+
+    public void setPenidngTransaction(List<ReceiptHeader> penidngTransaction) {
+        this.penidngTransaction = penidngTransaction;
+
+    }
+
+    public Long getRepayTransactionId() {
+        return repayTransactionId;
+    }
+
+    public void setRepayTransactionId(Long repayTransactionId) {
+        this.repayTransactionId = repayTransactionId;
+    }
 }

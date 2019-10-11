@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainWriteOffProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="15" rightMargin="25" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="92"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<subDataset name="Empty Dataset1" uuid="b347e8b7-c52e-433d-a6e4-00ca07eb9678"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="toInstallment" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="houseNo" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="resolutionType" class="java.lang.String"/>
+	<parameter name="resolutionNo" class="java.lang.String"/>
+	<parameter name="resolutionDate" class="java.lang.String"/>
+	<parameter name="fromInstallment" class="java.lang.String"/>
+	<parameter name="writeOffDemand" class="java.lang.String"/>
+	<parameter name="writeoffType" class="java.lang.String"/>
+	<parameter name="revenueWard" class="java.lang.String"/>
+	<parameter name="writeOffInterest" class="java.lang.String"/>
+	<parameter name="totalAmount" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="189" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="15" y="14" width="88" height="12" isPrintWhenDetailOverflows="true" uuid="4e9bf8c8-dad7-4cd5-b2ce-a453f2d4aa41"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="true" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"Party's Copy:":"Office Copy:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="32" y="44" width="498" height="26" uuid="a4c81938-a137-4342-bad7-de24d3d8d06d"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["	PROCEEDINGS OF THE MUNICIPAL COMMISSIONER\n		"+$P{cityName}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="160" y="80" width="234" height="17" uuid="ee9c98ae-41d4-4a67-95a8-1ed3cb14b1e1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{approverName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="20" y="115" width="510" height="45" isPrintWhenDetailOverflows="true" uuid="640ffde0-b98e-416e-86b5-e05c3c9e7a71"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["	Sub: <style isBold=\"true\"> "+$P{cityName}+"</style> – Revenue Wing – Property Tax write off – Orders – Issued-Reg.\n\n	Ref: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{resolutionType}+"</style> Resolution No. <style forecolor=\"#000000\" isBold=\"true\"> "+$P{resolutionNo}+"</style> dt.  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{resolutionDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="95" width="162" height="15" uuid="c9912dcf-1fff-42c4-ac4e-45c1add92f4c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{currentDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="101" y="95" width="129" height="15" isPrintWhenDetailOverflows="true" uuid="641428b1-f562-4388-9b0e-9cefff5239d1"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{noticeNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="35" y="95" width="55" height="15" uuid="7c5f857b-b37d-4f58-a207-0bffc0e5b099"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Proc.Roc.No:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="170" width="100" height="19" uuid="59f52c8f-464a-4f49-8517-dc5441aa2868"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[* * * * * *]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="538" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="20" y="20" width="510" height="90" uuid="75aa4cf0-93b7-4dd9-a88a-f4467db78343"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
+					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tIn pursuance of the resolution passed by the <style forecolor=\"#000000\" isBold=\"true\">"+$P{resolutionType}+"</style>vide reference cited, the Property Tax in respect of the Assessment bearing No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{assessmentNo}+"</style> , is<style forecolor=\"#000000\" isBold=\"true\"> "+$P{writeoffType}+"</style> written off and the details are as follows :"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="347" y="439" width="163" height="20" uuid="1d498d13-1a1e-4870-a73f-7d5708b0617c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ COMMISSIONER]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="101" y="421" width="165" height="15" uuid="28ef0fc5-4826-47fa-836f-954932026657"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="420" width="87" height="15" uuid="794352a0-17b8-4b80-8ecc-ecd04d58cf05"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[To, Sri/Smt./Kum.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="300" width="100" height="21" uuid="bd8ab7ee-0ab0-4bc8-a7bd-506286801bcb"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="300" width="113" height="21" uuid="dd90a462-df05-4145-b27a-5ad89864186d"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Principal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="300" width="139" height="21" uuid="e58aa857-c4f1-4094-b7fa-70f3ff65a5e4"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Interest]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="35" y="0" width="70" height="20" isPrintWhenDetailOverflows="true" uuid="04367b92-ef01-4585-8ade-6f2e685a1154"/>
+				<textElement markup="styled">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="290" y="460" width="219" height="15" uuid="a66e4786-4c18-4e54-a033-1eed97ce30b2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="321" width="113" height="31" uuid="1b021d99-604f-43bb-9ba4-416fd0f29d2c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{writeOffDemand}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="321" width="138" height="31" uuid="539def92-9b24-453e-955c-0908c826fb3c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{writeOffInterest}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="321" width="101" height="31" uuid="e9538cf5-c465-4ce3-b925-05556bc6a963"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="485" width="539" height="30" uuid="68686175-0050-4d90-ab31-04531989aeb7"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Copy to
+Zonal Commissioner / Deputy Commissioner (R) / Assistant Commissioner/ Revenue Officer of this office for information.]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="329" y="383" width="171" height="51" uuid="ebfa8254-ab93-4be0-b4f5-d8f1ea27b520"/>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="20" y="240" width="137" height="30" uuid="4cfd504e-74c8-400d-be85-1b05c2243e37"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Locality]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="409" y="270" width="100" height="30" uuid="02002b98-101f-4e0e-9901-e407e400c8ad"/>
+				<box topPadding="4" leftPadding="3">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{toInstallment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="270" width="113" height="30" uuid="d7713016-bf77-45dc-850e-e92651db9552"/>
+				<box topPadding="4" leftPadding="3">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fromInstallment}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="270" y="270" width="139" height="30" uuid="f8756f86-40a7-4768-bc32-bfbc53761bec"/>
+				<box topPadding="4" leftPadding="3">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Written-off To Period]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="157" y="240" width="352" height="30" uuid="36617e95-1c44-4157-862b-cbbd77e07664"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{locality}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="209" width="353" height="31" uuid="0c34f22b-a14e-460c-9ab0-ebeeb023e9ce"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="178" width="353" height="31" uuid="0bbc3aba-5848-419b-be21-b1b9b4a7a7ec"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{revenueWard}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="148" width="352" height="30" uuid="fd135bdb-ee05-484b-a27d-4ce6ef82f274"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{assessmentNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="120" width="353" height="28" uuid="02cbff06-ba2c-4ac6-be79-b19d50c42b6d"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{ownerName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="436" width="108" height="14" uuid="6472df61-2059-4ffd-83da-e607642f094e"/>
+				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="450" width="101" height="20" uuid="aada8547-37d2-4301-a439-3ed9433c7cdb"/>
+				<textFieldExpression><![CDATA[$P{locality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="270" width="137" height="30" uuid="321085aa-d024-4491-b56c-f7ac4609d053"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Written-off From Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="300" width="137" height="52" uuid="37246b8c-5ccf-4961-acf6-56464f33e0db"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount Written off]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="179" width="137" height="30" uuid="d597a767-c0af-465c-be11-bd8a30a1eb62"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Revenue Ward]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="209" width="137" height="31" uuid="9853b558-feb3-453e-b381-eb480d880a7a"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Door Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="120" width="137" height="29" uuid="7d9b3aed-09f0-46ad-9b2c-a8e085bed9aa"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name of the Owner]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="149" width="137" height="30" uuid="6ab69ba2-e970-4871-84be-e11a03b75993"/>
+				<box topPadding="3" leftPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assessment Number]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -96,13 +96,18 @@
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
+											<span class="bold"><s:text name="court_writeoff" /> </span>
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">
 											<span class="bold"><s:text name="Collection" />
 											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="Rebate" />
+											<span class="bold"><s:text name="rebate_waiver" />
 											</span>
 										</div>
 									</td>
@@ -113,9 +118,10 @@
 									</td>
 								</tr>
 								<s:set value="0" var="advance" />
-								<s:set value="0" var="advrebate" />
 								<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
+								    <s:set value="0" var="advrebate" />
 									<s:set value="0" var="instDmdTotal" />
+									<s:set value="0" var="instDmdVariationTotal" />
 									<s:set value="0" var="instCollTotal" />
 									<s:set value="0" var="instRebateTotal" />
 									<s:set value="0" var="instBalanceTotal" />
@@ -148,13 +154,29 @@
 													<c:set value="${instDmdTotal + instDmd}" var="instDmdTotal"/>
 												</div>
 											</td>
+												<s:if
+											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+													<td class="blueborderfortd">
+														<div align="right">
+															<s:text name="format.money">
+																<s:param value="value.getDemandVariation()[#fieldnames]"/>
+															</s:text>
+																<s:set value="value.getDemandVariation()[#fieldnames]" var="instDmdVar"/>
+													<c:set value="${instDmdVariationTotal + instDmdVar}" var="instDmdVariationTotal"/>
+															
+														</div>
+													</td>
+											</s:if>
+											
 											<td class="blueborderfortd">
 												<div align="right">
-													<s:text name="format.money">
-														<s:param value="value.getCollections()[#fieldnames]" />
-														<s:set value="value.getCollections()[#fieldnames]" var="instColl"/>
-														<c:set value="${instCollTotal + instColl}" var="instCollTotal"/>
-													</s:text>
+
+                                                    <s:set var="installment_fld_collection" value="value.getCollections()[#fieldnames]" />
+                                                    <s:set var="installment_fld_rebate" value="value.getRebates()[#fieldnames]" />
+												    <c:set var="cllctn_minus_rbt" value="${installment_fld_collection - installment_fld_rebate}" />
+
+												    <fmt:formatNumber value="${cllctn_minus_rbt}"/>
+													<c:set value="${instCollTotal + cllctn_minus_rbt}" var="instCollTotal" />
 												</div>
 											</td>
 											<td class="blueborderfortd">
@@ -202,6 +224,11 @@
 										</td>
 										<td class="blueborderfortd">
 											<div align="right">
+												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instDmdVariationTotal}"/></span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="right">
 												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instCollTotal}"/></span>
 											</div>
 										</td>
@@ -218,6 +245,11 @@
 									</tr>
 								</s:iterator>
 								<tr>
+									<td class="blueborderfortd">
+										<div align="center">
+											&nbsp;
+										</div>
+									</td>
 									<td class="blueborderfortd">
 										<div align="center">
 											&nbsp;

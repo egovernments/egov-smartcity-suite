@@ -102,14 +102,14 @@
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
-								code="lbl.applicationtype" /></label>
+								code="lbl.applicationtype" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
 							<form:select path="applicationType" name="applicationType"
 								data-first-option="false" id="applicationType"
-								cssClass="form-control">
+								cssClass="form-control" required="required">
 								<form:option value="">
 								</form:option>
-								<form:options items="${applicationTypes}" itemValue="name"
+								<form:options items="${applicationTypes}" itemValue="code"
 									itemLabel="name" />
 							</form:select>
 						</div>
@@ -123,8 +123,7 @@
 								cssClass="form-control" required="required">
 								<form:option value="">
 								</form:option>
-								<form:options items="${noticetypeList}" />
-							</form:select>
+								</form:select>
 						</div>
 					</div> 
 					<div class="form-group dateField">
@@ -186,6 +185,19 @@
 								id="houseNumber" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-md-4 control-label"><spring:message
+								code="lbl.financial.year" /><span class="mandatory"></span></label>
+						<div class="col-md-4 add-margin">
+							<select name="financialYear" id="financialYear" class="form-control"
+                                        data-first-option="false" required="required">
+                                    <option value="${finYear.startingDate}"></option>
+                                    <c:forEach items="${financialYears}" var="finYear">
+                                        <option value="${finYear.id}">${finYear.finYearRange}</option>
+                                    </c:forEach>
+                            </select>
+						</div>
+					</div> 
 					<div class="form-group text-center">
 
 						<form:button type="button" class="btn btn-primary" id="searchid">
@@ -197,7 +209,7 @@
 						<form:button type="button" class="btn btn-primary" id="zipid">
 							<spring:message code="lbl.zip" />
 						</form:button>
-						<form:button type="reset" class="btn btn-primary">
+						<form:button type="reset" class="btn btn-primary" id="resetid">
 							<spring:message code="lbl.reset" />
 						</form:button>
 						<a onclick="self.close()" class="btn btn-default"

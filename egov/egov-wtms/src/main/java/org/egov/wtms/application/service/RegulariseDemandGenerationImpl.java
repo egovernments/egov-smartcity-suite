@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,9 @@ public class RegulariseDemandGenerationImpl implements RegulariseDemandGeneratio
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Override
     public WaterConnectionDetails generateDemandForRegulariseConnection(WaterConnectionDetails waterConnectionDetails) {
@@ -99,7 +103,7 @@ public class RegulariseDemandGenerationImpl implements RegulariseDemandGeneratio
         WaterRatesDetails waterRates = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         if (waterRates == null)
             throw new ValidationException("err.water.rate.not.found");
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         for (Installment installment : installmentList) {
             demandDetails = connectionDemandService.createDemandDetails(waterRates.getMonthlyRate() * 6, WATERTAXREASONCODE,
                     installment);

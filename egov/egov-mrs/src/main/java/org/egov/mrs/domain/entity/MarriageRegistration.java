@@ -111,6 +111,7 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @SafeHtml
     @Length(max = 300)
+    @NotNull
     private String placeOfMarriage;
 
     @SafeHtml

@@ -248,13 +248,18 @@
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Demand" />
 									</th>
-
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF') }">
+										<th class="bluebgheadtd" width="10%" align="center"
+											colspan="3"><s:text
+												name="court_writeoff" /></th>
+									</s:if>
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Collection" />
 									</th>
 
 									<th class="bluebgheadtd" width="10%" align="center" colspan="1">
-										<s:text name="Rebate" />
+										<s:text name="rebate_waiver" />
 									</th>
 
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
@@ -281,7 +286,24 @@
 											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
-
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="Tax" /> </span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="chkBncPenalty" /> </span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="ltPmtPenalty" /> </span>
+											</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -298,13 +320,12 @@
 											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
-
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold">&nbsp; </span>
 										</div>
 									</td>
-
+									
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -334,7 +355,7 @@
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<td class="blueborderfortd">
 													<div align="right">
 														<s:text name="format.money">
@@ -344,41 +365,72 @@
 												</td>
 											</c:if>
 										</s:iterator>
+										<s:if
+											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+											<s:iterator value="dcbReport.getFieldNames()"
+												var="fieldnames">
+												<c:if
+													test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
+													<td class="blueborderfortd">
+														<div align="right">
+															<s:text name="format.money">
+																<s:param value="value.getDemandVariation()[#fieldnames]" />
+															</s:text>
+														</div>
+													</td>
+												</c:if>
+											</s:iterator>
+										</s:if>
+										<s:set value="0" var="rebate_waiver" />
+										<s:set value="0" var="waiver" />
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
-												<td class="blueborderfortd">
-													<div align="right">
-														<s:text name="format.money">
-															<s:param value="value.getCollections()[#fieldnames]" />
-														</s:text>
-													</div>
-												</td>
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY' && fieldnames != 'Early Payment Rebate'}">
+												<s:set var="trbt" value="%{#rebate_waiver + value.getRebates()[#fieldnames]}" />
+												<s:set var="rebate_waiver" value="%{#trbt}" />
 											</c:if>
-										</s:iterator>
-
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+											<c:if test="${fieldnames == 'FINES'}">
+											    <s:set var="waiver" value="%{#waiver + value.getRebates()[#fieldnames]}" />
+											</c:if>
 
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY' && fieldnames != 'FINES'}">
-												<td class="blueborderfortd">
-													<div align="right">
-														<s:text name="format.money">
-															<s:param value="value.getRebates()[#fieldnames]" />
-														</s:text>
-													</div>
-												</td>
-											</c:if>
-											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<s:set value="value.getRebates()[#fieldnames]" var="advreb" />
 												<c:set value="${advrebate + advreb}" var="advrebate" />
 											</c:if>
 										</s:iterator>
 
+
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
+												<td class="blueborderfortd">
+													<div align="right">
+														<c:if test="${fieldnames == 'FINES'}">
+															<s:set var="collection" value="%{value.getCollections()[#fieldnames] -  #waiver}" />
+														</c:if>
+														<c:if test="${fieldnames != 'FINES'}">
+															<s:set var="collection" value="%{value.getCollections()[#fieldnames]}" />
+														</c:if>
+														<s:text name="format.money">
+															<s:param value="#collection" />
+														</s:text>
+													</div>
+												</td>
+											</c:if>
+										</s:iterator>
+
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:text name="format.money">
+													<s:param value="#rebate_waiver" />
+												</s:text>
+											</div>
+										</td>
+										
+										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+											<c:if
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<td class="blueborderfortd">
 													<div align="right">
 														<s:text name="format.money">
@@ -389,6 +441,7 @@
 											</c:if>
 										</s:iterator>
 									</tr>
+
 								</s:iterator>
 								<tr>
 									<td class="blueborderfortd">
@@ -429,6 +482,48 @@
 											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalDmdTax() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarTax()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalDmdPnlty() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarPnlty()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalLpayPnlty() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarLpayPnlty()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
 										<div align="right">
 											<s:if test="%{dcbReport.getTotalColTax() != null}">
@@ -496,6 +591,18 @@
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
@@ -513,7 +620,7 @@
 
 									<s:iterator value="dcbReport.getFieldNames()" var="FieldNames">
 										<c:if
-											test="${FieldNames != 'Advance Collection' && FieldNames != 'Fines'}">
+											test="${FieldNames != 'Advance Collection' && FieldNames != 'Fines' && FieldNames != 'Early Payment Rebate'}">
 											<td class="blueborderfortd">
 												<div align="right">
 													<span class="bold"> <s:text name="format.money">
@@ -543,13 +650,24 @@
 										<td class="blueborderfortd">
 											<div align="center">&nbsp;</div>
 										</td>
+										<s:if
+											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
+										</s:if>
 										<td class="blueborderfortd">
 											<div align="center">&nbsp;</div>
 										</td>
 										<td class="blueborderfortd">
 											<div align="center">&nbsp;</div>
 										</td>
-
 										<td class="blueborderfortd">
 											<div align="right">
 												<b><s:text name="Advance" />:</b>
@@ -583,6 +701,18 @@
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
@@ -628,7 +758,7 @@
 														onclick="openShowReceipts();" />
 														<input type="button" name="button5" id="button5"
 														value="Show Old Demand" class="buttonsubmit"
-														onclick="openShowCollections();" />
+														onclick="openShowCollections();" /> 
 												</s:if>
 												
 											</s:if>

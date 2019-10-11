@@ -51,7 +51,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><s:text name="title.onlineReceipts"/></title>
+<title><s:text name="title.onlineReceipts" /></title>
 <script
 	src="${pageContext.request.contextPath}/resources/common/watermark.js"
 	type="text/javascript"></script>
@@ -103,7 +103,7 @@ function populateapportioningamountnew(){
 		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
 		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
 		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
-		if(advanceRebatePresent==0){
+		if(advanceRebatePresent=="false"){
 			zeroAccHeads=true;
 		}
 	}
@@ -122,7 +122,10 @@ function populateapportioningamountnew(){
 		return false;
 	}
 	if(collectiontotal < billingtotal && checkpartpaymentvalue=='true'){
-		 var minimumAmt=document.forms[0].totalAmountToBeCollected.value;
+		var minimumAmt=parseInt(document.forms[0].minimumAmount.value);
+		if((isNaN(minimumAmt)) || minimumAmt==null ){
+		    minimumAmt=0;
+		}
 		 if(collectiontotal < minimumAmt){
 	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
 	     	dom.get("receipt_error_area").style.display="block";
@@ -314,6 +317,12 @@ function validateOnlineReceipt(){
 		window.scroll(0,0);
 		validation=false;
 	}
+	if(zeroAccHeads==true && billingtotal>0 && amount>billingtotal){
+		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
+		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
+		validation=false;
+	}
 	if(dom.get("paymentServiceId").value=="-1"){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.selectpaymentgateway.errormessage" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
@@ -399,8 +408,21 @@ function callAjax(paymentServiceId){
 
 function onLoad(){
 	if(dom.get("isTransactionPending").value == "true")
+	{
 	    document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
+	    document.getElementById('paymentAmount').disabled=true; 
+	}
+	document.getElementById("bobcontent").style.display = 'none';
+	document.getElementById("bobcontent-title").style.display = 'none';    
+
 }
+
+function rePay(transactionid){
+	document.forms[0].repayTransactionId.value=transactionid;
+	document.forms[0].action="onlineReceipt-repay.action";
+	document.forms[0].submit;
+}
+
  </script>
 <style type="text/css">
 <!--
@@ -417,11 +439,17 @@ function onLoad(){
 </head>
 
 <body onload="onLoad();">
-<s:if test="%{hasActionMessages()}">
-    <div class="errorstyle">
-      <s:actionmessage/>
-    </div>
-</s:if>  
+	<s:if test="%{hasActionMessages()}">
+		<div class="errorstyle">
+			<s:actionmessage />
+		</div>
+	</s:if>
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+	</s:if>
 
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"
@@ -436,7 +464,7 @@ function onLoad(){
 					<div class="dottedgridlarge2"></div>
 				</div>
 
-				<div class="margin20 container-medium">
+				<div class="container">
 					<div class="rbroundbox3">
 						<div class="rbcontent4">
 							<div class="containerformsg1">
@@ -479,9 +507,13 @@ function onLoad(){
 										name="callbackForApportioning" />
 									<s:hidden id="paymentServiceId" value="%{paymentServiceId}"
 										name="paymentServiceId" />
+									<s:hidden id="repayTransactionId" value="%{repayTransactionId}"
+										name="repayTransactionId" />
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
-									<s:hidden id="isTransactionPending" value="%{isTransactionPending}" 
-									name="isTransactionPending"/>
+									<s:hidden id="isTransactionPending"
+										value="%{isTransactionPending}" name="isTransactionPending" />
+									<s:hidden label="minimumAmount" id="minimumAmount"
+										value="%{minimumAmount}" name="minimumAmount" />
 									<%
 									    int i = 1;
 									%>
@@ -489,10 +521,50 @@ function onLoad(){
 									    int rcptDtlCnt = 0;
 									%>
 
+
 									<tr>
-										<td>
-											<div class="switchgroup1"
-												id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
+										<td width="100%" class="greyboxwithlink" colspan=2>
+											<table width="100%" cellpadding="0" cellspacing="0"
+												border="0" align="left">
+												<tr>
+													<td width="20%"><span class="boldblue"><s:text
+																name="billreceipt.billnumber" /></span></td>
+													<td width="20%"><span class="boldblue"><s:text
+																name="onlineReceipt.description" /></span></td>
+													<td width="20%"><span class="boldblue"><s:text
+																name="onlineReceipt.id" /></span></td>
+													<td width="30%"><span class="boldblue"><s:text
+																name="onlineReceipt.payeename" /></span></td>
+													<td class="textholderl"><div id="bobcontent-title"
+															class="billdetailaction">
+															<s:text name="billreceipt.accountdetails" />
+														</div></td>
+
+												</tr>
+												<tr>
+													<td class="textholder"><s:property
+															value="%{refNumber}" /></td>
+													<td class="textholder"><s:property
+															value="%{displayMsg}" /></td>
+													<td class="textholder"><s:property
+															value="%{consumerCode}" /></td>
+													<td class="textholderl"><s:property
+															value="%{payeeName}" /></td>
+													<td width="10%">&nbsp;</td>
+
+												</tr>
+											</table>
+										</td>
+									</tr>
+
+
+
+
+
+
+									<tr>
+										<td colspan=2>
+											<div class="switchgroup1" id="bobcontent">
 
 												<table width="100%" border="0" cellpadding="0"
 													cellspacing="0" id="accountdetailtable<%=i%>"
@@ -562,33 +634,8 @@ function onLoad(){
 														%>
 													</s:iterator>
 													<!--  Finished iterating through the account heads (receipt detail) -->
-													<tr>
-														<!--td class="tablestyle">&nbsp;</td-->
-														<!--td class="tablestyle">&nbsp;</td-->
-														<td class="blueborderfortd text-right bg-gray"><span
-															class="justbold"><s:text
-																	name="onlineReceipts.totalbalance" /> :</span></td>
-														<td class="blueborderfortd text-right bg-gray"><span
-															class="justbold"><s:property
-																	value="%{totalAmountToBeCollected}" /></span></td>
-													</tr>
-													<tr>
-														<!--td class="tablestyle3">&nbsp;</td-->
-														<td colspan="1" class="blueborderfortd text-right bg-gray"><span
-															class="justbold"><s:text
-																	name="onlineReceipts.balanceamounttopay" /> :<span
-																class="mandatory1">*</span></span></td>
-														<td class="blueborderfortd text-right bg-gray"><s:textfield
-																label="paymentAmount" id="paymentAmount" maxlength="12"
-																name="paymentAmount" size="12"
-																cssClass="form-control patternvalidation text-right"
-																data-pattern="number" placeholder="0"
-																onkeyup="populateapportioningamountnew()"
-																onload="waterMarkInitialize('paymentAmount','0');" /></td>
-													</tr>
 
-													<td colspan="2"><span class="mandatory1 padding-5"><s:text
-																name="onlineReceipts.mandatoryfields" /></span></td>
+
 
 													</tr>
 												</table>
@@ -600,7 +647,75 @@ function onLoad(){
 											</div>
 										</td>
 									</tr>
+									<c:if test="${not empty penidngTransaction}">
+										<tr>
 
+											<td width="100%" class="greyboxwithlink" colspan=2>
+												<table width="100%" cellpadding="0" cellspacing="0"
+													border="0" align="left">
+													<tr>
+														<td width="20%"><span class="boldblue"><s:text
+																	name="onlineReceipt.transactionid" /></span></td>
+														<td width="20%"><span class="boldblue"><s:text
+																	name="onlineReceipt.transaction.date" /></span></td>
+														<td width="20%"><span class="boldblue"><s:text
+																	name="onlineReceipt.amount" /></span></td>
+														<td width="30%"><span class="boldblue"><s:text
+																	name="onlineReceipts.status" /></span></td>
+
+													</tr>
+													<s:iterator value="%{penidngTransaction}"
+														status="pendingTransaction">
+														<tr>
+															<td class="textholder"><s:property value="%{id}" /></td>
+															<td class="textholder"><s:date name='createdDate'
+																	format='dd/MM/yyyy' var="createddate" /> <s:property
+																	value="createddate" /></td>
+															<td class="textholder"><fmt:formatNumber
+																	value="${totalAmount}" pattern="#0.00" /></td>
+															<td class="textholder"><s:property
+																	value="%{status.description}" /></td>
+															<div class="bottombuttonholder" align="middle">
+
+
+																<td><input type="submit" class="buttonsubmit"
+																	name="repay" id="repay" value="Repay"
+																	onclick='rePay(<s:property value="%{id}"/>);' /> <%-- 	<s:text name="onlineReceipt.repay" /> --%>
+																</td>
+																<td width="10%">&nbsp;</td>
+														</tr>
+													</s:iterator>
+												</table>
+											</td>
+									</c:if>
+
+									<tr>
+										<!--td class="tablestyle">&nbsp;</td-->
+										<!--td class="tablestyle">&nbsp;</td-->
+										<td class="blueborderfortd text-right bg-gray"><span
+											class="justbold"><s:text
+													name="onlineReceipts.totalbalance" /> :</span></td>
+										<td class="blueborderfortd text-right bg-gray"><span
+											class="justbold"><s:property
+													value="%{totalAmountToBeCollected}" /></span></td>
+									</tr>
+									<tr>
+										<!--td class="tablestyle3">&nbsp;</td-->
+										<td colspan="1" class="blueborderfortd text-right bg-gray"><span
+											class="justbold"><s:text
+													name="onlineReceipts.balanceamounttopay" /> :<span
+												class="mandatory1">*</span></span></td>
+										<td class="blueborderfortd text-right bg-gray"><s:textfield
+												label="paymentAmount" id="paymentAmount" maxlength="12"
+												name="paymentAmount" size="12"
+												cssClass="form-control patternvalidation text-right"
+												data-pattern="number" placeholder="0"
+												onkeyup="populateapportioningamountnew()"
+												onload="waterMarkInitialize('paymentAmount','0');" /></td>
+									</tr>
+
+									<td colspan="2"><span class="mandatory1 padding-5"><s:text
+												name="onlineReceipts.mandatoryfields" /></span></td>
 								</table>
 
 								<div class="text-left margin-5">
@@ -746,7 +861,15 @@ function onLoad(){
 		</s:form>
 
 	</div>
+	<script type="text/javascript">
+// MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
+// Call Instance.init() at the very end. REQUIRED
+var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of switch contents to just "div" elements
+bobexample.collapsePrevious(true) //Only one content open at any given time
+bobexample.init()
+</script>
+	<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 </body>
-
 
 

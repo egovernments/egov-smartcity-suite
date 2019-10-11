@@ -145,6 +145,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
 
         buildCreateHoardingForm(advertisementPermitDetail, model);
         model.addAttribute("applicationSource", "online");
+        model.addAttribute("citizenCreated","yes");
 
         return HOARDING_CREATE;
     }

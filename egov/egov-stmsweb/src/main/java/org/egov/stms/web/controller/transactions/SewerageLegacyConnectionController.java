@@ -56,7 +56,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.FeesDetailMaster;
@@ -111,33 +110,23 @@ import java.util.Set;
 public class SewerageLegacyConnectionController extends GenericWorkFlowController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageLegacyConnectionController.class);
-    private final SewerageTaxUtils sewerageTaxUtils;
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR_PAGE = "common-error";
     private static final String SEWERAGEAPPLICATIONDETAILS = "sewerageApplicationDetails";
     private static final String PROPERTYTYPES = "propertyTypes";
-
+    private final SewerageTaxUtils sewerageTaxUtils;
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
-    @Autowired
-    private SewerageConnectionService sewerageConnectionService;
-
-    @Autowired
-    private SewerageApplicationTypeService sewerageApplicationTypeService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
     @Autowired
     protected AssignmentService assignmentService;
-
-    @Autowired
-    private FeesDetailMasterService feesDetailMasterService;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
+    @Autowired
+    private SewerageConnectionService sewerageConnectionService;
+    @Autowired
+    private SewerageApplicationTypeService sewerageApplicationTypeService;
+    @Autowired
+    private FeesDetailMasterService feesDetailMasterService;
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
 
@@ -149,7 +138,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @Autowired
     public SewerageLegacyConnectionController(final SewerageTaxUtils sewerageTaxUtils,
-            final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
+                                              final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
         this.sewerageTaxUtils = sewerageTaxUtils;
         this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
     }
@@ -176,7 +165,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @RequestMapping(value = "/legacyConnection-newform", method = RequestMethod.GET)
     public String showLegacyApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model, final HttpServletRequest request) {
+                                            final Model model, final HttpServletRequest request) {
         LOG.debug("Inside showLegacyApplicationForm method");
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
@@ -188,7 +177,6 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         model.addAttribute(PROPERTYTYPES, PropertyType.values());
 
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-        model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
         model.addAttribute("legacy", true);
@@ -216,9 +204,9 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @RequestMapping(value = "/legacyConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model,
-            @RequestParam("files") final MultipartFile[] files) {
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model,
+                         @RequestParam("files") final MultipartFile[] files) {
 
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
@@ -278,7 +266,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @RequestMapping(value = "/sewerageLegacyApplication-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+                                    final HttpServletRequest request, final Model model, final ModelMap modelMap) {
         SewerageApplicationDetails applicationDetails = null;
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
@@ -293,9 +281,10 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @RequestMapping(value = "/sewerage/sewerageLegacyApplication-updateForm/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public ModelAndView updateLegacy(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
-            final Model model, final ModelMap modelMap,
-            final HttpServletRequest request) {
+                                     final Model model, final ModelMap modelMap,
+                                     final HttpServletRequest request) {
         SewerageApplicationDetails sewerageApplicationDetails = null;
+        List<SewerageDemandDetail> sewerageDemandDetails = new ArrayList<>();
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
 
@@ -306,24 +295,24 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 model.addAttribute(MESSAGE, "msg.validate.modification.notallowed");
                 return new ModelAndView(COMMON_ERROR_PAGE, SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
             }
-        }
 
-        for (final EgDemandDetails dd : sewerageApplicationDetails.getCurrentDemand()
-                .getEgDemandDetails()) {
-            if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
-                model.addAttribute("amountCollected", dd.getAmtCollected());
-                model.addAttribute("pendingAmtForCollection", dd.getAmount().subtract(dd.getAmtCollected()));
-                break;
+            for (final EgDemandDetails dd : sewerageApplicationDetails.getCurrentDemand()
+                    .getEgDemandDetails()) {
+                if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
+                    model.addAttribute("amountCollected", dd.getAmtCollected());
+                    model.addAttribute("pendingAmtForCollection", dd.getAmount().subtract(dd.getAmtCollected()));
+                    break;
+                }
             }
+            sewerageDemandDetails = loadDemandDetails(sewerageApplicationDetails);
         }
 
         model.addAttribute(PROPERTYTYPES, PropertyType.values());
         model.addAttribute("legacy", true);
         model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
-        model.addAttribute("demandDetailList", loadDemandDetails(sewerageApplicationDetails));
+        model.addAttribute("demandDetailList", sewerageDemandDetails);
         return new ModelAndView("edit-legacySewerageConnection-form", SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
-    
     }
 
     @RequestMapping(value = "/sewerageLegacyApplication-update", method = RequestMethod.POST)
@@ -357,7 +346,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
             final SewerageApplicationDetails sewerageApplicationDetails) {
         final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
         final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<>();
-        List<Installment> allInstallments = new ArrayList<>();
+        List<Installment> allInstallments;
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
 
@@ -396,7 +385,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     }
 
     private EgDemandDetails getDemandDetailsExist(final SewerageApplicationDetails sewerageApplicationDetails,
-            final EgDemandReason demandReasonObj) {
+                                                  final EgDemandReason demandReasonObj) {
         EgDemandDetails demandDet = null;
         for (final EgDemandDetails dd : sewerageApplicationDetails.getCurrentDemand()
                 .getEgDemandDetails())
@@ -409,7 +398,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     }
 
     private SewerageDemandDetail createDemandDetailBean(final Installment installment, final EgDemandReason demandReasonObj,
-            final BigDecimal amount, final BigDecimal amountCollected, final Long demanddetailId) {
+                                                        final BigDecimal amount, final BigDecimal amountCollected, final Long demanddetailId) {
         final SewerageDemandDetail demandDetail = new SewerageDemandDetail();
         demandDetail.setInstallment(installment.getDescription());
         demandDetail.setReasonMaster(demandReasonObj.getEgDemandReasonMaster().getCode());

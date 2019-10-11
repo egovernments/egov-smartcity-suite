@@ -57,7 +57,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PTYearWiseDCBRequest;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.YearWiseDCBReportResponse;
-import org.egov.ptis.service.es.PTYearWiseDCBIndexService;
+import org.egov.ptis.service.es.YearWiseDCBIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -76,7 +76,7 @@ public class PTYearWiseDCBReportController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private PTYearWiseDCBIndexService ptYearWiseDCBIndexService;
+    private YearWiseDCBIndexService ptYearWiseDCBIndexService;
 
     @ModelAttribute("wards")
     public List<Boundary> wardBoundaries() {
@@ -98,7 +98,7 @@ public class PTYearWiseDCBReportController {
     public String searchDcbForm(final Model model) {
         model.addAttribute("YearWiseDCBReport", new PTYearWiseDCBRequest());
         model.addAttribute("mode", "ward");
-        return "yearwisedcb-form";
+        return "dcbreportpt-form";
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

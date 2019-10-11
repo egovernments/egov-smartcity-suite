@@ -1,8 +1,8 @@
 # This playbook deploys the PHOENIX stacks
 - hosts: phoenix
   #sudo: yes
-#  become: yes
-#  become_method: sudo
+  become: true
+  become_method: sudo
 #  connection: local
 # create a directory if it doesn't exist
   pre_tasks:

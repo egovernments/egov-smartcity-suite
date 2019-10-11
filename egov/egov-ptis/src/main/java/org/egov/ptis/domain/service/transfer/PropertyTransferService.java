@@ -245,15 +245,15 @@ public class PropertyTransferService {
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation, null);
 
-        propertyService.updateIndexes(propertyMutation,
-                propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         if (propertyService.isCitizenPortalUser(getLoggedInUser()))
             propertyService.pushPropertyMutationPortalMessage(propertyMutation, propertyMutation.getType()
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
                     ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
+        propertyService.updateIndexes(propertyMutation,
+                propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
     }
 
     @Transactional
@@ -277,6 +277,9 @@ public class PropertyTransferService {
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
                     ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
+        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
+                .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
     }
 
     @Transactional
@@ -288,6 +291,8 @@ public class PropertyTransferService {
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
         updateMutationReason(propertyMutation);
+        mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
+        basicPropertyService.persist(basicProperty);
         propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
                 ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
@@ -310,6 +315,9 @@ public class PropertyTransferService {
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
                     ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
+        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
     }
 
     @Transactional
@@ -501,6 +509,9 @@ public class PropertyTransferService {
                 noticeService.getSession().flush();
             }
         }
+        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
             propertyService.updatePortal(propertyMutation, propertyMutation.getType()
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)

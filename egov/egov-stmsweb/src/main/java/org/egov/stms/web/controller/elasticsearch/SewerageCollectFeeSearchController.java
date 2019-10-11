@@ -55,7 +55,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
@@ -63,15 +62,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.service.es.SeweragePaginationService;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionService;
-import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -79,13 +73,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/collectfee/search")
@@ -94,13 +86,7 @@ public class SewerageCollectFeeSearchController {
     @Autowired
     private CityService cityService;
     @Autowired
-    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    @Autowired
     private BoundaryService boundaryService;
-    @Autowired
-    private SewerageConnectionService sewerageConnectionService;
-    @Autowired
-    private SewerageThirdPartyServices sewerageThirdPartyServices;
     @Autowired
     private SeweragePaginationService seweragePaginationService;
 
@@ -109,8 +95,11 @@ public class SewerageCollectFeeSearchController {
         return new SewerageConnSearchRequest();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String newSearchForm(final Model model) {
+        SewerageConnSearchRequest sewerageConnSearchRequest = new SewerageConnSearchRequest();
+        sewerageConnSearchRequest.setSearchType("collectionSearch");
+        model.addAttribute("sewerageConnSearchRequest", sewerageConnSearchRequest);
         return "seweragecollectcharges-form";
     }
 
@@ -120,23 +109,7 @@ public class SewerageCollectFeeSearchController {
                 REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
     }
 
-    @RequestMapping(value = "/view/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
-    public ModelAndView view(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
-            final Model model, final ModelMap modelMap, final HttpServletRequest request) {
-        SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
-                .findByApplicationNumber(consumernumber);
-        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentnumber,
-                request);
-        if (propertyOwnerDetails != null)
-            modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        model.addAttribute("applicationHistory",
-                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
-        model.addAttribute("documentNamesList",
-                sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
-        return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(
             @ModelAttribute final SewerageConnSearchRequest searchRequest) {
@@ -151,7 +124,6 @@ public class SewerageCollectFeeSearchController {
         Page<SewerageIndex> resultList = seweragePaginationService.searchSewerageApplnsHasCollectionPending(searchRequest,
                 searchResultList, roleList, actionMap);
         return new DataTable<>(new PageImpl<>(searchResultList, pageable, resultList.getTotalElements()), searchRequest.draw());
-
     }
 
 }

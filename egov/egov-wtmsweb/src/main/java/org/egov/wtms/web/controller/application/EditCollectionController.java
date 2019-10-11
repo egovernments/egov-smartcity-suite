@@ -80,6 +80,7 @@ import org.egov.wtms.application.service.LegacyReceiptsSevice;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -100,6 +101,8 @@ public class EditCollectionController {
     private final ConnectionDemandService connectionDemandService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     private LegacyReceiptsSevice legacyReceiptsSevice;
@@ -162,7 +165,7 @@ public class EditCollectionController {
     private EgDemandDetails getDemandDetailsExist(final WaterConnectionDetails waterConnectionDetails,
             final EgDemandReason demandReasonObj) {
         EgDemandDetails demandDet = null;
-        for (final EgDemandDetails dd : waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()
+        for (final EgDemandDetails dd : waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand()
                 .getEgDemandDetails())
             if (dd.getEgDemandReason().equals(demandReasonObj)) {
                 demandDet = dd;
@@ -175,7 +178,7 @@ public class EditCollectionController {
             final String reasonMasterDesc, final BigDecimal amount, final BigDecimal amountCollected,
             final Long demanddetailId, final WaterConnectionDetails waterConnectionDetails) {
         EgDemandDetails demandDetailsObj = null;
-        if (demanddetailId != null && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+        if (demanddetailId != null && waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null)
             demandDetailsObj = waterConnectionDetailsRepository.findEgDemandDetailById(demanddetailId);
 
         final DemandDetail demandDetail = new DemandDetail();
@@ -224,7 +227,7 @@ public class EditCollectionController {
                         .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
                 if (demandReasonObj != null) {
                     EgDemandDetails demanddet = null;
-                    if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+                    if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                         demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
                     if (demanddet == null)
                         dmdDtl = createDemandDetailBean(installObj, entry.getKey(), entry.getValue(), BigDecimal.ZERO,

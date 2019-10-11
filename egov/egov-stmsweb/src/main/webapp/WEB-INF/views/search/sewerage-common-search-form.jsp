@@ -54,10 +54,10 @@
 
 <form:form id="sewerageSearchRequestForm" method="get"
 	class="form-horizontal form-groups-bordered"
-	modelAttribute="SewerageConnSearchRequest">
+	modelAttribute="sewerageConnSearchRequest">
 	<div class="row">
 		<div class="col-md-12">
-			<input type="hidden" name="legacy" id="legacy" value="${legacy}">
+			<form:hidden path="searchType" id="searchType" value="${sewerageConnSearchRequest.searchType}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title"></div>
@@ -75,7 +75,7 @@
 								code="lbl.shsc.number" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
 							<input type="text" name="shscNumber" id="shscNumber"
-								class="form-control is_valid_number" maxlength="11"
+								class="form-control is_valid_number" maxlength="10"
 								id="app-appcodo" />
 						</div>
 					</div>
