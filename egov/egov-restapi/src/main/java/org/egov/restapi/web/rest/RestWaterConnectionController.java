@@ -348,7 +348,7 @@ public class RestWaterConnectionController {
         List<WaterChargesDetails> waterChargesDetailsList;
         waterChargesDetailsList = connectionDetailService.getWaterTaxDetailsByPropertyId(
                 waterTaxDetailRequest.getAssessmentNumber(),
-                waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber());
+                waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber(), false);
 
         return waterChargesDetailsList;
     }

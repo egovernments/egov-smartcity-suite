@@ -68,6 +68,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -83,9 +84,7 @@ import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -119,9 +118,6 @@ public class ConnectionDetailService {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -303,55 +299,59 @@ public class ConnectionDetailService {
     }
 
     public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier,
-            final String ulbCode, final String consumerNumber) {
+            final String ulbCode, final String consumerNumber, boolean isForPT) {
         final List<WaterChargesDetails> waterChargesDetailsList = new ArrayList<>();
         if (consumerNumber != null) {
             final WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerNumber);
             if (waterConnection != null)
                 waterChargesDetailsList
-                        .add(getWaterChargesDetailsList(consumerNumber, waterConnection.getPropertyIdentifier(), ulbCode));
-            return waterChargesDetailsList;
+                        .add(getWaterChargesDetailsList(consumerNumber, ulbCode));
         } else {
-            final List<WaterConnection> waterConnections = waterConnectionService
-                    .findByPropertyIdentifier(propertyIdentifier);
-            if (waterConnections.isEmpty())
-                return waterChargesDetailsList;
-            else {
-                for (final WaterConnection connection : waterConnections)
-                    if (connection.getConsumerCode() != null)
-                        waterChargesDetailsList
-                                .add(getWaterChargesDetailsList(connection.getConsumerCode(), propertyIdentifier, ulbCode));
-                return waterChargesDetailsList;
+            if (isForPT) {
+                final List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
+                        .getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
+                if (!connectionDetailsList.isEmpty())
+                    for (WaterConnectionDetails connectionDetails : connectionDetailsList) {
+                        if (ConnectionStatus.ACTIVE.equals(connectionDetails.getConnectionStatus())
+                                || ConnectionStatus.INPROGRESS.equals(connectionDetails.getConnectionStatus()))
+                            waterChargesDetailsList.add(getWatertaxDetails(connectionDetails, ulbCode));
+                    }
+            } else {
+                final List<WaterConnection> waterConnections = waterConnectionService
+                        .findByPropertyIdentifier(propertyIdentifier);
+                if (!waterConnections.isEmpty())
+                    for (final WaterConnection connection : waterConnections)
+                        if (connection.getConsumerCode() != null)
+                            waterChargesDetailsList
+                                    .add(getWaterChargesDetailsList(connection.getConsumerCode(), ulbCode));
             }
         }
+        return waterChargesDetailsList;
     }
 
-    private WaterChargesDetails getWaterChargesDetailsList(final String consumerNumber, final String propertyIdentifier,
-            final String ulbCode) {
+    private WaterChargesDetails getWaterChargesDetailsList(final String consumerNumber, final String ulbCode) {
         WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
         WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE);
-        if (waterConnectionDetails == null) {
-            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
-                    ConnectionStatus.INPROGRESS);
-            if (waterConnectionDetails == null)
-                waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
-                        ConnectionStatus.INACTIVE);
-        }
         if (waterConnectionDetails != null)
-            waterChargesDetails = getWatertaxDetails(waterConnectionDetails, consumerNumber, propertyIdentifier,
-                    ulbCode);
+            waterChargesDetails = getWatertaxDetails(waterConnectionDetails, ulbCode);
+        else {
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
+                    ConnectionStatus.INACTIVE);
+            if (waterConnectionDetails != null)
+                waterChargesDetails = getWatertaxDetails(waterConnectionDetails, ulbCode);
+        }
         return waterChargesDetails;
     }
-    
 
-    public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
-            final String consumerCode, final String propertyIdentifier, final String ulbCode) {
+    public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails, final String ulbCode) {
         final WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
         waterChargesDetails.setTotalTaxDue(getDueInfo(waterConnectionDetails, null).getTotalTaxDue());
         waterChargesDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
-        waterChargesDetails.setConsumerCode(consumerCode);
-        waterChargesDetails.setPropertyID(propertyIdentifier);
+        waterChargesDetails.setApplicationNumber(waterConnectionDetails.getApplicationNumber());
+        waterChargesDetails.setApplicationDate(DateUtils.getDefaultFormattedDate(waterConnectionDetails.getApplicationDate()));
+        waterChargesDetails.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+        waterChargesDetails.setPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
         waterChargesDetails.setConnectionStatus(waterConnectionDetails.getConnectionStatus().name());
         waterChargesDetails.setNoOfPerson(waterConnectionDetails.getNumberOfPerson());
         waterChargesDetails.setPipesize(waterConnectionDetails.getPipeSize().getCode());
