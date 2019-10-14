@@ -310,9 +310,9 @@ public class DemandVoucherService {
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
             demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance).abs());
-            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty().add(normalizeDemandDetailsOld.getPenalty())
-                    .subtract(normalizeDemandDetailsNew.getPenaltyCollection()
-                            .add(normalizeDemandDetailsNew.getPenaltyCollection()))
+            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
+                    .subtract(normalizeDemandDetailsNew.getPenaltyCollection())
+                    .subtract(normalizeDemandDetailsOld.getPenalty().subtract(normalizeDemandDetailsOld.getPenaltyCollection()))
                     .abs());
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
