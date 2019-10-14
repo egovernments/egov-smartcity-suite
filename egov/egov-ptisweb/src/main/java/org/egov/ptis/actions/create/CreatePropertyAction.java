@@ -1054,8 +1054,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         if ("Closed".equals(property.getState().getValue())) {
             assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
-            propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
-                    .concat(assignment.getPosition().getName());
+            if (assignment != null)
+                propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
+                .concat(assignment.getPosition().getName());
             setPropertyInitiatedBy(getInitiator());
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
         } else
