@@ -162,7 +162,7 @@ public class FinancialUtil {
         accountdetailmap.put(VoucherConstant.GLCODE, glcode);
         accountdetailmap.put(VoucherConstant.DEBITAMOUNT, debitAmount);
         accountdetailmap.put(VoucherConstant.CREDITAMOUNT, creditAmount);
-        accountdetailmap.put(VoucherConstant.FUNCTIONCODE, getFunctionaryCode());
+        accountdetailmap.put(VoucherConstant.FUNCTIONCODE, getFunctionCode());
         return accountdetailmap;
     }
 
@@ -195,6 +195,7 @@ public class FinancialUtil {
         headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
         headerdetails.put(VoucherConstant.FUNDCODE, getFundCode());
         headerdetails.put(VoucherConstant.SOURCEPATH, sourceURL);
+        headerdetails.put(VoucherConstant.FUNDSOURCECODE, getFundSourceCode());
         return headerdetails;
     }
 
