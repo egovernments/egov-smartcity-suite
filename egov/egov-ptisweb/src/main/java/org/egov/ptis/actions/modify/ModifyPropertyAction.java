@@ -825,7 +825,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             propService.updatePortal(propertyModel, getApplicationType());
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
-        buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        buildEmailandSms(propertyModel, getApplicationType());
         addActionMessage(
                 getText(PROPERTY_FORWARD_SUCCESS, new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         return RESULT_ACK;
@@ -860,7 +860,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
 
-        demandVoucherService.createDemandVoucher(propertyModel, oldProperty, APPLICATION_TYPE_ALTER_ASSESSENT);
+        demandVoucherService.createDemandVoucher(propertyModel, oldProperty, getApplicationType());
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
