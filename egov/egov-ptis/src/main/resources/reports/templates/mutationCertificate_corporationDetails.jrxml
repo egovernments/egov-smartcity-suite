@@ -79,7 +79,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="603" splitType="Prevent">
+		<band height="592" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="20" y="45" width="524" height="17" uuid="f0a1341f-1330-486b-8e65-71d3ba7dc827"/>
 				<textElement textAlignment="Center" markup="none">
@@ -186,7 +186,7 @@
 				<text><![CDATA[ 	In exercise of the powers vested with the Municipal Commissioner under Section 207 and 208 of Municipal Corporations Act, 1994(formerly GHMC Act, 1955) on the request made by applicant and based on the strength of documentary evidence produced, the transfer of the title is hereby effected on the building premises within the Corporation limits as follows:-]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="280" width="230" height="30" uuid="a99d0860-4b50-4ae8-9673-8e253d253b61"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="270" width="230" height="30" uuid="a99d0860-4b50-4ae8-9673-8e253d253b61"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +200,7 @@
 				<text><![CDATA[House No. & Assessment No. of the premises for which transfer is effected]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="260" y="280" width="280" height="30" uuid="4577ee02-564f-463a-bb61-71c7afc8c128"/>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="270" width="280" height="30" uuid="4577ee02-564f-463a-bb61-71c7afc8c128"/>
 				<box leftPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -213,7 +213,7 @@
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{doorNo})+",\n"+$P{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="310" width="230" height="50" uuid="30b7cc03-1984-4bd2-a1ee-ef971a918bd3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="300" width="230" height="50" uuid="30b7cc03-1984-4bd2-a1ee-ef971a918bd3"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -227,7 +227,7 @@
 				<text><![CDATA[Name of the Transferor and his/her Father or Husband Name (if any) as per Assessment Books, whose name is changed due to effect of this title transfer]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="260" y="310" width="280" height="50" uuid="703a2f09-9896-40a5-a4f5-56f5bb13d143"/>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="300" width="280" height="50" uuid="703a2f09-9896-40a5-a4f5-56f5bb13d143"/>
 				<box leftPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -240,7 +240,7 @@
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{oldOwnerGuardianRelation})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="410" width="230" height="50" uuid="973380fa-39a3-4baa-8bb5-db60d7e5aa7b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="400" width="230" height="50" uuid="973380fa-39a3-4baa-8bb5-db60d7e5aa7b"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -254,7 +254,7 @@
 				<text><![CDATA[Nature of the Documents / Proceedings/Order basing on which the Transfer is effected ( No. & Date to be mentioned)]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="260" y="410" width="280" height="50" uuid="e9c0d96c-ecc5-43c9-a0d0-dc4139be52c0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="400" width="280" height="50" uuid="e9c0d96c-ecc5-43c9-a0d0-dc4139be52c0"/>
 				<box leftPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -267,7 +267,7 @@
 				<textFieldExpression><![CDATA["Registered document number: "+$P{regDocNo}+",\nRegistered document date: "+$P{regDocDate}+",\nof Sub Registrar Office,"+$P{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="360" width="230" height="50" uuid="b239dc55-05a1-41bd-a347-29db70568804"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="350" width="230" height="50" uuid="b239dc55-05a1-41bd-a347-29db70568804"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -281,7 +281,7 @@
 				<text><![CDATA[Name of the Transferee and his/her Father or Husband Name on whose name the transfer is effected]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="260" y="360" width="280" height="50" uuid="922f36ce-7196-4029-a5a3-9c86db2a343e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="350" width="280" height="50" uuid="922f36ce-7196-4029-a5a3-9c86db2a343e"/>
 				<box leftPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -294,7 +294,7 @@
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{newOwnerGuardianRelation})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="474" width="510" height="40" uuid="9ff7be09-66c6-4157-8446-6b345b7a833f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="469" width="510" height="40" uuid="9ff7be09-66c6-4157-8446-6b345b7a833f"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -308,7 +308,7 @@
 				<text><![CDATA[	This order is issued on the following conditions and any objections raised in future on the title of property, the transfer of title (mutation) deemed to be cancelled without giving any notice in this regard.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="515" width="510" height="30" uuid="e1218dae-c937-44c0-8b31-6703745a52fe"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="510" width="510" height="30" uuid="e1218dae-c937-44c0-8b31-6703745a52fe"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,7 +322,7 @@
 				<text><![CDATA[1. This transfer orders is not the regulation of un-authorised construction made against the sanctioned plan or without sanctioned plan.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="544" width="510" height="20" uuid="30a8ed0b-59e7-4f0e-8908-07ff72de8892"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="539" width="510" height="20" uuid="30a8ed0b-59e7-4f0e-8908-07ff72de8892"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -336,7 +336,7 @@
 				<text><![CDATA[2. This transfer order will not confer the ownership & Civil rights over the site and buildings.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="564" width="510" height="30" uuid="fefa6939-f339-4c32-b7e8-5a963e5958ac"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="559" width="510" height="30" uuid="fefa6939-f339-4c32-b7e8-5a963e5958ac"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -403,23 +403,23 @@
 		</band>
 	</title>
 	<pageFooter>
-		<band height="134" splitType="Prevent">
+		<band height="170" splitType="Prevent">
 			<textField>
-				<reportElement x="360" y="59" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
+				<reportElement x="357" y="108" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
 				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="280" y="81" width="263" height="25" uuid="95279cf3-2c18-4cdd-87eb-e3baaf7ddddc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="277" y="130" width="263" height="25" uuid="95279cf3-2c18-4cdd-87eb-e3baaf7ddddc"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="28" y="43" width="40" height="15" uuid="6473c033-455d-4fe7-868e-2ba2ded385fc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="25" y="-3" width="40" height="15" uuid="6473c033-455d-4fe7-868e-2ba2ded385fc"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -433,7 +433,7 @@
 				<text><![CDATA[To,]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="39" y="59" width="211" height="15" uuid="98425164-33e8-43d1-b40f-35ab27b9820f"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="12" width="361" height="15" uuid="98425164-33e8-43d1-b40f-35ab27b9820f"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -447,7 +447,7 @@
 				<textFieldExpression><![CDATA["Sri / Smt "+JRStringUtil.xmlEncode($P{newOwnerName})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="73" width="240" height="33" uuid="87ab0624-56fd-41cd-9dc9-59239d9eba0e"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="27" width="310" height="33" uuid="87ab0624-56fd-41cd-9dc9-59239d9eba0e"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -461,7 +461,7 @@
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{ownerAddress})]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
-				<reportElement x="369" y="7" width="171" height="51" uuid="adec0340-85ea-48f6-a847-51aa1e187146"/>
+				<reportElement x="366" y="56" width="171" height="51" uuid="adec0340-85ea-48f6-a847-51aa1e187146"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
 		</band>

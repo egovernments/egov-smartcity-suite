@@ -47,6 +47,37 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -63,6 +94,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,16 +107,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Controller
 @RequestMapping(value = "/demolition/update/{id}")
@@ -124,6 +146,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private ReassignService reassignService;
 
     @Autowired
+    private DemandVoucherService demandVoucherService;
+
+    @Autowired
     public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
         this.propertyDemolitionService = propertyDemolitionService;
     }
@@ -141,7 +166,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+    public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id,
+            final HttpServletRequest request) {
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
@@ -160,11 +186,11 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
                     property.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser());
-        
+
         propertyDemolitionService.addEndorsementToModelAttribute(property, model);
         model.addAttribute("ownersName", property.getBasicProperty().getFullOwnerName());
         model.addAttribute("applicationNo", property.getApplicationNo());
-        
+
         if (!currState.endsWith(STATUS_REJECTED))
             model.addAttribute("currentDesignation", currentDesignation);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -193,42 +219,42 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final PropertyImpl property, final BindingResult errors,
-                         final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
-                         @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
+            @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
         String workFlowAct = workFlowAction;
         Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
-		if (errorMessages.isEmpty()) {
-			final Character status = STATUS_WORKFLOW;
-			Long approvalPosition = 0l;
-			String approvalComent = "";
-			final Property oldProperty = property.getBasicProperty().getActiveProperty();
-			if (isApprovalCommentNotNull(request))
-				approvalComent = request.getParameter("approvalComent");
-			if (isWorkFlowActionNotNull(request))
-				workFlowAct = request.getParameter("workFlowAction");
-			if (isApprovalPosNotNull(request))
-				approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-			approveAction(property, workFlowAct, oldProperty);
-			if (isWfNoticeGenOrPrevOrSign(workFlowAct))
-				return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
-						+ property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-						+ "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
-			else
-				return ifNotNoticeGenAndModeViewOrSave(property, request, model, workFlowAct, status, approvalPosition,
-						approvalComent);
-		} else {
-			propertyDemolitionService.addEndorsementToModelAttribute(property, model);
-			model.addAttribute("errorMsg", errorMessages);
-			model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
-			propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
-			model.addAttribute("currentState", property.getCurrentState().getValue());
-			model.addAttribute("pendingActions", property.getState().getNextAction());
-			model.addAttribute("additionalRule", DEMOLITION);
-			prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
-			model.addAttribute("stateType", property.getClass().getSimpleName());
-			model.addAttribute("property", property);
-			return DEMOLITION_FORM;
-		}
+        if (errorMessages.isEmpty()) {
+            final Character status = STATUS_WORKFLOW;
+            Long approvalPosition = 0l;
+            String approvalComent = "";
+            final Property oldProperty = property.getBasicProperty().getActiveProperty();
+            if (isApprovalCommentNotNull(request))
+                approvalComent = request.getParameter("approvalComent");
+            if (isWorkFlowActionNotNull(request))
+                workFlowAct = request.getParameter("workFlowAction");
+            if (isApprovalPosNotNull(request))
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+            approveAction(property, workFlowAct, oldProperty);
+            if (isWfNoticeGenOrPrevOrSign(workFlowAct))
+                return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+                        + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
+                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
+            else
+                return ifNotNoticeGenAndModeViewOrSave(property, request, model, workFlowAct, status, approvalPosition,
+                        approvalComent);
+        } else {
+            propertyDemolitionService.addEndorsementToModelAttribute(property, model);
+            model.addAttribute("errorMsg", errorMessages);
+            model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+            propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
+            model.addAttribute("currentState", property.getCurrentState().getValue());
+            model.addAttribute("pendingActions", property.getState().getNextAction());
+            model.addAttribute("additionalRule", DEMOLITION);
+            prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
+            model.addAttribute("stateType", property.getClass().getSimpleName());
+            model.addAttribute("property", property);
+            return DEMOLITION_FORM;
+        }
     }
 
     private void approveAction(final Property property, final String workFlowAct, final Property oldProperty) {
@@ -241,6 +267,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 property.setStatus(STATUS_ISACTIVE);
                 persistenceService.persist(property);
             }
+            demandVoucherService.createDemandVoucher((PropertyImpl) property, (PropertyImpl) oldProperty, APPLICATION_TYPE_DEMOLITION);
         }
     }
 
@@ -275,7 +302,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private String ifNotNoticeGenAndModeViewOrSave(final Property property, final HttpServletRequest request, final Model model,
-                                                   final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
+            final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
             throws TaxCalculatorExeption {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         Long approvalPos;
@@ -299,7 +326,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private void wFReject(final Property property, final HttpServletRequest request, final Model model,
-                          final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
+            final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
             throws TaxCalculatorExeption {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         Assignment assignment = null;
@@ -376,7 +403,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private void ifNotRejectViewOrSave(final Property property, final HttpServletRequest request, final String workFlowAction,
-                                       final Character status, final Long approvalPosition, final String approvalComent, final Property oldProperty)
+            final Character status, final Long approvalPosition, final String approvalComent, final Property oldProperty)
             throws TaxCalculatorExeption {
         if (request.getParameter("mode").equalsIgnoreCase(VIEW)) {
             if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))

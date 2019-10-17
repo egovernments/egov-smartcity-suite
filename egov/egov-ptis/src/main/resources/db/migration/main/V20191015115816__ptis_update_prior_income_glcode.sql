@@ -1,0 +1,1 @@
+update eg_appconfig_values set value = 'CURR_TAX=4311001~ARREAR_TAX=4311004~ADVANCE=3504101~GEN_TAX=1100101~VAC_LAND_TAX=1100102~LIB_CESS=3503088~PENALTY_FINES=1402010~PRIOR_INCOME=3125002' where key_id=(SELECT id FROM EG_APPCONFIG WHERE key_name='PT_DEMAND_VOUCHER_GLCODES' and module = (select id from eg_module where name='Property Tax'));

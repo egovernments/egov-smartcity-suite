@@ -50,6 +50,7 @@ package org.egov.ptis.service.utils;
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_MAUD_INTEGRATION_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
@@ -1107,5 +1108,9 @@ public class PropertyTaxCommonUtils {
                     connStatus = true;
         return connStatus;
 
+    }
+    
+    public String getDemandVoucherAppConfigValue() {
+        return getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
     }
 }

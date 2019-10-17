@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -158,6 +160,7 @@ public class ViewPropertyAction extends BaseFormAction {
         return property;
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/view/viewProperty-viewForm")
     public String viewForm() {
         try {
@@ -170,6 +173,7 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (property == null)
                 property = (PropertyImpl) getBasicProperty().getProperty();
+            Collections.sort(getBasicProperty().getPropertyOwnerInfo(), new OwnerNameComparator());
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null) {
                 setErrorMessage("No Tax details for current Demand period.");

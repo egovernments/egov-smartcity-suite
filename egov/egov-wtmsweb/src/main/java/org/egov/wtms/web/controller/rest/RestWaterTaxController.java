@@ -130,7 +130,7 @@ public class RestWaterTaxController {
             "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber, null, null);
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber, null, null, true);
 
     }
 

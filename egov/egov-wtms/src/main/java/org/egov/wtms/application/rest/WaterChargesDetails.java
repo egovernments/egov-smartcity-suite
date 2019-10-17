@@ -66,9 +66,11 @@ public class WaterChargesDetails {
     private Long sumpCapacity;
     private String ulbCode;
     private Integer noOfPerson;
-	private BigDecimal halfYearlyTax;
+    private BigDecimal halfYearlyTax;
+    private String applicationNumber;
+    private String applicationDate;
 
-	public String getConnectionStatus() {
+    public String getConnectionStatus() {
         return connectionStatus;
     }
 
@@ -156,7 +158,6 @@ public class WaterChargesDetails {
         this.pipesize = pipesize;
     }
 
-    
     public Long getSumpCapacity() {
         return sumpCapacity;
     }
@@ -196,12 +197,29 @@ public class WaterChargesDetails {
     public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
     }
-    public BigDecimal getHalfYearlyTax() {
-		return halfYearlyTax;
-	}
 
-	public void setHalfYearlyTax(BigDecimal halfYearlyTax) {
-		this.halfYearlyTax = halfYearlyTax;
-	}
-    
+    public BigDecimal getHalfYearlyTax() {
+        return halfYearlyTax;
+    }
+
+    public void setHalfYearlyTax(BigDecimal halfYearlyTax) {
+        this.halfYearlyTax = halfYearlyTax;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(String applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
 }
