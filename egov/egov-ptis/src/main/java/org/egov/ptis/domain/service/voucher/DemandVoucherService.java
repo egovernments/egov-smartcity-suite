@@ -145,9 +145,11 @@ public class DemandVoucherService {
         String appConfigValue = propertyTaxCommonUtils.getDemandVoucherAppConfigValue();
         if ("Y".equalsIgnoreCase(appConfigValue)) {
             Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty);
-            CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
-                    applicationType);
-            persistPropertyDemandVoucher(newProperty, cvh);
+            if (!voucherData.isEmpty()) {
+                CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
+                        applicationType);
+                persistPropertyDemandVoucher(newProperty, cvh);
+            }
         }
     }
 

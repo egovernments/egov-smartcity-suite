@@ -146,6 +146,7 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SurroundingsAuditService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -256,6 +257,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
     @Autowired
     private SurroundingsAuditService surroundingsAuditService;
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     public AmalgamationAction() {
         super();
@@ -966,7 +969,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
         else
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
-
+        demandVoucherService.createDemandVoucher(propertyModel, oldProperty, getApplicationType());
         basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel, getApplicationType());
         setBasicProp(basicProp);
