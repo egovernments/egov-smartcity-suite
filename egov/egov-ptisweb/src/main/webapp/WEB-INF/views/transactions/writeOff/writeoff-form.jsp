@@ -192,42 +192,74 @@ div.floors-tbl-freeze-column-div {
 								<c:if test="${not empty wcDetails}">
 									<c:forEach items="${wcDetails}" var="wc">
 										<div class="panel-body">
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.consumerNo" />
+											<c:if test="${wc.connectionStatus == 'active'}">
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.consumerNo" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.consumerCode}"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connStatus" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionStatus }"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.consumerCode }"></c:out>
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connType" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionType}"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.hlfyearcharg" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.halfYearlyTax}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.connStatus" />
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.wtrchrgdue" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.totalTaxDue}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.connectionStatus }"></c:out>
+											</c:if>
+											<c:if test="${wc.connectionStatus == 'inprogress'}">
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.applicationNo" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.applicationNumber }"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.wo.applicationdate" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.applicationDate }"></c:out>
+													</div>
 												</div>
-											</div>
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.connType" />
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connStatus" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionStatus }"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connType" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionType}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.connectionType}"></c:out>
-												</div>
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.hlfyearcharg" />
-												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.halfYearlyTax}"></c:out>
-												</div>
-											</div>
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.wtrchrgdue" />
-												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.totalTaxDue}"></c:out>
-												</div>
-											</div>
+											</c:if>
 										</div>
 									</c:forEach>
 								</c:if>
