@@ -188,13 +188,13 @@
 	</class>
 
 	<query name="PROPERTYIMPL_BYID">
-        <![CDATA[from PropertyImpl where id=?]]></query>
+        <![CDATA[from PropertyImpl where id=?1]]></query>
 
 	<query name="PROPERTYIMPL_BY_APPLICATIONNO">
         <![CDATA[from PropertyImpl where applicationNo= :applicatiNo]]></query>
 
 	<query name="WORKFLOW_PROPERTYIMPL_BYID">
-        <![CDATA[from PropertyImpl where id=? and status = 'W']]></query>
+        <![CDATA[from PropertyImpl where id=?1 and status = 'W']]></query>
 
 	<query name="EXEMPTIOREASON_BYID">
         <![CDATA[From TaxExemptionReason where id = :id]]></query>
