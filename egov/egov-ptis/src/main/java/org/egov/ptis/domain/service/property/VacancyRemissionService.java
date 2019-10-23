@@ -86,12 +86,14 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -179,6 +181,9 @@ public class VacancyRemissionService {
     
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
+    
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo).get(0);
@@ -357,6 +362,8 @@ public class VacancyRemissionService {
     private void updateDemandDetailsWithRebate(final VacancyRemission vacancyRemission, final Installment demandInstallment,
                                                final Installment effectiveInstallment) {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
+        demandVoucherService.createDemandVoucher((PropertyImpl) vacancyRemission.getBasicProperty().getProperty(),
+                null, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
         BigDecimal excess = BigDecimal.ZERO;
         final Set<String> demandReasons = new LinkedHashSet<>(
                 Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,

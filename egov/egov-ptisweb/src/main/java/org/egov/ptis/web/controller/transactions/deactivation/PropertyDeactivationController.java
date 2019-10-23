@@ -71,10 +71,12 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyDeactivation;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.deactivation.PropertyDeactivationService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -118,6 +120,9 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -218,6 +223,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
             PropertyStatusValues propStatusValues = propertyService.createPropStatVal(basicProperty,
                     PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
             propertyDeactivation.setBasicproperty(basicProperty.getId());
+            demandVoucherService.createDemandVoucher((PropertyImpl)basicProperty.getProperty(), null, PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE);
             propertyDeactivationService.save(propertyDeactivation);
             basicProperty.setActive(false);
             basicProperty.setModifiedDate(new Date());
