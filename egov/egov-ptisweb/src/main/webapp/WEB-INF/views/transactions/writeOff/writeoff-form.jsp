@@ -192,7 +192,8 @@ div.floors-tbl-freeze-column-div {
 								<c:if test="${not empty wcDetails}">
 									<c:forEach items="${wcDetails}" var="wc">
 										<div class="panel-body">
-											<c:if test="${wc.connectionStatus == 'active'}">
+											<c:if
+												test="${wc.connectionStatus == 'ACTIVE' || wc.connectionStatus == 'active'}">
 												<div class="row add-border">
 													<div class="col-xs-3 add-margin">
 														<spring:message code="lbl.cv.consumerNo" />
@@ -230,7 +231,8 @@ div.floors-tbl-freeze-column-div {
 													</div>
 												</div>
 											</c:if>
-											<c:if test="${wc.connectionStatus == 'inprogress'}">
+											<c:if
+												test="${wc.connectionStatus == 'INPROGRESS' || wc.connectionStatus == 'inprogress'}">
 												<div class="row add-border">
 													<div class="col-xs-3 add-margin">
 														<spring:message code="lbl.applicationNo" />
