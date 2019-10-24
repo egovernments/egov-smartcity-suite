@@ -395,10 +395,10 @@ public class SearchNoticesAction extends SearchFormAction {
             fileStream = myInputStream;
             if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
                 fileName = new StringBuffer(ptNotice.getApplicationNumber()).append("-")
-                        .append(ptNotice.getNoticeType()).toString();
+                        .append(ptNotice.getNoticeType()).toString()+".pdf";
             else
                 fileName = new StringBuffer(ptNotice.getBasicProperty().getUpicNo()).append("-")
-                        .append(ptNotice.getNoticeType()).toString();
+                        .append(ptNotice.getNoticeType()).toString()+".pdf";
             contentType = "application/pdf";
             contentLength = Long.valueOf(file.length());
         }
