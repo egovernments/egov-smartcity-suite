@@ -213,7 +213,7 @@ public class PropertyTaxBillable extends AbstractBillable implements LatePayPena
                 if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED))
                     payeeName = propertyMutation.getFullTranfereeName();
         } else
-            payeeName = getBasicProperty().getPrimaryOwner().getName();
+            payeeName = getBasicProperty().getFullOwnerName();
         return payeeName;
     }
 

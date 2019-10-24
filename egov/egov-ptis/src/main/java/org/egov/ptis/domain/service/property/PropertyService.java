@@ -3663,7 +3663,7 @@ public class PropertyService {
                         nameList.add(names.get(n).toString());
                 for (final String str : nameList)
                     if (!"propertyID".equals(str))
-                        newMap.put(str, jsonObj.get(str).toString().toLowerCase());
+                        newMap.put(str, jsonObj.get(str).toString());
                 waterConnDtls.add(newMap);
             } catch (final JSONException e) {
                 LOGGER.error("Error in converting json array into json object " + e);

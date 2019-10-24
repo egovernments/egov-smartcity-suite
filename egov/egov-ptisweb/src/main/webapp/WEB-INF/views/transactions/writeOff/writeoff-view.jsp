@@ -102,10 +102,12 @@ div.floors-tbl-freeze-column-div {
 		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
 		<form:hidden path="" name="loggedUserIsEmployee"
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
-			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			<form:hidden path="propertyDeactivateFlag" name="propertyDeactivateFlag"
-			id="propertyDeactivateFlag" value="${writeOff.propertyDeactivateFlag}" />
-			<input type="hidden" id="attachedDocuments"  value="${attachedDocuments}" />
+		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+		<form:hidden path="propertyDeactivateFlag"
+			name="propertyDeactivateFlag" id="propertyDeactivateFlag"
+			value="${writeOff.propertyDeactivateFlag}" />
+		<input type="hidden" id="attachedDocuments"
+			value="${attachedDocuments}" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
@@ -179,42 +181,76 @@ div.floors-tbl-freeze-column-div {
 								<c:if test="${not empty wcDetails}">
 									<c:forEach items="${wcDetails}" var="wc">
 										<div class="panel-body">
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.consumerNo" />
+											<c:if
+												test="${wc.connectionStatus == 'ACTIVE' || wc.connectionStatus == 'active'}">
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.consumerNo" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.consumerCode }"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connStatus" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionStatus }"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.consumerCode }"></c:out>
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connType" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionType}"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.hlfyearcharg" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.halfYearlyTax}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.connStatus" />
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.wtrchrgdue" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.totalTaxDue}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.connectionStatus }"></c:out>
+											</c:if>
+											<c:if
+												test="${wc.connectionStatus == 'INPROGRESS' || wc.connectionStatus == 'inprogress'}">
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.applicationNo" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.applicationNumber }"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.wo.applicationdate" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.applicationDate }"></c:out>
+													</div>
 												</div>
-											</div>
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.connType" />
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connStatus" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionStatus }"></c:out>
+													</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.cv.connType" />
+													</div>
+													<div class="col-xs-3 add-margin view-content">
+														<c:out value="${wc.connectionType}"></c:out>
+													</div>
 												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.connectionType}"></c:out>
-												</div>
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.hlfyearcharg" />
-												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.halfYearlyTax}"></c:out>
-												</div>
-											</div>
-											<div class="row add-border">
-												<div class="col-xs-3 add-margin">
-													<spring:message code="lbl.cv.wtrchrgdue" />
-												</div>
-												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.totalTaxDue}"></c:out>
-												</div>
-											</div>
+											</c:if>
 										</div>
 									</c:forEach>
 								</c:if>
@@ -306,19 +342,20 @@ div.floors-tbl-freeze-column-div {
 										</div>
 									</div>
 									<c:if test="${writeOff.propertyDeactivateFlag==true}">
-									<div id="check" >
-										<spring:message code="lbl.writeoff.deactivation.checkbox" />
-										
-										<input type="checkbox" class="check_box" checked="checked" disabled>
-										
-									</div>
-								</c:if>
+										<div id="check">
+											<spring:message code="lbl.writeoff.deactivation.checkbox" />
+
+											<input type="checkbox" class="check_box" checked="checked"
+												disabled>
+
+										</div>
+									</c:if>
 								</div>
 
 							</div>
 						</div>
 					</div>
-					
+
 					<!-- Document Details -->
 					<div class="row">
 						<div class="col-md-12">
@@ -335,7 +372,7 @@ div.floors-tbl-freeze-column-div {
 											<spring:message code="lbl.resolution.type" />
 										</div>
 										<div class="col-xs-2 add-margin view-content">
-											<c:out value="${writeOff.resolutionType}"></c:out>	
+											<c:out value="${writeOff.resolutionType}"></c:out>
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.no" />
@@ -347,7 +384,7 @@ div.floors-tbl-freeze-column-div {
 											<spring:message code="lbl.resolution.date" />
 										</div>
 										<div class="col-xs-2 add-margin view-content">
-										<c:out value="${writeOff.resolutionDate}"></c:out>		
+											<c:out value="${writeOff.resolutionDate}"></c:out>
 										</div>
 									</div>
 
@@ -359,13 +396,14 @@ div.floors-tbl-freeze-column-div {
 					<div class="panel panel-primary">
 						<div class="panel-body custom-form">
 							<div class="panel-body custom-form">
-								<%@ include file="/WEB-INF/views/transactions/writeOff/writeoff-document-view.jsp"%>
+								<%@ include
+									file="/WEB-INF/views/transactions/writeOff/writeoff-document-view.jsp"%>
 							</div>
 						</div>
 
 					</div>
-				</div>			
-			<div id="demanddetails" class="tab-pane fade">
+				</div>
+				<div id="demanddetails" class="tab-pane fade">
 					<%@ include file="Writeoff-demand-details-edit.jsp"%>
 				</div>
 			</div>
@@ -375,7 +413,7 @@ div.floors-tbl-freeze-column-div {
 				<tr>
 			</c:if>
 			<c:if test="${currentDesignation != 'Commissioner'}">
-			<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp"/>
+				<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />
 			</c:if>
 			<c:if test="${currentDesignation == 'Commissioner'}">
 				<div class="row">
@@ -394,11 +432,21 @@ div.floors-tbl-freeze-column-div {
 					</div>
 				</div>
 			</c:if>
-	 	    </tr><jsp:include page="../../common/commonWorkflowMatrix-button.jsp"/>
-	 	    </div>
-	 	   
-			
+			</tr><jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+		</div>
+
+
 	</form:form>
-	<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	<script
+		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>
+<script type="text/javascript">
+	function validateRejectToCancel() {
+		if ((jQuery('#approvalComent').val()).trim() == '') {
+			bootbox.alert("Please add Remarks");
+			return false;
+		}
+		return true;
+	}
+</script>

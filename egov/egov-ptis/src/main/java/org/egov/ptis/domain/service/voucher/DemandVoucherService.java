@@ -89,6 +89,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
@@ -144,7 +145,7 @@ public class DemandVoucherService {
     public void createDemandVoucher(PropertyImpl newProperty, PropertyImpl oldProperty, String applicationType) {
         String appConfigValue = propertyTaxCommonUtils.getDemandVoucherAppConfigValue();
         if ("Y".equalsIgnoreCase(appConfigValue)) {
-            Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty);
+            Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationType);
             if (!voucherData.isEmpty()) {
                 CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
                         applicationType);
@@ -153,13 +154,14 @@ public class DemandVoucherService {
         }
     }
 
-    public Map<String, Map<String, Object>> prepareDemandVoucherData(Property newProperty, Property oldProperty) {
+    public Map<String, Map<String, Object>> prepareDemandVoucherData(Property newProperty, Property oldProperty,
+            String applicationType) {
         BigDecimal existingPropTax = ZERO;
         BigDecimal currentPropTax = getTotalPropertyTax(newProperty);
         if (oldProperty != null)
             existingPropTax = getTotalPropertyTax(oldProperty);
-        boolean demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
-        return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased);
+        boolean demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationType);
+        return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationType);
     }
 
     private BigDecimal getTotalPropertyTax(Property property) {
@@ -171,7 +173,7 @@ public class DemandVoucherService {
     }
 
     private Map<String, Map<String, Object>> prepareDataForDemandVoucher(Property newProperty, Property oldProperty,
-            boolean demandIncreased) {
+            boolean demandIncreased, String applicationType) {
         Map<String, Map<String, Object>> voucherDetails = new HashMap<>();
         Map<String, String> glCodeMap = getGlCodesForTaxes();
         Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -181,16 +183,17 @@ public class DemandVoucherService {
          * if demandIncreased, yearwise current and arrear tax details go as debit and headwise taxes go as credit, else yearwise
          * current and arrear tax details go as credit and headwise taxes go as debit
          */
-        Ptdemand ptDemand = newProperty.getPtDemandSet().iterator().next();
+        Ptdemand ptDemand;
+        ptDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(newProperty);
         Ptdemand oldPtDemand;
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         if (oldProperty != null) {
             oldPtDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(oldProperty);
             demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    oldPtDemand, ptDemand);
+                    oldPtDemand, ptDemand, applicationType);
         } else
             demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    null, ptDemand);
+                    null, ptDemand, applicationType);
 
         if (!demandVoucherDetailList.isEmpty())
             prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
@@ -276,7 +279,8 @@ public class DemandVoucherService {
     }
 
     public List<DemandVoucherDetails> prepareDemandVoucherDetails(
-            Installment currFirstHalf, Installment currSecondHalf, Ptdemand oldPtDemand, Ptdemand newPtDemand) {
+            Installment currFirstHalf, Installment currSecondHalf, Ptdemand oldPtDemand, Ptdemand newPtDemand,
+            String applicationType) {
 
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         List<NormalizeDemandDetails> normalizedDemandDetailListOld = new ArrayList<>();
@@ -289,7 +293,8 @@ public class DemandVoucherService {
             normalizedDemandDetailListOld = normalizeDemandDetails(currFirstHalf, currSecondHalf,
                     oldPtDemand);
         else
-            normalizedDemandDetailListOld = constructEmptyNormalizeDemandDetails(normalizedDemandDetailListNew);
+            normalizedDemandDetailListOld = constructNormalizeDemandDetailsByApplicationType(normalizedDemandDetailListNew,
+                    applicationType);
 
         Iterator<NormalizeDemandDetails> oldIterator = normalizedDemandDetailListOld.iterator();
         Iterator<NormalizeDemandDetails> newIterator = normalizedDemandDetailListNew.iterator();
@@ -403,8 +408,6 @@ public class DemandVoucherService {
             NormalizeDemandDetails details = new NormalizeDemandDetails();
             details.setInstallment(nmd.getInstallment());
             details.setAdvance(ZERO);
-            details.setCommonTax(ZERO);
-            details.setCommonTaxCollection(ZERO);
             details.setGeneralTax(ZERO);
             details.setGeneralTaxCollection(ZERO);
             details.setVacantLandTax(ZERO);
@@ -444,5 +447,135 @@ public class DemandVoucherService {
         demandVoucher.setProperty(property);
         demandVoucher.setVoucherHeader(voucherHeader);
         demandVoucherRepository.save(demandVoucher);
+    }
+
+    private boolean isDemandIncreased(BigDecimal existingPropTax, BigDecimal currentPropTax, String applicationType) {
+        boolean demandIncreased = true;
+        demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
+        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE)
+                || applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+            demandIncreased = false;
+        return demandIncreased;
+    }
+
+    private List<NormalizeDemandDetails> constructNormalizeDemandDetailsByApplicationType(
+            List<NormalizeDemandDetails> normalizedDemandDetailList, String applicationType) {
+        List<NormalizeDemandDetails> normalizedDemandDetails = new ArrayList<>();
+        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE))
+            normalizedDemandDetails = constructNormalizeDemandDetailsForDeactivation(normalizedDemandDetailList);
+        else if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+            normalizedDemandDetails = constructNormalizeDemandDetailsForVacancyRemission(normalizedDemandDetailList);
+        else
+            normalizedDemandDetails = constructEmptyNormalizeDemandDetails(normalizedDemandDetailList);
+        return normalizedDemandDetails;
+    }
+
+    private List<NormalizeDemandDetails> constructNormalizeDemandDetailsForDeactivation(
+            List<NormalizeDemandDetails> normalizedDemandDetailList) {
+        List<NormalizeDemandDetails> normalizedDemandDetails = new ArrayList<>();
+        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment currSecondHalf = currYearInstMap.get(CURRENTYEAR_SECOND_HALF);
+        BigDecimal advance = ZERO;
+        for (NormalizeDemandDetails nmd : normalizedDemandDetailList) {
+            NormalizeDemandDetails details = new NormalizeDemandDetails();
+            details.setInstallment(nmd.getInstallment());
+            details.setAdvance(nmd.getAdvance());
+            details.setGeneralTax(ZERO);
+            details.setGeneralTaxCollection(ZERO);
+            details.setVacantLandTax(ZERO);
+            details.setVacantLandTaxCollection(ZERO);
+            details.setLibraryCess(ZERO);
+            details.setLibraryCessCollection(ZERO);
+            details.setPenalty(ZERO);
+            details.setPenaltyCollection(ZERO);
+            details.setPurpose(nmd.getPurpose());
+            advance = advance
+                    .add(nmd.getGeneralTaxCollection().add(nmd.getLibraryCessCollection().add(nmd.getVacantLandTaxCollection())));
+            if (nmd.getInstallment().equals(currSecondHalf))
+                details.setAdvance(advance);
+            normalizedDemandDetails.add(details);
+        }
+        return normalizedDemandDetails;
+    }
+
+    private List<NormalizeDemandDetails> constructNormalizeDemandDetailsForVacancyRemission(
+            List<NormalizeDemandDetails> normalizedDemandDetailList) {
+        List<NormalizeDemandDetails> normalizedDemandDetails = new ArrayList<>();
+        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment currSecondHalf = currYearInstMap.get(CURRENTYEAR_SECOND_HALF);
+        for (NormalizeDemandDetails nmd : normalizedDemandDetailList) {
+            NormalizeDemandDetails details = new NormalizeDemandDetails();
+            if (!nmd.getInstallment().equals(currSecondHalf)) {
+                details.setInstallment(nmd.getInstallment());
+                details.setAdvance(nmd.getAdvance());
+                details.setGeneralTax(nmd.getGeneralTax());
+                details.setGeneralTaxCollection(nmd.getGeneralTaxCollection());
+                details.setVacantLandTax(nmd.getVacantLandTax());
+                details.setVacantLandTaxCollection(nmd.getVacantLandTaxCollection());
+                details.setLibraryCess(nmd.getLibraryCess());
+                details.setLibraryCessCollection(nmd.getLibraryCessCollection());
+                details.setPenalty(nmd.getPenalty());
+                details.setPenaltyCollection(nmd.getPenaltyCollection());
+                details.setPurpose(nmd.getPurpose());
+            } else {
+                details = reduceDemandForVacancyRemission(nmd);
+            }
+            normalizedDemandDetails.add(details);
+        }
+        return normalizedDemandDetails;
+    }
+
+    private NormalizeDemandDetails reduceDemandForVacancyRemission(NormalizeDemandDetails nmd) {
+        NormalizeDemandDetails details = new NormalizeDemandDetails();
+        BigDecimal totalCollection = BigDecimal.ZERO;
+        totalCollection = totalCollection
+                .add(nmd.getGeneralTaxCollection().add(nmd.getVacantLandTaxCollection().add(nmd.getLibraryCessCollection())))
+                .add(nmd.getPenaltyCollection());
+        details.setInstallment(nmd.getInstallment());
+        details.setPurpose(nmd.getPurpose());
+        if (nmd.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
+            details.setPenalty(nmd.getPenalty().divide(new BigDecimal("2")).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            if (totalCollection.compareTo(details.getPenalty()) > 0) {
+                details.setPenaltyCollection(details.getPenalty());
+                totalCollection = totalCollection.subtract(details.getPenalty());
+            } else
+                details.setPenaltyCollection(totalCollection);
+        }
+
+        if (nmd.getGeneralTax().compareTo(BigDecimal.ZERO) > 0) {
+            details.setGeneralTax(nmd.getGeneralTax().divide(new BigDecimal("2")).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            if (totalCollection.compareTo(details.getGeneralTax()) > 0) {
+                details.setGeneralTaxCollection(details.getGeneralTax());
+                totalCollection = totalCollection.subtract(details.getGeneralTax());
+            } else
+                details.setGeneralTaxCollection(totalCollection);
+        }
+
+        if (nmd.getVacantLandTax().compareTo(BigDecimal.ZERO) > 0) {
+            details.setVacantLandTax(nmd.getVacantLandTax().divide(new BigDecimal("2")).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            if (totalCollection.compareTo(details.getVacantLandTax()) > 0) {
+                details.setVacantLandTaxCollection(details.getVacantLandTax());
+                totalCollection = totalCollection.subtract(details.getVacantLandTax());
+            } else
+                details.setVacantLandTaxCollection(totalCollection);
+        }
+
+        if (nmd.getLibraryCess().compareTo(BigDecimal.ZERO) > 0) {
+            details.setLibraryCess(nmd.getLibraryCess().divide(new BigDecimal("2")).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            if (totalCollection.compareTo(details.getLibraryCess()) > 0) {
+                details.setLibraryCessCollection(details.getLibraryCess());
+                totalCollection = totalCollection.subtract(details.getLibraryCess());
+            } else
+                details.setLibraryCessCollection(totalCollection);
+        }
+
+        if (totalCollection.compareTo(BigDecimal.ZERO) > 0)
+            details.setAdvance(totalCollection);
+
+        return details;
     }
 }

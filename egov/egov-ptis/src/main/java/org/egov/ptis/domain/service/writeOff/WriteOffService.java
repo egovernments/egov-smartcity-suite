@@ -705,13 +705,13 @@ public class WriteOffService extends GenericWorkFlowController {
                 request);
         boolean hasActiveWC = propertyTaxCommonUtils.checkActiveWC(activeWCDetails);
         if (hasActiveWC) {
-            errorMessages.put(ERROR, "writeoff.wc.error");
+            errorMessages.put(ERROR, "writeoff.wc.swg.error");
             return errorMessages;
         }
         boolean hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
                 .getSewConnDetails(writeOff.getBasicProperty().getUpicNo(), request));
         if (hasActiveSwg) {
-            errorMessages.put(ERROR, "writeoff.Swg.error");
+            errorMessages.put(ERROR, "writeoff.wc.swg.error");
             return errorMessages;
         }
         return errorMessages;

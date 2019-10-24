@@ -1309,6 +1309,9 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
     public static final String APPLICATION_TYPE_AMALGAMATION = "Amalgamation";
     public static final String APPLICATION_TYPE_MARKASCOURTCASE = "Mark_As_Court_Case";
+    public static final String APPLICATION_TYPE_DEACTIVATE = "Property Deactivation";
+    
+    
     public static final String DOORNO_EDIT_MODE = "editDoorNo";
     public static final String MOBILENO_EDIT_MODE = "editMobileNo";
     public static final String OWNERDETAILS_EDIT_MODE = "editOwnerDetails";
