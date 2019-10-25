@@ -295,6 +295,9 @@ public class DemandVoucherService {
         else
             normalizedDemandDetailListOld = constructNormalizeDemandDetailsByApplicationType(normalizedDemandDetailListNew,
                     applicationType);
+        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE)
+                || applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION))
+            normalizedDemandDetailListNew = constructNormalizeDemandDetailsForZeroDemand(normalizedDemandDetailListNew);
 
         Iterator<NormalizeDemandDetails> oldIterator = normalizedDemandDetailListOld.iterator();
         Iterator<NormalizeDemandDetails> newIterator = normalizedDemandDetailListNew.iterator();
@@ -461,38 +464,29 @@ public class DemandVoucherService {
     private List<NormalizeDemandDetails> constructNormalizeDemandDetailsByApplicationType(
             List<NormalizeDemandDetails> normalizedDemandDetailList, String applicationType) {
         List<NormalizeDemandDetails> normalizedDemandDetails = new ArrayList<>();
-        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE))
-            normalizedDemandDetails = constructNormalizeDemandDetailsForDeactivation(normalizedDemandDetailList);
-        else if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
             normalizedDemandDetails = constructNormalizeDemandDetailsForVacancyRemission(normalizedDemandDetailList);
         else
             normalizedDemandDetails = constructEmptyNormalizeDemandDetails(normalizedDemandDetailList);
         return normalizedDemandDetails;
     }
 
-    private List<NormalizeDemandDetails> constructNormalizeDemandDetailsForDeactivation(
+    private List<NormalizeDemandDetails> constructNormalizeDemandDetailsForZeroDemand(
             List<NormalizeDemandDetails> normalizedDemandDetailList) {
         List<NormalizeDemandDetails> normalizedDemandDetails = new ArrayList<>();
-        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        Installment currSecondHalf = currYearInstMap.get(CURRENTYEAR_SECOND_HALF);
-        BigDecimal advance = ZERO;
         for (NormalizeDemandDetails nmd : normalizedDemandDetailList) {
             NormalizeDemandDetails details = new NormalizeDemandDetails();
             details.setInstallment(nmd.getInstallment());
-            details.setAdvance(nmd.getAdvance());
-            details.setGeneralTax(ZERO);
+            details.setAdvance(ZERO);
+            details.setGeneralTax(nmd.getGeneralTax().subtract(nmd.getGeneralTaxCollection()));
             details.setGeneralTaxCollection(ZERO);
-            details.setVacantLandTax(ZERO);
+            details.setVacantLandTax(nmd.getVacantLandTax().subtract(nmd.getVacantLandTaxCollection()));
             details.setVacantLandTaxCollection(ZERO);
-            details.setLibraryCess(ZERO);
+            details.setLibraryCess(nmd.getLibraryCess().subtract(nmd.getLibraryCessCollection()));
             details.setLibraryCessCollection(ZERO);
             details.setPenalty(ZERO);
             details.setPenaltyCollection(ZERO);
             details.setPurpose(nmd.getPurpose());
-            advance = advance
-                    .add(nmd.getGeneralTaxCollection().add(nmd.getLibraryCessCollection().add(nmd.getVacantLandTaxCollection())));
-            if (nmd.getInstallment().equals(currSecondHalf))
-                details.setAdvance(advance);
             normalizedDemandDetails.add(details);
         }
         return normalizedDemandDetails;
