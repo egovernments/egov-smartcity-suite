@@ -170,10 +170,14 @@ function isSpecialChar(Obj){
     var vType = document.getElementById('vType').value;
     var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
     var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
-    if(partyNameEntered.trim().length == 0 && (vType != 'JVGeneral' || vType != '-1')){
-        document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
-        document.getElementById('voucherTypeBean.partyName').focus();
-        return false;
+    if(vType != 'JVGeneral' && vType != '-1'){
+    	if(partyNameEntered.trim().length == 0){
+	        document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
+	        document.getElementById('voucherTypeBean.partyName').focus();
+	        return false;
+    	}else{
+            document.getElementById('lblError').innerHTML = "";
+        }
     }else{
         if(document.getElementById('voucherTypeBean.partyName').value.match(pattern)){
             var replacedNumber = partyNameEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
