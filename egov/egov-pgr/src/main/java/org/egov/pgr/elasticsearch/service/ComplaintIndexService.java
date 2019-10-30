@@ -260,7 +260,7 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintDuration(0);
         complaintIndex.setDurationRange("");
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = getAssisnmentsForPosition(position);
+        final List<Assignment> assignments = getAssignmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         complaintIndex.setComplaintPeriod(0);
         complaintIndex.setComplaintSLADays(complaint.getComplaintType().getSlaHours());
@@ -316,7 +316,7 @@ public class ComplaintIndexService {
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = getAssisnmentsForPosition(position);
+        final List<Assignment> assignments = getAssignmentsForPosition(position);
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         // If complaint is forwarded
         if (complaint.nextOwnerId() != null && !complaint.nextOwnerId().equals(0L)) {
@@ -328,6 +328,12 @@ public class ComplaintIndexService {
                     ? assignedUser.getMobileNumber() : EMPTY);
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
             complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
+            //Adding this because it was requested to update since the data is getting changed in EIS
+            complaintIndex.setInitialFunctionaryName(
+                    assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
+            complaintIndex.setInitialFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                    ? assignedUser.getMobileNumber() : EMPTY);
         }
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
         if (complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
@@ -376,8 +382,7 @@ public class ComplaintIndexService {
         complaintIndexRepository.save(complaintIndex);
     }
 
-    @Transactional
-    public List<Assignment> getAssisnmentsForPosition(final Position position) {
+    public List<Assignment> getAssignmentsForPosition(final Position position) {
         return assignmentService.getAssignmentsForPosition(position.getId(), new Date());
     }
 
@@ -390,7 +395,7 @@ public class ComplaintIndexService {
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         final Position position = complaint.getAssignee();
-        final List<Assignment> assignments = getAssisnmentsForPosition(position);
+        final List<Assignment> assignments = getAssignmentsForPosition(position);
         final User assignedUser = assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCityCode(city.getCode());
@@ -545,7 +550,7 @@ public class ComplaintIndexService {
     
     private void setCurrentOwnerDetails(Position currentOwner, ComplaintIndex complaintIndex) {
         if (currentOwner != null) {
-            final List<Assignment> assignments = getAssisnmentsForPosition(currentOwner);
+            final List<Assignment> assignments = getAssignmentsForPosition(currentOwner);
             final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
             complaintIndex.setCurrentFunctionaryName(assignedUser == null
                     ? NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName()
