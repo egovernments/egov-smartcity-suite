@@ -94,7 +94,6 @@ import com.google.gson.JsonObject;
  */
 public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final Logger LOGGER = Logger.getLogger(SbimopsAdaptor.class);
-    private static final String SBIMOPS_HOA_FORMAT = "%-19sVN";
     private static final String REQUEST_CONTENT_TYPE = "application/json";
 
     public static final String SBIMOPS_DC = "DC";
@@ -154,9 +153,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         requestParameterMap.put(SBIMOPS_RN, receiptHeader.getPayeeName());
         requestParameterMap.put(SBIMOPS_RID, receiptHeader.getConsumerCode());
         requestParameterMap.put(SBIMOPS_TA, receiptHeader.getTotalAmount().toString());
-        final StringBuilder chStringBuilder = new StringBuilder((String.format(SBIMOPS_HOA_FORMAT,
-                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode))).replace(' ',
-                        '0'));
+        final StringBuilder chStringBuilder = new StringBuilder(
+                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode));
         chStringBuilder.append(CollectionConstants.SEPARATOR_COMMA)
                 .append(collectionApplicationProperties.sbimopsDdocode(ApplicationThreadLocals.getCityCode()))
                 .append(CollectionConstants.SEPARATOR_COMMA)
