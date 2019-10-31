@@ -66,6 +66,7 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -128,6 +129,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     
     @Autowired
     private PropertyService propService;
+    
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -295,6 +299,10 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
+            if (property.getIsExemptedFromTax())
+                demandVoucherService.createDemandVoucher(property, null, APPLICATION_TYPE_TAX_EXEMTION);
+            else
+                demandVoucherService.createDemandVoucher(property, null, "Tax Exemption Removal");
         }
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
                 || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAct)
