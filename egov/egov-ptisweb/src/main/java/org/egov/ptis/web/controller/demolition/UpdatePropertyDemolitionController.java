@@ -90,6 +90,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
@@ -265,7 +266,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 property.setStatus(STATUS_ISACTIVE);
                 persistenceService.persist(property);
             }
-            demandVoucherService.createDemandVoucher((PropertyImpl) property, (PropertyImpl) oldProperty, APPLICATION_TYPE_DEMOLITION);
+            demandVoucherService.createDemandVoucher((PropertyImpl) property, (PropertyImpl) oldProperty,
+                    propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_DEMOLITION,
+                            PropertyTaxConstants.NO_ACTION));
         }
     }
 

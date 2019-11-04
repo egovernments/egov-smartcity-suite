@@ -223,7 +223,9 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
             PropertyStatusValues propStatusValues = propertyService.createPropStatVal(basicProperty,
                     PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
             propertyDeactivation.setBasicproperty(basicProperty.getId());
-            demandVoucherService.createDemandVoucher((PropertyImpl)basicProperty.getProperty(), null, PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE);
+            demandVoucherService.createDemandVoucher((PropertyImpl) basicProperty.getProperty(), null, propertyTaxCommonUtils
+                    .prepareApplicationDetailsForDemandVoucher(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE,
+                            PropertyTaxConstants.ZERO_DEMAND));
             propertyDeactivationService.save(propertyDeactivation);
             basicProperty.setActive(false);
             basicProperty.setModifiedDate(new Date());

@@ -860,7 +860,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
 
-        demandVoucherService.createDemandVoucher(propertyModel, oldProperty, getApplicationType());
+        demandVoucherService.createDemandVoucher(propertyModel, oldProperty,
+                propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(getApplicationType(),
+                        PropertyTaxConstants.NO_ACTION));
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
