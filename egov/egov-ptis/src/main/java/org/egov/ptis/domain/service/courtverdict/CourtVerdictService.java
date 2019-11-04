@@ -139,7 +139,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -162,6 +161,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
@@ -223,6 +223,8 @@ public class CourtVerdictService extends GenericWorkFlowController {
     private CourtVerdictDCBService courtVerdictDCBService;
     @Autowired
     private PtDemandDao ptDemandDAO;
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     private String propertyCategory;
     private static final String ERROR_MSG = "errorMsg";
@@ -582,6 +584,11 @@ public class CourtVerdictService extends GenericWorkFlowController {
                     courtVerdict.getBasicProperty().setModifiedDate(new Date());
                     courtVerdict.getBasicProperty().addPropertyStatusValues(propStatusValues);
                     basicPropertyService.persist(courtVerdict.getBasicProperty());
+                    demandVoucherService.createDemandVoucher(
+                            courtVerdict.getBasicProperty().getActiveProperty(), null,
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    PropertyTaxConstants.ZERO_DEMAND));
 
                 }
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
