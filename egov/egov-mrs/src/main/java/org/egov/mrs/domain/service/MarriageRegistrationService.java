@@ -698,8 +698,9 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
-        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.CREATED.name(),
-                MarriageRegistration.RegistrationStatus.APPROVED.name()));
+		criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.CREATED.name(),
+				MarriageRegistration.RegistrationStatus.APPROVED.name(),
+				MarriageRegistration.RegistrationStatus.REJECTED.name()));
         return criteria.list();
     }
 
