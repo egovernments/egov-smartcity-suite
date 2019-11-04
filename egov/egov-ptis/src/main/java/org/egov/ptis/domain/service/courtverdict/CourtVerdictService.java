@@ -587,7 +587,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
                     demandVoucherService.createDemandVoucher(
                             courtVerdict.getBasicProperty().getActiveProperty(), null,
                             propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
-                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    APPLICATION_TYPE_COURT_VERDICT,
                                     PropertyTaxConstants.ZERO_DEMAND));
 
                 }
