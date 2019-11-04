@@ -69,6 +69,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.demand.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -83,6 +84,7 @@ import org.egov.ptis.domain.repository.master.structureclassification.StructureC
 import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
 import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
@@ -100,6 +102,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class WriteOffService extends GenericWorkFlowController {
 
+    private static final Logger LOGGER = Logger.getLogger(WriteOffService.class);
+    private static final String CURRENT_STATE = "currentState";
+    private static final String STATE_TYPE = "stateType";
+    private static final String PROPERTY = "property";
+    private static final String CREATED = "Created";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String ERROR = "error";
+    Property property = null;
+    
     @Autowired
     private WriteOffRepository writeOffRepo;
     @Autowired
@@ -145,15 +156,9 @@ public class WriteOffService extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private WriteOffReasonRepository writeOffReasonRepository;
-    Property property = null;
-    private static final Logger LOGGER = Logger.getLogger(WriteOffService.class);
-    private static final String CURRENT_STATE = "currentState";
-    private static final String STATE_TYPE = "stateType";
-    private static final String PROPERTY = "property";
-    private static final String CREATED = "Created";
-    private static final String ERROR_MSG = "errorMsg";
-    private static final String ERROR = "error";
-
+    @Autowired
+    private DemandVoucherService demandVoucherService;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -308,6 +313,18 @@ public class WriteOffService extends GenericWorkFlowController {
                 writeOff.getProperty().setStatus(STATUS_ISACTIVE);
                 writeOff.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
                 propertyService.copyCollection(writeOff.getBasicProperty().getActiveProperty(), writeOff.getProperty());
+                if (writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF"))
+                    demandVoucherService.createDemandVoucher(
+                            writeOff.getBasicProperty().getActiveProperty(), null,
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    APPLICATION_TYPE_WRITE_OFF,
+                                    PropertyTaxConstants.ZERO_DEMAND));
+                else
+                    demandVoucherService.createDemandVoucher(writeOff.getProperty(),
+                            writeOff.getBasicProperty().getActiveProperty(),
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    PropertyTaxConstants.NO_ACTION));
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
                 nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
                 writeOff.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
