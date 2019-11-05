@@ -49,8 +49,6 @@ package org.egov.ptis.domain.service.courtverdict;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.COURTCASE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.Serializable;
@@ -83,8 +81,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.bean.demand.DemandDetail;
-import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
@@ -102,8 +98,6 @@ import org.springframework.stereotype.Service;
 public class CourtVerdictDCBService extends TaxCollection {
 
     @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
-    @Autowired
     private PropertyService propertyService;
     @Autowired
     StructureClassificationRepository structureDAO;
@@ -117,13 +111,11 @@ public class CourtVerdictDCBService extends TaxCollection {
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
-    private InstallmentHibDao installmentDao;
+    private InstallmentHibDao<?, ?> installmentDao;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
     private CourtVerdictService courtVerdictService;
-    @Autowired
-    private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private ModuleService moduleDao;
     @Autowired
@@ -286,38 +278,6 @@ public class CourtVerdictDCBService extends TaxCollection {
         demandDetail.setActualCollection(amountCollected);
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;
-    }
-
-    public CourtVerdict updateDemand(CourtVerdict courtVerdict) {
-
-        List<DemandDetail> demandDetailList = getDemandDetails(courtVerdict);
-        BigDecimal totalCollectionAmt = BigDecimal.ZERO;
-        for (DemandDetail demandDetail : demandDetailList)
-            totalCollectionAmt = totalCollectionAmt.add(demandDetail.getActualCollection());
-
-        Ptdemand ptDemandNew = propertyService.getCurrrentDemand(courtVerdict.getProperty());
-
-        if (ptDemandNew.getEgDemandDetails() != null) {
-            for (EgDemandDetails egDemandDetails : ptDemandNew.getEgDemandDetails()) {
-
-                totalCollectionAmt = updateCollection(totalCollectionAmt, egDemandDetails);
-            }
-
-            if (totalCollectionAmt.compareTo(BigDecimal.ZERO) > 0) {
-                final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
-                        .get(CURRENTYEAR_SECOND_HALF);
-                final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
-                        DEMANDRSN_CODE_ADVANCE);
-                if (advanceDemandDetails == null) {
-                    final EgDemandDetails dmdDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
-                            totalCollectionAmt, currSecondHalf);
-                    ptDemandNew.getEgDemandDetails().add(dmdDetails);
-                } else
-                    advanceDemandDetails.getAmtCollected().add(totalCollectionAmt);
-            }
-        }
-
-        return courtVerdict;
     }
 
     private BigDecimal updateCollection(BigDecimal totalColl, EgDemandDetails newDemandDetail) {

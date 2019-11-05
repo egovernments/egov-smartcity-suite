@@ -351,12 +351,12 @@ public class DemandVoucherService {
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_PENALTY_FINES)) {
-                    normalizedDemandDetail.setPenalty(demandDetail.getAmount());
+                    normalizedDemandDetail.setPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setPenaltyCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
-                    normalizedDemandDetail.setLibraryCess(demandDetail.getAmount());
+                    normalizedDemandDetail.setLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setLibraryCessCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -365,17 +365,18 @@ public class DemandVoucherService {
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_GENERAL_TAX)) {
-                    normalizedDemandDetail.setGeneralTax(demandDetail.getAmount());
+                    normalizedDemandDetail.setGeneralTax(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setGeneralTaxCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_VACANT_TAX)) {
-                    normalizedDemandDetail.setVacantLandTax(demandDetail.getAmount());
+                    normalizedDemandDetail.setVacantLandTax(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setVacantLandTaxCollection(demandDetail.getAmtCollected());
                     isVacant = Boolean.TRUE;
                 }
                 if (DEMAND_REASONS_COMMON.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    normalizedDemandDetail.setCommonTax(normalizedDemandDetail.getCommonTax().add(demandDetail.getAmount()));
+                    normalizedDemandDetail.setCommonTax(normalizedDemandDetail.getCommonTax()
+                            .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail)));
                     normalizedDemandDetail.setCommonTaxCollection(
                             normalizedDemandDetail.getCommonTaxCollection().add(demandDetail.getAmtCollected()));
                 }
@@ -451,11 +452,13 @@ public class DemandVoucherService {
         demandVoucherRepository.save(demandVoucher);
     }
 
-    private boolean isDemandIncreased(BigDecimal existingPropTax, BigDecimal currentPropTax, Map<String, String> applicationDetails) {
+    private boolean isDemandIncreased(BigDecimal existingPropTax, BigDecimal currentPropTax,
+            Map<String, String> applicationDetails) {
         boolean demandIncreased = true;
         demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
         if (applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND)
-                || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE).equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+                || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
+                        .equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
             demandIncreased = false;
         return demandIncreased;
     }

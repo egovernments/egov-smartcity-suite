@@ -571,12 +571,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
             }
 
             else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                courtVerdict.getProperty().setStatus(STATUS_ISACTIVE);
-                courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
-                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-                courtVerdict.getBasicProperty().setUnderWorkflow(false);
                 propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
-
                 if (action.equalsIgnoreCase("CANCEL_PROP")) {
                     PropertyStatusValues propStatusValues = propertyService.createPropStatVal(courtVerdict.getBasicProperty(),
                             PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
@@ -590,10 +585,20 @@ public class CourtVerdictService extends GenericWorkFlowController {
                                     APPLICATION_TYPE_COURT_VERDICT,
                                     PropertyTaxConstants.ZERO_DEMAND));
 
+                } else {
+                    demandVoucherService.createDemandVoucher(courtVerdict.getProperty(),
+                            courtVerdict.getBasicProperty().getActiveProperty(),
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    PropertyTaxConstants.NO_ACTION));
                 }
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(courtVerdict.getCurrentState().getOwnerPosition());
+                courtVerdict.getProperty().setStatus(STATUS_ISACTIVE);
+                courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                courtVerdict.getBasicProperty().setUnderWorkflow(false);
             } else {
 
                 wfmatrix = propertyWorkflowService.getWfMatrix(courtVerdict.getStateType(), null, null, additionalRule,

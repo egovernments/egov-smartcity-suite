@@ -4098,17 +4098,9 @@ public class PropertyService {
                             totalColl, currSecondHalf);
                     ptDemandNew.getEgDemandDetails().add(dmdDetails);
                 } else
-                    advanceDemandDetails.getAmtCollected().add(totalColl);
+                    advanceDemandDetails.setAmtCollected(totalColl);
             }
         }
-        // if(ptDemandOld != null && ptDemandNew != null ) {
-        // Set<EgDemandDetails> oldEgDd = ptDemandOld.getEgDemandDetails();
-        // Set<EgDemandDetails> newEgDd = ptDemandNew.getEgDemandDetails();
-        //
-        // for(EgDemandDetails edd:oldEgDd) {
-        //
-        // }
-        // }
     }
 
     /**
