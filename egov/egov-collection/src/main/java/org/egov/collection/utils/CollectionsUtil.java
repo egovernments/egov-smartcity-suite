@@ -483,7 +483,7 @@ public class CollectionsUtil {
         return (CFinancialYear) persistenceService
                 .getSession()
                 .createQuery(
-                        "from CFinancialYear cfinancialyear where ? between "
+                        "from CFinancialYear cfinancialyear where ?1 between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate")
                 .setDate(0, date).list()
                 .get(0);
