@@ -176,7 +176,13 @@ function isSpecialChar(Obj){
 	        document.getElementById('voucherTypeBean.partyName').focus();
 	        return false;
     	}else{
-            document.getElementById('lblError').innerHTML = "";
+    		var atleastOneChar = /.*(?=.*[a-zA-Z]).*/;
+    		if(!document.getElementById('voucherTypeBean.partyName').value.match(atleastOneChar)){
+    			document.getElementById('lblError').innerHTML = "Atleast one character is mandatory";
+    	        document.getElementById('voucherTypeBean.partyName').focus();
+    		}else{
+    			document.getElementById('lblError').innerHTML = "";
+    		}
         }
     }else{
         if(document.getElementById('voucherTypeBean.partyName').value.match(pattern)){
