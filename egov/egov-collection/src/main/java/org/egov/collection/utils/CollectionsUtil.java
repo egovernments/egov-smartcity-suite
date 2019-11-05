@@ -485,7 +485,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ?1 between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list()
+                .setDate(1, date).list()
                 .get(0);
     }
 
