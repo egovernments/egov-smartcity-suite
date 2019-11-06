@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,6 +199,7 @@ import org.egov.ptis.master.service.TaxExemptionReasonService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.egov.ptis.utils.OwnerNameComparator;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -495,10 +497,12 @@ public class PropertyExternalService {
         return boundaryDetails;
     }
 
+    @SuppressWarnings("unchecked")
     private Set<OwnerName> prepareOwnerInfo(final Property property) {
         final List<PropertyOwnerInfo> propertyOwners = property.getBasicProperty().getPropertyOwnerInfo();
-        final Set<OwnerName> ownerNames = new HashSet<>(0);
-        if (propertyOwners != null && !propertyOwners.isEmpty())
+        final Set<OwnerName> ownerNames = new LinkedHashSet<>(0);
+        if (propertyOwners != null && !propertyOwners.isEmpty()) {
+            Collections.sort(propertyOwners, new OwnerNameComparator());
             for (final PropertyOwnerInfo propertyOwner : propertyOwners) {
                 final OwnerName ownerName = new OwnerName();
                 if (StringUtils.isNotBlank(propertyOwner.getOwner().getAadhaarNumber()))
@@ -511,6 +515,7 @@ public class PropertyExternalService {
                 ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
                 ownerNames.add(ownerName);
             }
+        }
         return ownerNames;
     }
 

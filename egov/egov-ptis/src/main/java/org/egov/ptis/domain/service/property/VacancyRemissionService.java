@@ -47,6 +47,79 @@
  */
 package org.egov.ptis.domain.service.property;
 
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESIGNATIONS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_SPECIALNOTICE_TEMPLATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_COMMISSIONER_FORWARD_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_MONTHLY_UPDATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_FORWARD_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -104,23 +177,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -360,14 +416,16 @@ public class VacancyRemissionService {
      * @param effectiveInstallment
      */
     private void updateDemandDetailsWithRebate(final VacancyRemission vacancyRemission, final Installment demandInstallment,
-                                               final Installment effectiveInstallment) {
+            final Installment effectiveInstallment) {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
         demandVoucherService.createDemandVoucher((PropertyImpl) vacancyRemission.getBasicProperty().getProperty(),
-                null, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
+                null,
+                propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL,
+                        PropertyTaxConstants.NO_ACTION));
         BigDecimal excess = BigDecimal.ZERO;
         final Set<String> demandReasons = new LinkedHashSet<>(
                 Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
-                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SCAVENGE_TAX, 
+                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SCAVENGE_TAX,
                         DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_DRAINAGE_TAX));
         Ptdemand currPtDemand = getCurrentPTDemand(demandInstallment, activePropPtDemandSet);
         if (currPtDemand != null) {
@@ -379,8 +437,9 @@ public class VacancyRemissionService {
                 final EgDemandDetails dmdDet = propertyService.getEgDemandDetailsForReason(
                         effectiveInstDemandDetails, demandReason);
                 if (dmdDet != null) {
-                    dmdDet.setAmount(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
-                            BigDecimal.ROUND_HALF_UP));
+                    dmdDet.setAmount(
+                            propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
+                                    BigDecimal.ROUND_HALF_UP));
                     excess = adjustCollection(excess, dmdDet);
                 }
             }

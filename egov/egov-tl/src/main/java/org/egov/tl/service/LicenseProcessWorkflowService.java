@@ -361,9 +361,10 @@ public class LicenseProcessWorkflowService {
     }
 
     private Position getCurrentPositionByWorkFlowBean(WorkflowBean workflowBean, State<Position> currentState) {
-        return workflowBean.getApproverPositionId() == null || workflowBean.getWorkFlowAction() == null
-                || BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) ?
-                currentState.getOwnerPosition() : positionMasterService.getPositionById(workflowBean.getApproverPositionId());
+        return workflowBean.getApproverPositionId() == null || workflowBean.getApproverPositionId() == -1
+                || workflowBean.getWorkFlowAction() == null
+                || BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) ? currentState.getOwnerPosition()
+                        : positionMasterService.getPositionById(workflowBean.getApproverPositionId());
     }
 }
 

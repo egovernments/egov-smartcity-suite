@@ -142,26 +142,26 @@ public class DemandVoucherService {
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
-    public void createDemandVoucher(PropertyImpl newProperty, PropertyImpl oldProperty, String applicationType) {
+    public void createDemandVoucher(PropertyImpl newProperty, PropertyImpl oldProperty, Map<String, String> applicationDetails) {
         String appConfigValue = propertyTaxCommonUtils.getDemandVoucherAppConfigValue();
         if ("Y".equalsIgnoreCase(appConfigValue)) {
-            Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationType);
+            Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationDetails);
             if (!voucherData.isEmpty()) {
                 CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
-                        applicationType);
+                        applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
                 persistPropertyDemandVoucher(newProperty, cvh);
             }
         }
     }
 
     public Map<String, Map<String, Object>> prepareDemandVoucherData(Property newProperty, Property oldProperty,
-            String applicationType) {
+            Map<String, String> applicationDetails) {
         BigDecimal existingPropTax = ZERO;
         BigDecimal currentPropTax = getTotalPropertyTax(newProperty);
         if (oldProperty != null)
             existingPropTax = getTotalPropertyTax(oldProperty);
-        boolean demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationType);
-        return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationType);
+        boolean demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
+        return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationDetails);
     }
 
     private BigDecimal getTotalPropertyTax(Property property) {
@@ -173,7 +173,7 @@ public class DemandVoucherService {
     }
 
     private Map<String, Map<String, Object>> prepareDataForDemandVoucher(Property newProperty, Property oldProperty,
-            boolean demandIncreased, String applicationType) {
+            boolean demandIncreased, Map<String, String> applicationDetails) {
         Map<String, Map<String, Object>> voucherDetails = new HashMap<>();
         Map<String, String> glCodeMap = getGlCodesForTaxes();
         Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -190,10 +190,10 @@ public class DemandVoucherService {
         if (oldProperty != null) {
             oldPtDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(oldProperty);
             demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    oldPtDemand, ptDemand, applicationType);
+                    oldPtDemand, ptDemand, applicationDetails);
         } else
             demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    null, ptDemand, applicationType);
+                    null, ptDemand, applicationDetails);
 
         if (!demandVoucherDetailList.isEmpty())
             prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
@@ -280,7 +280,7 @@ public class DemandVoucherService {
 
     public List<DemandVoucherDetails> prepareDemandVoucherDetails(
             Installment currFirstHalf, Installment currSecondHalf, Ptdemand oldPtDemand, Ptdemand newPtDemand,
-            String applicationType) {
+            Map<String, String> applicationDetails) {
 
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         List<NormalizeDemandDetails> normalizedDemandDetailListOld = new ArrayList<>();
@@ -294,9 +294,8 @@ public class DemandVoucherService {
                     oldPtDemand);
         else
             normalizedDemandDetailListOld = constructNormalizeDemandDetailsByApplicationType(normalizedDemandDetailListNew,
-                    applicationType);
-        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE)
-                || applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION))
+                    applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
+        if (applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND))
             normalizedDemandDetailListNew = constructNormalizeDemandDetailsForZeroDemand(normalizedDemandDetailListNew);
 
         Iterator<NormalizeDemandDetails> oldIterator = normalizedDemandDetailListOld.iterator();
@@ -352,12 +351,12 @@ public class DemandVoucherService {
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_PENALTY_FINES)) {
-                    normalizedDemandDetail.setPenalty(demandDetail.getAmount());
+                    normalizedDemandDetail.setPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setPenaltyCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
-                    normalizedDemandDetail.setLibraryCess(demandDetail.getAmount());
+                    normalizedDemandDetail.setLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setLibraryCessCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -366,17 +365,18 @@ public class DemandVoucherService {
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_GENERAL_TAX)) {
-                    normalizedDemandDetail.setGeneralTax(demandDetail.getAmount());
+                    normalizedDemandDetail.setGeneralTax(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setGeneralTaxCollection(demandDetail.getAmtCollected());
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_VACANT_TAX)) {
-                    normalizedDemandDetail.setVacantLandTax(demandDetail.getAmount());
+                    normalizedDemandDetail.setVacantLandTax(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                     normalizedDemandDetail.setVacantLandTaxCollection(demandDetail.getAmtCollected());
                     isVacant = Boolean.TRUE;
                 }
                 if (DEMAND_REASONS_COMMON.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    normalizedDemandDetail.setCommonTax(normalizedDemandDetail.getCommonTax().add(demandDetail.getAmount()));
+                    normalizedDemandDetail.setCommonTax(normalizedDemandDetail.getCommonTax()
+                            .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail)));
                     normalizedDemandDetail.setCommonTaxCollection(
                             normalizedDemandDetail.getCommonTaxCollection().add(demandDetail.getAmtCollected()));
                 }
@@ -452,11 +452,13 @@ public class DemandVoucherService {
         demandVoucherRepository.save(demandVoucher);
     }
 
-    private boolean isDemandIncreased(BigDecimal existingPropTax, BigDecimal currentPropTax, String applicationType) {
+    private boolean isDemandIncreased(BigDecimal existingPropTax, BigDecimal currentPropTax,
+            Map<String, String> applicationDetails) {
         boolean demandIncreased = true;
         demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
-        if (applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_DEACTIVATE)
-                || applicationType.equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+        if (applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND)
+                || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
+                        .equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
             demandIncreased = false;
         return demandIncreased;
     }

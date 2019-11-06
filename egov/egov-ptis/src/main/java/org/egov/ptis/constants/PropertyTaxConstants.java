@@ -1814,4 +1814,8 @@ public interface PropertyTaxConstants {
     public static final String ACTIVE = "ACTIVE";
     public static final String COUNCIL_ERROR = "COUNCIL RESOLUTION DOES NOT EXIST";
     public static final String INPROGRESS = "INPROGRESS";
+    
+    public static final String NO_ACTION = "NA";
+    public static final String ZERO_DEMAND = "ZERO_DEMAND";
+    public static final String APPLICATION_TYPE = "applicationType";
 }

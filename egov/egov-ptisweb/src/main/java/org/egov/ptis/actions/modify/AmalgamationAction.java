@@ -965,7 +965,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
         else
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
-        demandVoucherService.createDemandVoucher(propertyModel, oldProperty, getApplicationType());
+        demandVoucherService.createDemandVoucher(propertyModel, oldProperty,
+                propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(getApplicationType(),
+                        PropertyTaxConstants.NO_ACTION));
         basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel, getApplicationType());
         setBasicProp(basicProp);

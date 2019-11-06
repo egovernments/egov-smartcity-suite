@@ -56,7 +56,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CV_VIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.RE_ASSESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
@@ -80,7 +79,6 @@ import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,8 +106,6 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @Autowired
-    private PropertyService propertyService;
 
     @ModelAttribute
     public CourtVerdict courtVerdictModel(@PathVariable Long id) {
@@ -211,16 +207,6 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-
-            if (request.getParameter(ACTION).equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
-
-                courtVerdictDCBService.updateDemand(courtVerdict);
-            }
-            if (request.getParameter(ACTION).equalsIgnoreCase(RE_ASSESS)) {
-
-                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
-            }
-
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());
 

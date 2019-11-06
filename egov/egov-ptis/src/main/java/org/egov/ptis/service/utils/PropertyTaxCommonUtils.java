@@ -1113,4 +1113,11 @@ public class PropertyTaxCommonUtils {
     public String getDemandVoucherAppConfigValue() {
         return getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
     }
+    
+    public Map<String, String> prepareApplicationDetailsForDemandVoucher(String applicationType, String action){
+        Map<String, String> applicationDetails = new HashMap<>();
+        applicationDetails.put(PropertyTaxConstants.APPLICATION_TYPE, applicationType);
+        applicationDetails.put(PropertyTaxConstants.ACTION, action);
+        return applicationDetails;
+    }
 }

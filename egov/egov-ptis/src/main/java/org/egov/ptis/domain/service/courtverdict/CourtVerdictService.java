@@ -139,7 +139,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -162,6 +161,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
@@ -223,6 +223,8 @@ public class CourtVerdictService extends GenericWorkFlowController {
     private CourtVerdictDCBService courtVerdictDCBService;
     @Autowired
     private PtDemandDao ptDemandDAO;
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     private String propertyCategory;
     private static final String ERROR_MSG = "errorMsg";
@@ -230,7 +232,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
 
     public void addModelAttributes(final Model model, final PropertyImpl property,
             final HttpServletRequest request) {
-
+        Boolean isZoneActive = FALSE;
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(property.getBasicProperty().getUpicNo(), request);
         List<Map<String, Object>> sewConnDetails = propertyTaxCommonUtils.getSewConnDetails(
                 property.getBasicProperty().getUpicNo(),
@@ -250,7 +252,9 @@ public class CourtVerdictService extends GenericWorkFlowController {
         final List<PropertyTypeMaster> propTypeList = propTypeMasterDAO.findAllExcludeEWSHS();
         final List<PropertyOccupation> propOccList = propOccRepo.findAll();
         final List<StructureClassification> structureList = structureDAO.findByIsActiveTrueOrderByTypeName();
-
+        if (property.getBasicProperty().getPropertyID().getZone() != null
+                && property.getBasicProperty().getPropertyID().getZone().isActive())
+            isZoneActive = TRUE;
         usageList = populateUsages(
                 isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
 
@@ -268,7 +272,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
         model.addAttribute("propOccList", propOccList);
         model.addAttribute("flrNoMap", flrNoMap);
         model.addAttribute("structureList", structureList);
-
+        model.addAttribute("isZoneActive", isZoneActive);
         model.addAttribute("usageList", usageList);
         model.addAttribute("plotAreaList", plotAreaList);
         model.addAttribute("layoutApprovalList", layoutApprovalList);
@@ -569,12 +573,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
             }
 
             else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                courtVerdict.getProperty().setStatus(STATUS_ISACTIVE);
-                courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
-                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-                courtVerdict.getBasicProperty().setUnderWorkflow(false);
                 propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
-
                 if (action.equalsIgnoreCase("CANCEL_PROP")) {
                     PropertyStatusValues propStatusValues = propertyService.createPropStatVal(courtVerdict.getBasicProperty(),
                             PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
@@ -582,11 +581,26 @@ public class CourtVerdictService extends GenericWorkFlowController {
                     courtVerdict.getBasicProperty().setModifiedDate(new Date());
                     courtVerdict.getBasicProperty().addPropertyStatusValues(propStatusValues);
                     basicPropertyService.persist(courtVerdict.getBasicProperty());
+                    demandVoucherService.createDemandVoucher(
+                            courtVerdict.getBasicProperty().getActiveProperty(), null,
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    APPLICATION_TYPE_COURT_VERDICT,
+                                    PropertyTaxConstants.ZERO_DEMAND));
 
+                } else {
+                    demandVoucherService.createDemandVoucher(courtVerdict.getProperty(),
+                            courtVerdict.getBasicProperty().getActiveProperty(),
+                            propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
+                                    APPLICATION_TYPE_COURT_VERDICT,
+                                    PropertyTaxConstants.NO_ACTION));
                 }
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(courtVerdict.getCurrentState().getOwnerPosition());
+                courtVerdict.getProperty().setStatus(STATUS_ISACTIVE);
+                courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                courtVerdict.getBasicProperty().setUnderWorkflow(false);
             } else {
 
                 wfmatrix = propertyWorkflowService.getWfMatrix(courtVerdict.getStateType(), null, null, additionalRule,
@@ -728,7 +742,8 @@ public class CourtVerdictService extends GenericWorkFlowController {
             propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         newProperty.getBasicProperty().setPropOccupationDate(propCompletionDate);
         newProperty.setEffectiveDate(propCompletionDate);
-        PropertyTypeMaster oldPropertyTypeMaster = newProperty.getBasicProperty().getActiveProperty().getPropertyDetail().getPropertyTypeMaster();
+        PropertyTypeMaster oldPropertyTypeMaster = newProperty.getBasicProperty().getActiveProperty().getPropertyDetail()
+                .getPropertyTypeMaster();
         if (propTypeMaster != null && !propTypeMaster.getCode().equals(oldPropertyTypeMaster.getCode())) {
             if (propTypeMaster.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
                 newProperty.setPropertyDetail(propertyService

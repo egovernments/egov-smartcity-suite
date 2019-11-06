@@ -145,13 +145,13 @@ function getPropertyDetails() {
                     $("#address").val("");
                 } else {
                     if (data.boundaryDetails != null) {
-                        $("#boundary").val(data.boundaryDetails.localityId);
+                        $("#boundary").attr('value',data.boundaryDetails.localityId);
                         parentBoundary = data.boundaryDetails.wardId;
                         adminWard = data.boundaryDetails.adminWardId;
                         var boundaryChanged = $("#boundary").triggerHandler('blur');
                         boundaryChanged && boundaryChanged.done(function () {
-                            $("#parentBoundary").val(data.boundaryDetails.wardId);
-                            $("#adminWard").val(data.boundaryDetails.adminWardId)
+                            $("#parentBoundary").attr('value',data.boundaryDetails.wardId);
+                            $("#adminWard").attr('value',data.boundaryDetails.adminWardId)
                         });
                         $("#address").val(data.propertyAddress);
                         $("#boundary").attr("disabled","disabled");

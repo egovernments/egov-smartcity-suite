@@ -123,14 +123,28 @@
 						<span class="mandatory"></span>
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<form:select path="basicProperty.propertyID.zone.id" id="zone"
-							name="zone" cssClass="form-control" cssStyle="width: 50%"
-							disabled="true">
-							<form:option value="">--select--</form:option>
-							<c:forEach items="${zones}" var="zone">
-								<form:option value="${zone.id}">${zone.name}</form:option>
-							</c:forEach>
-						</form:select>
+						<c:if test=""></c:if>
+						<c:choose>
+							<c:when test="${isZoneActive}">
+								<form:select path="basicProperty.propertyID.zone.id" id="zone"
+									name="zone" cssClass="form-control" cssStyle="width: 50%"
+									disabled="true">
+									<form:option value="">--select--</form:option>
+									<c:forEach items="${zones}" var="zone">
+										<form:option value="${zone.id}">${zone.name}</form:option>
+									</c:forEach>
+								</form:select>
+							</c:when>
+							<c:otherwise>
+								<form:select path="basicProperty.propertyID.zone" id="zone"
+									name="zone" cssClass="form-control" cssStyle="width: 50%">
+									<form:option value="">--select--</form:option>
+									<c:forEach items="${zones}" var="zone">
+										<form:option value="${zone.id}">${zone.name}</form:option>
+									</c:forEach>
+								</form:select>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 				<div class="row add-border">

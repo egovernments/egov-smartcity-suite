@@ -822,12 +822,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(
                         objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE, null, null, null, null, null));
                 demandVoucherService.createDemandVoucher(objection.getProperty(), (PropertyImpl) oldProperty,
-                        APPLICATION_TYPE_REVISION_PETITION);
+                        propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_REVISION_PETITION,
+                                PropertyTaxConstants.NO_ACTION));
             } else {
                 objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(
                         objection.getBasicProperty(), GRP_STATUS_CODE, null, null, null, null, null));
                 demandVoucherService.createDemandVoucher(objection.getProperty(), (PropertyImpl) oldProperty,
-                        APPLICATION_TYPE_GRP);
+                        propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_GRP,
+                                PropertyTaxConstants.NO_ACTION));
             }
             propService.setWFPropStatValActive(objection.getBasicProperty());
         }
