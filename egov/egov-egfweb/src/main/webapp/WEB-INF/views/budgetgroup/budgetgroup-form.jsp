@@ -68,7 +68,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-6 add-margin">
-							<form:input path="name"
+							<form:input path="name" id="budgetGroupName" onkeypress="return replaceSpecialChar(event);" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="250" required="required" />
 							<form:errors path="name" cssClass="error-msg" />

@@ -73,6 +73,21 @@
 			e.preventDefault();
 		}
 	});
+	
+	function replaceSpecialChar(e) {
+	    var k;
+	    document.all ? k = e.keyCode : k = e.which;
+	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
+	function isSpecialChar(Obj){
+		var groupName = document.getElementById('budgetGroupName').value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	    if(document.getElementById('budgetGroupName').value.match(pattern)){
+            var replacedNumber = groupName.replace(/[`~!@#$%^&*()_|+\-=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('budgetGroupName').value = replacedNumber;
+            return false;
+        }
+	}
 </script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/budgetGroupHelper.js?rnd=${app_release_no}'/>"></script>
