@@ -72,32 +72,33 @@
 						</tr>
 						<c:forEach items="${demandDetailList}" var="demandDetails"
 							varStatus="status">
-
-							<tr>
-								<td class="greybox"><form:hidden
-										path="demandDetailBeanList[${status.index }].installment.id" />
-									<c:if
-										test="${demandDetailList[status.index].installment.id == demandDetailList[status.index-1].installment.id}">
+							<c:if test="${demandDetails.reasonMaster ne 'Advance'}">
+								<tr>
+									<td class="greybox"><form:hidden
+											path="demandDetailBeanList[${status.index }].installment.id" />
+										<c:if
+											test="${demandDetailList[status.index].installment.id == demandDetailList[status.index-1].installment.id}">
 									&nbsp;
 									</c:if> <c:if
-										test="${demandDetailList[status.index].installment.id != demandDetailList[status.index-1].installment.id}">
+											test="${demandDetailList[status.index].installment.id != demandDetailList[status.index-1].installment.id}">
 
-										<c:out value="${demandDetails.installment}"></c:out>
+											<c:out value="${demandDetails.installment}"></c:out>
 
-									</c:if></td>
-								<td class="greybox"><form:hidden
-										path="demandDetailBeanList[${status.index }].reasonMaster" />
-									<c:out value="${demandDetails.reasonMaster}"></c:out></td>
-								<td class="greybox"><c:out
-										value="${demandDetails.actualAmount}">
-									</c:out></td>
-								<td class="greybox"><c:out
-										value="${demandDetails.revisedAmount}">
-									</c:out></td>
-								<td class="greybox"><c:out
-										value="${demandDetails.actualCollection}">
-									</c:out></td>
-							</tr>
+										</c:if></td>
+									<td class="greybox"><form:hidden
+											path="demandDetailBeanList[${status.index }].reasonMaster" />
+										<c:out value="${demandDetails.reasonMaster}"></c:out></td>
+									<td class="greybox"><c:out
+											value="${demandDetails.actualAmount}">
+										</c:out></td>
+									<td class="greybox"><c:out
+											value="${demandDetails.revisedAmount}">
+										</c:out></td>
+									<td class="greybox"><c:out
+											value="${demandDetails.actualCollection}">
+										</c:out></td>
+								</tr>
+							</c:if>
 						</c:forEach>
 					</table>
 				</div>
