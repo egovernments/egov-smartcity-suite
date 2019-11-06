@@ -232,7 +232,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
 
     public void addModelAttributes(final Model model, final PropertyImpl property,
             final HttpServletRequest request) {
-        Boolean isZoneActive = Boolean.FALSE;
+        Boolean isZoneActive = FALSE;
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(property.getBasicProperty().getUpicNo(), request);
         List<Map<String, Object>> sewConnDetails = propertyTaxCommonUtils.getSewConnDetails(
                 property.getBasicProperty().getUpicNo(),
@@ -252,8 +252,9 @@ public class CourtVerdictService extends GenericWorkFlowController {
         final List<PropertyTypeMaster> propTypeList = propTypeMasterDAO.findAllExcludeEWSHS();
         final List<PropertyOccupation> propOccList = propOccRepo.findAll();
         final List<StructureClassification> structureList = structureDAO.findByIsActiveTrueOrderByTypeName();
-        if(property.getBasicProperty().getPropertyID().getZone() != null && property.getBasicProperty().getPropertyID().getZone().isActive())
-            isZoneActive = Boolean.TRUE;
+        if (property.getBasicProperty().getPropertyID().getZone() != null
+                && property.getBasicProperty().getPropertyID().getZone().isActive())
+            isZoneActive = TRUE;
         usageList = populateUsages(
                 isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
 
@@ -590,7 +591,7 @@ public class CourtVerdictService extends GenericWorkFlowController {
                     demandVoucherService.createDemandVoucher(courtVerdict.getProperty(),
                             courtVerdict.getBasicProperty().getActiveProperty(),
                             propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
-                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    APPLICATION_TYPE_COURT_VERDICT,
                                     PropertyTaxConstants.NO_ACTION));
                 }
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
@@ -741,7 +742,8 @@ public class CourtVerdictService extends GenericWorkFlowController {
             propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         newProperty.getBasicProperty().setPropOccupationDate(propCompletionDate);
         newProperty.setEffectiveDate(propCompletionDate);
-        PropertyTypeMaster oldPropertyTypeMaster = newProperty.getBasicProperty().getActiveProperty().getPropertyDetail().getPropertyTypeMaster();
+        PropertyTypeMaster oldPropertyTypeMaster = newProperty.getBasicProperty().getActiveProperty().getPropertyDetail()
+                .getPropertyTypeMaster();
         if (propTypeMaster != null && !propTypeMaster.getCode().equals(oldPropertyTypeMaster.getCode())) {
             if (propTypeMaster.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
                 newProperty.setPropertyDetail(propertyService
