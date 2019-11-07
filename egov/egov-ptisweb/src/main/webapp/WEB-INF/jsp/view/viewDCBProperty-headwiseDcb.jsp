@@ -49,86 +49,88 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
-	<head>
-		<title><s:text name="viewHeadwiseDCB"></s:text></title>
-	</head>
-	<body>
-		<div class="formmainbox">
-			<div class="headingbg">
-				<s:text name="viewHeadwiseDCB" />
-			</div>
-			<s:form action="#" theme="simple">
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td colspan="8">
-							<table width="100%" border="0" align="center" cellpadding="0"
-								cellspacing="0" class="tablebottom">
+<head>
+<title><s:text name="viewHeadwiseDCB"></s:text></title>
+</head>
+<body>
+	<div class="formmainbox">
+		<div class="headingbg">
+			<s:text name="viewHeadwiseDCB" />
+		</div>
+		<s:form action="#" theme="simple">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="8">
+						<table width="100%" border="0" align="center" cellpadding="0"
+							cellspacing="0" class="tablebottom">
 
-								<tr>
-									<th class="bluebgheadtd" width="10%">
-										<s:text name="Installment" />
+							<tr>
+								<th class="bluebgheadtd" width="10%"><s:text
+										name="Installment" /></th>
+								<th class="bluebgheadtd" width="10%"><s:text name="TaxHead" />
+								</th>
+								<s:if
+									test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+									<th class="bluebgheadtd" width="20%" align="center" colspan="4">
+										<s:text name="Details" />
 									</th>
-									<th class="bluebgheadtd" width="10%">
-										<s:text name="TaxHead" />
-									</th>
+								</s:if>
+								<s:else>
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Details" />
 									</th>
-									<th class="bluebgheadtd" width="10%" align="center" colspan="3">
-										<s:text name="Balance" />
-									</th>
-								</tr>
-								<tr>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="Demand" /> </span>
-										</div>
-									</td>
+								</s:else>
+								<th class="bluebgheadtd" width="10%" align="center" colspan="3">
+									<s:text name="Balance" />
+								</th>
+							</tr>
+							<tr>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">
+										<span class="bold"><s:text name="Demand" /> </span>
+									</div>
+								</td>
+								<s:if
+									test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="court_writeoff" /> </span>
 										</div>
 									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="Collection" />
-											</span>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="rebate_waiver" />
-											</span>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-								</tr>
-								<s:set value="0" var="advance" />
-								<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
-								    <s:set value="0" var="advrebate" />
-									<s:set value="0" var="instDmdTotal" />
-									<s:set value="0" var="instDmdVariationTotal" />
-									<s:set value="0" var="instCollTotal" />
-									<s:set value="0" var="instRebateTotal" />
-									<s:set value="0" var="instBalanceTotal" />
-									<s:set value="true" var="firstRecord" />
-									<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-										<tr>
-											<s:if test="%{fieldnames != 'Advance Collection' && fieldnames != 'Fines' && value.getDemands()[#fieldnames]!=0}">
+								</s:if>
+								<td class="blueborderfortd">
+									<div align="center">
+										<span class="bold"><s:text name="Collection" /> </span>
+									</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">
+										<span class="bold"><s:text name="rebate_waiver" /> </span>
+									</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+							</tr>
+							<s:set value="0" var="advance" />
+							<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
+								<s:set value="0" var="advrebate" />
+								<s:set value="0" var="instDmdTotal" />
+								<s:set value="0" var="instDmdVariationTotal" />
+								<s:set value="0" var="instCollTotal" />
+								<s:set value="0" var="instRebateTotal" />
+								<s:set value="0" var="instBalanceTotal" />
+								<s:set value="true" var="firstRecord" />
+								<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+									<tr>
+										<s:if
+											test="%{fieldnames != 'Advance Collection' && fieldnames != 'Fines' && value.getDemands()[#fieldnames]!=0}">
 											<td class="blueborderfortd">
 												<div align="center">
 													<s:if test="#firstRecord">
@@ -150,40 +152,48 @@
 													<s:text name="format.money">
 														<s:param value="value.getDemands()[#fieldnames]" />
 													</s:text>
-													<s:set value="value.getDemands()[#fieldnames]" var="instDmd"/>
-													<c:set value="${instDmdTotal + instDmd}" var="instDmdTotal"/>
+													<s:set value="value.getDemands()[#fieldnames]"
+														var="instDmd" />
+													<c:set value="${instDmdTotal + instDmd}" var="instDmdTotal" />
 												</div>
 											</td>
-												<s:if
-											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
-													<td class="blueborderfortd">
-														<div align="right">
-															<s:text name="format.money">
-																<s:param value="value.getDemandVariation()[#fieldnames]"/>
-															</s:text>
-																<s:set value="value.getDemandVariation()[#fieldnames]" var="instDmdVar"/>
-													<c:set value="${instDmdVariationTotal + instDmdVar}" var="instDmdVariationTotal"/>
-															
-														</div>
-													</td>
+											<s:if
+												test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+												<td class="blueborderfortd">
+													<div align="right">
+														<s:text name="format.money">
+															<s:param value="value.getDemandVariation()[#fieldnames]" />
+														</s:text>
+														<s:set value="value.getDemandVariation()[#fieldnames]"
+															var="instDmdVar" />
+														<c:set value="${instDmdVariationTotal + instDmdVar}"
+															var="instDmdVariationTotal" />
+
+													</div>
+												</td>
 											</s:if>
-											
+
 											<td class="blueborderfortd">
 												<div align="right">
 
-                                                    <s:set var="installment_fld_collection" value="value.getCollections()[#fieldnames]" />
-                                                    <s:set var="installment_fld_rebate" value="value.getRebates()[#fieldnames]" />
-												    <c:set var="cllctn_minus_rbt" value="${installment_fld_collection - installment_fld_rebate}" />
+													<s:set var="installment_fld_collection"
+														value="value.getCollections()[#fieldnames]" />
+													<s:set var="installment_fld_rebate"
+														value="value.getRebates()[#fieldnames]" />
+													<c:set var="cllctn_minus_rbt"
+														value="${installment_fld_collection - installment_fld_rebate}" />
 
-												    <fmt:formatNumber value="${cllctn_minus_rbt}"/>
-													<c:set value="${instCollTotal + cllctn_minus_rbt}" var="instCollTotal" />
+													<fmt:formatNumber value="${cllctn_minus_rbt}" />
+													<c:set value="${instCollTotal + cllctn_minus_rbt}"
+														var="instCollTotal" />
 												</div>
 											</td>
 											<td class="blueborderfortd">
 												<div align="right">
 													<s:text name="format.money">
 														<s:param value="value.getRebates()[#fieldnames]" />
-														<s:set value="value.getRebates()[#fieldnames]" var="advreb" />
+														<s:set value="value.getRebates()[#fieldnames]"
+															var="advreb" />
 														<c:set value="${advrebate + advreb}" var="advrebate" />
 														<c:set value="${advrebate}" var="instRebateTotal" />
 													</s:text>
@@ -193,265 +203,258 @@
 												<div align="right">
 													<s:text name="format.money">
 														<s:param value="value.getBalances()[#fieldnames]" />
-														<s:set value="value.getBalances()[#fieldnames]" var="instBal"/>
-														<c:set value="${instBalanceTotal + instBal}" var="instBalanceTotal"/>
+														<s:set value="value.getBalances()[#fieldnames]"
+															var="instBal" />
+														<c:set value="${instBalanceTotal + instBal}"
+															var="instBalanceTotal" />
 													</s:text>
 												</div>
 											</td>
-											</s:if>
-											<s:if test="%{fieldnames == 'Advance Collection'}">
+										</s:if>
+										<s:if test="%{fieldnames == 'Advance Collection'}">
 											<s:set value="%{value.getCollections()[#fieldnames]}"
-													var="adv" />
+												var="adv" />
 											<c:set value="${advance + adv}" var="advance" />
-											</s:if>
-										</tr>	
-									</s:iterator>
-									<tr>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												&nbsp;
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instDmdTotal}"/></span>
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instDmdVariationTotal}"/></span>
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instCollTotal}"/></span>
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instRebateTotal}"/></span>
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="right">
-												<span class="bold"><fmt:formatNumber pattern="#,##0.00" value="${instBalanceTotal}"/></span>
-											</div>
-										</td>
+										</s:if>
 									</tr>
 								</s:iterator>
 								<tr>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"><fmt:formatNumber
+													pattern="#,##0.00" value="${instDmdTotal}" /></span>
 										</div>
 									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="right">
+												<span class="bold"><fmt:formatNumber
+														pattern="#,##0.00" value="${instDmdVariationTotal}" /></span>
+											</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"><fmt:formatNumber
+													pattern="#,##0.00" value="${instCollTotal}" /></span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<b><s:text name="amtDue" />:</b>
+											<span class="bold"><fmt:formatNumber
+													pattern="#,##0.00" value="${instRebateTotal}" /></span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> 
-												<s:text name="format.money">
-													<s:param value="dcbReport.getTotalBalance()" />
-												</s:text>
-											</span>
+											<span class="bold"><fmt:formatNumber
+													pattern="#,##0.00" value="${instBalanceTotal}" /></span>
 										</div>
 									</td>
 								</tr>
-		<s:if test="%{!getActiveRcpts().isEmpty()}" >
-		<tr>
-      		<td colspan="9"><div class="headingsmallbg"><s:text name="PaymentDetails"/></div></td>
-		</tr>		
-		
-			<tr>		
-				<td colspan="9">
-					<table width="100%" border="0" align="center" cellpadding="0"
-						cellspacing="0" class="tablebottom">
-
-						<tr>
-							<th class="bluebgheadtd">
-								<s:text name="receiptNo"/>
-							</th>
-							<th class="bluebgheadtd">
-								<s:text name="receiptDate"/>
-							</th>
-							<th class="bluebgheadtd">
-								<s:text name="totalAmount"/>
-							</th>
-						</tr>
-						
-						<s:iterator value="getActiveRcpts()" var="rcpt" status="r">		
-								<s:hidden id="%{#r.index}" value="%{#rcpt.receiptNumber}" />																										
+							</s:iterator>
+							<tr>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<s:if
+									test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+								</s:if>
+								<td class="blueborderfortd">
+									<div align="center">&nbsp;</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="right">
+										<b><s:text name="amtDue" />:</b>
+									</div>
+								</td>
+								<td class="blueborderfortd">
+									<div align="right">
+										<span class="bold"> <s:text name="format.money">
+												<s:param value="dcbReport.getTotalBalance()" />
+											</s:text>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<s:if test="%{!getActiveRcpts().isEmpty()}">
 								<tr>
-									<td class="blueborderfortd">
-										<div align="center">
-										<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
-                                               <s:property value="#rcpt.getReceiptNumber()" /> 
-                                            </a>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<s:date format="dd/MM/yyyy HH:mm:ss" name="#rcpt.getReceiptDate()" var="rcptDate" />
-											<s:property value="rcptDate" />
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-										<s:text name="format.money" >
-											<s:param value="#rcpt.getReceiptAmt()" />
-										</s:text>
-										</div>
-									</td>
-							  	</tr>
-						</s:iterator>
-				</table>
-				</td>
-				</tr>
-				</s:if>
-				<s:if
-					test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
-					<table width="100%" border="0" align="center" cellpadding="0"
-								cellspacing="0" class="tablebottom">
-					<tr>
-						<td align="center">
-							<div class="headingsmallbg">
-								<s:text name="rcptHeader" />
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td align="center">
-							<table width="100%" border="0" align="center" cellpadding="0"
-								cellspacing="0" class="tablebottom">
-
-								<tr>
-									<th class="bluebgheadtd">
-										<s:text name="receiptNo" />
-									</th>
-									<th class="bluebgheadtd">
-										<s:text name="receiptDate" />
-									</th>
-									<th class="bluebgheadtd">
-										<s:text name="totalAmount" />
-									</th>
+									<td colspan="9"><div class="headingsmallbg">
+											<s:text name="PaymentDetails" />
+										</div></td>
 								</tr>
 
-								<s:iterator value="getCancelledReceipts()" var="rcpt">
+								<tr>
+									<td colspan="9">
+										<table width="100%" border="0" align="center" cellpadding="0"
+											cellspacing="0" class="tablebottom">
 
+											<tr>
+												<th class="bluebgheadtd"><s:text name="receiptNo" /></th>
+												<th class="bluebgheadtd"><s:text name="receiptDate" />
+												</th>
+												<th class="bluebgheadtd"><s:text name="totalAmount" />
+												</th>
+											</tr>
+
+											<s:iterator value="getActiveRcpts()" var="rcpt" status="r">
+												<s:hidden id="%{#r.index}" value="%{#rcpt.receiptNumber}" />
+												<tr>
+													<td class="blueborderfortd">
+														<div align="center">
+															<a
+																href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT"
+																target="_blank"> <s:property
+																	value="#rcpt.getReceiptNumber()" />
+															</a>
+														</div>
+													</td>
+													<td class="blueborderfortd">
+														<div align="center">
+															<s:date format="dd/MM/yyyy HH:mm:ss"
+																name="#rcpt.getReceiptDate()" var="rcptDate" />
+															<s:property value="rcptDate" />
+														</div>
+													</td>
+													<td class="blueborderfortd">
+														<div align="center">
+															<s:text name="format.money">
+																<s:param value="#rcpt.getReceiptAmt()" />
+															</s:text>
+														</div>
+													</td>
+												</tr>
+											</s:iterator>
+										</table>
+									</td>
+								</tr>
+							</s:if>
+							<s:if
+								test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
+								<table width="100%" border="0" align="center" cellpadding="0"
+									cellspacing="0" class="tablebottom">
 									<tr>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:property value="#rcpt.getReceiptNumber()" />
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:date format="dd/MM/yyyy HH24:mm:ss" name="#rcpt.getReceiptDate()" var="rcptDate" />
-												<s:property value="rcptDate" />
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:property value="#rcpt.getReceiptAmt()" />
+										<td align="center">
+											<div class="headingsmallbg">
+												<s:text name="rcptHeader" />
 											</div>
 										</td>
 									</tr>
-								</s:iterator>
-							</table>
-						</td>
-					</tr>
-					</table>
-				</s:if>		
-
-				<s:if
-					test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
-					<table width="100%" border="0" align="center" cellpadding="0"
-								cellspacing="0" class="tablebottom">
-					<tr>
-						<td align="center">
-							<div class="headingsmallbg">
-								<s:text name="rcptHeader" />
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td align="center">
-							<table width="100%" border="0" align="center" cellpadding="0"
-								cellspacing="0" class="tablebottom">
-
-								<tr>
-									<th class="bluebgheadtd">
-										<s:text name="receiptNo" />
-									</th>
-									<th class="bluebgheadtd">
-										<s:text name="receiptDate" />
-									</th>
-									<th class="bluebgheadtd">
-										<s:text name="totalAmount" />
-									</th>
-								</tr>
-
-								<s:iterator value="getCancelledReceipts()" var="rcpt">
 
 									<tr>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:property value="#rcpt.getReceiptNumber()" />
-											</div>
+										<td align="center">
+											<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+
+												<tr>
+													<th class="bluebgheadtd"><s:text name="receiptNo" />
+													</th>
+													<th class="bluebgheadtd"><s:text name="receiptDate" />
+													</th>
+													<th class="bluebgheadtd"><s:text name="totalAmount" />
+													</th>
+												</tr>
+
+												<s:iterator value="getCancelledReceipts()" var="rcpt">
+
+													<tr>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:property value="#rcpt.getReceiptNumber()" />
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:date format="dd/MM/yyyy HH24:mm:ss"
+																	name="#rcpt.getReceiptDate()" var="rcptDate" />
+																<s:property value="rcptDate" />
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:property value="#rcpt.getReceiptAmt()" />
+															</div>
+														</td>
+													</tr>
+												</s:iterator>
+											</table>
 										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:property value="#rcpt.getReceiptDate()" />
-											</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">
-												<s:property value="#rcpt.getReceiptAmt()" />
+									</tr>
+								</table>
+							</s:if>
+
+							<s:if
+								test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
+								<table width="100%" border="0" align="center" cellpadding="0"
+									cellspacing="0" class="tablebottom">
+									<tr>
+										<td align="center">
+											<div class="headingsmallbg">
+												<s:text name="rcptHeader" />
 											</div>
 										</td>
 									</tr>
-								</s:iterator>
-							</table>
-						</td>
-					</tr>
-					</table>
-				</s:if>												
-				</table>
-				<div class="buttonbottom" align="center">
-					<input type="button" name="button2" id="button2" value="Close"
-							class="button" onclick="return confirmClose();" />
-				</div>
-		</s:form>
-	</div>
-	</body>
+
+									<tr>
+										<td align="center">
+											<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+
+												<tr>
+													<th class="bluebgheadtd"><s:text name="receiptNo" />
+													</th>
+													<th class="bluebgheadtd"><s:text name="receiptDate" />
+													</th>
+													<th class="bluebgheadtd"><s:text name="totalAmount" />
+													</th>
+												</tr>
+
+												<s:iterator value="getCancelledReceipts()" var="rcpt">
+
+													<tr>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:property value="#rcpt.getReceiptNumber()" />
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:property value="#rcpt.getReceiptDate()" />
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:property value="#rcpt.getReceiptAmt()" />
+															</div>
+														</td>
+													</tr>
+												</s:iterator>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</s:if>
+						</table>
+						<div class="buttonbottom" align="center">
+							<input type="button" name="button2" id="button2" value="Close"
+								class="button" onclick="return confirmClose();" />
+						</div> </s:form>
+						</div>
+</body>
 </html>
