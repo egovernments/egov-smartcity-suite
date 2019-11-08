@@ -132,17 +132,17 @@
 		var endingDate = document.getElementById('endingDate')value;
 	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
 	    if(document.getElementById('finYearRange').value.match(pattern)){
-            var replacedNumber = groupName.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            var replacedNumber = groupName.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
             document.getElementById('finYearRange').value = replacedNumber;
             return false;
         }
 	    if(document.getElementById('startingDate').value.match(pattern)){
-            var replacedNumber = startDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            var replacedNumber = startDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
             document.getElementById('startingDate').value = replacedNumber;
             return false;
         }
 	    if(document.getElementById('endingDate').value.match(pattern)){
-            var replacedNumber = endingDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            var replacedNumber = endingDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
             document.getElementById('endingDate').value = replacedNumber;
             return false;
         }
