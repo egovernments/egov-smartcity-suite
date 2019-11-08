@@ -120,6 +120,33 @@
 		}
 		return true;
 	}
+	
+	function replaceSpecialChar(e) {
+	    var k;
+	    document.all ? k = e.keyCode : k = e.which;
+	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
+	function isSpecialChar(Obj){
+		var groupName = document.getElementById('finYearRange').value;
+		var startDate = document.getElementById('startingDate')value;
+		var endingDate = document.getElementById('endingDate')value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	    if(document.getElementById('finYearRange').value.match(pattern)){
+            var replacedNumber = groupName.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('finYearRange').value = replacedNumber;
+            return false;
+        }
+	    if(document.getElementById('startingDate').value.match(pattern)){
+            var replacedNumber = startDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('startingDate').value = replacedNumber;
+            return false;
+        }
+	    if(document.getElementById('endingDate').value.match(pattern)){
+            var replacedNumber = endingDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('endingDate').value = replacedNumber;
+            return false;
+        }
+	}
 </script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/cFinancialYearHelper.js?rnd=${app_release_no}'/>"></script>

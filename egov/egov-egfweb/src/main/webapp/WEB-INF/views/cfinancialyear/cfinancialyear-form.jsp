@@ -63,7 +63,7 @@
 								code="lbl.finyearrange" /><span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<c:if test="${mode == 'create'}">
-								<form:input path="finYearRange"
+								<form:input path="finYearRange" id="finYearRange"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="25" />
 								<form:errors path="finYearRange" cssClass="error-msg" />

@@ -62,7 +62,8 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);" onclick="isSpecialChar(this);">
 				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
@@ -77,4 +78,31 @@
 			e.preventDefault();
 		}
 	});
+	function replaceSpecialChar(e) {
+	    var k;
+	    document.all ? k = e.keyCode : k = e.which;
+	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
+	function isSpecialChar(Obj){
+		alert("here");
+		var finYear = document.getElementById('finYearRange').value;
+		var startDate = document.getElementById('startingDate')value;
+		var endingDate = document.getElementById('endingDate')value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	    if(document.getElementById('finYearRange').value.match(pattern)){
+            var replacedNumber = finYear.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('finYearRange').value = replacedNumber;
+            return false;
+        }
+	    if(document.getElementById('startingDate').value.match(pattern)){
+            var replacedNumber = startDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('startingDate').value = replacedNumber;
+            return false;
+        }
+	    if(document.getElementById('endingDate').value.match(pattern)){
+            var replacedNumber = endingDate.replace(/[`~!@#$%^&*()_|+\=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\]/gi, '');
+            document.getElementById('endingDate').value = replacedNumber;
+            return false;
+        }
+	}
 </script>
