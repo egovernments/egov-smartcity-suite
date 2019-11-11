@@ -142,6 +142,15 @@ public class BankBranchController {
             model.addAttribute(BANKBRANCH, bankbranch);
             return "bankbranch-new";
         }
+        
+        String branchName = bankbranch.getBranchname(); 
+        branchName = branchName.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankbranch.setBranchname(branchName);
+        
+        String branchCode = bankbranch.getBranchcode();
+        branchCode = branchCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankbranch.setBranchcode(branchCode);
+        
         createBankBranchService.create(bankbranch);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankbranch.success", null, null));
         return "redirect:/bankbranch/success/" + bankbranch.getId();
@@ -155,6 +164,15 @@ public class BankBranchController {
             model.addAttribute(BANKBRANCH, bankbranch);
             return "bankbranch-update";
         }
+        
+        String branchName = bankbranch.getBranchname(); 
+        branchName = branchName.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankbranch.setBranchname(branchName);
+        
+        String branchCode = bankbranch.getBranchcode();
+        branchCode = branchCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankbranch.setBranchcode(branchCode);
+        
         createBankBranchService.update(bankbranch);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankbranch.success", null, null));
         return "redirect:/bankbranch/success/" + bankbranch.getId();
