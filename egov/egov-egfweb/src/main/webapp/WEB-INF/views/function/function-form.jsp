@@ -59,7 +59,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name"
+							<form:input path="name" id="functionName" onkeypress="return replaceSpecialChar(event);" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="100" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
@@ -67,8 +68,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="code" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()" onblur="isSpecialChar()"
-								class="form-control text-left patternvalidation" id="enteredCode"
+							<form:input path="code" id="functionCode" onkeypress="return replaceSpecialChar(event);" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
+								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
@@ -124,8 +126,18 @@
 	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
 	}
     function isSpecialChar(){
-        var codeEntered = document.getElementById('enteredCode').value;
-        var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '')
-        document.getElementById('enteredCode').value = replacedCode;
+    	var functionName = document.getElementById('functionName').value;
+		var functionCode = document.getElementById('functionCode').value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+        if(document.getElementById('functionName').value.match(pattern)){
+            var replacedName = functionName.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('functionName').value = replacedName;
+            return false;
+        }
+        if(document.getElementById('functionCode').value.match(pattern)){
+            var replacedCode = functionCode.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('functionCode').value = replacedCode;
+            return false;
+        }
     }
 </script>

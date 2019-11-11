@@ -65,7 +65,8 @@
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.name" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:input path="name"
+								<form:input path="name" id="functionName" onkeypress="return replaceSpecialChar(event);" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="100" />
 								<form:errors path="name" cssClass="error-msg" />
@@ -73,7 +74,8 @@
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.code" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:input path="code"
+								<form:input path="code" id="functionCode" onkeypress="return replaceSpecialChar(event);" 
+								onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="50" />
 								<form:errors path="code" cssClass="error-msg" />
@@ -143,6 +145,26 @@
 			e.preventDefault();
 		}
 	});
+	function replaceSpecialChar(e) {
+	    var k;
+	    document.all ? k = e.keyCode : k = e.which;
+	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
+	function isSpecialChar(Obj){
+		var functionName = document.getElementById('functionName').value;
+		var functionCode = document.getElementById('functionCode').value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	    if(document.getElementById('functionName').value.match(pattern)){
+            var replacedName = functionName.replace(/[`~!@#$%^&*()_|+\-=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('functionName').value = replacedName;
+            return false;
+        }
+	    if(document.getElementById('functionCode').value.match(pattern)){
+            var replacedCode = functionCode.replace(/[`~!@#$%^&*()_|+\-=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('functionCode').value = replacedCode;
+            return false;
+        }
+	}
 </script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
