@@ -58,14 +58,16 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" class="form-control text-left patternvalidation" 
-							onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
+							<form:input path="name" class="form-control text-left patternvalidation" id="bankName"
+							onkeypress="return replaceSpecialChar(event)" onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
+							data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="code" class="form-control text-left patternvalidation" 
-							onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
+							<form:input path="code" class="form-control text-left patternvalidation" id="bankCode"
+							onkeypress="return replaceSpecialChar(event)" onchange="isSpecialChar(this);" onblur="isSpecialChar(this);"
+							data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
@@ -90,5 +92,20 @@
 		    var k;
 		    document.all ? k = e.keyCode : k = e.which;
 		    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+		}
+		function isSpecialChar(Obj){
+			var bankCode = document.getElementById('bankCode').value;
+			var bankName = document.getElementById('bankName').value;
+		    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+		    if(document.getElementById('bankCode').value.match(pattern)){
+	            var replacedCode = bankCode.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+	            document.getElementById('bankCode').value = replacedCode;
+	            return false;
+	        }
+		    if(document.getElementById('bankName').value.match(pattern)){
+	            var replacedName = bankName.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+	            document.getElementById('bankName').value = replacedName;
+	            return false;
+	        }
 		}
 	</script>

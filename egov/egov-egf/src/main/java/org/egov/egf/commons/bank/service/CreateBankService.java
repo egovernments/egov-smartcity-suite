@@ -108,7 +108,14 @@ public class CreateBankService {
 
         bank.setCreatedDate(new Date());
         bank.setCreatedBy(getCurrentSession().load(User.class, ApplicationThreadLocals.getUserId()));
-
+        
+        String bankName = bank.getName(); 
+        bankName = bankName.replaceAll("[^a-zA-Z0-9]", "");
+        bank.setName(bankName);
+        String bankCode = bank.getCode();
+        bankCode = bankCode.replaceAll("[^a-zA-Z0-9]", "");
+        bank.setCode(bankCode);
+        
         return bankRepository.save(bank);
     }
 
@@ -117,6 +124,14 @@ public class CreateBankService {
 
         bank.setLastModifiedDate(new Date());
         bank.setLastModifiedBy(getCurrentSession().load(User.class, ApplicationThreadLocals.getUserId()));
+        
+        String bankName = bank.getName(); 
+        bankName = bankName.replaceAll("[^a-zA-Z0-9]", "");
+        bank.setName(bankName);
+        String bankCode = bank.getCode();
+        bankCode = bankCode.replaceAll("[^a-zA-Z0-9]", "");
+        bank.setCode(bankCode);
+        
         return bankRepository.save(bank);
     }
 

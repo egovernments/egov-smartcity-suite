@@ -54,7 +54,7 @@
 	<input type="hidden" name="bank" value="${bank.id}" />
 	<div class="form-group">
 		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit" onclick="isSpecialChar(this);">
 				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
@@ -69,4 +69,19 @@
 			e.preventDefault();
 		}
 	});
+	function isSpecialChar(Obj){
+		var bankCode = document.getElementById('bankCode').value;
+		var bankName = document.getElementById('bankName').value;
+	    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	    if(document.getElementById('bankCode').value.match(pattern)){
+            var replacedCode = bankCode.replace(/[`~!@#$%^&*()_|+\-=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('bankCode').value = replacedCode;
+            return false;
+        }
+	    if(document.getElementById('bankName').value.match(pattern)){
+            var replacedName = bankName.replace(/[`~!@#$%^&*()_|+\-=ï¿½ï¿½?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('bankName').value = replacedName;
+            return false;
+        }
+	}
 </script>
