@@ -88,7 +88,7 @@ public class CouncilReportService {
                     .compareTo(f2.getItemNumber()));
             agendaDetails.put("agendaList", agendaDetailsList);
             ReportRequest reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting));
-            reportInput.setReportFormat(ReportFormat.RTF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportInput.setPrintDialogOnOpenReport(false);
             return createReport(reportInput).getReportOutputData();
         }
@@ -103,7 +103,7 @@ public class CouncilReportService {
             meetingMomList.sort((final MeetingMOM f1, final MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
             momDetails.put("meetingMOMList", meetingMomList);
             ReportRequest reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting));
-            reportInput.setReportFormat(ReportFormat.RTF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportInput.setPrintDialogOnOpenReport(false);
             return createReport(reportInput).getReportOutputData();
         }

@@ -122,7 +122,7 @@ public class CouncilMeetingController {
 
     private static final String REDIRECT_COUNCILMEETING_RESULT = "redirect:/councilmeeting/result/";
     private static final String MEETING_NUMBER_AUTO = "MEETING_NUMBER_AUTO";
-    private static final String APPLICATION_RTF = "application/rtf";
+    private static final String APPLICATION_PDF = "application/pdf";
     private static final String DATA = "{ \"data\":";
     private static final String MSG_ATTENDANCE_ALREADY_FINALIZD = "msg.attendance.already.finalizd";
     private static final String COUNCIL_MEETING = "councilMeeting";
@@ -256,7 +256,7 @@ public class CouncilMeetingController {
         councilMeetingService.create(councilMeeting);
         councilSmsAndEmailService.sendSms(councilMeeting, null);
         councilSmsAndEmailService.sendEmail(councilMeeting, null,
-                councilReportService.generatePDFForAgendaDetails(councilMeeting));
+                councilReportService.generatePDFForAgendaDetails(councilMeeting), false);
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
         return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
     }
@@ -383,7 +383,7 @@ public class CouncilMeetingController {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         councilSmsAndEmailService.sendSms(councilMeeting, msg);
         councilSmsAndEmailService.sendEmail(councilMeeting, msg,
-                councilReportService.generatePDFForAgendaDetails(councilMeeting));
+                councilReportService.generatePDFForAgendaDetails(councilMeeting), false);
         return new StringBuilder("{ \"success\":true }").toString();
     }
 
@@ -541,8 +541,8 @@ public class CouncilMeetingController {
                     byte[] reportOutput = councilReportService.generatePDFForMom(councilMeeting);
 
                     if (reportOutput != null) {
-                        councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"rtf" ).toFile(),
-                                MEETINGRESOLUTIONFILENAME, APPLICATION_RTF, MODULE_NAME));
+                        councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"pdf" ).toFile(),
+                                MEETINGRESOLUTIONFILENAME, APPLICATION_PDF, MODULE_NAME));
                         councilMeetingService.update(councilMeeting);
                     }
 
@@ -577,8 +577,8 @@ public class CouncilMeetingController {
         reportOutput = councilReportService.generatePDFForAgendaDetails(councilMeeting);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(APPLICATION_RTF));
-        headers.add("content-disposition", "inline;filename=meetingdetails.rtf");
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
+        headers.add("content-disposition", "inline;filename=meetingdetails.pdf");
         return new ResponseEntity<>(reportOutput, headers, HttpStatus.CREATED);
 
     }
