@@ -189,6 +189,15 @@ public class BankAccountController {
             model.addAttribute(BANKACCOUNT, bankaccount);
             return "bankaccount-update";
         }
+        
+        String payTo = bankaccount.getPayTo();
+        payTo = payTo.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankaccount.setPayTo(payTo);
+        
+        String accountNumber = bankaccount.getAccountnumber();
+        accountNumber = accountNumber.replaceAll("[^a-zA-Z0-9 ]","");
+        bankaccount.setAccountnumber(accountNumber);
+        
         createBankAccountService.update(bankaccount);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankaccount.success", null, null));
         return "redirect:/bankaccount/success/" + bankaccount.getId();
