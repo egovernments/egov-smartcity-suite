@@ -59,6 +59,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,6 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -124,6 +126,10 @@ public class BankController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Bank bank, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateBankDetails(bank);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors())
             return "bank-new";
         createBankService.create(bank);
@@ -134,6 +140,10 @@ public class BankController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Bank bank, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateBankDetails(bank);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors())
             return "bank-update";
         createBankService.update(bank);
@@ -154,6 +164,31 @@ public class BankController {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(Bank.class, new BankJsonAdaptor()).create();
         return gson.toJson(object);
+    }
+    
+    private List<String> validateBankDetails(final Bank bank){
+    	List<String> msgs = new ArrayList<String>();
+    	String bankName = bank.getName();
+    	bankName = "    ";
+        bankName = bankName.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankName = bankName.trim();
+        if(!bankName.isEmpty()) {
+        	bank.setName(bankName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.bank.name.empty.space", null, bankName, null));
+        }
+                
+        String bankCode = bank.getCode();
+        bankCode = "    ";
+        bankCode = bankCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        bankCode = bankCode.trim();
+        if(!bankCode.isEmpty()) {
+        	bank.setCode(bankCode);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.bank.code.empty.space", null, bankCode, null));
+        }
+		return msgs;
+        
     }
 
 }
