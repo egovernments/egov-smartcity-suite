@@ -169,7 +169,6 @@ public class BankController {
     private List<String> validateBankDetails(final Bank bank){
     	List<String> msgs = new ArrayList<String>();
     	String bankName = bank.getName();
-    	bankName = "    ";
         bankName = bankName.replaceAll("[^a-zA-Z0-9 ]", "");
         bankName = bankName.trim();
         if(!bankName.isEmpty()) {
@@ -179,7 +178,6 @@ public class BankController {
         }
                 
         String bankCode = bank.getCode();
-        bankCode = "    ";
         bankCode = bankCode.replaceAll("[^a-zA-Z0-9 ]", "");
         bankCode = bankCode.trim();
         if(!bankCode.isEmpty()) {
