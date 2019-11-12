@@ -147,14 +147,16 @@ public class CouncilSmsAndEmailService {
                             councilMeeting, customMessage,
                             attachment);
             }
-            List<User> listOfUsers = councilMeetingService.getUserListForMeeting(councilMeeting);
-            for (User user : listOfUsers) {
-                if (StringUtils.isNotBlank(user.getEmailId()))
-                    buildEmailForMeetingOrMOM(user.getEmailId(), user.getUsername(), councilMeeting, customMessage,
-                            attachment);
-            }
             if (isForMOM)
                 sendEmailToDesignatedUsers(councilMeeting, customMessage, attachment);
+            else {
+                List<User> listOfUsers = councilMeetingService.getUserListForMeeting(councilMeeting);
+                for (User user : listOfUsers) {
+                    if (StringUtils.isNotBlank(user.getEmailId()))
+                        buildEmailForMeetingOrMOM(user.getEmailId(), user.getUsername(), councilMeeting, customMessage,
+                                attachment);
+                }
+            }
         }
     }
 
@@ -166,7 +168,7 @@ public class CouncilSmsAndEmailService {
         if (appConfigValues != null && !appConfigValues.isEmpty()) {
             for (AppConfigValues value : appConfigValues) {
                 desigId = designationService.getDesignationByName(value.getValue()).getId();
-                assignments = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(null, desigId, new Date());
+                assignments = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desigId, new Date());
                 if (assignments != null && !assignments.isEmpty()) {
                     for (Assignment assignment : assignments) {
                         if (StringUtils.isNotBlank(assignment.getEmployee().getEmailId()))
