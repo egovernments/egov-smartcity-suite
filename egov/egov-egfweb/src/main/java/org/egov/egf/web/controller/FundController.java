@@ -61,6 +61,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +70,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -124,6 +127,10 @@ public class FundController {
     public String update(@Valid @ModelAttribute final Fund fund,
                          final BindingResult errors, final Model model,
                          final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateFundDetails(fund);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return FUND_EDIT;
@@ -176,5 +183,28 @@ public class FundController {
         final Gson gson = gsonBuilder.registerTypeAdapter(Fund.class,
                 new FundJsonAdaptor()).create();
         return gson.toJson(object);
+    }
+    private List<String> validateFundDetails(final Fund fund){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String fundName = fund.getName(); 
+        fundName = fundName.replaceAll("[^a-zA-Z0-9 ]", "");
+        fundName = fundName.trim();
+        if(!fundName.isEmpty()) {
+        	fund.setName(fundName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.fund.name.empty.space", null, fundName, null));
+        }
+                
+        String fundCode = fund.getCode();
+        fundCode = fundCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        fundCode = fundCode.trim();
+        if(!fundCode.isEmpty()) {
+        	fund.setCode(fundCode);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.fund.code.empty.space", null, fundCode, null));
+        }
+		return msgs;
+        
     }
 }
