@@ -60,6 +60,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +70,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -104,6 +106,10 @@ public class AccountdetailtypeController {
 	public String create(@Valid @ModelAttribute final Accountdetailtype accountdetailtype,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		List<String> errorMsgs = validateAccountEntityDetails(accountdetailtype);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ACCOUNTDETAILTYPE_NEW;
@@ -134,6 +140,10 @@ public class AccountdetailtypeController {
 	public String update( @ModelAttribute final Accountdetailtype accountdetailtype,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		List<String> errorMsgs = validateAccountEntityDetails(accountdetailtype);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ACCOUNTDETAILTYPE_EDIT;
@@ -198,4 +208,27 @@ public class AccountdetailtypeController {
 		final String json = gson.toJson(object);
 		return json;
 	}
+	private List<String> validateAccountEntityDetails(final Accountdetailtype accountdetailtype){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String accountDetailName = accountdetailtype.getName(); 
+        accountDetailName = accountDetailName.replaceAll("[^a-zA-Z0-9 ]", "");
+        accountDetailName = accountDetailName.trim();
+        if(!accountDetailName.isEmpty()) {
+        	accountdetailtype.setName(accountDetailName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.account.entity.name", null, accountDetailName, null));
+        }
+                
+        String description = accountdetailtype.getDescription();
+        description = description.replaceAll("[^a-zA-Z0-9 ]", "");
+        description = description.trim();
+        if(!description.isEmpty()) {
+        	accountdetailtype.setDescription(description);;
+        }else {
+        	msgs.add(messageSource.getMessage("msg.account.entity.description", null, description, null));
+        }
+		return msgs;
+        
+    }
 }
