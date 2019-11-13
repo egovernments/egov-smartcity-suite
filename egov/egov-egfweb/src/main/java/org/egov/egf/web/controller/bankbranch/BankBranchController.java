@@ -60,6 +60,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +69,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -136,21 +139,17 @@ public class BankBranchController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Bankbranch bankbranch, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateBankDetails(bankbranch);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             final Model model2 = model;
             setDropDownValues(model2);
             model.addAttribute(BANKBRANCH, bankbranch);
             return "bankbranch-new";
         }
-        
-        String branchName = bankbranch.getBranchname(); 
-        branchName = branchName.replaceAll("[^a-zA-Z0-9 ]", "");
-        bankbranch.setBranchname(branchName);
-        
-        String branchCode = bankbranch.getBranchcode();
-        branchCode = branchCode.replaceAll("[^a-zA-Z0-9 ]", "");
-        bankbranch.setBranchcode(branchCode);
-        
+                
         createBankBranchService.create(bankbranch);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankbranch.success", null, null));
         return "redirect:/bankbranch/success/" + bankbranch.getId();
@@ -159,20 +158,16 @@ public class BankBranchController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Bankbranch bankbranch, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateBankDetails(bankbranch);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute(BANKBRANCH, bankbranch);
             return "bankbranch-update";
         }
-        
-        String branchName = bankbranch.getBranchname(); 
-        branchName = branchName.replaceAll("[^a-zA-Z0-9 ]", "");
-        bankbranch.setBranchname(branchName);
-        
-        String branchCode = bankbranch.getBranchcode();
-        branchCode = branchCode.replaceAll("[^a-zA-Z0-9 ]", "");
-        bankbranch.setBranchcode(branchCode);
-        
+       
         createBankBranchService.update(bankbranch);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankbranch.success", null, null));
         return "redirect:/bankbranch/success/" + bankbranch.getId();
@@ -193,5 +188,29 @@ public class BankBranchController {
         final Gson gson = gsonBuilder.registerTypeAdapter(Bankbranch.class, new BankBranchJsonAdaptor()).create();
         return gson.toJson(object);
     }
-
+    
+    private List<String> validateBankDetails(final Bankbranch bankbranch){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String branchName = bankbranch.getBranchname(); 
+        branchName = branchName.replaceAll("[^a-zA-Z0-9 ]", "");
+        branchName = branchName.trim();
+        if(!branchName.isEmpty()) {
+        	bankbranch.setBranchname(branchName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.bankbranch.name.empty.space", null, branchName, null));
+        }
+                
+        String branchCode = bankbranch.getBranchcode();
+        branchCode = branchCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        branchCode = branchCode.trim();
+        if(!branchCode.isEmpty()) {
+        	bankbranch.setBranchcode(branchCode);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.bankbranch.code.empty.space", null, branchCode, null));
+        }
+		return msgs;
+        
+    }
+    
 }

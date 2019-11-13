@@ -50,6 +50,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
+		<form:errors style="color:red;"></form:errors>
 			<div class="panel-heading">
 				<div class="panel-title"><spring:message code="lbl.create.bankbranch" /></div>
 				<input type="hidden" name="bankbranch" value="${bankbranch.id}" />
