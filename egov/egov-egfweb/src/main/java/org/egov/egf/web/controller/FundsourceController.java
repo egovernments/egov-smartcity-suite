@@ -58,6 +58,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +67,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -96,6 +99,10 @@ public class FundsourceController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Fundsource fundsource, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateFundSourceDetails(fundsource);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return FUNDSOURCE_NEW;
@@ -117,6 +124,10 @@ public class FundsourceController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Fundsource fundsource, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateFundSourceDetails(fundsource);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return FUNDSOURCE_EDIT;
@@ -165,5 +176,28 @@ public class FundsourceController {
         final Gson gson = gsonBuilder.registerTypeAdapter(Fundsource.class, new FundsourceJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
+    }
+    private List<String> validateFundSourceDetails(final Fundsource fundsource){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String fundSourceName = fundsource.getName();
+        fundSourceName = fundSourceName.replaceAll("[^a-zA-Z0-9 ]", "");
+        fundSourceName = fundSourceName.trim();
+        if(!fundSourceName.isEmpty()) {
+        	fundsource.setName(fundSourceName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.name", null, fundSourceName, null));
+        }
+                
+        String fundSourceCode = fundsource.getCode();
+        fundSourceCode = fundSourceCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        fundSourceCode = fundSourceCode.trim();
+        if(!fundSourceCode.isEmpty()) {
+        	fundsource.setCode(fundSourceCode);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.code", null, fundSourceCode, null));
+        }
+		return msgs;
+        
     }
 }
