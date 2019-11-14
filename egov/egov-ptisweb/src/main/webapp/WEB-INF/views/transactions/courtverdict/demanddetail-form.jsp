@@ -71,37 +71,55 @@
 						</tr>
 						<c:forEach items="${dmndDetails}" var="demandDetails"
 							varStatus="status">
-
-							<tr>
-								<td class="greybox"><form:hidden
+							<c:choose>
+								<c:when test="${demandDetails.reasonMaster eq 'Advance'}">
+									<form:hidden
 										path="demandDetailBeanList[${status.index }].installment.id" />
-									<c:if
-										test="${dmndDetails[status.index].installment.id == dmndDetails[status.index-1].installment.id}">
+									<form:hidden
+										path="demandDetailBeanList[${status.index }].reasonMaster" />
+									<form:hidden
+										path="demandDetailBeanList[${status.index }].actualAmount"
+										value="${demandDetails.actualAmount}" />
+									<form:hidden
+										path="demandDetailBeanList[${status.index }].revisedAmount" />
+									<form:hidden
+										path="demandDetailBeanList[${status.index }].actualCollection"
+										value="${demandDetails.actualCollection}" />
+
+								</c:when>
+								<c:otherwise>
+									<tr>
+										<td class="greybox"><form:hidden
+												path="demandDetailBeanList[${status.index }].installment.id" />
+											<c:if
+												test="${dmndDetails[status.index].installment.id == dmndDetails[status.index-1].installment.id}">
 									&nbsp;
 									</c:if> <c:if
-										test="${dmndDetails[status.index].installment.id != dmndDetails[status.index-1].installment.id}">
+												test="${dmndDetails[status.index].installment.id != dmndDetails[status.index-1].installment.id}">
 
-										<c:out value="${demandDetails.installment}"></c:out>
+												<c:out value="${demandDetails.installment}"></c:out>
 
-									</c:if></td>
-								<td class="greybox"><form:hidden
-										path="demandDetailBeanList[${status.index }].reasonMaster" />
-									<c:out value="${demandDetails.reasonMaster}"></c:out></td>
-								<td class="greybox"><form:input align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].actualAmount"
-										value="${demandDetails.actualAmount}" readonly="true" /></td>
-								<td class="greybox"><form:input
-										onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"
-										id="revisedAmount" align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].revisedAmount" /></td>
-								<td class="greybox"><form:input align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].actualCollection"
-										value="${demandDetails.actualCollection}" readonly="true" /></td>
+											</c:if></td>
+										<td class="greybox"><form:hidden
+												path="demandDetailBeanList[${status.index }].reasonMaster" />
+											<c:out value="${demandDetails.reasonMaster}"></c:out></td>
+										<td class="greybox"><form:input align="center"
+												type="text" style="width:80%"
+												path="demandDetailBeanList[${status.index }].actualAmount"
+												value="${demandDetails.actualAmount}" readonly="true" /></td>
+										<td class="greybox"><form:input
+												onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"
+												id="revisedAmount" align="center" type="text"
+												style="width:80%"
+												path="demandDetailBeanList[${status.index }].revisedAmount" /></td>
+										<td class="greybox"><form:input align="center"
+												type="text" style="width:80%"
+												path="demandDetailBeanList[${status.index }].actualCollection"
+												value="${demandDetails.actualCollection}" readonly="true" /></td>
 
-							</tr>
+									</tr>
+								</c:otherwise>
+							</c:choose>
 						</c:forEach>
 					</table>
 				</div>

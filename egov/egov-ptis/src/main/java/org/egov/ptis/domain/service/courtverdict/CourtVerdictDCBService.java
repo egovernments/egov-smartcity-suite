@@ -274,7 +274,7 @@ public class CourtVerdictDCBService extends TaxCollection {
         demandDetail.setInstallment(installment);
         demandDetail.setReasonMaster(reasonMaster);
         demandDetail.setActualAmount(amount);
-        demandDetail.setRevisedAmount(revisedAmount);
+        demandDetail.setRevisedAmount(revisedAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         demandDetail.setActualCollection(amountCollected);
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;

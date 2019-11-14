@@ -112,7 +112,7 @@ public class CouncilConstants {
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String MEETINGSTATUSCREATED = "CREATED";
     public static final String MEETINGSTATUSAPPROVED = "APPROVED";
-    public static final String MEETINGRESOLUTIONFILENAME = "MeetingResolution.rtf";
+    public static final String MEETINGRESOLUTIONFILENAME = "MeetingResolution.pdf";
     public static final String WF_FORWARD_BUTTON = "Forward";
     public static final String WF_PROVIDE_INFO_BUTTON = "Provide more info";
     public static final String CHECK_BUDGET = "budgetcheckurl";
@@ -153,4 +153,7 @@ public class CouncilConstants {
             Arrays.asList("Special knowledge", "Minority"));
     
     public static final String COUNCIL_RESOLUTION_DETAILS_URL = "/council/councilmom/view/%d";
+    public static final String DESIGNATIONSTOSENDEMAILFORCOUNCILMOM = "DESIGNATIONSTOSENDEMAILFORCOUNCILMOM";
+    public static final String ROLE_COUNCIL_CLERK = "Council Clerk";
+
 }

@@ -140,7 +140,7 @@ public class CouncilMomController {
     private static final String COUNCILMOM_SEARCH = "councilmom-search";
     private static final String COUNCILMOM_VIEW = "councilmom-view";
     private static final String COMMONERRORPAGE = "common-error-page";
-    private static final String APPLICATION_RTF = "application/rtf";
+    private static final String APPLICATION_PDF = "application/pdf";
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -483,14 +483,14 @@ public class CouncilMomController {
         reportOutput = generateMomPdfByPassingMeeting(councilMeeting);
         if (reportOutput != null) {
             councilMeeting.setFilestore(fileStoreService.store(
-                    FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME, "rtf").toFile(), MEETINGRESOLUTIONFILENAME,
-                    APPLICATION_RTF, MODULE_NAME));
+                    FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME, "pdf").toFile(), MEETINGRESOLUTIONFILENAME,
+                    APPLICATION_PDF, MODULE_NAME));
         }
         councilMeetingService.update(councilMeeting);
         councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         councilSmsAndEmailService.sendSms(councilMeeting, null);
-        councilSmsAndEmailService.sendEmail(councilMeeting, null, reportOutput);
-        return "forward:/councilmeeting/generateresolution/".concat(councilMeeting.getId().toString());
+        councilSmsAndEmailService.sendEmail(councilMeeting, null, reportOutput, true);
+	return "forward:/councilmeeting/generateresolution/".concat(councilMeeting.getId().toString());
     }
 
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {

@@ -88,7 +88,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="PENALTY" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
-		<variableExpression><![CDATA[("ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose})||"CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose})) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[("ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose})||"CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose})||"CHEQUE_BOUNCE_PENALTY".equals($F{purpose})) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="ROW_TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
@@ -100,7 +100,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="PENALTY_SUM" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[("ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose})||"CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose})) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[("ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose})||"CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose})||"CHEQUE_BOUNCE_PENALTY".equals($F{purpose})) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="CGST_SUM" class="java.math.BigDecimal" calculation="Sum">
@@ -127,7 +127,7 @@
 		<variableExpression><![CDATA[("SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
-	<filterExpression><![CDATA[$F{isRevenueAccount} == false ]]></filterExpression>
+	<filterExpression><![CDATA[$F{isRevenueAccount} == false]]></filterExpression>
 	<group name="REPORT_GROUP">
 		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
 		<groupFooter>
