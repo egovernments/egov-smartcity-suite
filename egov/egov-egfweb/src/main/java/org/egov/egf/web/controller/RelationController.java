@@ -62,6 +62,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +71,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,6 +109,13 @@ public class RelationController {
 	public String create(@Valid @ModelAttribute final Relation relation,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		if(relation.getCode().isEmpty() || relation.getName().isEmpty()) {
+			errors.addError(new ObjectError("message : ","Please fill mandatory fields"));
+		}
+		List<String> errorMsgs = validateRelationDetails(relation);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return RELATION_NEW;
@@ -139,6 +149,13 @@ public class RelationController {
 	public String update(@Valid @ModelAttribute final Relation relation,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		if(relation.getCode().isEmpty() || relation.getName().isEmpty()) {
+			errors.addError(new ObjectError("message : ","Please fill mandatory fields"));
+		}
+		List<String> errorMsgs = validateRelationDetails(relation);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return RELATION_EDIT;
@@ -194,4 +211,39 @@ public class RelationController {
 		final String json = gson.toJson(object);
 		return json;
 	}
+	private List<String> validateRelationDetails(final Relation relation){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String relationName = relation.getName(); 
+        relationName = relationName.replaceAll("[^a-zA-Z0-9 ]", "");
+        relationName = relationName.trim();
+        if(!relationName.isEmpty()) {
+        	relation.setName(relationName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.name", null, relationName, null));
+        }
+                
+        String relationCode = relation.getCode();
+        relationCode = relationCode.replaceAll("[^a-zA-Z0-9 ]", "");
+        relationCode = relationCode.trim();
+        if(!relationCode.isEmpty()) {
+        	relation.setCode(relationCode);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.code", null, relationCode, null));
+        }
+        
+        String mobileNo = relation.getMobile();
+        if(mobileNo != null && !mobileNo.equals("null")) {
+        	mobileNo = mobileNo.replaceAll("[^0-9]", "");
+            mobileNo = mobileNo.trim();
+            if(!mobileNo.isEmpty()) {
+            	relation.setMobile(mobileNo);
+            }else {
+            	msgs.add(messageSource.getMessage("msg.relation.mobile.number", null, mobileNo, null));
+            }
+        }
+        
+		return msgs;
+        
+    }
 }

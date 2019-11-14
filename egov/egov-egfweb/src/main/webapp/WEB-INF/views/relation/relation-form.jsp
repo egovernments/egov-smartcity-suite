@@ -51,6 +51,8 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
+			<form:errors style="color:red;"></form:errors>
+			<p style="color:red;font-size:15px;display:none;" id="showErrorMessage">Please fill Mandatory fields</p>
 				<div class="panel-heading">
 					<div class="panel-title">Supplier</div>
 				</div>
@@ -59,7 +61,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="code"
+							<form:input path="code" id="supplierCode"
 								class="form-control text-left patternvalidation enteredValue" onkeypress="return replaceSpecialChar(event)"
 										onkeyup="isSpecialChar()" onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
@@ -68,7 +70,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" onkeypress="return replaceSpecialChar(event)"
+							<form:input path="name" id="supplierName" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation enteredValue" onkeyup="isSpecialChar()"
 										onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="50" required="required" />

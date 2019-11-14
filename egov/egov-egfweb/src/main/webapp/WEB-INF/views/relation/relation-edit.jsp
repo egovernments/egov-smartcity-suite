@@ -80,6 +80,14 @@ function submitForm(){
 	}
 }
 function validateFormData(){
+	var supplierName = document.getElementById('supplierName').value;
+	var supplierCode = document.getElementById('supplierCode').value;
+	if(supplierName == "" || supplierCode == ""){
+		$('#showErrorMessage').show();
+		return false;
+	}else {
+		$('#showErrorMessage').hide();
+	}
 	if(validEmail == true && validMobile == true){
 		$("#buttonSubmit").attr('type','submit');
 		submitForm();
