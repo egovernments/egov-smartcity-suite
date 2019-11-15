@@ -201,12 +201,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @SafeHtml
     private String workOrderNumber;
 
-    @SafeHtml
-    private String estimationNumber;
-
-    @Temporal(value = TemporalType.DATE)
-    private Date estimationNoticeDate;
-
     private double donationCharges;
     private Boolean legacy = false;
 
