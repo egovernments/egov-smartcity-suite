@@ -80,6 +80,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
@@ -926,7 +927,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withNextAction(nextAction);
             }
-        } else {
+        } 
+        else if(WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction))
+            wFRejectToCancel(propertyMutation);
+        else {
             if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = propertyMutation.getCurrentState().getOwnerPosition();
             else if (null != approverPositionId && approverPositionId != -1)
@@ -1083,7 +1087,24 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     && StringUtils.isNotBlank(emailBodyTransferee))
                 notificationService.sendEmail(transferee.getTransferee().getEmailId(), subject, emailBodyTransferee);
     }
-
+    
+    @SkipValidation
+    @Action(value = "/rejecttocancel")
+    public String rejectToCancel() {
+        if (mutationId != null) {
+            final javax.persistence.Query qry = entityManager.createNamedQuery("BY_MUTATION_ID");
+            qry.setParameter("id", mutationId);
+            propertyMutation = (PropertyMutation) qry.getSingleResult();
+            persistenceService.getSession().refresh(propertyMutation);
+        }
+        transitionWorkFlow(propertyMutation);
+        transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
+        setAckMessage(
+                "Transfer of ownership rejected successfuly and forwarded to : " + securityUtils.getCurrentUser().getName());
+        setAssessmentNoMessage(" with Assessment Number: ");
+        return ACK;
+    }
+    
     private String getNatureOfTask() {
         return ADDTIONAL_RULE_REGISTERED_TRANSFER.equals(getAdditionalRule())
                 ? NATURE_REGISTERED_TRANSFER
@@ -1118,7 +1139,17 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 : (Boolean) propertyService.getWaterTaxDues(assessmentNo)
                         .get(UNDER_WTMS_WF);
     }
-
+    
+    private void wFRejectToCancel(final PropertyMutation propertyMutation) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        String nextAction = "";
+        nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
+        propertyMutation.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                .withComments(approverComments).withStateValue(WF_STATE_REJECTED_TO_CANCEL).withDateInfo(currentDate.toDate())
+                .withOwner(propertyMutation.getCurrentState().getOwnerPosition()).withNextAction(nextAction);
+    }
+    
     public BigDecimal getCurrentPropertyTax() {
         return currentPropertyTax;
     }

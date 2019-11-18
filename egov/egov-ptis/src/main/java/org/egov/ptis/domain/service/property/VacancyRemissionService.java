@@ -104,6 +104,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGN
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -352,7 +354,8 @@ public class VacancyRemissionService {
                         .withOwner(vacancyRemission.getCurrentState().getOwnerPosition());
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
-        } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+        } 
+        else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             final String stateValue = VR_APP_STATUS_REJECTED;
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
             vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
@@ -608,8 +611,8 @@ public class VacancyRemissionService {
 
     @Transactional
     public void saveVacancyRemissionApproval(final VacancyRemissionApproval vacancyRemissionApproval,
-                                             final Long approvalPosition, final String approvalComent, final String additionalRule,
-                                             final String workFlowAction) {
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -624,7 +627,8 @@ public class VacancyRemissionService {
 
         wfInitiator = getInitiatorOnWFAction(vacancyRemissionApproval, workFlowAction);
         if (wfInitiator == null)
-            wfInitiator = getWorkflowInitiatorAssignment(user.getId(), Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
+            wfInitiator = getWorkflowInitiatorAssignment(user.getId(),
+                    Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
 
         if (null != approvalPosition && approvalPosition != 0) {
             assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date())
@@ -640,10 +644,10 @@ public class VacancyRemissionService {
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
                 && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
+                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
                 nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
             else {
@@ -676,12 +680,16 @@ public class VacancyRemissionService {
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                     vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
                 } else {
-                    vacancyRemissionApproval.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                    vacancyRemissionApproval.transition().progressWithStateCopy()
+                            .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
                             .withOwner(wfInitiator.getPosition())
-                            .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
+                            .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
+                            .withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                 }
+        } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT_TO_CANCEL)) {
+            wFRejectToCancel(vacancyRemissionApproval, approvalComent, user, currentDate);
         } else {
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD) && vacancyRemissionApproval.getStatus() == null)
                 vacancyRemissionApproval.setStatus(VR_STATUS_WORKFLOW);
@@ -701,7 +709,8 @@ public class VacancyRemissionService {
                         null, additionalRule, null, null);
                 vacancyRemissionApproval.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL)
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if ("END".equalsIgnoreCase(vacancyRemissionApproval.getCurrentState().getNextAction()))
                 vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
@@ -714,7 +723,8 @@ public class VacancyRemissionService {
                 vacancyRemissionApproval.transition().progress().withSenderName(user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
+                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction())
+                        .withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
                     wFApprove(vacancyRemissionApproval);
@@ -723,7 +733,8 @@ public class VacancyRemissionService {
         }
 
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
-                && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
+                && propertyService
+                        .getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
             propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(), APPLICATION_TYPE_VACANCY_REMISSION);
         }
         if (LOG.isDebugEnabled())
@@ -1067,5 +1078,15 @@ public class VacancyRemissionService {
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
                 .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
-
+    
+    private void wFRejectToCancel(final VacancyRemissionApproval vacancyRemissionApproval, final String approvarComments,
+            final User user, final DateTime currentDate) {
+        String nextAction;
+        vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
+        nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
+        vacancyRemissionApproval.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                .withComments(approvarComments).withStateValue(WF_STATE_REJECTED_TO_CANCEL)
+                .withDateInfo(currentDate.toDate()).withOwner(vacancyRemissionApproval.getState().getOwnerPosition())
+                .withNextAction(nextAction);
+    }
 }

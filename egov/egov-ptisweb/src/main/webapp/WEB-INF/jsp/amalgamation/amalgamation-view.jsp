@@ -73,6 +73,9 @@ function onSubmit() {
 	var action = null;
 	var userDesg = '<s:property value="%{userDesgn}"/>';
 	var state = '<s:property value="%{model.state.value}"/>';
+	var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+	var stateId = '<s:property value="%{model.state.id}"/>';
+
 	if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 		if ((nextAction != null && nextAction == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVAL_PENDING}"/>')
 			|| (nextAction != null && nextAction == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING}"/>')
@@ -92,7 +95,16 @@ function onSubmit() {
 		action = 'amalgamation-approve.action';
 	} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 		action = 'amalgamation-reject.action';
-	} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
+	} else if(state == 'Amalgamation:Rejected to Cancel'){
+		var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+		 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+				+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicProp.upicno}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)
+				+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+		popupWindow.opener.close();
+	}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT_TO_CANCEL}"/>') {
+		action = 'amalgamation-rejecttocancel.action';
+	}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
 			|| actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_SIGN}"/>'){
 		var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
 		action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType='+noticeType+'&noticeMode=modify&actionType='+actionName;
@@ -154,7 +166,8 @@ function onSubmit() {
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase()) ||
 							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
+							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)) || 
+							model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)}">
 								<tr>
 									<%@ include file="amalgamationView.jsp"%>
 									<%@ include file="../common/DocumentUploadView_new.jsp"%>

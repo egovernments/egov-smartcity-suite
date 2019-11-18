@@ -78,6 +78,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -287,6 +289,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         super.prepare();
         setUserInfo();
         setUserDesignations();
+        PropertyImpl propertyById;
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp(basicPropertyDAO.getBasicPropertyByProperty(Long.valueOf(getModelId())));
@@ -294,9 +297,14 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 logger.debug("prepare: BasicProperty: " + basicProp);
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
+            propertyById = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+                    Long.valueOf(getModelId()));
             if (propWF != null) {
                 setProperty(propWF);
                 historyMap = propService.populateHistory(propWF);
+            } else if (propertyById.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
+                setProperty(propertyById);
+                historyMap = propService.populateHistory(propertyById);
             } else
                 historyMap = propService.populateHistory(basicProp.getActiveProperty());
         } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
@@ -411,6 +419,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                         propertyModel.getStatus() != null
                                 && propertyModel.getStatus().equals(STATUS_WORKFLOW))
                     amalBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(amal.getAmalgamatedProperty().getUpicNo());
+                else if (propertyModel.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
+                    amalBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(amal.getAmalgamatedProperty().getUpicNo()); 
                 else
                     amalBasicProp = basicPropertyDAO
                             .getInActiveBasicPropertyByPropertyID(amal.getAmalgamatedProperty().getUpicNo());
@@ -1087,6 +1097,27 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         setAckMessage(getText("property.modify.forward.success",
                 new String[] { action, userName,
                         propertyModel.getApplicationNo() }));
+    }
+    
+    @SkipValidation
+    @Action(value = "/amalgamation-rejecttocancel")
+    public String rejectToCancel() {
+        if (logger.isDebugEnabled())
+            logger.debug("reject: Property rejection started");
+        if (isBlank(approverComments)) {
+            addActionError(getText("property.workflow.remarks"));
+        }
+        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+                Long.valueOf(getModelId()));
+        final BasicProperty basicProperty = propertyModel.getBasicProperty();
+        setBasicProp(basicProperty);
+        transitionWorkFlow(propertyModel);
+        propertyImplService.update(propertyModel);
+        propService.updateIndexes(propertyModel, getApplicationType());
+        setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+        setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS,
+                new String[] { AMALGAMATION_OF_ASSESSMENT, securityUtils.getCurrentUser().getName() }));
+        return RESULT_ACK;
     }
 
     @Override

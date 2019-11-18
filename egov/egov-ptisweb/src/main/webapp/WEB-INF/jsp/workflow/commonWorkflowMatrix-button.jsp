@@ -85,6 +85,13 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 				return false;
 	    	}
 		}
+	    else if (name=="Reject To Cancel"){
+	    	var approverComments = document.getElementById("approverComments").value;
+	    	if (approverComments == null || approverComments == "") {
+	    		bootbox.alert("Please Enter Remarks ");
+				return false;
+	    }
+	    }
 	    </s:if>
 	    return  onSubmit();
 	}

@@ -108,11 +108,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -1126,18 +1128,24 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      *
      */
     private void prepareWorkflowPropInfo() {
+        PropertyImpl propertyById;
         setBasicProp((BasicProperty) getPersistenceService()
                 .find("select prop.basicProperty from PropertyImpl prop where prop.id=?", Long.valueOf(getModelId())));
         propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
+                Long.valueOf(getModelId()));
+        propertyById = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
         if (propWF != null) {
             setProperty(propWF);
             preparePropertyTaxDetails(propWF);
             historyMap = propService.populateHistory(propWF);
-        } else {
-            preparePropertyTaxDetails(basicProp.getProperty());
+        } else if (propertyById.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
+                preparePropertyTaxDetails(basicProp.getProperty());
+                historyMap = propService.populateHistory(propertyById);
+            } else{
+                preparePropertyTaxDetails(basicProp.getProperty());
             historyMap = propService.populateHistory((PropertyImpl) basicProp.getProperty());
-        }
+            }
     }
 
     /**
@@ -1731,6 +1739,30 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 && basicProperty.getPropertyID().getElectionBoundary().isActive())
             setElectionWardActive(Boolean.TRUE);
     }
+    
+    @SkipValidation
+    @Action(value = "/modifyProperty-rejecttocancel")
+    public String rejectToCancel() {
+        if (logger.isDebugEnabled())
+            logger.debug("reject: Property rejection started");
+        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+                Long.valueOf(getModelId()));
+        if (isBlank(approverComments))
+            addActionError(getText("property.workflow.remarks"));
+        if (multipleSubmitCondition(propertyModel, approverPositionId))
+            return multipleSubmitRedirect();
+        setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+        final BasicProperty basicProperty = propertyModel.getBasicProperty();
+        setBasicProp(basicProperty);
+        transitionWorkFlow(propertyModel);
+        propertyImplService.update(propertyModel);
+        propService.updateIndexes(propertyModel, getApplicationType());
+        setAckMessage(
+                getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(),
+                        securityUtils.getCurrentUser().getName() + " with Assessment Number: " }));
+        return RESULT_ACK;
+    }
+
 
     public BasicProperty getBasicProp() {
         return basicProp;

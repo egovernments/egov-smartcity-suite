@@ -82,9 +82,11 @@ import java.util.List;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 @Controller
 @RequestMapping(value = "/vacancyremissionapproval/update/{id}")
@@ -169,6 +171,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                          final HttpServletRequest request, final Model model) {
 
         final String senderName = vacancyRemissionApproval.getCurrentState().getSenderName();
+        String pathVars="";
         if (!resultBinder.hasErrors()) {
             String workFlowAction = "";
             if (request.getParameter("workFlowAction") != null)
@@ -188,15 +191,30 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
             if (org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)) {
                 if (isPreviewOrSignOrNoticeGen(workFlowAction)) {
-                    final String pathVars = vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo()
-                            + "," + senderName;
-                    return "redirect:/vacancyremission/generatenotice?pathVar=" + pathVars + "&workFlowAction="
-                            + workFlowAction;
+                    if (vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
+                        pathVars = "assessmentNo=" + vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo()
+                                + "&noticeType=" + NOTICE_TYPE_REJECTION + "&noticeMode="
+                                + NOTICE_TYPE_REJECTION + "&actionType=" + workFlowAction + "&stateId="
+                                + vacancyRemissionApproval.getState().getId()
+                                + "&applicationNumber=" + vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()
+                                + "&transactionType="
+                                + vacancyRemissionApproval.getVacancyRemission().getState().getNatureOfTask();
+                        return "redirect:/rejectionnotice/generaterejectionnotice?" + pathVars;
+                    } else {
+                        pathVars = vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo()
+                                + "," + senderName;
+                        return "redirect:/vacancyremission/generatenotice?pathVar=" + pathVars + "&workFlowAction="
+                                + workFlowAction;
+                    }
                 } else if (isReject(workFlowAction))
                     successMsg = wfReject(vacancyRemissionApproval, workFlowAction, approvalPosition, approvalComent);
                 else if (isApprove(workFlowAction))
                     successMsg = "Vacancy Remission Approved Successfully in the System and forwarded to " + propertyTaxUtil
                             .getApproverUserName(vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId());
+                else if (isRejectedToCancel(workFlowAction))
+                    successMsg = "Vacancy Remission rejected successfully and forwared to "
+                            + propertyTaxUtil.getApproverUserName(vacancyRemissionApproval.getState().getOwnerPosition().getId())
+                            +" with Assessment Number: "+vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();
                 else
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition);
@@ -271,5 +289,9 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
             successMsg = PROPERTY_MODIFY_REJECT_FAILURE
                     + vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();
         return successMsg;
+    }
+    
+    private boolean isRejectedToCancel(final String workFlowAction) {
+        return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL);
     }
 }

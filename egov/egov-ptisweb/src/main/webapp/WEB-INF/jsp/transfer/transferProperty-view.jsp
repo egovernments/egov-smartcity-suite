@@ -58,7 +58,20 @@
 	jQuery("#loadingMask").remove();
 	function generateMutationCertificate(actionName) {
 		var mutation= jQuery('#mutationId').val();
-		if (actionName == 'Preview') {
+		var nextAction = '<s:property value="%{model.state.nextAction}"/>'; 
+		var action = null;
+		var userDesg = '<s:property value="%{userDesgn}"/>';
+		var state = '<s:property value="%{model.state.value}"/>';
+		var stateId = '<s:property value="%{model.state.id}"/>';
+		var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+		if(state == 'Rejected to Cancel'){
+			var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+			 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+					+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicproperty.upicNo}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNo}"/>'),
+					'_blank', 'width=650, height=500, scrollbars=yes', false);
+			popupWindow.opener.close();
+		}
+		else if (actionName == 'Preview') {
 			var params = [ 'height=' + screen.height, 'width=' + screen.width,
 					'fullscreen=yes' ].join(',');
 			window.open("printNotice.action?mutationId=" + mutation
@@ -77,7 +90,10 @@
 			document.forms[0].action = '/ptis/property/transfer/reject.action';
 		} else if (actionName == 'Approve') {
 			document.forms[0].action = '/ptis/property/transfer/approve.action';
-		} else {
+		} else if (actionName == 'Reject To Cancel') {
+			document.forms[0].action = '/ptis/property/transfer/rejecttocancel.action';
+		}
+		else {
 			generateMutationCertificate(actionName);
 			return false;
 		}
