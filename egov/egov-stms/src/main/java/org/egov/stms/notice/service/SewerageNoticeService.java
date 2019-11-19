@@ -253,7 +253,7 @@ public class SewerageNoticeService {
     public SewerageNotice generateReportForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletRequest request) {
         SewerageNotice sewerageNotice = null;
-        final ReportOutput reportOutput = generateReportOutputDataForRejection(sewerageApplicationDetails, session, request);
+        final ReportOutput reportOutput = generateReportOutputDataForRejection(sewerageApplicationDetails, session, request, sewerageApplicationDetails.getWorkflowContainer().getApproverComments());
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = saveRejectionNotice(sewerageApplicationDetails, generateNoticePDF);
@@ -334,7 +334,7 @@ public class SewerageNoticeService {
 
     public ReportOutput generateReportOutputDataForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session,
-            final HttpServletRequest request) {
+            final HttpServletRequest request, String remarks) {
         final List<Assignment> assignList = assignmentService
                 .getAllActiveAssignments(
                         designationService.getDesignationByName(
@@ -357,7 +357,7 @@ public class SewerageNoticeService {
                     WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
-            reportParams.put("remarks", request.getParameter("approvalComent"));
+            reportParams.put("remarks", remarks);
             reportParams.put("rejectionDate", getDefaultFormattedDate(sewerageApplicationDetails.getRejectionDate()));
             reportParams.put("rejectionNumber", sewerageApplicationDetails.getRejectionNumber());
             reportParams.put(PRESENT_COMMISSIONER, assignList == null ? StringUtils.EMPTY: assignList

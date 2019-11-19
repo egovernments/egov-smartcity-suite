@@ -85,11 +85,10 @@ public class SewerageRejectionNoticeController {
     private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletRequest request) {
         ReportOutput reportOutput = null;
-
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
-        reportOutput = sewerageNoticeService.generateReportOutputDataForRejection(sewerageApplicationDetails, session, request);
+        reportOutput = sewerageNoticeService.generateReportOutputDataForRejection(sewerageApplicationDetails, session, request, request.getParameter("approvalComent"));
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
