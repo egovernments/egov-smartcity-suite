@@ -57,6 +57,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -102,6 +103,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     public UpdateVacancyRemissionController(final VacancyRemissionService vacancyRemissionService,
@@ -191,7 +195,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             if (!isWfReject(workFlowAction))
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);
-
+            propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             if (isWfNotNoticeGen(workFlowAction))
                 if (isWfApprove(workFlowAction))
                     successMsg = "Vacancy Remission Approved Successfully in the System";
