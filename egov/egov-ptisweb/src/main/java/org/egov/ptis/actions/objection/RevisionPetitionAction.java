@@ -95,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FOR
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_OF_ASSESSMENT;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -1439,6 +1440,22 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         else
             addittionalRule = REVISION_PETITION;
         return addittionalRule;
+    }
+
+    @Action(value = "/revPetition-rejecttocancel")
+    public String rejectToCancelRevisionPetition() {
+        objection.getProperty().setStatus(PropertyTaxConstants.STATUS_CANCELLED);
+        revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
+                approverComments, approverName);
+        revisionPetitionService.updateRevisionPetition(objection);
+        revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+        StringBuilder build = new StringBuilder(" ").append(securityUtils.getCurrentUser().getName())
+                .append(" with Assessment Number: ")
+                .append(objection.getBasicProperty().getUpicNo());
+        addActionMessage(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)
+                ? getText("objection.rp.forward.cancel") + build.toString()
+                : getText("objection.grp.forward.cancel") + build.toString());
+        return STRUTS_RESULT_MESSAGE;
     }
 
     public List<Floor> getFloorDetails() {

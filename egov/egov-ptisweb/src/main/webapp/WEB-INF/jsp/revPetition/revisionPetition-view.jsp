@@ -151,6 +151,8 @@
 		var statusModuleType = '<s:property value="%{model.egwStatus.moduletype}"/>';
 		var statusCode = '<s:property value="%{model.egwStatus.code}"/>';
 		var state = '<s:property value="%{model.state.value}"/>';
+		var stateId = '<s:property value="%{model.state.id}"/>';
+		var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
 
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
@@ -165,7 +167,10 @@
 					action = 'revPetition-addHearingDate.action';
 				} else
 					return false;
-			} else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED}"/>') {
+			}else if((state == 'GRP:Rejected to Cancel' ||state == 'RP:Rejected to Cancel') && actionName == 'Forward'){
+				action = 'revPetition-recordObjectionOutcome.action';
+			} 
+			else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED}"/>') {
 				action = 'revPetition-generateHearingNotice.action';
 
 			} else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE}"/>') {
@@ -187,7 +192,21 @@
 				action = 'revPetition-recordObjectionOutcome.action';				
 			}
 			
-		} else if (actionName == 'Print HearingNotice') {
+		} else if((state == 'GRP:Rejected to Cancel' || state == 'RP:Rejected to Cancel')){
+			var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+			if(actionName == 'Preview'){
+			 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+					+ 'assessmentNo='+encodeURIComponent('<s:property value="%{objection.getBasicProperty().getUpicNo()}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)+'&applicationNumber='+encodeURIComponent('<s:property value="%{objectionNumber}"/>'),
+					 'NoticeWindow'+'width=screen.width, height=screen.height, fullscreen=yes',false);
+			 return false;
+			}else if(actionName == 'Sign'){
+				 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+						+ 'assessmentNo='+encodeURIComponent('<s:property value="%{objection.getBasicProperty().getUpicNo()}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)+'&applicationNumber='+encodeURIComponent('<s:property value="%{objectionNumber}"/>'),
+						'_self','width=screen.width, height=screen.height, fullscreen=yes',false);
+				 return false;	
+			}
+		}
+		else if (actionName == 'Print HearingNotice') {
 			url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
 					+ document.getElementById("model.id").value;
 			window.open(url, 'printHearingNotice', 'width=1000,height=400');
@@ -233,6 +252,8 @@
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='
 						+ document.getElementById("model.id").value;
 			}
+		}else if(actionName == 'Reject To Cancel'){
+			action = 'revPetition-rejecttocancel.action';
 		}
 
 		document.forms[0].action = action;
@@ -391,8 +412,8 @@
 							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
-							">
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ||
+							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)))">
 									<jsp:include page="modifyPropertyViewForRevPetition.jsp" />
 
 								</s:if>
@@ -490,6 +511,10 @@
 										<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 									</s:else>
 								</s:elseif>
+								<s:elseif test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) &&
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)}">
+					   <jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+					   </s:elseif>
 								<s:else>
 								<s:if test="%{!endorsementNotices.isEmpty() && @org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
 								   <jsp:include page="../workflow/endorsement_history.jsp"/>

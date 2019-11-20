@@ -97,11 +97,19 @@ function onSubmit() {
 		action = 'amalgamation-reject.action';
 	} else if(state == 'Amalgamation:Rejected to Cancel'){
 		var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+		if(actionName == 'Preview'){
 		 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
 				+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicProp.upicno}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)
 				+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
-				'_blank', 'width=650, height=500, scrollbars=yes', false);
-		popupWindow.opener.close();
+				 'NoticeWindow'+'width=screen.width, height=screen.height, fullscreen=yes',false);
+		 return false;
+		}else if(actionName == 'Sign'){
+			popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+					+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicProp.upicno}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)
+					+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
+					'_self','width=screen.width, height=screen.height, fullscreen=yes',false);
+			 return false;	
+		}
 	}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT_TO_CANCEL}"/>') {
 		action = 'amalgamation-rejecttocancel.action';
 	}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'

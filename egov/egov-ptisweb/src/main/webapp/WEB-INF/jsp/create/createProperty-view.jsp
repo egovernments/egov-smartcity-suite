@@ -124,10 +124,17 @@
 		var stateId = '<s:property value="%{model.state.id}"/>';
 		if(actionName != 'Forward' && state == 'Create:Rejected to Cancel'){
 			var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+			if(actionName == 'Preview'){
 			 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
 					+ 'assessmentNo='+encodeURIComponent('<s:property value="%{stateAwareId}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
-					'_blank', 'width=650, height=500, scrollbars=yes', false);
-			popupWindow.opener.close();
+					 'NoticeWindow'+'width=screen.width, height=screen.height, fullscreen=yes',false);
+			 return false;
+		}else if(actionName == 'Sign'){
+			 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+					+ 'assessmentNo='+encodeURIComponent('<s:property value="%{stateAwareId}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
+					'_self','width=screen.width, height=screen.height, fullscreen=yes',false);
+			 return false;
+			 }
 		}
 		else if(actionName == 'Generate Notice' || actionName == 'Sign') {
 			generateNotice(actionName);
