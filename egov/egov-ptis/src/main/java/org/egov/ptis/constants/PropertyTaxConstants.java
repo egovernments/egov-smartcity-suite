@@ -1818,4 +1818,10 @@ public interface PropertyTaxConstants {
     public static final String NO_ACTION = "NA";
     public static final String ZERO_DEMAND = "ZERO_DEMAND";
     public static final String APPLICATION_TYPE = "applicationType";
+    //Rejection notice
+    public static final String NOTICE_TYPE_REJECTION = "Rejection Notice";
+    public static final String REJECTION_NOTICE_TEMPLATE = "RejectionNotice";
+    public static final String WFLOW_ACTION_STEP_REJECT_TO_CANCEL = "Reject To Cancel";
+    public static final String WF_STATE_REJECTED_TO_CANCEL = "Rejected to Cancel";
+    
 }

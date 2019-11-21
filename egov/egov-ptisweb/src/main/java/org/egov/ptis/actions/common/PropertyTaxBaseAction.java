@@ -102,6 +102,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -597,6 +598,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionReject(property, wfInitiator, approverDesignation, loggedInUserDesignation);
+        else if(WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction))
+            propertyTaxCommonUtils.wFRejectToCancel(property,approverComments);
         else
             transition(property, wfInitiator, nature, approverDesignation, loggedInUserDesignation);
         prepareAckMessage();

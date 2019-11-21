@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONE
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -68,6 +69,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.util.Collections;
 import java.util.Date;
@@ -236,10 +239,22 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             if (isApprovalPosNotNull(request))
                 approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             approveAction(property, workFlowAct, oldProperty);
+            if (approvalComent.isEmpty() && property.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
+                approvalComent = property.getState().getComments();
             if (isWfNoticeGenOrPrevOrSign(workFlowAct))
-                return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
-                        + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
+                if (!property.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
+                    return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+                            + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
+                            + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
+                else {
+                    final String pathVars = "assessmentNo=" + property.getBasicProperty().getUpicNo()
+                            + "&noticeType=" + NOTICE_TYPE_REJECTION + "&noticeMode="
+                            + NOTICE_TYPE_REJECTION + "&actionType=" + workFlowAction + "&stateId=" + property.getState().getId()
+                            + "&applicationNumber=" + property.getApplicationNo()
+                            + "&transactionType="
+                            + property.getState().getNatureOfTask();
+                    return "redirect:/rejectionnotice/generaterejectionnotice?" + pathVars;
+                }
             else
                 return ifNotNoticeGenAndModeViewOrSave(property, request, model, workFlowAct, status, approvalPosition,
                         approvalComent);
@@ -317,6 +332,10 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     + property.getBasicProperty().getUpicNo());
         else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             wFReject(property, request, model, workFlowAction, status, approvalPosition, approvalComent);
+        else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT_TO_CANCEL))
+            model.addAttribute(SUCCESSMESSAGE, "Property Demolition rejected successfully and forwared to "
+                    + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId())
+                    + " with Assessment number " + property.getBasicProperty().getUpicNo());
         else {
             final Assignment cscAssignment = getCscUserAssignment(property);
             approvalPos = cscAssignment != null ? cscAssignment.getPosition().getId() : approvalPosition;

@@ -868,4 +868,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/transactions/writeOff/writeoff-digitalsignatureredirection.jsp" />
 	</definition>
+	<definition name="digital-signature" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.rejection.notice"
+			cascade="true" />
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/rejectionNotice/rejectionnotice-digitalsignature.jsp" />
+	</definition>
 </tiles-definitions> 

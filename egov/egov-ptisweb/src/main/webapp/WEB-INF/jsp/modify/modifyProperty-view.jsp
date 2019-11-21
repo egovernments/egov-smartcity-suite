@@ -90,8 +90,12 @@
 				var action = null;
 				var userDesg = '<s:property value="%{userDesgn}"/>';
 				var state = '<s:property value="%{model.state.value}"/>';
+				var nextAction = '<s:property value="%{model.state.nextAction}"/>'; 
+				var stateId = '<s:property value="%{model.state.id}"/>';
+				var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+				
 				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
-					if ((nextAction != null && nextAction.toUpperCase() == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVAL_PENDING.toUpperCase()}"/>')
+				if ((nextAction != null && nextAction.toUpperCase() == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVAL_PENDING.toUpperCase()}"/>')
 						|| (nextAction != null && nextAction == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING}"/>')
 						|| state == 'Alter:Rejected') {
 						action = 'modifyProperty-forward.action';
@@ -102,6 +106,23 @@
 					action = 'modifyProperty-approve.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 					action = 'modifyProperty-reject.action';
+				}else if(state == 'Alter:Rejected to Cancel' || 'Bifurcate:Rejected to Cancel'){
+					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
+					if(actionName == 'Preview'){
+					 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+							+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicProp.upicNo}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)
+							+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
+							 'NoticeWindow'+'width=screen.width, height=screen.height, fullscreen=yes',false);
+					 return false;
+					}else if(actionName == 'Sign'){
+						popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
+								+ 'assessmentNo='+encodeURIComponent('<s:property value="%{basicProp.upicNo}"/>')+'&noticeType='+encodeURIComponent(noticeType)+'&actionType='+encodeURIComponent(actionName)+'&stateId='+encodeURIComponent(stateId)+'&transactionType='+encodeURIComponent(natureoftask)
+								+'&applicationNumber='+encodeURIComponent('<s:property value="%{applicationNumber}"/>'),
+								'_self','width=screen.width, height=screen.height, fullscreen=yes',false);
+						 return false;
+					}
+				}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT_TO_CANCEL}"/>') {
+					action = 'modifyProperty-rejecttocancel.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
 						|| actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_SIGN}"/>'){
 					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
@@ -363,7 +384,8 @@
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@TAX_COLLECTOR_DESGN.toUpperCase()) ||
 							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
+							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)) ||
+							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)}">
 							
 					
 						<tr>

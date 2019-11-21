@@ -71,6 +71,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -294,22 +297,23 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         Long approvalPosition = 0l;
         String approvalComent = "";
         String workFlowAct = workFlowAction;
-        String exemptionReason="";
-		final Property oldProperty = property.getBasicProperty().getActiveProperty();
-		if (!workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-			if (!oldProperty.getIsExemptedFromTax() && property.getIsExemptedFromTax()) {
-				if (taxExemptionService
-						.getTaxDues(request, model, property.getBasicProperty(),property.getExemptionDate())
-						.equals(DUE))
-					return TARGET_TAX_DUES;
-				else if (taxExemptionService
-						.getTaxDues(request, model, property.getBasicProperty(),property.getExemptionDate())
-						.equals(NO_DEMAND)) {
-					model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
-					return PROPERTY_VALIDATION_FOR_SPRING;
-				}
-			}
-		}
+        String exemptionReason = "";
+        final Property oldProperty = property.getBasicProperty().getActiveProperty();
+        if (!workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)
+                || !workFlowAct.equalsIgnoreCase(WF_STATE_REJECTED_TO_CANCEL)) {
+            if (!oldProperty.getIsExemptedFromTax() && property.getIsExemptedFromTax()) {
+                if (taxExemptionService
+                        .getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
+                        .equals(DUE))
+                    return TARGET_TAX_DUES;
+                else if (taxExemptionService
+                        .getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
+                        .equals(NO_DEMAND)) {
+                    model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
+                    return PROPERTY_VALIDATION_FOR_SPRING;
+                }
+            }
+        }
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
@@ -333,23 +337,33 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         }
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
                 || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAct)
-                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAct))
-            if (property.getTaxExemptedReason() == null)
-                return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
-                        + property.getBasicProperty().getId() + "&noticeType="
-                        + PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE + "&noticeMode="
-                        + PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAct;
-            else
-                return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
-                        + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION + "&noticeMode="
-                        + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAct;
-        else
+                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAct)) {
+            if (property.getState().getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
+                final String pathVars = "assessmentNo=" + property.getBasicProperty().getUpicNo()
+                        + "&noticeType=" + NOTICE_TYPE_REJECTION + "&noticeMode="
+                        + NOTICE_TYPE_REJECTION + "&actionType=" + workFlowAction + "&stateId=" + property.getState().getId()
+                        + "&applicationNumber=" + property.getApplicationNo() + "&transactionType="
+                        + property.getState().getNatureOfTask();
+                return "redirect:/rejectionnotice/generaterejectionnotice?" + pathVars;
+            } else {
+                if (property.getTaxExemptedReason() == null)
+                    return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+                            + property.getBasicProperty().getId() + "&noticeType="
+                            + PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE + "&noticeMode="
+                            + PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAct;
+                else
+                    return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
+                            + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION + "&noticeMode="
+                            + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAct;
+            }
+        } else
             return wfApproveReject(property, request, model, status, approvalPosition, approvalComent,
                     workFlowAct, exemptionReason);
     }
 
     private String wfApproveReject(final Property property, final HttpServletRequest request, final Model model,
-            final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct, String previousExemptionReason) {
+            final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct,
+            String previousExemptionReason) {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String taxExemptedReason;
@@ -377,6 +391,10 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         else if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             successMessage = wFReject(property, request, status, approvalPosition, approvalComent,
                     workFlowAct, previousExemptionReason);
+        else if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT_TO_CANCEL))
+            successMessage = "Property Exemption rejected successfully and forwared to "
+                    + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId())
+                    + " with Assessment Number: " + property.getBasicProperty().getUpicNo();
         else
             successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
                     + " with application number " + property.getApplicationNo();

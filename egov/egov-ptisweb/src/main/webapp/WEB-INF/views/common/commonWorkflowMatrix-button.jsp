@@ -74,6 +74,13 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');	
 		} 
+	else if (rejectbutton!=null && rejectbutton == 'Reject To Cancel')
+		{
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+		}
    document.forms[0].submit;
    return true;
 }

@@ -268,8 +268,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final Long approverPosition,
             final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule);
-        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_DEMOLITION);
         propertyPerService.update(newProperty.getBasicProperty());
+        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_DEMOLITION);
         getSession().flush();
     }
 
@@ -324,6 +324,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
         if (isReject(workFlowAction))
             wFReject(property, approvarComments, workFlowAction, user, currentDate, wfInitiator, loggedInUserDesignation);
+        else if (isRejectedToCancel(workFlowAction))
+            propertyTaxCommonUtils.wFRejectToCancel(property, approvarComments);
         else {
             if (isWfApprove(workFlowAction))
                 pos = property.getCurrentState().getOwnerPosition();
@@ -385,6 +387,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
     private boolean isReject(final String workFlowAction) {
         return WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction);
+    }
+    
+    private boolean isRejectedToCancel(final String workFlowAction) {
+        return WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction);
     }
 
     private void wFReject(final PropertyImpl property, final String approvarComments, final String workFlowAction,

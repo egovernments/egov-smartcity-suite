@@ -102,6 +102,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.RP_INSPECTION_COMPLET
 import static org.egov.ptis.constants.PropertyTaxConstants.RP_WF_REGISTERED;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_MEESEVA;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OBJECTED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
@@ -110,8 +111,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -1068,7 +1071,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     .withOwner(position).withSenderName(user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
-        } else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+        }else if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT_TO_CANCEL))
+        {
+            wFRejectToCancel(objection, approverComments, user);
+            updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
+        }
+        else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
                     .withOwner(position).withSenderName(user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
@@ -1215,5 +1223,16 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         ? APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
         }
     }
-
+    
+    private void wFRejectToCancel(final RevisionPetition objection, final String approvarComments,
+            final User user) {
+        String nextAction;
+        objection.getProperty().setStatus(STATUS_CANCELLED);
+        final String stateValue = objection.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED_TO_CANCEL;
+        nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
+        objection.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                .withComments(approvarComments).withStateValue(stateValue)
+                .withDateInfo(new DateTime().toDate()).withOwner(objection.getState().getOwnerPosition())
+                .withNextAction(nextAction);
+    }
 }

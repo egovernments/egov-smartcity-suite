@@ -112,13 +112,17 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STMS_TAXDUE_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -126,6 +130,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -165,10 +170,12 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -192,6 +199,7 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,6 +256,9 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private SimpleRestClient simpleRestClient;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     /**
      * Gives the first half of the current financial year
@@ -719,7 +730,7 @@ public class PropertyTaxCommonUtils {
         return positionIds;
     }
 
-    public void buildMailAndSMS(final Property property) {
+    public void buildMailAndSMS(final PropertyImpl property) {
         String transactionType;
         String modifyReason = property.getPropertyModifyReason();
         if (modifyReason.equalsIgnoreCase(TRANSACTION_TYPE_CREATE))
@@ -736,50 +747,76 @@ public class PropertyTaxCommonUtils {
             transactionType = NATURE_TAX_EXEMPTION;
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo())
             if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
-                buildSmsAndMail(property.getApplicationNo(), ownerInfo.getOwner(), transactionType);
+                buildSmsAndMail(property.getApplicationNo(), ownerInfo.getOwner(), transactionType,
+                        property.getStateHistory().get(property.getStateHistory().size() - 1));
     }
 
     public void buildMailAndSMS(final RevisionPetition revisionPetition) {
         for (final PropertyOwnerInfo ownerInfo : revisionPetition.getBasicProperty().getPropertyOwnerInfo())
             if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
                 buildSmsAndMail(revisionPetition.getObjectionNumber(), ownerInfo.getOwner(),
-                        revisionPetition.getProperty().getPropertyModifyReason());
+                        revisionPetition.getProperty().getPropertyModifyReason(),
+                        revisionPetition.getStateHistory().get(revisionPetition.getStateHistory().size() - 1));
     }
 
     public void buildMailAndSMS(final PropertyMutation propertyMutation) {
         for (final PropertyOwnerInfo ownerInfo : propertyMutation.getBasicProperty().getPropertyOwnerInfo())
             if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
-                buildSmsAndMail(propertyMutation.getApplicationNo(), ownerInfo.getOwner(), NATURE_TITLE_TRANSFER);
+                buildSmsAndMail(propertyMutation.getApplicationNo(), ownerInfo.getOwner(), NATURE_TITLE_TRANSFER,
+                        propertyMutation.getStateHistory().get(propertyMutation.getStateHistory().size() - 1));
     }
 
     public void buildMailAndSMS(final VacancyRemission vacancyRemission) {
         for (final PropertyOwnerInfo ownerInfo : vacancyRemission.getBasicProperty().getPropertyOwnerInfo())
-            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
-                buildSmsAndMail(vacancyRemission.getApplicationNumber(), ownerInfo.getOwner(), NATURE_VACANCY_REMISSION);
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())){
+                Collections.reverse(vacancyRemission.getVacancyRemissionApproval());
+                buildSmsAndMail(vacancyRemission.getApplicationNumber(), ownerInfo.getOwner(), NATURE_VACANCY_REMISSION,
+                        vacancyRemission.getVacancyRemissionApproval().get(0).getStateHistory()
+                                .get(vacancyRemission.getVacancyRemissionApproval().get(0).getStateHistory().size() - 1));
+            }
     }
 
-    private void buildSmsAndMail(final String applicationNumber, final User user, final String workFlowAction) {
+    private void buildSmsAndMail(final String applicationNumber, final User user, final String workFlowAction,
+            final StateHistory<Position> stateHistory) {
         final String mobileNumber = user.getMobileNumber();
         String smsMsg = "";
         final String emailid = user.getEmailId();
         String emailSubject = "";
         String emailBody = "";
-        String noticeNumber = getNoticeNumber(applicationNumber, workFlowAction);
+        String noticeNumber = getNoticeNumber(applicationNumber, workFlowAction, stateHistory.getValue());
+        String str = "Your application ";
+        String str1 = ", for "; 
+        String appnText =  str+ applicationNumber + str1 + workFlowAction;
+        String noticeText = ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
+                + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
+                + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+        ;
         if (mobileNumber != null)
-            smsMsg = "Your application " + applicationNumber + ", for " + workFlowAction
-                    + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                    + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                    + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                    + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+            if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
+                smsMsg = appnText + " is rejected. Download your digitally signed copy of Rejection Notice from the below " +
+                        noticeText;
+            else
+                smsMsg = appnText
+                        + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
+                        + noticeText;
         if (emailid != null) {
-            emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
-                    + " is approved and digitally signed.";
-            emailBody = "Dear " + user.getName() + ",\n\n" + "Your application " + applicationNumber + ", for " + workFlowAction
-                    + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                    + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                    + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                    + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.\n\nThanks,\n"
-                    + ApplicationThreadLocals.getMunicipalityName();
+            if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
+                emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
+                        + " is rejected and digitally signed.";
+                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
+                        + workFlowAction
+                        + " is rejected. Download your digitally signed copy of Rejection Notice from the below "
+                        +noticeText +"\n\nThanks,\n"
+                        + ApplicationThreadLocals.getMunicipalityName();
+            } else {
+                emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
+                        + " is approved and digitally signed.";
+                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
+                        + workFlowAction
+                        + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
+                        + noticeText +"\n\nThanks,\n"
+                        + ApplicationThreadLocals.getMunicipalityName();
+            }
         }
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
             notificationService.sendEmail(emailid, emailSubject, emailBody);
@@ -787,9 +824,11 @@ public class PropertyTaxCommonUtils {
             notificationService.sendSMS(mobileNumber, smsMsg);
     }
 
-    public String getNoticeNumber(final String applicationNo, final String workFlowAction) {
+    public String getNoticeNumber(final String applicationNo, final String workFlowAction,final String stateValue) {
         String noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
-        if (workFlowAction.equalsIgnoreCase(NATURE_OF_WORK_RP))
+        if(stateValue.contains(WF_STATE_REJECTED_TO_CANCEL))
+            noticeType = NOTICE_TYPE_REJECTION;
+        else if (workFlowAction.equalsIgnoreCase(NATURE_OF_WORK_RP))
             noticeType = NOTICE_TYPE_RPPROCEEDINGS;
         else if (workFlowAction.equalsIgnoreCase(NATURE_OF_WORK_GRP))
             noticeType = NOTICE_TYPE_GRPPROCEEDINGS;
@@ -1119,5 +1158,17 @@ public class PropertyTaxCommonUtils {
         applicationDetails.put(PropertyTaxConstants.APPLICATION_TYPE, applicationType);
         applicationDetails.put(PropertyTaxConstants.ACTION, action);
         return applicationDetails;
+    }
+    
+    public void wFRejectToCancel(final PropertyImpl property, String approverComments) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        String nextAction = "";
+        property.setStatus(STATUS_CANCELLED);
+        nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
+        final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED_TO_CANCEL;
+        property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                .withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(nextAction);
     }
 }

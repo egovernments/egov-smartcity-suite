@@ -67,6 +67,7 @@ import org.egov.commons.service.UOMService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -386,7 +387,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                          final BindingResult resultBinder, final HttpServletRequest request, final HttpSession session, final Model model,
                          @RequestParam("files") final MultipartFile[] files) {
         String mode = EMPTY;
-        String workFlowAction = sewerageApplicationDetails.getWorkflowContainer().getWorkFlowAction();
+        WorkflowContainer workflowContainer = sewerageApplicationDetails.getWorkflowContainer();
+        String workFlowAction = workflowContainer.getWorkFlowAction();
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
 
@@ -422,16 +424,17 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 sewerageApplicationDetailsService.getCurrentSession().evict(sewerageApplicationDetails);
                 sewerageApplicationDetails = sewerageApplicationDetailsService.findBy(sewerageApplicationDetails
                         .getId());
+                sewerageApplicationDetails.setWorkflowContainer(workflowContainer);
             }
 
-        if (sewerageApplicationDetails.getStatus().getCode() != null
+        if ((sewerageApplicationDetails.getStatus().getCode() != null
                 && APPLICATION_STATUS_INITIALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                || APPLICATION_STATUS_INSPECTIONFEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                || APPLICATION_STATUS_INSPECTIONFEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                 && !WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             populateDonationSewerageTax(sewerageApplicationDetails);
 
-        Long approvalPosition = sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId();
+        Long approvalPosition = workflowContainer.getApproverPositionId();
         if (!resultBinder.hasErrors()) {
             try {
                 if (isNotBlank(workFlowAction)) {
@@ -463,7 +466,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))
                     return "redirect:/transactions/rejectionnotice?pathVar="
                             + sewerageApplicationDetails.getApplicationNumber() + "&" + "approvalComent="
-                            + sewerageApplicationDetails.getWorkflowContainer().getApproverComments();
+                            + workflowContainer.getApproverComments();
             }
             final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                     .getCurrentUser().getId(), new Date(), new Date());

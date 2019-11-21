@@ -95,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -878,7 +879,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (hasErrors())
                 return RESULT_VIEW;
         }
-        if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
+        if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                && !WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
 
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
@@ -886,6 +888,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             transitionWorkFlow(property);
             return reject();
+        } else if (WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction)) {
+            transitionWorkFlow(property);
+            return rejectToCancel();
         }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
@@ -1680,6 +1685,20 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             setEligibleInitiator(false);
             addActionError(getText("initiator.noteligible"));
         }
+    }
+    
+    @SkipValidation
+    @Action(value = "/createProperty-rejecttocancel")
+    public String rejectToCancel() {
+        basicPropertyService.applyAuditing(property.getState());
+        basicPropertyService.persist(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource())) {
+            propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        }
+        setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to : " + securityUtils.getCurrentUser().getName()
+                + " with Application Number: ");
+        return RESULT_ACK;
     }
 
     @Override

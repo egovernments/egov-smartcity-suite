@@ -364,7 +364,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 buildSMS(property, workFlowAction);
             }
 
-        } else {
+        } else if (WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction))
+            propertyTaxCommonUtils.wFRejectToCancel(property, approvarComments);
+        else {
             if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = property.getCurrentState().getOwnerPosition();
             else if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
@@ -634,7 +636,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             return NO_DEMAND;
         }
         final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(),effectiveDate, request);
-        model.addAttribute("assessementNo", basicProperty.getUpicNo());
+        model.addAttribute("assessmentNo", basicProperty.getUpicNo());
         model.addAttribute("ownerName", basicProperty.getFullOwnerName());
         model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
         model.addAttribute("currentPropertyTax", currentPropertyTax);
