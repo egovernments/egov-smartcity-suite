@@ -783,39 +783,37 @@ public class PropertyTaxCommonUtils {
         String emailSubject = "";
         String emailBody = "";
         String noticeNumber = getNoticeNumber(applicationNumber, workFlowAction, stateHistory.getValue());
+        String str = "Your application ";
+        String str1 = ", for "; 
+        String appnText =  str+ applicationNumber + str1 + workFlowAction;
+        String noticeText = ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
+                + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
+                + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+        ;
         if (mobileNumber != null)
             if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
-                smsMsg = "Your application " + applicationNumber + ", for " + workFlowAction
-                        + " is rejected. Download your digitally signed copy of Rejection Notice from the below "
-                        + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                        + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                        + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+                smsMsg = appnText + " is rejected. Download your digitally signed copy of Rejection Notice from the below " +
+                        noticeText;
             else
-                smsMsg = "Your application " + applicationNumber + ", for " + workFlowAction
+                smsMsg = appnText
                         + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                        + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                        + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                        + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+                        + noticeText;
         if (emailid != null) {
             if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
                 emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
                         + " is rejected and digitally signed.";
-                emailBody = "Dear " + user.getName() + ",\n\n" + "Your application " + applicationNumber + ", for "
+                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
                         + workFlowAction
                         + " is rejected. Download your digitally signed copy of Rejection Notice from the below "
-                        + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                        + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                        + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.\n\nThanks,\n"
+                        +noticeText +"\n\nThanks,\n"
                         + ApplicationThreadLocals.getMunicipalityName();
             } else {
                 emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
                         + " is approved and digitally signed.";
-                emailBody = "Dear " + user.getName() + ",\n\n" + "Your application " + applicationNumber + ", for "
+                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
                         + workFlowAction
                         + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                        + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                        + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                        + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.\n\nThanks,\n"
+                        + noticeText +"\n\nThanks,\n"
                         + ApplicationThreadLocals.getMunicipalityName();
             }
         }

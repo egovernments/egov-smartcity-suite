@@ -78,7 +78,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 
 import java.text.DateFormat;

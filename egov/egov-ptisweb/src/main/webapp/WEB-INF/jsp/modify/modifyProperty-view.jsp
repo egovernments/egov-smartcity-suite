@@ -107,7 +107,7 @@
 					action = 'modifyProperty-approve.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 					action = 'modifyProperty-reject.action';
-				}else if(state == 'Alter:Rejected to Cancel'){
+				}else if(state == 'Alter:Rejected to Cancel' || 'Bifurcate:Rejected to Cancel'){
 					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
 					if(actionName == 'Preview'){
 					 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
