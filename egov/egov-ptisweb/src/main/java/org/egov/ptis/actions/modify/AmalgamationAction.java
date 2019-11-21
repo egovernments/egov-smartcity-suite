@@ -74,8 +74,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -88,6 +88,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -156,9 +158,6 @@ import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
@@ -301,8 +300,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             if (logger.isDebugEnabled())
                 logger.debug("prepare: BasicProperty: " + basicProp);
             propWF = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(getModelId()));
-            propertyById = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
+            propertyById = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
             if (propWF != null) {
                 setProperty(propWF);
                 historyMap = propService.populateHistory(propWF);
@@ -1103,8 +1101,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
         }
-        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                Long.valueOf(getModelId()));
+        propertyModel = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
         setBasicProp(basicProperty);
         transitionWorkFlow(propertyModel);
