@@ -52,6 +52,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MarriageWitness;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,16 +207,26 @@ public class MarriageFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "witnesses[3].contactInfo.residenceAddress",
                 NOTEMPTY_MRG_RESIDENCE_ADDRESS);
 
+        if(!registration.getWitnesses().isEmpty()){
+            int witnessCount = 0;
+            for(MarriageWitness witness : registration.getWitnesses()){
+                if(witness.getAge() < 25){
+                    errors.rejectValue("witnesses[".concat(String.valueOf(witnessCount)).concat("].age"), "invalid.mrg.witness.age");
+                    witnessCount++;
+                }
+            }
+        }
         if (registration != null) {
-        	if(!"Residence".equalsIgnoreCase(registration.getVenue()) && StringUtils.isBlank(registration.getPlaceOfMarriage())){
-        		errors.rejectValue("placeOfMarriage", "Notempty.mrg.place.of.mrg");
-        		if(StringUtils.isNotBlank(registration.getPlaceOfMarriage())){
-        			pattern = Pattern.compile(ALPHANUMERIC_WITH_SPECIAL_CHARS);
+            if (!"Residence".equalsIgnoreCase(registration.getVenue())
+                    && StringUtils.isBlank(registration.getPlaceOfMarriage())) {
+                errors.rejectValue("placeOfMarriage", "Notempty.mrg.place.of.mrg");
+                if (StringUtils.isNotBlank(registration.getPlaceOfMarriage())) {
+                    pattern = Pattern.compile(ALPHANUMERIC_WITH_SPECIAL_CHARS);
                     matcher = pattern.matcher(registration.getPlaceOfMarriage());
                     if (!matcher.matches())
                         errors.rejectValue("placeOfMarriage", "invalid.pattern.alphanumeric.with.special.chars");
-        		}
-        	}
+                }
+            }
             validateBrideInformation(errors, registration);
             validateBrideGroomInformation(errors, registration);
             validateDocumentAttachments(errors, registration);
