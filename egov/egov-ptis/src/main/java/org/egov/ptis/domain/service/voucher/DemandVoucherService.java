@@ -147,6 +147,7 @@ public class DemandVoucherService {
         if ("Y".equalsIgnoreCase(appConfigValue)) {
             Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationDetails);
             if (!voucherData.isEmpty()) {
+                System.out.println("Voucher Data-------------->" + voucherData);
                 CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
                         applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
                 persistPropertyDemandVoucher(newProperty, cvh);
@@ -319,9 +320,8 @@ public class DemandVoucherService {
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
             demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance).abs());
-            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
-                    .subtract(normalizeDemandDetailsNew.getPenaltyCollection())
-                    .subtract(normalizeDemandDetailsOld.getPenalty().subtract(normalizeDemandDetailsOld.getPenaltyCollection()))
+            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                    .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
                     .abs());
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
