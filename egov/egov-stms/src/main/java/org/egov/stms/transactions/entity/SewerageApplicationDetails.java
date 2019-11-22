@@ -186,6 +186,7 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     @Transient
     private List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
 
+    @SafeHtml
     private String closeConnectionReason;
 
     @Transient

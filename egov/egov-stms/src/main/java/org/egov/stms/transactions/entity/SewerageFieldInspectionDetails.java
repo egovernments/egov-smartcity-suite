@@ -48,6 +48,7 @@
 package org.egov.stms.transactions.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -93,6 +94,8 @@ public class SewerageFieldInspectionDetails extends AbstractAuditable {
     private Double distance;
     private Integer roadLength;
     private boolean roadDigging;
+    
+    @SafeHtml
     private String roadOwner;
 
     @Override
