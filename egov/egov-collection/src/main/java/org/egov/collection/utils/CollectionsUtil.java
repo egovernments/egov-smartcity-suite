@@ -297,7 +297,7 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        final String locationId = (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID);
+        final String locationId = sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID).toString();
         if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         else

@@ -95,29 +95,69 @@ public class SearchReceiptAction extends BaseFormAction {
 	private Integer searchStatus = -1;
 	private String target = NEW;
 	private String manualReceiptNumber;
-	private List<ReceiptHeader> resultList;
+	private List resultList;
 	private String serviceClass = "-1";
-	private TreeMap<String, String> serviceClassMap = new TreeMap<>();
+	private TreeMap<String, String> serviceClassMap = new TreeMap<String, String>();
+	private CollectionsUtil collectionsUtil;
 	private Integer branchId;
+	private TreeMap<Long, String> userMap = new TreeMap<>();
 	private int pageNum = CollectionConstants.PAGENUM;
 	private int pageSize = CollectionConstants.PAGESIZE;
 	private PaginatedList searchResult;
-	private TreeMap<Long, String> userMap = new TreeMap<>();
 
 	@Autowired
 	private AssignmentService assignmentService;
-	@Autowired
-	private CollectionsUtil collectionsUtil;
-	@PersistenceContext
-	private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+	@PersistenceContext
+	EntityManager entityManager;
 
 	@Override
 	public Object getModel() {
 		return null;
+	}
+
+	public Integer getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(final Integer serviceType) {
+		serviceTypeId = serviceType;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(final String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
+
+	public String getReceiptNumber() {
+		return receiptNumber;
+	}
+
+	public void setReceiptNumber(final String receiptNumber) {
+		this.receiptNumber = receiptNumber;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(final Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(final Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Action(value = "/receipts/searchReceipt-reset")
@@ -151,7 +191,6 @@ public class SearchReceiptAction extends BaseFormAction {
 			addDropdownData("serviceTypeList",
 					entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, ServiceDetails.class)
 							.setParameter(1, getServiceClass()).getResultList());
-
 	}
 
 	@Override
@@ -162,9 +201,11 @@ public class SearchReceiptAction extends BaseFormAction {
 
 	public List<EgwStatus> getReceiptStatuses() {
 		Query query = getCurrentSession().createQuery(
-				"from EgwStatus s where moduletype=:moduleType and code !=:statusCode order by description");
+				"from EgwStatus s where moduletype=:moduleType and code not in (:statusCode) order by description");
 		query.setParameter("moduleType", CollectionConstants.MODULE_NAME_RECEIPTHEADER, StringType.INSTANCE);
-		query.setParameter("statusCode", CollectionConstants.RECEIPT_STATUS_CODE_PENDING, StringType.INSTANCE);
+		query.setParameterList("statusCode",
+				new ArrayList<>(Arrays.asList(CollectionConstants.RECEIPT_STATUS_CODE_PENDING,
+						CollectionConstants.RECEIPT_STATUS_CODE_FAILED)));
 		return query.list();
 	}
 
@@ -204,7 +245,7 @@ public class SearchReceiptAction extends BaseFormAction {
 		final StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
 
 		// Get only those receipts whose status is NOT PENDING
-		final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code not in (:statusList) ");
+		final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code not in(:status) ");
 
 		if (StringUtils.isNotBlank(getInstrumentType())) {
 			fromString.append(" inner join receipt.receiptInstrument as instruments ");
@@ -259,46 +300,9 @@ public class SearchReceiptAction extends BaseFormAction {
 			query.setParameter("branchId", getBranchId());
 	}
 
-	public Integer getServiceTypeId() {
-		return serviceTypeId;
-	}
-
-	public void setServiceTypeId(final Integer serviceType) {
-		serviceTypeId = serviceType;
-	}
-
-	public String getInstrumentType() {
-		return instrumentType;
-	}
-
-	public void setInstrumentType(final String instrumentType) {
-		this.instrumentType = instrumentType;
-	}
-
-	public String getReceiptNumber() {
-		return receiptNumber;
-	}
-
-	public void setReceiptNumber(final String receiptNumber) {
-		this.receiptNumber = receiptNumber;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(final Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(final Date toDate) {
-		this.toDate = toDate;
-	}
-
+	/**
+	 * @return the target
+	 */
 	public String getTarget() {
 		return target;
 	}
@@ -327,11 +331,11 @@ public class SearchReceiptAction extends BaseFormAction {
 		this.manualReceiptNumber = manualReceiptNumber;
 	}
 
-	public List<ReceiptHeader> getResultList() {
+	public List getResultList() {
 		return resultList;
 	}
 
-	public void setResultList(List<ReceiptHeader> resultList) {
+	public void setResultList(List resultList) {
 		this.resultList = resultList;
 	}
 
@@ -351,12 +355,28 @@ public class SearchReceiptAction extends BaseFormAction {
 		this.serviceClassMap = serviceClassMap;
 	}
 
+	/**
+	 * @param collectionsUtil
+	 *            the collectionsUtil to set
+	 */
+	public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+		this.collectionsUtil = collectionsUtil;
+	}
+
 	public Integer getBranchId() {
 		return branchId;
 	}
 
 	public void setBranchId(Integer branchId) {
 		this.branchId = branchId;
+	}
+
+	public TreeMap<Long, String> getUserMap() {
+		return userMap;
+	}
+
+	public void setUserMap(TreeMap<Long, String> userMap) {
+		this.userMap = userMap;
 	}
 
 	public void setPage(final int pageNum) {
@@ -378,13 +398,4 @@ public class SearchReceiptAction extends BaseFormAction {
 	public PaginatedList getSearchResult() {
 		return searchResult;
 	}
-
-	public TreeMap<Long, String> getUserMap() {
-		return userMap;
-	}
-
-	public void setUserMap(TreeMap<Long, String> userMap) {
-		this.userMap = userMap;
-	}
-
 }

@@ -71,6 +71,12 @@ function validate(obj){
 <s:form action="serviceDetails" theme="simple" name="serviceDetailsForm" method="post">
 
 	 <div class="errorstyle" id="error_area" style="display:none;"></div>
+	 <span class="mandatory1">
+			<font  style='color: red ; font-weight:bold '> 
+				<s:actionerror/>  
+				<s:fielderror />
+				<s:actionmessage /></font>
+	</span>  
 	<div class="formmainbox">
 	<div class="subheadnew"><s:text name="service.master.search.header"></s:text> </div>
 	

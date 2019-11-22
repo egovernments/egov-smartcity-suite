@@ -66,61 +66,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ServiceDetailsService extends PersistenceService<ServiceDetails, Long> {
-    public ServiceDetailsService(Class<ServiceDetails> type) {
-        super(type);
-        // TODO Auto-generated constructor stub
-    }
+	public ServiceDetailsService(Class<ServiceDetails> type) {
+		super(type);
+		// TODO Auto-generated constructor stub
+	}
 
-    public ServiceDetailsService() {
-        super(ServiceDetails.class);
-    }
+	public ServiceDetailsService() {
+		super(ServiceDetails.class);
+	}
 
-    private static final long serialVersionUID = 5581301494846870670L;
-    private static final Logger LOGGER = Logger.getLogger(ServiceDetailsService.class);
+	private static final long serialVersionUID = 5581301494846870670L;
+	private static final Logger LOGGER = Logger.getLogger(ServiceDetailsService.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private CollectionsUtil collectionsUtil;
+	@PersistenceContext
+	private EntityManager entityManager;
+	@Autowired
+	private CollectionsUtil collectionsUtil;
 
-    @Transactional
-    public ServiceDetails persist(ServiceDetails serviceDetails) {
-        final List<ServiceAccountDetails> accountList = entityManager
-                .createQuery(" from ServiceAccountDetails sa where sa.serviceDetails.id =:serviceDetailId",
-                        ServiceAccountDetails.class)
-                .setParameter("serviceDetailId", serviceDetails.getId()).getResultList();
+	@Override
+	@Transactional
+	public ServiceDetails persist(ServiceDetails serviceDetails) {
+		final List<ServiceAccountDetails> accountList = entityManager
+				.createQuery(" from ServiceAccountDetails sa where sa.serviceDetails.id =:serviceDetailId",
+						ServiceAccountDetails.class)
+				.setParameter("serviceDetailId", serviceDetails.getId()).getResultList();
 
-        for (final ServiceAccountDetails serviceAccountDetails : accountList) {
-            entityManager.createQuery(
-                    "delete from ServiceSubledgerInfo where serviceAccountDetail.id=:accountId")
-                    .setParameter("accountId", serviceAccountDetails.getId()).executeUpdate();
-        }
+		for (final ServiceAccountDetails serviceAccountDetails : accountList) {
+			entityManager.createQuery("delete from ServiceSubledgerInfo where serviceAccountDetail.id=:accountId")
+					.setParameter("accountId", serviceAccountDetails.getId()).executeUpdate();
+		}
 
-        entityManager
-                .createQuery(" delete from ServiceAccountDetails where serviceDetails.id=:serviceId")
-                .setParameter("serviceId", serviceDetails.getId()).executeUpdate();
+		if (serviceDetails.getId() == null)
+			getCurrentSession().save(serviceDetails);
+		else {
+			entityManager.createQuery(" delete from ServiceAccountDetails where serviceDetails.id=:serviceId")
+					.setParameter("serviceId", serviceDetails.getId()).executeUpdate();
+			if (ApplicationThreadLocals.getUserId() != null) {
+				final User user = collectionsUtil.getUserById(ApplicationThreadLocals.getUserId());
+				serviceDetails.setCreatedBy(user);
+				serviceDetails.setModifiedBy(user);
+				serviceDetails.setCreatedDate(new Date());
+				serviceDetails.setModifiedDate(new Date());
+			}
+			entityManager.merge(serviceDetails);
+		}
+		return serviceDetails;
+	}
 
-        if (serviceDetails.getId() == null)
-            entityManager.persist(serviceDetails);
-        else {
-            if (ApplicationThreadLocals.getUserId() != null) {
-                final User user = collectionsUtil.getUserById(ApplicationThreadLocals.getUserId());
-                serviceDetails.setCreatedBy(user);
-                serviceDetails.setModifiedBy(user);
-                serviceDetails.setCreatedDate(new Date());
-                serviceDetails.setModifiedDate(new Date());
-            }
-            entityManager.merge(serviceDetails);
-        }
-        return serviceDetails;
-    }
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
-    }
+	public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+		this.collectionsUtil = collectionsUtil;
+	}
 
 }
