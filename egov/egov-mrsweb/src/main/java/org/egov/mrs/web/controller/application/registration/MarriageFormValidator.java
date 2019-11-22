@@ -210,10 +210,10 @@ public class MarriageFormValidator implements Validator {
         if(!registration.getWitnesses().isEmpty()){
             int witnessCount = 0;
             for(MarriageWitness witness : registration.getWitnesses()){
-                if(witness.getAge() < 25){
+                if(witness.getAge() < 25)
                     errors.rejectValue("witnesses[".concat(String.valueOf(witnessCount)).concat("].age"), "invalid.mrg.witness.age");
-                    witnessCount++;
-                }
+                
+                witnessCount++;
             }
         }
         if (registration != null) {

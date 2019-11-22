@@ -197,7 +197,7 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
             }
         } else if (!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
                 .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
-            errors.reject("err.validate.marriageRegistration.applicationDate",
+            errors.rejectValue("dateOfMarriage", "err.validate.marriageRegistration.applicationDate",
                     new String[] { DateUtils.getDefaultFormattedDate(registration.getDateOfMarriage()) }, null);
         }
     }

@@ -197,6 +197,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         }
 
         final String appNo;
+        marriageRegistration.setFeePaid(marriageFeeCalculator.calculateMarriageRegistrationFee(marriageRegistration, marriageRegistration.getDateOfMarriage()));
         if (loggedUserIsMeesevaUser) {
             marriageRegistration.setSource(MarriageConstants.SOURCE_MEESEVA);
             appNo = marriageRegistrationService
