@@ -103,8 +103,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/writeoff")
 public class WriteOffController extends GenericWorkFlowController {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteOffController.class);
-
     private static final String CURRENT_STATE = "currentState";
     private static final String STATE_TYPE = "stateType";
     private static final String PROPERTY = "property";
@@ -222,7 +220,6 @@ public class WriteOffController extends GenericWorkFlowController {
         final String successMsg = "write Off Saved Successfully in the System and forwarded to : "
                 + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
                 + " with application number : " + writeOff.getApplicationNumber();
-        LOGGER.error("Write off saved successfully");
         model.addAttribute("successMessage", successMsg);
         model.addAttribute("propertyId", assessmentNo);
         target = WO_SUCCESS_FORM;

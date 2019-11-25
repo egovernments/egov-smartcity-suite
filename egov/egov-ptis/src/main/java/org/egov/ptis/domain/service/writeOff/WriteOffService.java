@@ -110,7 +110,7 @@ public class WriteOffService extends GenericWorkFlowController {
     private static final String ERROR_MSG = "errorMsg";
     private static final String ERROR = "error";
     Property property = null;
-    
+
     @Autowired
     private WriteOffRepository writeOffRepo;
     @Autowired
@@ -158,7 +158,7 @@ public class WriteOffService extends GenericWorkFlowController {
     private WriteOffReasonRepository writeOffReasonRepository;
     @Autowired
     private DemandVoucherService demandVoucherService;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -317,13 +317,13 @@ public class WriteOffService extends GenericWorkFlowController {
                     demandVoucherService.createDemandVoucher(
                             writeOff.getBasicProperty().getActiveProperty(), null,
                             propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
-                                    APPLICATION_TYPE_WRITE_OFF,
+                                    NATURE_WRITE_OFF,
                                     PropertyTaxConstants.ZERO_DEMAND));
                 else
                     demandVoucherService.createDemandVoucher(writeOff.getProperty(),
                             writeOff.getBasicProperty().getActiveProperty(),
                             propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(
-                                    PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT,
+                                    NATURE_WRITE_OFF,
                                     PropertyTaxConstants.NO_ACTION));
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
                 nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
