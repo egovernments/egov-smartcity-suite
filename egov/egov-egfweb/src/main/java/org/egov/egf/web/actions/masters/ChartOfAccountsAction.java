@@ -65,6 +65,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
@@ -517,6 +518,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setGlcode(StringUtils.leftPad("", glCodeLengths.get(classification), '0'));
     }
 
+    @ValidationErrorPage(value = NEW)
     @Action(value = "/masters/chartOfAccounts-save")
     public String save() throws Exception {
         if (generatedGlcode == null || newGlcode == null) {
@@ -544,16 +546,58 @@ public class ChartOfAccountsAction extends BaseFormAction {
         populateAccountDetailType();
         model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
         model.setCreatedDate(DateUtils.now());
-        chartOfAccountsService.persist(model);
-        saveCoaDetails(model);
-        addActionMessage(getText("chartOfAccount.saved.successfully"));
-        clearCache();
+        try {
+	        validateCoaDetails(model);
+	        chartOfAccountsService.persist(model);
+	        saveCoaDetails(model);
+	        addActionMessage(getText("chartOfAccount.saved.successfully"));
+	        clearCache();
+        }catch(final ValidationException e) {
+            LOGGER.error("ValidationException in create COA" ,e);
+            throw e;
+        } catch (final Exception e) {
+            LOGGER.error("Exception while creating COA" ,e);
+            throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator",
+                    "An error occured contact Administrator")));
+        }
        // reset();
         coaId = model.getId();
         return Constants.VIEW;
        
     }
-
+    
+    private void validateCoaDetails(CChartOfAccounts coa) {
+    	String newGlcode = coa.getGlcode();
+    	newGlcode = newGlcode.trim();
+    	if(!newGlcode.isEmpty()) {
+    		newGlcode = newGlcode.replaceAll("[^a-zA-Z0-9]", "");
+    		newGlcode = newGlcode.trim();
+    		//For checking only empty space
+    		if(!newGlcode.isEmpty()) {
+    			coa.setGlcode(newGlcode);
+    		}else {
+    			throw new ValidationException(Arrays.asList(new ValidationError("COA Code : ","Please provide correct COA Code")));
+    		}
+    	}else {
+    		throw new ValidationException(Arrays.asList(new ValidationError("COA Code : ","Please provide correct COA Code")));
+    	}
+    	
+    	String newCOAName = coa.getName();
+    	newCOAName = newCOAName.trim();
+    	if(!newCOAName.isEmpty()) {
+    		newCOAName = newCOAName.replaceAll("[^a-zA-Z0-9 ]", "");
+    		newCOAName = newCOAName.trim();
+    		//For checking only empty space
+    		if(!newCOAName.isEmpty()) {
+    			coa.setName(newCOAName);
+    		}else {
+    			throw new ValidationException(Arrays.asList(new ValidationError("COA Name : ","Please provide correct COA Name")));
+    		}
+    	}else {
+    		throw new ValidationException(Arrays.asList(new ValidationError("COA Name : ","Please provide correct COA Name")));
+    	}
+    }
+    
     private void reset() {
         activeForPosting = false;
         budgetCheckRequired = false;
