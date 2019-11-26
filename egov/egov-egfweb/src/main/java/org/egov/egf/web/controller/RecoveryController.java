@@ -66,6 +66,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,6 +124,10 @@ public class RecoveryController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Recovery recovery, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateRecoveryDetails(recovery);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return RECOVERY_NEW;
@@ -157,6 +162,10 @@ public class RecoveryController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Recovery recovery, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+    	List<String> errorMsgs = validateRecoveryDetails(recovery);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return RECOVERY_EDIT;
@@ -222,5 +231,61 @@ public class RecoveryController {
         final Gson gson = gsonBuilder.registerTypeAdapter(Recovery.class, new RecoveryJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
+    }
+    
+    private List<String> validateRecoveryDetails(final Recovery recovery){
+    	List<String> msgs = new ArrayList<String>();
+    	
+        String recoveryName = recovery.getRecoveryName();
+        recoveryName = recoveryName.replaceAll("[^a-zA-Z0-9 ]", "");
+        recoveryName = recoveryName.trim();
+        if(!recoveryName.isEmpty()) {
+        	recovery.setRecoveryName(recoveryName);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.name", null, recoveryName, null));
+        }
+          
+        String recoveryType = recovery.getType();
+        recoveryType = recoveryType.replaceAll("[^a-zA-Z0-9]", "");
+        recoveryType = recoveryType.trim();
+        if(!recoveryType.isEmpty()) {
+        	recovery.setType(recoveryType);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.name", null, recoveryType, null));
+        }
+        
+        String remittedTo = recovery.getRemitted();
+        remittedTo = remittedTo.replaceAll("[^a-zA-Z0-9 ]", "");
+        remittedTo = remittedTo.trim();
+        if(!remittedTo.isEmpty()) {
+        	recovery.setRemitted(remittedTo);
+        }else {
+        	msgs.add(messageSource.getMessage("msg.relation.name", null, remittedTo, null));
+        }
+        
+        String accountNumber = recovery.getAccountNumber();
+        if(accountNumber!= null) {
+        	accountNumber = accountNumber.replaceAll("[^a-zA-Z0-9]", "");
+            accountNumber = accountNumber.trim();
+            if(!accountNumber.isEmpty()) {
+            	recovery.setAccountNumber(accountNumber);
+            }else {
+            	msgs.add(messageSource.getMessage("msg.relation.name", null, accountNumber, null));
+            }
+        }
+        
+        String ifscCode = recovery.getIfscCode();
+        if(ifscCode!= null) {
+        	ifscCode = ifscCode.replaceAll("[^a-zA-Z0-9]", "");
+            ifscCode = ifscCode.trim();
+            if(!ifscCode.isEmpty()) {
+            	recovery.setIfscCode(ifscCode);
+            }else {
+            	msgs.add(messageSource.getMessage("msg.relation.name", null, ifscCode, null));
+            }
+        }
+        
+		return msgs;
+        
     }
 }
