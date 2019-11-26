@@ -199,6 +199,7 @@ public class SchemeAction extends BaseFormAction {
         try {
         	scheme.setLastModifiedDate(new Date());
         	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+        	validateSchemeDetails(scheme);
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in creating Scheme" ,e);
@@ -224,6 +225,7 @@ public class SchemeAction extends BaseFormAction {
         try {
         	scheme.setCreatedDate(new Date());
         	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+        	validateSchemeDetails(scheme);
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in create Scheme" ,e);
@@ -315,4 +317,33 @@ public class SchemeAction extends BaseFormAction {
         this.schemeService = schemeService;
     }
 
+    private void validateSchemeDetails(Scheme scheme) {
+    	String schemeName = scheme.getName();
+    	schemeName = schemeName.trim();
+    	if(!schemeName.isEmpty()) {
+    		schemeName = schemeName.replaceAll("[^a-zA-Z0-9 ]", "");
+    		schemeName = schemeName.trim();
+    		if(!schemeName.isEmpty()) {
+    			scheme.setName(schemeName);
+    		}else {
+    			throw new ValidationException(Arrays.asList(new ValidationError("Scheme Name : ","Please provide correct Scheme Name")));
+    		}    		
+    	}else {
+    		throw new ValidationException(Arrays.asList(new ValidationError("Scheme Name : ","Please provide correct Scheme Name")));
+    	}
+    	String schemeCode = scheme.getCode();
+    	schemeCode = schemeCode.trim();
+    	if(!schemeCode.isEmpty()) {
+    		schemeCode = schemeCode.replaceAll("[^a-zA-Z0-9 ]", "");
+    		schemeCode = schemeCode.trim();
+    		if(!schemeCode.isEmpty()) {
+    			scheme.setCode(schemeCode);
+    		}else {
+    			throw new ValidationException(Arrays.asList(new ValidationError("Scheme Code : ","Please provide correct Scheme Code")));
+    		}    		
+    	}else {
+    		throw new ValidationException(Arrays.asList(new ValidationError("Scheme Code : ","Please provide correct Scheme Code")));
+    	}
+    }
+    
 }
