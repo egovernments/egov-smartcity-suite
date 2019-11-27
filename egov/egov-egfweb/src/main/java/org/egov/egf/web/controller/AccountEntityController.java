@@ -50,6 +50,8 @@ package org.egov.egf.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.egov.commons.Bankbranch;
 import org.egov.commons.service.AccountEntityService;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.egf.web.adaptor.AccountEntityJsonAdaptor;
@@ -60,6 +62,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +71,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -102,6 +107,10 @@ public class AccountEntityController {
 			@Valid @ModelAttribute final AccountEntity accountEntity,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		List<String> errorMsgs = validateAccountEntityDetails(accountEntity);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ACCOUNTENTITY_NEW;
@@ -129,6 +138,10 @@ public class AccountEntityController {
 			@Valid @ModelAttribute final AccountEntity accountEntity,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		List<String> errorMsgs = validateAccountEntityDetails(accountEntity);
+    	for(String msgs : errorMsgs) {
+    		errors.addError(new ObjectError("message : ",msgs));
+    	}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ACCOUNTENTITY_EDIT;
@@ -182,4 +195,28 @@ public class AccountEntityController {
 		final String json = gson.toJson(object);
 		return json;
 	}
+	
+	 private List<String> validateAccountEntityDetails(final AccountEntity accountEntity){
+	    	List<String> msgs = new ArrayList<String>();
+	    	
+	        String accountEntityName = accountEntity.getName(); 
+	        accountEntityName = accountEntityName.replaceAll("[^a-zA-Z0-9 ]", "");
+	        accountEntityName = accountEntityName.trim();
+	        if(!accountEntityName.isEmpty()) {
+	        	accountEntity.setName(accountEntityName);	        	
+	        }else {
+	        	msgs.add(messageSource.getMessage("msg.account.entity.name", null, accountEntityName, null));
+	        }
+	                
+	        String accountEntityCode = accountEntity.getCode();
+	        accountEntityCode = accountEntityCode.replaceAll("[^a-zA-Z0-9 ]", "");
+	        accountEntityCode = accountEntityCode.trim();
+	        if(!accountEntityCode.isEmpty()) {
+	        	accountEntity.setCode(accountEntityCode);
+	        }else {
+	        	msgs.add(messageSource.getMessage("msg.relation.code", null, accountEntityCode, null));
+	        }
+			return msgs;
+	        
+	    }
 }
