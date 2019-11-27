@@ -165,4 +165,10 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.propertyIdentifier = :propertyId) ")
     List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(@Param("propertyId") String propertyId);
+    
+    @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.consumerCode = :consumerCode ")
+    List<WaterConnectionDetails> getAllConnectionDetailsByConsumerCode(@Param("consumerCode") String consumerCode);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connectionStatus not in ('INACTIVE') and wcd.connection.consumerCode =:consumerCode ")
+    WaterConnectionDetails findConnectionDetailsByConsumerCode(@Param("consumerCode") String consumerCode);
 }

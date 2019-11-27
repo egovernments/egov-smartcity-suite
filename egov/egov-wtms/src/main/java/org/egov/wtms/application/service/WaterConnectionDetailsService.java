@@ -405,9 +405,9 @@ public class WaterConnectionDetailsService {
 		return waterConnectionDetailsRepository.findByApplicationNumber(applicationNumber);
 	}
 
-	public WaterConnectionDetails findByConsumerCode(String consumerCode) {
-		return waterConnectionDetailsRepository.findByConnectionConsumerCode(consumerCode);
-	}
+    public WaterConnectionDetails findByConsumerCode(String consumerCode) {
+        return waterConnectionDetailsRepository.findConnectionDetailsByConsumerCode(consumerCode);
+    }
 
 	public WaterConnectionDetails load(Long id) {
 		return waterConnectionDetailsRepository.getOne(id);
@@ -1347,6 +1347,10 @@ public class WaterConnectionDetailsService {
 	public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(String propertyId) {
 		return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
 	}
+	
+    public List<WaterConnectionDetails> getAllConnectionDetailsByConsumerCode(String consumerCode) {
+        return waterConnectionDetailsRepository.getAllConnectionDetailsByConsumerCode(consumerCode);
+    }
 
 	/**
 	 * Method to push data for citizen portal inbox
