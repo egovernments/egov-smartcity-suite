@@ -245,6 +245,9 @@ public class DemandVoucherService {
         if (penalty.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        else
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         if (priorIncome.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
                     putAmountAndType(priorIncome.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
@@ -320,9 +323,13 @@ public class DemandVoucherService {
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
             demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance).abs());
-            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
-                    .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
-                    .abs());
+            if (isPenaltyCollectionApportioned(applicationDetails, normalizeDemandDetailsNew, normalizeDemandDetailsOld))
+                demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
+                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
+            else
+                demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
+                        .abs());
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
         }
@@ -573,5 +580,14 @@ public class DemandVoucherService {
             details.setAdvance(totalCollection);
 
         return details;
+    }
+
+    private boolean isPenaltyCollectionApportioned(Map<String, String> applicationDetails,
+            NormalizeDemandDetails normalizedDemandDetaiNew,
+            NormalizeDemandDetails normalizedDemandDetailOld) {
+        return applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
+                .equals(PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT) &&
+                normalizedDemandDetaiNew.getPenalty().subtract(normalizedDemandDetailOld.getPenaltyCollection())
+                        .compareTo(BigDecimal.ZERO) < 0;
     }
 }
