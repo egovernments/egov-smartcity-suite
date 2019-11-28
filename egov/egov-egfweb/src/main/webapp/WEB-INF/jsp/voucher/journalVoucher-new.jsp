@@ -83,6 +83,7 @@
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">Journal Voucher</div>
+			<form:errors style="color:red;"></form:errors>
 			<div id="listid" style="display: block">
 				<div align="center">
 					<font style='color: red; font-weight: bold'>

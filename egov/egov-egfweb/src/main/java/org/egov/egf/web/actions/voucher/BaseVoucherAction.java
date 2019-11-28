@@ -725,6 +725,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     next.setDebitAmountDetail(BigDecimal.ZERO);
                 if (next.getCreditAmountDetail() == null)
                     next.setCreditAmountDetail(BigDecimal.ZERO);
+                if(next.getCreditAmountDetail().intValue() < 0 || next.getDebitAmountDetail().intValue() < 0) {
+                	throw new ValidationException("Voucher creation failed", "Please provide correct amount.");
+                }
                 if ((next.getGlcodeDetail() == null || StringUtils.isEmpty(next.getGlcodeDetail()))
                         && (next.getFunctionDetail() == null || StringUtils.isEmpty(next.getFunctionDetail()))
                         && next.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0

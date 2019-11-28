@@ -192,7 +192,13 @@ public class JournalVoucherAction extends BaseVoucherAction {
         }
         String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
         String cutOffDate1 = null;
-        removeEmptyRowsAccoutDetail(billDetailslist);
+        try {
+        	removeEmptyRowsAccoutDetail(billDetailslist);
+        }catch(final ValidationException e) {
+        	addActionError(getText("Please provide correct amount"));
+        	return NEW;
+        }
+        
         removeEmptyRowsSubledger(subLedgerlist);
         target = "";
         // for manual voucher number.
