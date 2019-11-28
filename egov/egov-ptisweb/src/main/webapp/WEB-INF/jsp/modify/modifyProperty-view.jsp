@@ -106,7 +106,10 @@
 					action = 'modifyProperty-approve.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 					action = 'modifyProperty-reject.action';
-				}else if(state == 'Alter:Rejected to Cancel' || 'Bifurcate:Rejected to Cancel'){
+				}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT_TO_CANCEL}"/>') {
+					action = 'modifyProperty-rejecttocancel.action';
+				} 
+				else if((state == 'Alter:Rejected to Cancel' || state == 'Bifurcate:Rejected to Cancel') && (actionName == 'Preview' || actionName == 'Sign')){
 					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
 					if(actionName == 'Preview'){
 					 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
@@ -121,9 +124,7 @@
 								'_self','width=screen.width, height=screen.height, fullscreen=yes',false);
 						 return false;
 					}
-				}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT_TO_CANCEL}"/>') {
-					action = 'modifyProperty-rejecttocancel.action';
-				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
+				}else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'
 						|| actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_SIGN}"/>'){
 					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
 					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType='+noticeType+'&noticeMode=modify&actionType='+actionName;

@@ -54,6 +54,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FEE_COLLECTION_COMMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -75,6 +77,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.CFinancialYear;
@@ -730,5 +733,28 @@ public class WaterTaxCollection extends TaxCollection {
         receiptAmountInfo.setRevenueWard(revenueWard);
         return receiptAmountInfo;
     }
+    
+    @Override
+    public ReceiptCancellationInfo validateCancelReceipt(final String receiptNumber, final String consumerCode) {
+        ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+        List<WaterConnectionDetails> waterConnectionDetailsList = waterConnectionDetailsService
+                .getAllConnectionDetailsByConsumerCode(consumerCode);
+        if (waterConnectionDetailsList != null && !waterConnectionDetailsList.isEmpty()) {
+            for (WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
+                if (!APPLICATIONSTATUSCLOSED.equals(waterConnectionDetails.getState().getValue())
+                        && ((REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                                && waterConnectionDetails.getExecutionDate() != null)
+                                || CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
+                    receiptCancellationInfo.setCancellationAllowed(false);
+                    receiptCancellationInfo.setValidationMessage("User Cannot cancel the receipt as "
+                            + waterConnectionDetails.getApplicationType().getName() + " application is under workflow");
 
+                }
+            }
+        }
+        return receiptCancellationInfo;
+
+    }
 }
+
+    
