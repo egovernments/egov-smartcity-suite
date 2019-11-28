@@ -746,8 +746,8 @@ public class WaterTaxCollection extends TaxCollection {
                                 && waterConnectionDetails.getExecutionDate() != null)
                                 || CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
                     receiptCancellationInfo.setCancellationAllowed(false);
-                    receiptCancellationInfo.setValidationMessage(waterConnectionDetails.getApplicationType().getName()
-                            + " application is under workflow for the receipt");
+                    receiptCancellationInfo.setValidationMessage("User Cannot cancel the receipt as "
+                            + waterConnectionDetails.getApplicationType().getName() + " application is under workflow");
 
                 }
             }
