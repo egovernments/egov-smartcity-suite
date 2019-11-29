@@ -245,7 +245,7 @@ public class DemandVoucherService {
         if (penalty.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        else
+        if (penalty.compareTo(ZERO) < 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         if (priorIncome.compareTo(BigDecimal.ZERO) > 0)
@@ -588,6 +588,6 @@ public class DemandVoucherService {
         return applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
                 .equals(PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT) &&
                 normalizedDemandDetaiNew.getPenalty().subtract(normalizedDemandDetailOld.getPenaltyCollection())
-                        .compareTo(BigDecimal.ZERO) < 0;
+                        .compareTo(ZERO) < 0;
     }
 }
