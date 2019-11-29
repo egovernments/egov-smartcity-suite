@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Installment;
@@ -107,6 +108,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class DemandVoucherService {
+    private static final Logger LOGGER = Logger.getLogger(DemandVoucherService.class);
 
     private static final String AMOUNT_TYPE = "amountType";
     private static final String AMOUNT = "amount";
@@ -147,7 +149,7 @@ public class DemandVoucherService {
         if ("Y".equalsIgnoreCase(appConfigValue)) {
             Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationDetails);
             if (!voucherData.isEmpty()) {
-                System.out.println("Voucher Data-------------->" + voucherData);
+                LOGGER.error("Voucher Data-------------->" + voucherData);
                 CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
                         applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
                 persistPropertyDemandVoucher(newProperty, cvh);
