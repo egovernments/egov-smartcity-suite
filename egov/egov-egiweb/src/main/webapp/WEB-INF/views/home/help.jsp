@@ -70,33 +70,33 @@ $(document).ready(function(){
 
 function property(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
 }
 
 
 function water(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
 }
 
 function grievance(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
 }
 
 function council(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/council.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/council.pdf');
 }
 
 function lcms(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
 }
 
 function ntr(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
 }
 
 
