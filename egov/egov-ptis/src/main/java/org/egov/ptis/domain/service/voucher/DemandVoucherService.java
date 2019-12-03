@@ -244,12 +244,9 @@ public class DemandVoucherService {
         if (libraryCess.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
                     putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (penalty.compareTo(BigDecimal.ZERO) > 0 && !demandIncreased)
+        if (penalty.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
-                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        if (penalty.compareTo(BigDecimal.ZERO) > 0 && demandIncreased)
-            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
-                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), false));
         if (penalty.compareTo(ZERO) < 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
