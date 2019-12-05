@@ -59,6 +59,7 @@
   		 action="" cssClass="form-horizontal form-groups-bordered">
   			<input type="hidden" name="applicationNumber" value="${waterConnectionDetails.applicationNumber}" />
   			<input type="hidden" id="ulbMaterialValue" name="ulbMaterialValue" value="${waterConnectionDetails.ulbMaterial}" /> 
+			<input type="hidden" id="validationMessage" name="validationMessage" value="${validationMessage}" /> 
   			<div class="panel panel-primary">
   				<div class="panel-heading">
   					<c:if test="${mode=='success'}">

@@ -72,9 +72,12 @@ import org.egov.wtms.masters.entity.ConnectionAddress;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.reports.entity.ExecuteWaterConnectionAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -97,6 +100,10 @@ public class WaterConnectionMaterialDemandController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @GetMapping(value = "/search")
 	public String searchApplications(final Model model) {
@@ -136,9 +143,16 @@ public class WaterConnectionMaterialDemandController {
 
     @PostMapping(value = "/update/{applicationnumber}")
     public String updateApplicationDetails(@PathVariable("applicationnumber") final String applicationNumber,
-            @Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
-        model.addAttribute("message", connectionDemandService.updateUlbMaterial(applicationNumber, waterConnectionDetails));
-        model.addAttribute("mode", "success");
+            @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
+        if (waterConnectionDetails.getUlbMaterial() == null) {
+            model.addAttribute("ulbMaterialDropdownValues", Arrays.asList(YES, NO));
+            model.addAttribute("waterApplicationDetails", new WaterConnExecutionDetails());
+            model.addAttribute("validationMessage",
+                    messageSource.getMessage("err.validate.ulbmaterial", new String[] { "" }, null));
+        } else {
+            model.addAttribute("message", connectionDemandService.updateUlbMaterial(applicationNumber, waterConnectionDetails));
+            model.addAttribute("mode", "success");
+        }
         model.addAttribute("waterConnectionDetails", applicationNumber != null
                 ? waterConnectionDetailsService.findByApplicationNumber(applicationNumber) : waterConnectionDetails);
         return "material-demand-view-application";

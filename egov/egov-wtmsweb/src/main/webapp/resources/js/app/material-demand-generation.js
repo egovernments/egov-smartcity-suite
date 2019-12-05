@@ -56,7 +56,10 @@ jQuery(document).ready(function() {
 	}
 	
 	$('#itemDescription').css('height','auto');
-	
+	if ($('#validationMessage').val()) {
+		bootbox.alert($('#validationMessage').val());
+		return false;
+	}
 });
 
 $('#search').on("click", function() {
