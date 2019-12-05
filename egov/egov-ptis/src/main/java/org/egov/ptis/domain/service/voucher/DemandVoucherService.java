@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Installment;
@@ -107,6 +108,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class DemandVoucherService {
+    private static final Logger LOGGER = Logger.getLogger(DemandVoucherService.class);
 
     private static final String AMOUNT_TYPE = "amountType";
     private static final String AMOUNT = "amount";
@@ -147,7 +149,7 @@ public class DemandVoucherService {
         if ("Y".equalsIgnoreCase(appConfigValue)) {
             Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationDetails);
             if (!voucherData.isEmpty()) {
-                System.out.println("Voucher Data-------------->" + voucherData);
+                LOGGER.error("Voucher Data-------------->" + voucherData);
                 CVoucherHeader cvh = financialUtil.createVoucher(newProperty.getBasicProperty().getUpicNo(), voucherData,
                         applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
                 persistPropertyDemandVoucher(newProperty, cvh);
@@ -244,16 +246,19 @@ public class DemandVoucherService {
                     putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         if (penalty.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
-                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), false));
+        if (penalty.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         if (priorIncome.compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
                     putAmountAndType(priorIncome.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (arrearsTax.compareTo(BigDecimal.ZERO) > 0)
+        if (arrearsTax.abs().compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(ARREAR_TAX),
-                    putAmountAndType(arrearsTax.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        if (currentTax.compareTo(BigDecimal.ZERO) > 0)
+                    putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (currentTax.abs().compareTo(BigDecimal.ZERO) > 0)
             voucherDetails.put(glCodeMap.get(CURR_TAX),
-                    putAmountAndType(currentTax.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+                    putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
     }
 
     private Map<String, Object> putAmountAndType(BigDecimal amount, boolean demandIncreased) {
@@ -319,10 +324,14 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsNew.getVacantLandTax()).subtract(normalizeDemandDetailsNew
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance).abs());
-            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
-                    .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
-                    .abs());
+            demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance));
+            if (isPenaltyCollectionApportioned(applicationDetails, normalizeDemandDetailsNew, normalizeDemandDetailsOld))
+                demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
+                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
+            else
+                demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
+                        .abs());
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
         }
@@ -573,5 +582,14 @@ public class DemandVoucherService {
             details.setAdvance(totalCollection);
 
         return details;
+    }
+
+    private boolean isPenaltyCollectionApportioned(Map<String, String> applicationDetails,
+            NormalizeDemandDetails normalizedDemandDetaiNew,
+            NormalizeDemandDetails normalizedDemandDetailOld) {
+        return applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
+                .equals(PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT) &&
+                normalizedDemandDetaiNew.getPenalty().subtract(normalizedDemandDetailOld.getPenaltyCollection())
+                        .compareTo(ZERO) < 0;
     }
 }

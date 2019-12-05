@@ -54,6 +54,10 @@ html,body{
     position: absolute;
     height: calc(100%);
 }
+.padding-left-right{
+	padding-left: 15px;
+	padding-right: 15px;
+}
 </style>
 <script>
 $(document).ready(function(){
@@ -70,77 +74,167 @@ $(document).ready(function(){
 
 function property(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
 }
 
 
 function water(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
 }
 
 function grievance(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
 }
 
 function council(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/council.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/council.pdf');
 }
 
 function lcms(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
 }
 
 function ntr(src){
 	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
+}
+function eis(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/eis.pdf');
+}
+function fin(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/fin.pdf');
+}
+function tl(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/tl.pdf');
+}
+function coll(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/coll.pdf');
+}
+function asset(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/asset.pdf');
+}
+function lest(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/lest.pdf');
+}
+function advtx(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/advtx.pdf');
+}
+function mrgreg(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/mrgreg.pdf');
 }
 
+function swtx(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/swtx.pdf');
+}
 
 </script>
 <div class="row text-center" style="height:calc(100%);">
 
 	<div class="citizen-screens tabs tabs-style-topline">
 		<nav>
-			<ul>
+			<ul style="overflow:auto;">
 				<li class="tab-current-newreq source" data-src="property" tooltip="Property and Vacant Land Tax">
 					<a href="javascript:void(0);">
 						<div class="text-center"><i class="fa fa-building-o"></i></div>
-						<span class="hidden-xs">Property and Vacant Land Tax</span>
+						<span class="hidden-xs padding-left-right">Property and Vacant Land Tax</span>
 					</a>
 				</li>
 				<li class="source" data-src="water">
 					<a href="javascript:void(0);">
 						<div class="text-center"><i class="fa fa-tint"></i></div>
-						<span class="hidden-xs">Water Charges</span>
+						<span class="hidden-xs padding-left-right">Water Charges</span>
 					</a>
 				</li>
 				<li class="source" data-src="grievance">
 					<a href="javascript:void(0);">
 						<div class="text-center"><i class="fa fa-pencil"></i></div>
-						<span class="hidden-xs">Public Grievance and Redressal System</span>
+						<span class="hidden-xs padding-left-right">Public Grievance and Redressal System</span>
 					</a>
 				</li>
-				<li class="source" data-src="council"><a
-					href="javascript:void(0);">
-						<div class="text-center">
-							<i class="fa fa-university"></i>
-						</div> <span class="hidden-xs">Council Management</span>
-				</a></li>
 				<li class="source" data-src="lcms"><a
 					href="javascript:void(0);">
 						<div class="text-center">
-							<i class="fa fa-university"></i>
-						</div> <span class="hidden-xs">Legal Case Management</span>
+							<i class="fa fa-gavel"></i>
+						</div> <span class="hidden-xs padding-left-right">Legal Case Management</span>
 				</a></li>
 				<li class="source" data-src="ntr"><a
 					href="javascript:void(0);">
 						<div class="text-center">
 							<i class="fa fa-university"></i>
-						</div> <span class="hidden-xs">Non Tax Revenue</span>
+						</div> <span class="hidden-xs padding-left-right">Non Tax Revenue</span>
+				</a></li>
+				<li class="source" data-src="fin"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-money"></i>
+						</div> <span class="hidden-xs padding-left-right">Finance Management</span>
+				</a></li>
+				<li class="source" data-src="eis"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-user"></i>
+						</div> <span class="hidden-xs padding-left-right">Employee Management</span>
+				</a></li>
+				<li class="source" data-src="tl"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-outdent"></i>
+						</div> <span class="hidden-xs padding-left-right">Trade License</span>
+				</a></li>
+				<li class="source" data-src="coll"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-inr"></i>
+						</div> <span class="hidden-xs padding-left-right">Collections</span>
+				</a></li>
+				<li class="source" data-src="asset"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-shopping-bag"></i>
+						</div> <span class="hidden-xs padding-left-right">Asset</span>
+				</a></li>
+				<li class="source" data-src="lest"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-building-o"></i>
+						</div> <span class="hidden-xs padding-left-right">Leases & Agreements</span>
+				</a></li>
+				<li class="source" data-src="advtx"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-adn"></i>
+						</div> <span class="hidden-xs padding-left-right">Advertisement Tax</span>
+				</a></li>
+				<li class="source" data-src="council"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-connectdevelop"></i>
+						</div> <span class="hidden-xs padding-left-right">Council Management</span>
+				</a></li>
+				<li class="source" data-src="mrgreg"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-registered"></i>
+						</div> <span class="hidden-xs padding-left-right">Marriage Registration</span>
+				</a></li>
+				<li class="source" data-src="swtx"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-ticket"></i>
+						</div> <span class="hidden-xs padding-left-right">Sewerage Tax</span>
 				</a></li>
 			</ul>
 		</nav>
