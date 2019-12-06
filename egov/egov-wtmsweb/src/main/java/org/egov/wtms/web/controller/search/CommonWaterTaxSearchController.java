@@ -92,6 +92,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_AP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
@@ -341,7 +342,8 @@ public class CommonWaterTaxSearchController {
             } else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTION))
+                    || waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(REGULARIZE_CONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/close/" + waterConnectionDetails.getConnection().getConsumerCode();
             else 
