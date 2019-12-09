@@ -104,10 +104,7 @@ public class MicroserviceBillingUtil {
         try {
             receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
 		} catch (final Exception e) {
-			
-			final String rollBackUrl = collectionApplicationProperties.getLamsServiceUrl()
-					.concat(collectionApplicationProperties.getRollBackDemandUrl(serviceCode.toLowerCase()));
-			microserviceCollectionUtil.rollBackDemand(rollBackUrl, billReceiptInfoReq);
+
 			final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
 					+ billReceipt.getBillReferenceNum() + "]!";
 			LOGGER.error(errMsg, e);
