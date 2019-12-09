@@ -69,6 +69,7 @@ public class WaterChargesDetails {
     private BigDecimal halfYearlyTax;
     private String applicationNumber;
     private String applicationDate;
+    private boolean closerInprogress;
 
     public String getConnectionStatus() {
         return connectionStatus;
@@ -220,6 +221,14 @@ public class WaterChargesDetails {
 
     public void setApplicationDate(String applicationDate) {
         this.applicationDate = applicationDate;
+    }
+    
+    public boolean isCloserInprogress() {
+        return closerInprogress;
+    }
+
+    public void setCloserInprogress(boolean closerInprogress) {
+        this.closerInprogress = closerInprogress;
     }
 
 }

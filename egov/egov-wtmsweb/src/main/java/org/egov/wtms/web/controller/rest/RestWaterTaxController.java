@@ -150,4 +150,12 @@ public class RestWaterTaxController {
             throws JsonGenerationException, JsonMappingException, IOException {
        return connectionDetailService.getValueByModuleType();
     }
+    
+	@RequestMapping(value = {
+			"rest/watertax/getClosureStatus/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+	public WaterChargesDetails getCloserStatus(@PathVariable final String assessmentNumber)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		return connectionDetailService.getCloserStatusByPropertyId(assessmentNumber);
+	}
+	
 }
