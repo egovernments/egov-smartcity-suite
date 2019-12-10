@@ -51,7 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum TransactionStatus {
 
-    SUCCESS, FAILED;
+    INITIATED, SUCCESS, FAILED;
     @Override
     public String toString() {
         return StringUtils.capitalize(name());
