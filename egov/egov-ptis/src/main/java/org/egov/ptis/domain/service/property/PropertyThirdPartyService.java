@@ -51,11 +51,16 @@ package org.egov.ptis.domain.service.property;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.infra.event.WSApplicationEventPublisher;
+import org.egov.infra.event.model.WSApplicationDetails;
+import org.egov.infra.event.model.enums.ApplicationStatus;
+import org.egov.infra.event.model.enums.TransactionStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -63,6 +68,7 @@ import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +88,12 @@ public class PropertyThirdPartyService {
 
     @Autowired
     private PropertyTransferService transferOwnerService;
+    
+    @Autowired
+    private PropertyPersistenceService basicPropertyService;
+    
+    @Autowired
+    private WSApplicationEventPublisher wsApplicationEventPublisher;
 
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
@@ -271,5 +283,27 @@ public class PropertyThirdPartyService {
     public void setPersistenceService(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
+    
+	@Transactional
+	public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
+			final String transactionId) {
+		try {
+			basicPropertyService.persist(basicProperty);
+			wsApplicationEventPublisher
+					.publishEvent(WSApplicationDetails.builder().withApplicationNumber(property.getApplicationNo())
+							.withViewLink(WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
+									.concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT))
+							.withTransactionStatus(TransactionStatus.SUCCESS)
+							.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Property created.")
+							.withTransactionId(transactionId).build());
+
+		} catch (Exception ex) {
+
+			LOGGER.error("exception while saving basic proeprty", ex);
+			wsApplicationEventPublisher.publishEvent(WSApplicationDetails.builder().withTransactionId(transactionId)
+					.withTransactionStatus(TransactionStatus.FAILED).withRemark("Property creation failed.").build());
+		}
+	}
+    
 
 }

@@ -97,6 +97,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE_VALUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_INPROGRESS;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -191,6 +195,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -322,6 +327,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private boolean citizenPortalUser;
     private Boolean isDataEntryOperator = Boolean.FALSE;
+    private boolean isWardSecretaryUser;
     private String indexNumber;
     private String modifyRsn;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
@@ -338,6 +344,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
+    private String wsTransactionId;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -369,6 +376,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @Autowired
     private DemandVoucherService demandVoucherService;
     
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService;
+    
+
     public CreatePropertyAction() {
         super();
         property.setPropertyDetail(new BuiltUpProperty());
@@ -398,9 +409,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-newForm")
     public String newForm() {
-
+    	final HttpServletRequest request = ServletActionContext.getRequest();
         if (loggedUserIsMeesevaUser) {
-            final HttpServletRequest request = ServletActionContext.getRequest();
+            
             if (request.getParameter("applicationNo") == null || request.getParameter(MEESEVA_SERVICE_CODE) == null) {
                 addActionMessage(getText("MEESEVA.005"));
                 return RESULT_ERROR;
@@ -413,7 +424,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
-        }
+		} else if (isWardSecretaryUser) {
+			if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+					|| request.getParameter(WARDSECRETARY_SOURCE_CODE_VALUE) == null) {
+				addActionMessage(getText("WS.001"));
+				return RESULT_ERROR;
+			} else {
+				if (WARDSECRETARY_SOURCE_CODE_VALUE.equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
+					getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+				wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+			}
+
+		}
         showCalculateTaxButton();
         return RESULT_NEW;
     }
@@ -438,6 +460,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
+        }
+        if(isWardSecretaryUser){
+        	property.setSource(Source.WARDSECRETARY.toString());	
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
@@ -468,10 +493,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // this should be appending to messgae
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
-        if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
-            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+		if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
+			basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+		else if (isWardSecretaryUser)
+			basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
+
         propService.processAndStoreDocument(property.getAssessmentDocuments());
-        if (!loggedUserIsMeesevaUser)
+        
+        if(isWardSecretaryUser){
+        	propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty,property,wsTransactionId);
+        }else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -1097,6 +1128,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
         isDataEntryOperator = propService.isDataEntryOperator(securityUtils.getCurrentUser());
+        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
+
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
