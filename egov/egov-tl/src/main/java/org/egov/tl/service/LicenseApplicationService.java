@@ -131,9 +131,6 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public TradeLicense create(TradeLicense license, WorkflowBean workflowBean) {
-        if (Boolean.TRUE) {
-            throw new ValidationException("TL-009", "TL-009");
-        }
         Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().toDate())
                 .getFromDate();
         Date toRange = installmentDao
