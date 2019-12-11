@@ -100,7 +100,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     @Transactional
-    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean) {
+    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
         try {
             license = create(license, wfBean);
             wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
@@ -110,14 +110,15 @@ public class LicenseApplicationService extends TradeLicenseService {
                     .withTransactionStatus(TransactionStatus.SUCCESS)
                     .withApplicationStatus(ApplicationStatus.INPROGRESS)
                     .withRemark("License created")
-                    .withTransactionId("")
+                    .withTransactionId(tpTransactionId)
                     .build());
 
         } catch (Exception e) {
             wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
                     .withTransactionStatus(TransactionStatus.FAILED)
                     .withRemark("License creation failed")
-                    .withTransactionId("")
+                    .withTransactionId(tpTransactionId)
+                    .withRemark(e.toString())
                     .build());
         }
         return license;
@@ -130,6 +131,9 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public TradeLicense create(TradeLicense license, WorkflowBean workflowBean) {
+        if (Boolean.TRUE) {
+            throw new ValidationException("TL-009", "TL-009");
+        }
         Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().toDate())
                 .getFromDate();
         Date toRange = installmentDao

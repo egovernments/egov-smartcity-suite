@@ -187,6 +187,8 @@ public final class Constants {
             .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
     
     public static final String VIEW_LINK ="%s/tl/license/show/%s";
+    public static final String WARDSECRETARY_REQUEST_PARAM_SOURCE="source";
+    public static final String WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID="transactionId";
 
     private Constants() {
         // only invariants

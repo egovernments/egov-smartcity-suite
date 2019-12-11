@@ -48,10 +48,50 @@
 
 package org.egov.tl.web.actions;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.SPACE;
+import static org.egov.tl.utils.Constants.ACKNOWLEDGEMENT;
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.BEFORE_RENEWAL;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONCANCEL;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.BUTTONGENERATEDCERTIFICATE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.DROPDOWN_AREA_LIST_LICENSE;
+import static org.egov.tl.utils.Constants.DROPDOWN_AREA_LIST_LICENSEE;
+import static org.egov.tl.utils.Constants.DROPDOWN_DIVISION_LIST_LICENSE;
+import static org.egov.tl.utils.Constants.DROPDOWN_DIVISION_LIST_LICENSEE;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+import static org.egov.tl.utils.Constants.GENERATE_PROVISIONAL_CERTIFICATE;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.REPORT_PAGE;
+import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.WARDSECRETARY_REQUEST_PARAM_SOURCE;
+import static org.egov.tl.utils.Constants.WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID;
+import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
+import static org.egov.tl.utils.Constants.WF_PREVIEW_BUTTON;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -85,20 +125,6 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.SPACE;
-import static org.egov.tl.utils.Constants.*;
 
 @ParentPackage("egov")
 @Results({
@@ -183,9 +209,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+        } else if (tradeLicenseService.currentUserIsWardSecretary() &&
+                Source.WARDSECRETARY.toString().equals(request.get(WARDSECRETARY_REQUEST_PARAM_SOURCE))) {
             license.setApplicationNumber(getApplicationNo());
-            licenseApplicationService.createWithWardSecretary(license, workflowBean);
+            license.setApplicationSource(Source.WARDSECRETARY.toString());
+            licenseApplicationService.createWithWardSecretary(license, workflowBean,
+                    request.get(WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID).toString());
         } else {
             licenseApplicationService.create(license, workflowBean);
             setMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
