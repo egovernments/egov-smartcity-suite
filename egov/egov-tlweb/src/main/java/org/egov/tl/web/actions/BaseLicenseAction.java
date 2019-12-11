@@ -102,17 +102,16 @@ import static org.egov.tl.utils.Constants.*;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
-                "/integration", "method", "renew"}),
-        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = {"namespace",
-                "/viewtradelicense", "method", "showForApproval"}),
-        @Result(name = "tl_generateCertificate", type = "redirectAction",
-                location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
+        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = { "namespace",
+                "/integration", "method", "renew" }),
+        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = { "namespace",
+                "/viewtradelicense", "method", "showForApproval" }),
+        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
         @Result(name = APPROVE_PAGE, location = "newTradeLicense-new.jsp"),
         @Result(name = REPORT_PAGE, location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
-        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
-                params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
+        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect", params = {
+                "prependServletContext", "false", "transactionServiceNumber", "${applicationNo}" }) })
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     protected static final String WF_INPROGRESS_ERROR_CODE = "WF.INPROGRESS";
@@ -184,6 +183,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
+        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+            license.setApplicationNumber(getApplicationNo());
+            licenseApplicationService.createWithWardSecretary(license, workflowBean);
         } else {
             licenseApplicationService.create(license, workflowBean);
             setMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
@@ -307,8 +309,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     /**
-     * should be called from the second level only Approve will not end workflow
-     * instead it sends to the creator in approved state
+     * should be called from the second level only Approve will not end workflow instead it sends to the creator in approved state
      */
     public void processWorkflow() {
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
@@ -493,8 +494,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void addNewDocuments() {
         licenseDocument.removeIf(document -> document.getUploadsFileName().isEmpty());
-        licenseDocument.forEach(document ->
-                document.setType(tradeLicenseService.getLicenseDocumentType(document.getType().getId())));
+        licenseDocument
+                .forEach(document -> document.setType(tradeLicenseService.getLicenseDocumentType(document.getType().getId())));
         license().getDocuments().addAll(licenseDocument);
     }
 
@@ -508,7 +509,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         else if (getModel().hasState())
             if (getModel().isNewWorkflow())
                 validActions.addAll(this.customizedWorkFlowService.getNextValidActions(getModel()
-                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
                         getPendingActions(), getModel().getCreatedDate(),
                         "%" + license().getCurrentState().getOwnerPosition()
@@ -531,7 +532,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             return false;
         else
             return this.customizedWorkFlowService.getWfMatrix(getModel()
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                    .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                     getAdditionalRule(), getModel().getCurrentState().getValue(),
                     getPendingActions(), new Date(), getCurrentDesignation()).isForwardEnabled();
 
@@ -540,7 +541,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String getEnabledFields() {
         if (getModel().hasState()) {
             WorkFlowMatrix workFlowMatrix = this.customizedWorkFlowService.getWfMatrix(getModel()
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                    .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                     getAdditionalRule(), getModel().getCurrentState().getValue(),
                     this.getPendingActions(), getModel().getCreatedDate(),
                     "%" + license().getCurrentState().getOwnerPosition()
@@ -589,8 +590,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (!supportDocs.isEmpty() && supportDocs.stream().anyMatch(document -> document.getUploads().isEmpty()) &&
                 (existingDocs.isEmpty()
                         || !supportDocType.stream().filter(
-                        licenseDocumentType -> !existingDocsType.contains(licenseDocumentType))
-                        .collect(Collectors.toList()).isEmpty())) {
+                                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType))
+                                .collect(Collectors.toList()).isEmpty())) {
             throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
         }
     }

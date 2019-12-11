@@ -48,18 +48,7 @@
 
 package org.egov.tl.service;
 
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.UUID;
-
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -73,6 +62,25 @@ import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.VIEW_LINK;
+
+import java.util.Date;
+import java.util.UUID;
+
+import org.apache.struts2.ServletActionContext;
+import org.egov.infra.event.WSApplicationEventPublisher;
+import org.egov.infra.event.model.WSApplicationDetails;
+import org.egov.infra.event.model.enums.ApplicationStatus;
+import org.egov.infra.event.model.enums.TransactionStatus;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.WorkflowBean;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
@@ -83,9 +91,36 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
+    @Autowired
+    private WSApplicationEventPublisher wSApplicationEventPublisher;
+
     @Transactional
     public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
         return create(license, wfBean);
+    }
+
+    @Transactional
+    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean) {
+        try {
+            license = create(license, wfBean);
+            wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+                    .withApplicationNumber(license.getApplicationNumber())
+                    .withViewLink(format(VIEW_LINK,
+                            WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), license.getUid()))
+                    .withTransactionStatus(TransactionStatus.SUCCESS)
+                    .withApplicationStatus(ApplicationStatus.INPROGRESS)
+                    .withRemark("License created")
+                    .withTransactionId("")
+                    .build());
+
+        } catch (Exception e) {
+            wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+                    .withTransactionStatus(TransactionStatus.FAILED)
+                    .withRemark("License creation failed")
+                    .withTransactionId("")
+                    .build());
+        }
+        return license;
     }
 
     @Transactional
