@@ -211,7 +211,6 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else if (tradeLicenseService.currentUserIsWardSecretary() &&
                 Source.WARDSECRETARY.toString().equals(request.get(WARDSECRETARY_REQUEST_PARAM_SOURCE))) {
-            license.setApplicationNumber(getApplicationNo());
             license.setApplicationSource(Source.WARDSECRETARY.toString());
             licenseApplicationService.createWithWardSecretary(license, workflowBean,
                     request.get(WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID).toString());
