@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -196,6 +197,10 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.event.WSApplicationEventPublisher;
+import org.egov.infra.event.model.WSApplicationDetails;
+import org.egov.infra.event.model.enums.ApplicationStatus;
+import org.egov.infra.event.model.enums.TransactionStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -249,6 +254,7 @@ import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -392,6 +398,9 @@ public class WaterConnectionDetailsService {
 	@Autowired
 	@Qualifier("workflowService")
 	private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
+	
+	@Autowired
+    private WSApplicationEventPublisher wSApplicationEventPublisher;
 
 	public WaterConnectionDetails findBy(Long waterConnectionId) {
 		return waterConnectionDetailsRepository.findOne(waterConnectionId);
@@ -1911,5 +1920,26 @@ public class WaterConnectionDetailsService {
 		if (appConfig != null && !appConfig.getConfValues().isEmpty())
 			value = appConfig.getConfValues().get(0).getValue().toString();
 		return value;
+	}
+	
+	@Transactional
+	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
+		try {
+			createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
+					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+			wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+					.withApplicationNumber(waterConnectionDetails.getApplicationNumber())
+					.withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
+							waterConnectionDetails.getApplicationNumber()))
+					.withTransactionStatus(TransactionStatus.SUCCESS)
+					.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Water connection created")
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
+
+		} catch (Exception e) {
+			wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+					.withTransactionStatus(TransactionStatus.FAILED).withRemark("Water connection creation failed")
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
+		}
 	}
 }

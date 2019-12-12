@@ -482,5 +482,7 @@ public class WaterTaxConstants {
             add(RECONNECTION);
         }
     };
+    public static final String WARDSECRETARY_OPERATOR_ROLE = "WardSecretary Operator";
+    public static final String VIEW_LINK ="%s/wtms/application/view/%s";
 
 }
