@@ -46,12 +46,12 @@
  *
  */
 
-package org.egov.infra.event.model;
+package org.egov.infra.integration.event.model;
 
-import org.egov.infra.event.model.enums.ApplicationStatus;
-import org.egov.infra.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 
-public class WSApplicationDetails {
+public class ApplicationDetails {
 
     private static final long serialVersionUID = 1L;
     private String transactionId;
@@ -61,7 +61,7 @@ public class WSApplicationDetails {
     private ApplicationStatus applicationStatus;
     private String viewLink;
 
-    private WSApplicationDetails() {
+    private ApplicationDetails() {
 
     }
 
@@ -111,8 +111,8 @@ public class WSApplicationDetails {
             return this;
         }
 
-        public WSApplicationDetails build() {
-            final WSApplicationDetails wSApplicationDetails = new WSApplicationDetails();
+        public ApplicationDetails build() {
+            final ApplicationDetails wSApplicationDetails = new ApplicationDetails();
             wSApplicationDetails.transactionId = this.transactionId;
             wSApplicationDetails.transactionStatus = this.transactionStatus;
             wSApplicationDetails.remark = this.remark;
@@ -123,8 +123,6 @@ public class WSApplicationDetails {
         }
 
     }
-
-    
 
     public String getTransactionId() {
         return transactionId;

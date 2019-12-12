@@ -45,23 +45,15 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.infra.integration.event.model.enums;
 
-package org.egov.infra.event.model;
+import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.context.ApplicationEvent;
+public enum TransactionStatus {
 
-public class WSApplicationEvent extends ApplicationEvent {
-
-    private static final long serialVersionUID = 1L;
-    private final WSApplicationDetails wSApplicationDetails;
-
-    public WSApplicationEvent(final Object source, final WSApplicationDetails wSApplicationDetails) {
-        super(source);
-        this.wSApplicationDetails = wSApplicationDetails;
+    INITIATED, SUCCESS, FAILED;
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
     }
-
-    public WSApplicationDetails getwSApplicationDetails() {
-        return wSApplicationDetails;
-    }
-
 }

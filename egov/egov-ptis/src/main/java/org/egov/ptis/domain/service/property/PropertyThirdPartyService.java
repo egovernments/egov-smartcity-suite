@@ -48,15 +48,44 @@
 
 package org.egov.ptis.domain.service.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_END;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.infra.event.WSApplicationEventPublisher;
-import org.egov.infra.event.model.WSApplicationDetails;
-import org.egov.infra.event.model.enums.ApplicationStatus;
-import org.egov.infra.event.model.enums.TransactionStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -70,13 +99,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 public class PropertyThirdPartyService {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyThirdPartyService.class);
@@ -88,12 +110,12 @@ public class PropertyThirdPartyService {
 
     @Autowired
     private PropertyTransferService transferOwnerService;
-    
+
     @Autowired
     private PropertyPersistenceService basicPropertyService;
-    
+
     @Autowired
-    private WSApplicationEventPublisher wsApplicationEventPublisher;
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
@@ -123,9 +145,9 @@ public class PropertyThirdPartyService {
             }
 
         } else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
-                ptNotice = (PtNotice) persistenceService.find(
-                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
-                        NOTICE_TYPE_EXEMPTION);
+            ptNotice = (PtNotice) persistenceService.find(
+                    "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
+                    NOTICE_TYPE_EXEMPTION);
         }
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
@@ -284,31 +306,31 @@ public class PropertyThirdPartyService {
         this.persistenceService = persistenceService;
     }
 
-	@Transactional
-	public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
-			final String transactionId) {
-		try {
-			basicPropertyService.persist(basicProperty);
-			String viewURL = WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
-					.concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT);
-			wsApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.SUCCESS,
-					property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created."));
+    @Transactional
+    public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
+            final String transactionId) {
+        try {
+            basicPropertyService.persist(basicProperty);
+            String viewURL = WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
+                    .concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT);
+            thirdPartyApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created."));
 
-		} catch (Exception ex) {
+        } catch (Exception ex) {
 
-			LOGGER.error("exception while saving basic proeprty", ex);
-			wsApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.FAILED,
-					property.getApplicationNo(), null, null, "Property Creation Failed."));
-		}
-	}
+            LOGGER.error("exception while saving basic proeprty", ex);
+            thirdPartyApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, "Property Creation Failed."));
+        }
+    }
 
-	private WSApplicationDetails prepareWSPublishEvent(final String transactionId,
-			final TransactionStatus transactionStatus, final String applicationNo,
-			final ApplicationStatus applicationStatus, final String viewLink, final String remarks) {
-		return WSApplicationDetails.builder().withApplicationNumber(applicationNo).withViewLink(viewLink)
-				.withTransactionStatus(transactionStatus).withApplicationStatus(applicationStatus).withRemark(remarks)
-				.withTransactionId(transactionId).build();
+    private ApplicationDetails prepareWSPublishEvent(final String transactionId,
+            final TransactionStatus transactionStatus, final String applicationNo,
+            final ApplicationStatus applicationStatus, final String viewLink, final String remarks) {
+        return ApplicationDetails.builder().withApplicationNumber(applicationNo).withViewLink(viewLink)
+                .withTransactionStatus(transactionStatus).withApplicationStatus(applicationStatus).withRemark(remarks)
+                .withTransactionId(transactionId).build();
 
-	}
+    }
 
 }

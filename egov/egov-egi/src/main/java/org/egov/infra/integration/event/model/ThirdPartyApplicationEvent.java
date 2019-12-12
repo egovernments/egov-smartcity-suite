@@ -46,21 +46,22 @@
  *
  */
 
-package org.egov.infra.event;
+package org.egov.infra.integration.event.model;
 
-import org.egov.infra.event.model.WSApplicationDetails;
-import org.egov.infra.event.model.WSApplicationEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
+import org.springframework.context.ApplicationEvent;
 
-@Service
-public class WSApplicationEventPublisher {
+public class ThirdPartyApplicationEvent extends ApplicationEvent {
 
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private static final long serialVersionUID = 1L;
+    private final ApplicationDetails wSApplicationDetails;
 
-    public void publishEvent(final WSApplicationDetails wsApplicationDetails) {
-        applicationEventPublisher.publishEvent(new WSApplicationEvent(this, wsApplicationDetails));
+    public ThirdPartyApplicationEvent(final Object source, final ApplicationDetails wSApplicationDetails) {
+        super(source);
+        this.wSApplicationDetails = wSApplicationDetails;
     }
+
+    public ApplicationDetails getwSApplicationDetails() {
+        return wSApplicationDetails;
+    }
+
 }

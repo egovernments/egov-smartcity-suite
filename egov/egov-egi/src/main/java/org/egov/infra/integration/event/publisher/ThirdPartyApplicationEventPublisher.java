@@ -45,16 +45,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.infra.event.model.enums;
 
-import org.apache.commons.lang3.StringUtils;
+package org.egov.infra.integration.event.publisher;
 
-public enum ApplicationStatus {
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.ThirdPartyApplicationEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
-    INPROGRESS, REJECTED, APPROVED;
+@Service
+public class ThirdPartyApplicationEventPublisher {
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    public void publishEvent(final ApplicationDetails wsApplicationDetails) {
+        applicationEventPublisher.publishEvent(new ThirdPartyApplicationEvent(this, wsApplicationDetails));
     }
 }

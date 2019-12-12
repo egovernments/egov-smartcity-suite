@@ -45,13 +45,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.infra.event.model.enums;
+package org.egov.infra.integration.event.model.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-public enum TransactionStatus {
+public enum ApplicationStatus {
 
-    INITIATED, SUCCESS, FAILED;
+    INPROGRESS, REJECTED, APPROVED;
+
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

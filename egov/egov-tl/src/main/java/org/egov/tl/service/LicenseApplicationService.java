@@ -69,10 +69,10 @@ import java.util.UUID;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.entity.Source;
-import org.egov.infra.event.WSApplicationEventPublisher;
-import org.egov.infra.event.model.WSApplicationDetails;
-import org.egov.infra.event.model.enums.ApplicationStatus;
-import org.egov.infra.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -93,7 +93,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Autowired
-    private WSApplicationEventPublisher wSApplicationEventPublisher;
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     @Transactional
     public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
@@ -105,7 +105,7 @@ public class LicenseApplicationService extends TradeLicenseService {
         try {
             license.setApplicationSource(Source.WARDSECRETARY.toString());
             license = create(license, wfBean);
-            wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
                     .withApplicationNumber(license.getApplicationNumber())
                     .withViewLink(format(VIEW_LINK,
                             WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), license.getUid()))
@@ -116,7 +116,7 @@ public class LicenseApplicationService extends TradeLicenseService {
                     .build());
 
         } catch (Exception e) {
-            wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
+            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
                     .withTransactionStatus(TransactionStatus.FAILED)
                     .withRemark("License creation failed")
                     .withTransactionId(tpTransactionId)
