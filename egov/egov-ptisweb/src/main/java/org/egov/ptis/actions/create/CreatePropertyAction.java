@@ -89,18 +89,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE_VALUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_INPROGRESS;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -218,7 +216,7 @@ import com.google.gson.GsonBuilder;
         @Result(name = CreatePropertyAction.PRINT_ACK, location = "create/createProperty-printAck.jsp"),
         @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp"),
-        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp")})
+        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp") })
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final String REJECT_ERROR_INITIATOR_INACTIVE = "reject.error.initiator.inactive";
@@ -246,7 +244,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     transient PropertyPersistenceService basicPropertyService;
     @Autowired
     transient APTaxCalculator taxCalculator;
-    
+
     private Long zoneId;
     private Long wardId;
     private Long blockId;
@@ -322,7 +320,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient PropertySurveyService propertySurveyService;
     @Autowired
     private transient NoticeService noticeService;
-    
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private boolean citizenPortalUser;
@@ -354,31 +351,30 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
-    
+
     @Autowired
     private transient ReassignService reassignmentservice;
-    
+
     @Autowired
     private transient WoodTypeRepository woodTypeRepository;
-    
+
     @Autowired
     private transient WallTypeRepository wallTypeRepository;
-    
+
     @Autowired
     private transient RoofTypeRepository roofTypeRepository;
 
     @Autowired
     private transient FloorTypeRepository floorTypeRepository;
-    
+
     @PersistenceContext
     private transient EntityManager entityManager;
-    
+
     @Autowired
     private DemandVoucherService demandVoucherService;
-    
+
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
-    
 
     public CreatePropertyAction() {
         super();
@@ -409,9 +405,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-newForm")
     public String newForm() {
-    	final HttpServletRequest request = ServletActionContext.getRequest();
+        final HttpServletRequest request = ServletActionContext.getRequest();
         if (loggedUserIsMeesevaUser) {
-            
+
             if (request.getParameter("applicationNo") == null || request.getParameter(MEESEVA_SERVICE_CODE) == null) {
                 addActionMessage(getText("MEESEVA.005"));
                 return RESULT_ERROR;
@@ -424,18 +420,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
-		} else if (isWardSecretaryUser) {
-			if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
-					|| request.getParameter(WARDSECRETARY_SOURCE_CODE_VALUE) == null) {
-				addActionMessage(getText("WS.001"));
-				return RESULT_ERROR;
-			} else {
-				if (WARDSECRETARY_SOURCE_CODE_VALUE.equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
-					getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
-				wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-			}
+        } else if (isWardSecretaryUser) {
+            if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+                    || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            } else {
+                if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
+                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+                wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+            }
 
-		}
+        }
         showCalculateTaxButton();
         return RESULT_NEW;
     }
@@ -461,8 +457,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
-        if(isWardSecretaryUser){
-        	property.setSource(Source.WARDSECRETARY.toString());	
+        if (isWardSecretaryUser) {
+            property.setSource(Source.WARDSECRETARY.toString());
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
@@ -493,16 +489,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // this should be appending to messgae
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
-		if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
-			basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-		else if (isWardSecretaryUser)
-			basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
+        if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
+            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+        else if (isWardSecretaryUser)
+            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
 
         propService.processAndStoreDocument(property.getAssessmentDocuments());
-        
-        if(isWardSecretaryUser){
-        	propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty,property,wsTransactionId);
-        }else if (!loggedUserIsMeesevaUser)
+
+        if (isWardSecretaryUser) {
+            propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property, wsTransactionId);
+        } else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -560,7 +556,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private PropertyImpl createNonVacantProperty(final Character status, final BasicProperty nonVacantBasicProperty)
             throws TaxCalculatorExeption {
         final PropertyImpl nonVacantProperty = createAppurTenantProperty(status, nonVacantBasicProperty, Boolean.TRUE);
-        if (!property.getDocuments().isEmpty()){
+        if (!property.getDocuments().isEmpty()) {
             nonVacantProperty.setDocuments(property.getDocuments());
             propService.processAndStoreDocument(nonVacantProperty.getDocuments());
         }
@@ -799,7 +795,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         transactionType = APPLICATION_TYPE_NEW_ASSESSENT;
         final String currState = property.getState().getValue();
         populateFormData();
-        if(SOURCE_SURVEY.equalsIgnoreCase(property.getSource()))
+        if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource()))
             enableActionsForGIS(property, documentTypes);
         if (currState.endsWith(WF_STATE_REJECTED)
                 || property.getState().getNextAction() != null && property.getState().getNextAction()
@@ -845,12 +841,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null) {
             if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
                 addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE, Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            else 
+            else
                 addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
-        }
-        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+        } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
                 && propService.getWorkflowInitiator(property) == null) {
             addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
                     Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
@@ -906,17 +901,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 BigDecimal totalTax = propService.getSurveyTax(property, new Date());
                 surveyBean.setApplicationTax(totalTax);
                 GisDetails gisDetails = property.getGisDetails();
-                if(gisDetails != null){
+                if (gisDetails != null) {
                     gisDetails.setPropertyZone(basicProp.getPropertyID().getZone());
                     gisDetails.setApplicationTax(totalTax);
                     GisAuditDetails auditDetails = new GisAuditDetails(gisDetails);
                     gisDetails.addAuditDetails(auditDetails);
                 }
             }
-            if(property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
+            if (property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())) {
                 BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
                 property.setSurveyVariance(surveyVariance);
-                if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified()){
+                if (surveyVariance.compareTo(BigDecimal.TEN) > 0 && !property.isThirdPartyVerified()) {
                     noticeService.generateComparisonNotice(property);
                     property.setSentToThirdParty(true);
                     surveyBean.setProperty(property);
@@ -924,7 +919,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
-            basicProp.addProperty(property);
+        basicProp.addProperty(property);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
@@ -1069,12 +1064,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             basicProp.setUnderWorkflow(true);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            if(isThirdPartyCheckbox() 
-            		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(property.getState().getNextAction())){
-            	property.setThirdPartyVerified(true);
+            if (isThirdPartyCheckbox()
+                    && PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                            .equalsIgnoreCase(property.getState().getNextAction())) {
+                property.setThirdPartyVerified(true);
             }
             surveyBean.setProperty(property);
-            propertySurveyService.updateSurveyIndex( APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
+            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -1094,7 +1090,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
             if (assignment != null)
                 propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
-                .concat(assignment.getPosition().getName());
+                        .concat(assignment.getPosition().getName());
             setPropertyInitiatedBy(getInitiator());
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
         } else
@@ -1143,11 +1139,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             historyMap = propService.populateHistory(property);
         }
         if (property.getState() != null) {
-        endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(), property.getCurrentState());
-        ownersName = property.getBasicProperty().getFullOwnerName();
-        applicationNumber =  property.getApplicationNo();
-        endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(applicationNumber);
-    }
+            endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                    property.getCurrentState());
+            ownersName = property.getBasicProperty().getFullOwnerName();
+            applicationNumber = property.getApplicationNo();
+            endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(applicationNumber);
+        }
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         assessmentDocumentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
         final List<FloorType> floorTypeList = floorTypeRepository.findByActiveTrueOrderByName();
@@ -1219,11 +1216,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         } else
             setPropTypeCategoryMap(Collections.emptyMap());
-       if(property!=null)
-           populateUsages(isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
-       else
-           populateUsages(propertyCategory);
-       // tax exempted properties
+        if (property != null)
+            populateUsages(isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
+        else
+            populateUsages(propertyCategory);
+        // tax exempted properties
         addDropdownData(EXEMPTED_REASON_LIST, CommonServices.getTaxExemptedList());
 
         // Loading Property Department based on ownership of property
@@ -1336,8 +1333,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
                 propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(), propertyDetail.getCurrentCapitalValue(),
                 propertyDetail.getMarketValue(), propertyDetail.getCategoryType(),
-                                propertyDetail.getOccupancyCertificationNo(), propertyDetail.getOccupancyCertificationDate(),
-                                propertyDetail.isAppurtenantLandChecked(),
+                propertyDetail.getOccupancyCertificationNo(), propertyDetail.getOccupancyCertificationDate(),
+                propertyDetail.isAppurtenantLandChecked(),
                 propertyDetail.isCorrAddressDiff(), propertyDetail.getPropertyDepartment(),
                 propertyDetail.getVacantLandPlotArea(), propertyDetail.getLayoutApprovalAuthority(),
                 propertyDetail.getLayoutPermitNo(), propertyDetail.getLayoutPermitDate());
@@ -1536,10 +1533,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateDocumentDetails(getDocumentTypeDetails());
     }
 
-	private void checkIfParentIsUnderWorkflow(final BasicProperty basicProperty) {
-		if(basicProperty.isUnderWorkflow())
-			addActionError(getText("error.parent.under.wf"));
-	}
+    private void checkIfParentIsUnderWorkflow(final BasicProperty basicProperty) {
+        if (basicProperty.isUnderWorkflow())
+            addActionError(getText("error.parent.under.wf"));
+    }
 
     @SkipValidation
     @Action(value = "/createProperty-printAck")
@@ -1705,7 +1702,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("initiator.noteligible"));
         }
     }
-    
+
     @SkipValidation
     @Action(value = "/createProperty-rejecttocancel")
     public String rejectToCancel() {
@@ -2365,7 +2362,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
-    
+
     public boolean isCitizenPortalUser() {
         return citizenPortalUser;
     }
