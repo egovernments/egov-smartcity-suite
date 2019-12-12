@@ -72,20 +72,23 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.integration.event.model.ApplicationDetails;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
-import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -94,6 +97,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -115,7 +119,7 @@ public class PropertyThirdPartyService {
     private PropertyPersistenceService basicPropertyService;
 
     @Autowired
-    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
+    private EventPublisher eventPublisher;
 
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
@@ -308,29 +312,21 @@ public class PropertyThirdPartyService {
 
     @Transactional
     public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
-            final String transactionId) {
+            final HttpServletRequest request, final String transactionId) {
         try {
             basicPropertyService.persist(basicProperty);
-            String viewURL = WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
-                    .concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT);
-            thirdPartyApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.SUCCESS,
-                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created."));
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
+                    property.getApplicationNo());
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created");
 
         } catch (Exception ex) {
 
             LOGGER.error("exception while saving basic proeprty", ex);
-            thirdPartyApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.FAILED,
-                    property.getApplicationNo(), null, null, "Property Creation Failed."));
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, "Property Creation Failed");
         }
-    }
-
-    private ApplicationDetails prepareWSPublishEvent(final String transactionId,
-            final TransactionStatus transactionStatus, final String applicationNo,
-            final ApplicationStatus applicationStatus, final String viewLink, final String remarks) {
-        return ApplicationDetails.builder().withApplicationNumber(applicationNo).withViewLink(viewLink)
-                .withTransactionStatus(transactionStatus).withApplicationStatus(applicationStatus).withRemark(remarks)
-                .withTransactionId(transactionId).build();
-
     }
 
 }

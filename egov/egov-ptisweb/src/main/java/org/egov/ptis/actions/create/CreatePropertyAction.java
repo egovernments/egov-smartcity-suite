@@ -453,6 +453,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Action(value = "/createProperty-create")
     public String create() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
@@ -497,7 +498,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.processAndStoreDocument(property.getAssessmentDocuments());
 
         if (isWardSecretaryUser) {
-            propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property, wsTransactionId);
+            propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property,request, wsTransactionId);
         } else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
@@ -2377,5 +2378,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setSitalArea(String sitalArea) {
         this.sitalArea = sitalArea;
+    }
+    public String getWsTransactionId() {
+        return wsTransactionId;
+    }
+
+    public void setWsTransactionId(String wsTransactionId) {
+        this.wsTransactionId = wsTransactionId;
     }
 }
