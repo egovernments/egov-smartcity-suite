@@ -48,7 +48,6 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static java.lang.String.format;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -69,7 +68,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
