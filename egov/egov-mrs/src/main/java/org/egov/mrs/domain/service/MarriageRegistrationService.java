@@ -48,6 +48,7 @@
 
 package org.egov.mrs.domain.service;
 
+import static java.lang.String.format;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
@@ -74,6 +75,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -92,11 +94,16 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -221,6 +228,8 @@ public class MarriageRegistrationService {
     private ReportService reportService;
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -302,7 +311,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration createRegistration(final MarriageRegistration registration,
-                                                   final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
+                                                   final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser, boolean loggedUserIsWardSecretaryUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
@@ -313,6 +322,8 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
         if (loggedUserIsMeesevaUser)
             createMeesevaMarriageReg(registration);
+        else if (loggedUserIsWardSecretaryUser)
+        	create(registration);
         else if (citizenPortalUser) {
             registration.setSource(Source.CITIZENPORTAL.name());
             savedMarriageRegistration = registrationRepository.save(registration);
@@ -349,11 +360,11 @@ public class MarriageRegistrationService {
     
     @Transactional
     public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
-                                                          final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
-        createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser);
+                                                          final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser, boolean loggedUserIsWardSecretaryUser) {
+        createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser, loggedUserIsWardSecretaryUser);
         return registration;
     }
-
+    
     @Transactional
     public String createDataEntryMrgRegistration(final MarriageRegistration registration) {
         setMarriageRegData(registration);
@@ -990,4 +1001,28 @@ public class MarriageRegistrationService {
                 marriageRegistration.getApplicationNo(),
                 String.format(MRS_APPLICATION_VIEW, marriageRegistration.getId()));
     }
+    
+	@Transactional
+	public String createRegistrationAndPublishEventForWardSecretary(MarriageRegistration registration,
+			HttpServletRequest request, WorkflowContainer workflowContainer, boolean loggedUserIsWardSecretaryUser) {
+		String applicationNo = StringUtils.EMPTY;
+		try {
+			createRegistration(registration, workflowContainer, false, false, loggedUserIsWardSecretaryUser);
+			applicationNo = registration.getApplicationNo();
+			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+					.withApplicationNumber(applicationNo)
+					.withViewLink(format(MarriageConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
+							applicationNo))
+					.withTransactionStatus(TransactionStatus.SUCCESS)
+					.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Marriage registration created")
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
+
+		} catch (Exception e) {
+			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+					.withTransactionStatus(TransactionStatus.FAILED).withRemark("Marriage registration failed")
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
+		}
+
+		return applicationNo;
+	}
 }

@@ -62,6 +62,7 @@ import static org.egov.mrs.application.MarriageConstants.MRS_ROLEFORNONEMPLOYEE;
 import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.ROLE_CITIZEN;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
@@ -163,9 +164,11 @@ public class RegistrationWorkflowService {
         final Boolean isCscOperator = isCscOperator(user);
         boolean loggedUserIsMeesevaUser = isMeesevaUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
-
+        boolean isWardSecretaryUser = isWardSecretaryUser(user);
+        
         // In case of CSC Operator or online user or meeseva  will execute this block 
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser||citizenPortalUser ) {
+		if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+				|| loggedUserIsMeesevaUser || citizenPortalUser || isWardSecretaryUser) {
             currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -176,7 +179,7 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
-            if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !loggedUserIsMeesevaUser)
+            if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !(loggedUserIsMeesevaUser || isWardSecretaryUser))
              if(isCscOperator)
                  registration.setSource(Source.CSC.name());
              else if(citizenPortalUser)
@@ -641,5 +644,12 @@ public class RegistrationWorkflowService {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 MRS_DEPARTEMENT_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
+    }
+    
+    public boolean isWardSecretaryUser(final User user) {
+        for (final Role role : user.getRoles())
+                if (role != null && role.getName().equalsIgnoreCase(WARDSECRETARY_OPERATOR_ROLE))
+                        return true;
+        return false;
     }
 }

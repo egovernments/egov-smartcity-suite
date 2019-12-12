@@ -203,4 +203,7 @@ public class MarriageConstants {
     public static List<String> getWitnessRelations() {
         return Collections.unmodifiableList(WITENSSRELATION);
     }
+    
+    public static final String WARDSECRETARY_OPERATOR_ROLE = "WardSecretary Operator";
+    public static final String VIEW_LINK ="%s/mrs/registration/viewapplication/%s";
 }
