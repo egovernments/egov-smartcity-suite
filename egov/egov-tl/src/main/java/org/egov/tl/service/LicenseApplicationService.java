@@ -68,6 +68,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.struts2.ServletActionContext;
+import org.egov.commons.entity.Source;
 import org.egov.infra.event.WSApplicationEventPublisher;
 import org.egov.infra.event.model.WSApplicationDetails;
 import org.egov.infra.event.model.enums.ApplicationStatus;
@@ -102,6 +103,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
         try {
+            license.setApplicationSource(Source.WARDSECRETARY.toString());
             license = create(license, wfBean);
             wSApplicationEventPublisher.publishEvent(WSApplicationDetails.builder()
                     .withApplicationNumber(license.getApplicationNumber())
