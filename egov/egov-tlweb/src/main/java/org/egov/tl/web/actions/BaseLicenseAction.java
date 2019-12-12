@@ -70,8 +70,6 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
-import static org.egov.tl.utils.Constants.WARDSECRETARY_REQUEST_PARAM_SOURCE;
-import static org.egov.tl.utils.Constants.WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID;
 import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
 import static org.egov.tl.utils.Constants.WF_PREVIEW_BUTTON;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_GENERATECERTIFICATE;
@@ -160,6 +158,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient WorkflowBean workflowBean = new WorkflowBean();
 
+    protected String source;
+    protected String transactionId;
+
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -206,14 +207,14 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String create(TradeLicense license) {
         addNewDocuments();
         populateWorkflowBean();
+
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else if (tradeLicenseService.currentUserIsWardSecretary() &&
-                Source.WARDSECRETARY.toString().equals(request.get(WARDSECRETARY_REQUEST_PARAM_SOURCE))) {
-            license.setApplicationSource(Source.WARDSECRETARY.toString());
+                Source.WARDSECRETARY.toString().equals(source)) {
             licenseApplicationService.createWithWardSecretary(license, workflowBean,
-                    request.get(WARDSECRETARY_REQUEST_PARAM_TRANSACTIONID).toString());
+                    transactionId);
         } else {
             licenseApplicationService.create(license, workflowBean);
             setMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
@@ -639,6 +640,22 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void setMessage(final String message) {
         this.message = message;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
 }
