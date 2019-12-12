@@ -65,6 +65,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.event.model.WSApplicationEventDetails;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -283,27 +284,32 @@ public class PropertyThirdPartyService {
     public void setPersistenceService(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
-    
+
 	@Transactional
 	public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
 			final String transactionId) {
 		try {
 			basicPropertyService.persist(basicProperty);
-			wsApplicationEventPublisher
-					.publishEvent(WSApplicationDetails.builder().withApplicationNumber(property.getApplicationNo())
-							.withViewLink(WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
-									.concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT))
-							.withTransactionStatus(TransactionStatus.SUCCESS)
-							.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Property created.")
-							.withTransactionId(transactionId).build());
+			String viewURL = WS_VIEW_PROPERT_BY_APP_NO_URL.concat(property.getApplicationNo())
+					.concat("&applicationType=").concat(APPLICATION_TYPE_NEW_ASSESSENT);
+			wsApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.SUCCESS,
+					property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created."));
 
 		} catch (Exception ex) {
 
 			LOGGER.error("exception while saving basic proeprty", ex);
-			wsApplicationEventPublisher.publishEvent(WSApplicationDetails.builder().withTransactionId(transactionId)
-					.withTransactionStatus(TransactionStatus.FAILED).withRemark("Property creation failed.").build());
+			wsApplicationEventPublisher.publishEvent(prepareWSPublishEvent(transactionId, TransactionStatus.FAILED,
+					property.getApplicationNo(), null, null, "Property Creation Failed."));
 		}
 	}
-    
+
+	private WSApplicationDetails prepareWSPublishEvent(final String transactionId,
+			final TransactionStatus transactionStatus, final String applicationNo,
+			final ApplicationStatus applicationStatus, final String viewLink, final String remarks) {
+		return WSApplicationDetails.builder().withApplicationNumber(applicationNo).withViewLink(viewLink)
+				.withTransactionStatus(transactionStatus).withApplicationStatus(applicationStatus).withRemark(remarks)
+				.withTransactionId(transactionId).build();
+
+	}
 
 }
