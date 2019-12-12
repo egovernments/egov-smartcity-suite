@@ -1399,7 +1399,6 @@ public interface PropertyTaxConstants {
     public static final String CITIZEN_ROLE = "CITIZEN";
     public static final String WARDSCRETARY_OPERATOR_ROLE = "WardSecretary Operator";
     public static final String WARDSECRETARY_SOURCE_CODE = "source";
-    public static final String WARDSECRETARY_SOURCE_CODE_VALUE = "wardsecretary";
     public static final String WARDSECRETARY_TRANSACTIONID_CODE = "transactionId";
 
     // Status for Meseva
@@ -1410,7 +1409,7 @@ public interface PropertyTaxConstants {
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
 
     //WS View URLs
-    public static final String WS_VIEW_PROPERT_BY_APP_NO_URL = "/view/viewProperty-viewForm.action?applicationNo=";
+    public static final String WS_VIEW_PROPERT_BY_APP_NO_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=";
     
     
     public static final String SEARCH_RESULT_COUNT = "500";
