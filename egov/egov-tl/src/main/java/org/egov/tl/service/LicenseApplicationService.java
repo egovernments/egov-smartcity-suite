@@ -67,8 +67,11 @@ import static org.egov.tl.utils.Constants.VIEW_LINK;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.entity.Source;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.event.model.ApplicationDetails;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
@@ -85,6 +88,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
+
+    private static final Logger LOGGER = Logger.getLogger(LicenseApplicationService.class);
 
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
@@ -103,6 +108,11 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
         try {
+            if (!Source.WARDSECRETARY.toString().equals(license.getApplicationSource()) ||
+                    StringUtils.isEmpty(tpTransactionId)) {
+                LOGGER.error("WARDSECRETARY:source and transactionId are mandatory fields");
+                throw new ApplicationRuntimeException("source and transactionId are mandatory fields");
+            }
             license.setApplicationSource(Source.WARDSECRETARY.toString());
             license = create(license, wfBean);
             thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
@@ -115,7 +125,10 @@ public class LicenseApplicationService extends TradeLicenseService {
                     .withTransactionId(tpTransactionId)
                     .build());
 
+        } catch (ValidationException validationException) {
+            throw validationException;
         } catch (Exception e) {
+            LOGGER.error("Ward Secretary : Failed to create license");
             thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
                     .withTransactionStatus(TransactionStatus.FAILED)
                     .withRemark("License creation failed")

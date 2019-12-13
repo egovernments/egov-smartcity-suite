@@ -89,7 +89,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -211,8 +210,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary() &&
-                Source.WARDSECRETARY.toString().equals(source)) {
+        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+            license.setApplicationSource(source);
             licenseApplicationService.createWithWardSecretary(license, workflowBean,
                     transactionId);
         } else {
