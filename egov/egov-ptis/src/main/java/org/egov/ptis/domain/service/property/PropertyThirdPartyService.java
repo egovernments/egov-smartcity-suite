@@ -316,7 +316,7 @@ public class PropertyThirdPartyService {
         try {
             basicPropertyService.persist(basicProperty);
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
-                    property.getApplicationNo());
+                    property.getApplicationNo(),APPLICATION_TYPE_NEW_ASSESSENT);
 
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
                     property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created");

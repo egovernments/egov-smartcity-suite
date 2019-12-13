@@ -79,6 +79,8 @@
 						<s:hidden name="actionNamespace" value="%{actionNamespace}"/>
 						<s:hidden name="applicationSource" value="%{applicationSource}"/>
 						<s:hidden name="mutationType" value="%{mutationType}"/>
+						<s:hidden id="transactionId" name="transactionId" value="%{transactionId}"></s:hidden>
+						
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					

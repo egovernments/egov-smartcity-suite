@@ -69,6 +69,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -118,7 +119,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = MUTATION_TYPE_REGISTERED_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
-                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}","transactionId","${transactionId}", "type",
                 MUTATION_TYPE_REGISTERED_TRANSFER }),
         @Result(name = ADDITIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
@@ -243,6 +244,8 @@ public class SearchPropertyAction extends SearchFormAction {
     private Map<String, Object> queryMap;
     private String mutationType;
     private Long mutationId;
+    private boolean isWardSecreatryUser;
+    private String transactionId;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -299,8 +302,10 @@ public class SearchPropertyAction extends SearchFormAction {
      */
     public String commonForm() {
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        isWardSecreatryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        final HttpServletRequest request = ServletActionContext.getRequest();
         if (loggedUserIsMeesevaUser) {
-            final HttpServletRequest request = ServletActionContext.getRequest();
+            
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
                 addActionMessage(getText("MEESEVA.005"));
                 return RESULT_ERROR;
@@ -308,6 +313,16 @@ public class SearchPropertyAction extends SearchFormAction {
             } else {
                 setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
+            }
+        } else if (isWardSecreatryUser) {
+            if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+                    || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+
+                setTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                setApplicationSource(Source.WARDSECRETARY.toString());
             }
         }
         return COMMON_FORM;
@@ -460,6 +475,12 @@ public class SearchPropertyAction extends SearchFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
+        isWardSecreatryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecreatryUser) {
+			if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
+				return MUTATION_TYPE_REGISTERED_TRANSFER;
+		}
+        
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
             if (basicProperty.isUnderWorkflow() && !propertyTaxCommonUtils.isUnderMutationWorkflow(basicProperty)) {
                 addActionError(getText("error.underworkflow"));
@@ -744,6 +765,7 @@ public class SearchPropertyAction extends SearchFormAction {
      */
     @Override
     public void prepare() {
+
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",
                 REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
@@ -1440,4 +1462,14 @@ public class SearchPropertyAction extends SearchFormAction {
     public void setMutationId(final Long mutationId) {
         this.mutationId = mutationId;
     }
+    
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
 }

@@ -1409,7 +1409,7 @@ public interface PropertyTaxConstants {
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
 
     //WS View URLs
-    public static final String WS_VIEW_PROPERT_BY_APP_NO_URL = "%s/ptis/view/viewProperty-viewForm.action?applicationNo=%s";
+    public static final String WS_VIEW_PROPERT_BY_APP_NO_URL = "%s/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
     
     
     public static final String SEARCH_RESULT_COUNT = "500";

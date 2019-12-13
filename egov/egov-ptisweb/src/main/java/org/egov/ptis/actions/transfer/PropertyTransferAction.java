@@ -109,6 +109,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -234,6 +235,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Boolean propertyByEmployee = Boolean.TRUE;
     private String userDesignationList;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private boolean isWardSecretaryUser;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
     private String applicationType;
@@ -264,6 +266,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private List<Document> successionDocuments = new ArrayList<>();
     private List<Document> otherDocuments = new ArrayList<>();
     private String taxDueOrStruc;
+    private String transactionId;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -278,6 +281,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/new")
     public String showNewTransferForm() {
+    	final HttpServletRequest request = ServletActionContext.getRequest();
 
         if (basicproperty.getProperty().getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
@@ -292,12 +296,19 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (isInAddAltDemolitionFlow() && propertyService.isLatestPropertyMutationClosed(basicproperty.getUpicNo())) {
                 if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
-                    if (loggedUserIsMeesevaUser)
+                    isWardSecretaryUser = propertyService.isWardSecretaryUser(transferOwnerService.getLoggedInUser());
+                    if (loggedUserIsMeesevaUser) {
                         if (getMeesevaApplicationNumber() == null) {
                             addActionMessage(getText("MEESEVA.005"));
                             return ERROR;
                         } else
                             propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+                    }
+                    if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+                            || request.getParameter("applicationSource") == null) {
+                        addActionMessage(getText("WS.001"));
+                        return ERROR;
+                    }
                 } else {
                     addActionError(getText("initiator.noteligible"));
                     return COMMON_FORM;
@@ -391,6 +402,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
         if (propertyTaxCommonUtils.isUnderMutationWorkflow(basicproperty)) {
             final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
@@ -404,15 +416,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             propertyMutation.setMutationReason(transferOwnerService.getPropertyTransferReasonsByCode(MUTATION_REASON_CODE_SALE));
         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
-        if (!loggedUserIsMeesevaUser){
+        if (!loggedUserIsMeesevaUser) {
             final Position position = propertyMutation.getState().getOwnerPosition() == null
                     ? propertyMutation.getState().getPreviousOwner() : propertyMutation.getState().getOwnerPosition();
-            if (position != null && assignmentService.getAssignmentsForPosition(position.getId(), new Date()).isEmpty()){
+            if (position != null && assignmentService.getAssignmentsForPosition(position.getId(), new Date()).isEmpty()) {
                 addActionError(getText(POSITION_EXPIRED));
                 return NEW;
             }
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        }else {
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,request,transactionId);
+        } else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
             propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
@@ -715,6 +727,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(userId);
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         citizenPortalUser = propertyService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        isWardSecretaryUser = propertyService.isWardSecretaryUser(transferOwnerService.getLoggedInUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals(SEARCH) || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
@@ -1566,4 +1579,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setOtherDocuments(List<Document> otherDocuments) {
         this.otherDocuments = otherDocuments;
     }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
 }
