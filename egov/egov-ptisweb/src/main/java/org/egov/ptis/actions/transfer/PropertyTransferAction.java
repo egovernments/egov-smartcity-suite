@@ -303,9 +303,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                             return ERROR;
                         } else
                             propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-                    }
-                    if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
-                            || request.getParameter("applicationSource") == null) {
+                    } else if (isWardSecretaryUser && (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+                            || request.getParameter("applicationSource") == null)) {
                         addActionMessage(getText("WS.001"));
                         return ERROR;
                     }
@@ -402,7 +401,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
         if (propertyTaxCommonUtils.isUnderMutationWorkflow(basicproperty)) {
             final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
@@ -423,7 +421,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText(POSITION_EXPIRED));
                 return NEW;
             }
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,request,transactionId);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation,ServletActionContext.getRequest(),transactionId);
         } else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());

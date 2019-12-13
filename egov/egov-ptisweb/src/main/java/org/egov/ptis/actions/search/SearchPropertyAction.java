@@ -244,7 +244,7 @@ public class SearchPropertyAction extends SearchFormAction {
     private Map<String, Object> queryMap;
     private String mutationType;
     private Long mutationId;
-    private boolean isWardSecreatryUser;
+    private boolean isWardSecretaryUser;
     private String transactionId;
 
     @Autowired
@@ -302,7 +302,7 @@ public class SearchPropertyAction extends SearchFormAction {
      */
     public String commonForm() {
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
-        isWardSecreatryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
         final HttpServletRequest request = ServletActionContext.getRequest();
         if (loggedUserIsMeesevaUser) {
             
@@ -314,7 +314,7 @@ public class SearchPropertyAction extends SearchFormAction {
                 setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
             }
-        } else if (isWardSecreatryUser) {
+        } else if (isWardSecretaryUser) {
             if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
                     || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
                 addActionMessage(getText("WS.001"));
@@ -475,12 +475,12 @@ public class SearchPropertyAction extends SearchFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
-        isWardSecreatryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
-		if (isWardSecreatryUser) {
-			if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
-				return MUTATION_TYPE_REGISTERED_TRANSFER;
-		}
-        
+        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        if (isWardSecretaryUser && APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+
+            return MUTATION_TYPE_REGISTERED_TRANSFER;
+        }
+
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
             if (basicProperty.isUnderWorkflow() && !propertyTaxCommonUtils.isUnderMutationWorkflow(basicProperty)) {
                 addActionError(getText("error.underworkflow"));
