@@ -53,6 +53,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.SYSTEM;
+import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONN_NAME_ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
@@ -69,6 +70,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -191,6 +193,7 @@ public class NewConnectionController extends GenericConnectionController {
         if (sewerageTaxenabled)
             waterConnectionDtlsService.prepareNewForm(model, waterConnectionDetails);
         User currentUser = securityUtils.getCurrentUser();
+        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
         model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(currentUser));
         model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
@@ -198,11 +201,21 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("isCSCOperator", waterTaxUtils.isCSCoperator(currentUser));
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(currentUser));
         model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
-        if (waterTaxUtils.isMeesevaUser(currentUser))
-            if (request.getParameter("applicationNo") == null)
-                throw new ApplicationRuntimeException("MEESEVA.005");
-            else
-                waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+        model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
+		if (waterTaxUtils.isMeesevaUser(currentUser))
+			if (request.getParameter("applicationNo") == null)
+				throw new ApplicationRuntimeException("MEESEVA.005");
+			else
+				waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
+		if (isWardSecretaryUser) {
+			if (StringUtils.isBlank(request.getParameter("transactionId"))
+					|| StringUtils.isBlank(request.getParameter("source")))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
+				model.addAttribute("wsSource", request.getParameter("source"));
+			}
+		}
         return NEWCONNECTION_FORM;
     }
 
@@ -239,13 +252,16 @@ public class NewConnectionController extends GenericConnectionController {
 
     	User currentUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
+        boolean loggedUserIsWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
         boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
         boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         model.addAttribute("citizenPortalUser", citizenPortalUser);
         boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
         model.addAttribute("isAnonymousUser", isAnonymousUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser
-                && !waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId()))
+        
+		if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser
+				&& !loggedUserIsWardSecretaryUser
+				&& !waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId()))
             throw new ValidationException("err.creator.application");
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
 
@@ -287,6 +303,11 @@ public class NewConnectionController extends GenericConnectionController {
             model.addAttribute("isCSCOperator", waterTaxUtils.isCSCoperator(currentUser));
             model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(currentUser));
             model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
+			if (loggedUserIsWardSecretaryUser) {
+				model.addAttribute("isWardSecretaryUser", loggedUserIsWardSecretaryUser);
+				model.addAttribute("wsTransactionId", request.getParameter("wsTransactionId"));
+				model.addAttribute("wsSource", request.getParameter("wsSource"));
+			}
             return NEWCONNECTION_FORM;
         }
         waterConnectionDetails.getApplicationDocs().clear();
@@ -338,7 +359,11 @@ public class NewConnectionController extends GenericConnectionController {
             waterConnectionDetails.setSource(MEESEVA);
             if (waterConnectionDetails.getMeesevaApplicationNumber() != null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
-        } else
+		} else if (loggedUserIsWardSecretaryUser) {
+			if (WARDSECRETARY.toString().equals(request.getParameter("wsSource")))
+				waterConnectionDetails.setSource(WARDSECRETARY);
+		}
+        else
             waterConnectionDetails.setSource(SYSTEM);
 
         boolean isSewerageChecked = request.getParameter("sewerageApplication") == null ? false : true;
@@ -347,6 +372,10 @@ public class NewConnectionController extends GenericConnectionController {
         if (moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled() && isSewerageChecked) {
             if (isCSCOperator)
                 sewerageDetails.setSource(CSC.toString());
+			else if (loggedUserIsWardSecretaryUser) {
+				if (WARDSECRETARY.toString().equals(request.getParameter("wsSource")))
+					sewerageDetails.setSource(WARDSECRETARY.toString());
+			}
             if (isAnonymousUser)
                 sewerageDetails.setSource(ONLINE.toString());
             sewerageIntegration(waterConnectionDetails, resultBinder, sewerageDetails);
@@ -354,8 +383,12 @@ public class NewConnectionController extends GenericConnectionController {
                     approvalComent);
         }
 
-        waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+		if (loggedUserIsWardSecretaryUser)
+			waterConnectionDtlsService.persistAndPublishEventForWardSecretary(waterConnectionDetails, request,
+					workFlowAction, approvalPosition, approvalComent);
+		else
+			waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
+					approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
 
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");

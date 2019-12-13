@@ -48,18 +48,25 @@
 
 package org.egov.ptis.domain.service.property;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,6 +80,9 @@ import org.hibernate.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyThirdPartyService {
@@ -91,6 +101,12 @@ public class PropertyThirdPartyService {
     
     @Autowired
     private VacancyRemissionRepository vacancyRemissionRepository;
+
+    @Autowired
+    private PropertyPersistenceService basicPropertyService;
+
+    @Autowired
+    private EventPublisher eventPublisher;
 
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
@@ -115,10 +131,10 @@ public class PropertyThirdPartyService {
 						.setParameter("applicationNumber", applicationNo);
 			}
 
-		} else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
+	} else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
 			ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
 					.setParameter("noticeType", NOTICE_TYPE_EXEMPTION).setParameter("applicationNumber", applicationNo);
-		}
+	}
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             if (LOGGER.isDebugEnabled())
@@ -251,4 +267,24 @@ public class PropertyThirdPartyService {
         }
         return statusCommentsMap;
     }
+
+    @Transactional
+    public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
+            final HttpServletRequest request, final String transactionId) {
+        try {
+            basicPropertyService.persist(basicProperty);
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
+                    property.getApplicationNo(),APPLICATION_TYPE_NEW_ASSESSENT);
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created");
+
+        } catch (Exception ex) {
+
+            LOGGER.error("exception while saving basic proeprty", ex);
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, "Property Creation Failed");
+        }
+    }
+
 }

@@ -48,6 +48,7 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -58,6 +59,8 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -131,20 +134,28 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         User logedinUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         String meesevaApplicationNumber = null;
         if (request.getParameter("applicationNo") != null)
             meesevaApplicationNumber = request.getParameter("applicationNo");
 
         if (loggedUserIsMeesevaUser) {
-
             if (meesevaApplicationNumber == null) {
                 throw new ApplicationRuntimeException("MEESEVA.005");
             } else {
                 marriageRegistration.setApplicationNo(meesevaApplicationNumber);
             }
-
         }
-        model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
+		if (isWardSecretaryUser) {
+			if (StringUtils.isBlank(request.getParameter("transactionId"))
+					|| StringUtils.isBlank(request.getParameter("source")))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
+				model.addAttribute("wsSource", request.getParameter("source"));
+			}
+		}
+        model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(logedinUser));
         model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser));
 
@@ -171,13 +182,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration",null);
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
-        boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
+        boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
                 isEmployee);
         if (!isAssignmentPresent || errors.hasErrors()) 
-            return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent);
+            return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent, isWardSecretaryUser, request);
       
         String message;
         String approverName = null;
@@ -200,15 +212,21 @@ public class NewRegistrationController extends MarriageRegistrationController {
         marriageRegistration.setFeePaid(marriageFeeCalculator.calculateMarriageRegistrationFee(marriageRegistration, marriageRegistration.getDateOfMarriage()));
         if (loggedUserIsMeesevaUser) {
             marriageRegistration.setSource(MarriageConstants.SOURCE_MEESEVA);
-            appNo = marriageRegistrationService
-                    .createMeesevaRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser,
-                            citizenPortalUser)
-                    .getApplicationNo();
+			appNo = marriageRegistrationService.createMeesevaRegistration(marriageRegistration, workflowContainer,
+					loggedUserIsMeesevaUser, citizenPortalUser, isWardSecretaryUser).getApplicationNo();
+	} else if (isWardSecretaryUser) {
+		if (WARDSECRETARY.toString().equals(request.getParameter("wsSource")))
+			marriageRegistration.setSource(Source.WARDSECRETARY.toString());
+		appNo = marriageRegistrationService.createRegistrationAndPublishEventForWardSecretary(marriageRegistration,
+				request, workflowContainer, isWardSecretaryUser);
         } else {
-            appNo = marriageRegistrationService
-                    .createRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser)
-                    .getApplicationNo();
+            appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer,
+					loggedUserIsMeesevaUser, citizenPortalUser, isWardSecretaryUser).getApplicationNo();
         }
+	message = messageSource.getMessage("msg.success.forward",
+                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+        model.addAttribute(MESSAGE, message);
+        model.addAttribute("applnNo", appNo);
         model.addAttribute(IS_EMPLOYEE, isEmployee);
 		if (!marriageRegistration.isValidApprover()) {
 			model.addAttribute(MESSAGE, messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
@@ -232,7 +250,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
     }
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
-            final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent) {
+			final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent, boolean isWardSecretaryUser,
+			HttpServletRequest request) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
             model.addAttribute(MESSAGE, messageSource.getMessage(NOTEXISTS_POSITION,
@@ -241,6 +260,10 @@ public class NewRegistrationController extends MarriageRegistrationController {
             model.addAttribute(MESSAGE, "Validation failed");
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
+		if (isWardSecretaryUser) {
+			model.addAttribute("wsTransactionId", request.getParameter("wsTransactionId"));
+			model.addAttribute("wsSource", request.getParameter("wsSource"));
+		}
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return REGISTRATION_FORM;
     }

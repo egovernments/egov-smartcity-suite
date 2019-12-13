@@ -1350,6 +1350,7 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_SURVEY = 'S';
     public static final Character SOURCEOFDATA_ESEVA = 'E';
     public static final Character SOURCEOFDATA_CARD = 'D';
+    public static final Character SOURCEOFDATA_WARDSECRETARY = 'W';
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
@@ -1386,13 +1387,21 @@ public interface PropertyTaxConstants {
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
     public static final String CITIZEN_ROLE = "CITIZEN";
+    public static final String WARDSCRETARY_OPERATOR_ROLE = "WardSecretary Operator";
+    public static final String WARDSECRETARY_SOURCE_CODE = "source";
+    public static final String WARDSECRETARY_TRANSACTIONID_CODE = "transactionId";
 
     // Status for Meseva
     public static final String STATUS_REJECTED = "Rejected";
     public static final String STATUS_APPROVED = "Approved";
     public static final String STATUS_OPEN = "Open";
+    public static final String STATUS_INPROGRESS = "InProgress";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
 
+    //WS View URLs
+    public static final String WS_VIEW_PROPERT_BY_APP_NO_URL = "%s/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
+    
+    
     public static final String SEARCH_RESULT_COUNT = "500";
 
     // Nature of task

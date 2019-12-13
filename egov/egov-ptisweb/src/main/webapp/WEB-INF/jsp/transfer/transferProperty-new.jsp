@@ -111,6 +111,7 @@
 				</s:else>
 				<s:hidden name="type" value="%{type}" />
 				<s:hidden name="applicationSource" value="%{applicationSource}" />
+				<s:hidden name="transactionId" value="%{transactionId}" />
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td>&nbsp;</td>

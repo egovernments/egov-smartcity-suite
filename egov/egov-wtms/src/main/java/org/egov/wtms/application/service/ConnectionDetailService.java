@@ -47,7 +47,10 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
@@ -526,5 +529,19 @@ public class ConnectionDetailService {
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
 
         return query.list();
+    }
+    
+    public WaterChargesDetails getCloserStatusByPropertyId(String assessmentNumber) {
+        WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
+        List<WaterConnectionDetails> waterConnectionDetailsList = waterConnectionDetailsService
+                .getAllConnectionDetailsExceptInactiveStatusByPropertyID(assessmentNumber);
+        for (WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
+            if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                    && !APPLICATIONSTATUSCLOSED.equals(waterConnectionDetails.getState().getValue())) {
+                waterChargesDetails.setCloserInprogress(true);
+                waterChargesDetails.setApplicationDate(toDefaultDateFormat(waterConnectionDetails.getExecutionDate()));
+            }
+        }
+        return waterChargesDetails;
     }
 }

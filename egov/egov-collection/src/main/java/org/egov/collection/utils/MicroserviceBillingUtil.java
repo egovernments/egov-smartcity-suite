@@ -83,6 +83,9 @@ public class MicroserviceBillingUtil {
     private FunctionHibernateDAO functionDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+  
+    @Autowired
+    private MicroserviceCollectionUtil microserviceCollectionUtil;
 
     public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(final BillReceiptReq billReceipt,
             final String serviceCode) {
@@ -100,12 +103,13 @@ public class MicroserviceBillingUtil {
         ReceiptAmountInfo receiptAmountInfo = null;
         try {
             receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
-        } catch (final Exception e) {
-            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
-                    + billReceipt.getBillReferenceNum() + "]!";
-            LOGGER.error(errMsg, e);
-            throw new ApplicationRuntimeException(errMsg, e);
-        }
+		} catch (final Exception e) {
+
+			final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
+					+ billReceipt.getBillReferenceNum() + "]!";
+			LOGGER.error(errMsg, e);
+			throw new ApplicationRuntimeException(errMsg, e);
+		}
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - response" + receiptAmountInfo);
         return receiptAmountInfo;

@@ -88,6 +88,13 @@
 				value="${citizenPortalUser}" />
 			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser"
 				value="${isAnonymousUser}" />
+			<input type="hidden" id="isWardSecretaryUser" name="isWardSecretaryUser"
+				value="${isWardSecretaryUser}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId"
+				value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource"
+				value="${wsSource}" />
+				
 			<form:hidden id="mode" path="" value="${mode}" />
 			<form:hidden path="legacy" id="legacy" value="false" />
 			<input type="hidden" name="allowIfPTDueExists"

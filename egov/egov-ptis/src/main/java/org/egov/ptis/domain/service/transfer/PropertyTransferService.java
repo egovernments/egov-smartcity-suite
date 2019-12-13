@@ -49,6 +49,7 @@ package org.egov.ptis.domain.service.transfer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.eis.entity.Assignment;
@@ -62,6 +63,8 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -73,6 +76,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -104,6 +108,7 @@ import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.repository.master.mutationfee.MutationFeeRepository;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -144,8 +149,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_MUTATION_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import javax.servlet.http.HttpServletRequest;
+
+import static java.lang.String.format;
 
 public class PropertyTransferService {
+    private static final Logger LOGGER = Logger.getLogger(PropertyTransferService.class);
 
     @Autowired
     @Qualifier("propertyMutationService")
@@ -230,9 +241,12 @@ public class PropertyTransferService {
 
     @PersistenceContext
     private EntityManager entityManager;
+  
+    @Autowired
+    private EventPublisher eventPublisher;
 
     @Transactional
-    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation,final HttpServletRequest request,final String transactionId) {
         propertyMutation.setBasicProperty(basicProperty);
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
@@ -244,7 +258,9 @@ public class PropertyTransferService {
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation, null);
-
+        if (propertyService.isWardSecretaryUser(getLoggedInUser())) {
+            saveMutationAndPublishEvent(propertyMutation,request, transactionId);
+        } else
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         if (propertyService.isCitizenPortalUser(getLoggedInUser()))
             propertyService.pushPropertyMutationPortalMessage(propertyMutation, propertyMutation.getType()
@@ -658,8 +674,9 @@ public class PropertyTransferService {
     }
 
     public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
-                                                     final HashMap<String, String> meesevaParams) {
-        initiatePropertyTransfer(basicproperty, propertyMutation);
+            final HashMap<String, String> meesevaParams) {
+        // passing transaction id as empty , because request id from meeseva
+        initiatePropertyTransfer(basicproperty, propertyMutation,null, "");
         return propertyMutation;
     }
 
@@ -904,5 +921,23 @@ public class PropertyTransferService {
             propertyMutation.setCourtName(null);
         }
     }
+    
+    @Transactional
+    public void saveMutationAndPublishEvent(final PropertyMutation propertyMutation, final HttpServletRequest request,
+            final String transactionId) {
+        try {
+            mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
+                    propertyMutation.getApplicationNo(), APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+            eventPublisher.wsPublishEvent(transactionId,
+                    TransactionStatus.SUCCESS, propertyMutation.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL,
+                    "Title Transfer Application Created");
+        } catch (Exception ex) {
+            LOGGER.error("exception while initiating registered transfer", ex);
+            eventPublisher.wsPublishEvent(transactionId,
+                    TransactionStatus.FAILED, propertyMutation.getApplicationNo(), null, null,
+                    "Title Transfer Application Creation Failed");
 
+        }
+    }
 }

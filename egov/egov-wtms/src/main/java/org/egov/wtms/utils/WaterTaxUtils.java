@@ -157,6 +157,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENG
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXWORKFLOWDEPARTEMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_OPERATOR_ROLE;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 @Service
@@ -331,6 +332,10 @@ public class WaterTaxUtils {
      */
     public Boolean isMeesevaUser(User user) {
         return compareUserRoleWithParameter(user, MEESEVA_OPERATOR_ROLE);
+    }
+    
+    public boolean isWardSecretaryUser(User user) {
+        return compareUserRoleWithParameter(user, WARDSECRETARY_OPERATOR_ROLE);
     }
 
     public boolean isEmailEnabled() {

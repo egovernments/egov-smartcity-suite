@@ -99,6 +99,10 @@
 				value="${marriageRegistration.status}" />
 			<input type="hidden" id="allowDaysValidation"
 				value="${allowDaysValidation}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId"
+				value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource"
+				value="${wsSource}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>

@@ -48,10 +48,48 @@
 
 package org.egov.tl.web.actions;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.SPACE;
+import static org.egov.tl.utils.Constants.ACKNOWLEDGEMENT;
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.BEFORE_RENEWAL;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONCANCEL;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.BUTTONGENERATEDCERTIFICATE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.DROPDOWN_AREA_LIST_LICENSE;
+import static org.egov.tl.utils.Constants.DROPDOWN_AREA_LIST_LICENSEE;
+import static org.egov.tl.utils.Constants.DROPDOWN_DIVISION_LIST_LICENSE;
+import static org.egov.tl.utils.Constants.DROPDOWN_DIVISION_LIST_LICENSEE;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+import static org.egov.tl.utils.Constants.GENERATE_PROVISIONAL_CERTIFICATE;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.REPORT_PAGE;
+import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
+import static org.egov.tl.utils.Constants.WF_PREVIEW_BUTTON;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -86,33 +124,18 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.SPACE;
-import static org.egov.tl.utils.Constants.*;
-
 @ParentPackage("egov")
 @Results({
-        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
-                "/integration", "method", "renew"}),
-        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = {"namespace",
-                "/viewtradelicense", "method", "showForApproval"}),
-        @Result(name = "tl_generateCertificate", type = "redirectAction",
-                location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
+        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = { "namespace",
+                "/integration", "method", "renew" }),
+        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = { "namespace",
+                "/viewtradelicense", "method", "showForApproval" }),
+        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
         @Result(name = APPROVE_PAGE, location = "newTradeLicense-new.jsp"),
         @Result(name = REPORT_PAGE, location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
-        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
-                params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
+        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect", params = {
+                "prependServletContext", "false", "transactionServiceNumber", "${applicationNo}" }) })
 public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     protected static final String WF_INPROGRESS_ERROR_CODE = "WF.INPROGRESS";
@@ -134,6 +157,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected transient List<LicenseDocument> licenseDocument = new ArrayList<>();
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient WorkflowBean workflowBean = new WorkflowBean();
+
+    protected String source;
+    protected String transactionId;
 
     @Autowired
     protected transient LicenseUtils licenseUtils;
@@ -181,9 +207,14 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String create(TradeLicense license) {
         addNewDocuments();
         populateWorkflowBean();
+
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
+        } else if (tradeLicenseService.currentUserIsWardSecretary() &&
+                Source.WARDSECRETARY.toString().equals(source)) {
+            licenseApplicationService.createWithWardSecretary(license, workflowBean,
+                    transactionId);
         } else {
             licenseApplicationService.create(license, workflowBean);
             setMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
@@ -320,8 +351,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     }
 
     /**
-     * should be called from the second level only Approve will not end workflow
-     * instead it sends to the creator in approved state
+     * should be called from the second level only Approve will not end workflow instead it sends to the creator in approved state
      */
     public void processWorkflow() {
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
@@ -506,8 +536,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void addNewDocuments() {
         licenseDocument.removeIf(document -> document.getUploadsFileName().isEmpty());
-        licenseDocument.forEach(document ->
-                document.setType(tradeLicenseService.getLicenseDocumentType(document.getType().getId())));
+        licenseDocument
+                .forEach(document -> document.setType(tradeLicenseService.getLicenseDocumentType(document.getType().getId())));
         license().getDocuments().addAll(licenseDocument);
     }
 
@@ -521,7 +551,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         else if (getModel().hasState())
             if (getModel().isNewWorkflow())
                 validActions.addAll(this.customizedWorkFlowService.getNextValidActions(getModel()
-                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
                         getPendingActions(), getModel().getCreatedDate(),
                         "%" + license().getCurrentState().getOwnerPosition()
@@ -544,7 +574,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             return false;
         else
             return this.customizedWorkFlowService.getWfMatrix(getModel()
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                    .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                     getAdditionalRule(), getModel().getCurrentState().getValue(),
                     getPendingActions(), new Date(), getCurrentDesignation()).isForwardEnabled();
 
@@ -553,7 +583,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public String getEnabledFields() {
         if (getModel().hasState()) {
             WorkFlowMatrix workFlowMatrix = this.customizedWorkFlowService.getWfMatrix(getModel()
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                    .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                     getAdditionalRule(), getModel().getCurrentState().getValue(),
                     this.getPendingActions(), getModel().getCreatedDate(),
                     "%" + license().getCurrentState().getOwnerPosition()
@@ -602,8 +632,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (!supportDocs.isEmpty() && supportDocs.stream().anyMatch(document -> document.getUploads().isEmpty()) &&
                 (existingDocs.isEmpty()
                         || !supportDocType.stream().filter(
-                        licenseDocumentType -> !existingDocsType.contains(licenseDocumentType))
-                        .collect(Collectors.toList()).isEmpty())) {
+                                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType))
+                                .collect(Collectors.toList()).isEmpty())) {
             throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
         }
     }
@@ -623,6 +653,22 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void setMessage(final String message) {
         this.message = message;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
 }

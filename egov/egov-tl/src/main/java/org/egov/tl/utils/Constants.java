@@ -157,6 +157,7 @@ public final class Constants {
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVAOPERATOR = "MeeSeva Operator";
+    public static final String WARDSECRETARY = "WardSecretary Operator";
     public static final String NEWLICENSECOLLECTION = "NEWLICENSECOLLECTION";
     public static final String RENEWLICENSECOLLECTION = "RENEWLICENSECOLLECTION";
     public static final String NEWLICENSE = "NEWLICENSE";
@@ -180,6 +181,8 @@ public final class Constants {
             .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
             .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)
             .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
+
+    public static final String VIEW_LINK = "%s/tl/license/show/%s";
 
     private Constants() {
         // only invariants

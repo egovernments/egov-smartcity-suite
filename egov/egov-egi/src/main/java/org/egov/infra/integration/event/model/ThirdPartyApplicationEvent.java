@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,17 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.entity;
 
-import org.apache.commons.lang3.StringUtils;
+package org.egov.infra.integration.event.model;
 
-public enum Source {
+import org.springframework.context.ApplicationEvent;
 
-    APONLINE, ESEVA, MEESEVA, SYSTEM, SOFTTECH, CARD, MOBILE, LEADWINNER, CSC, CITIZENPORTAL, SMARTVIZAG, ANYEMI,
-    ONLINE, PAYTM, BILLDESK, SURVEY, IVRS, CHPK, SOFTTECHWMS, FLUENTGRID, WARDSECRETARY;
+public class ThirdPartyApplicationEvent extends ApplicationEvent {
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    private static final long serialVersionUID = 1L;
+    private final ApplicationDetails wSApplicationDetails;
+
+    public ThirdPartyApplicationEvent(final Object source, final ApplicationDetails wSApplicationDetails) {
+        super(source);
+        this.wSApplicationDetails = wSApplicationDetails;
     }
+
+    public ApplicationDetails getwSApplicationDetails() {
+        return wSApplicationDetails;
+    }
+
 }

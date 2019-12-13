@@ -225,5 +225,9 @@ public class CollectionApplicationProperties {
     public String getValidateReceiptCancelUrl(final String serviceCode) {
         return environment.getProperty(serviceCode.concat(".validate.receiptcancel.url"));
     }
+    
+    public String getRollBackDemandUrl(final String serviceCode) {
+        return environment.getProperty(serviceCode.concat(".rollbackdemand.url"));
+    }
 
 }

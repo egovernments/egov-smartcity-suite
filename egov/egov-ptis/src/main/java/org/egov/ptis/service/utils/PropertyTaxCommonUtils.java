@@ -123,6 +123,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSCRETARY_OPERATOR_ROLE;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -596,7 +597,9 @@ public class PropertyTaxCommonUtils {
 
     public String setSourceOfProperty(final User user, final Boolean isOnline) {
         String source;
-        if (checkCscUserAndType(user))
+        if(isWardSecretaryUser(user))
+        	source = Source.WARDSECRETARY.toString();
+        else if (checkCscUserAndType(user))
             source = PropertyTaxConstants.SOURCE_CSC;
         else if (isMeesevaUser(user))
             source = PropertyTaxConstants.SOURCE_MEESEVA;
@@ -649,6 +652,13 @@ public class PropertyTaxCommonUtils {
     public Boolean isCitizenPortalUser(final User user) {
         for (final Role role : user.getRoles())
             if (role != null && role.getName().equalsIgnoreCase(CITIZEN_ROLE))
+                return true;
+        return false;
+    }
+    
+    public Boolean isWardSecretaryUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WARDSCRETARY_OPERATOR_ROLE))
                 return true;
         return false;
     }

@@ -54,6 +54,7 @@ public final class SecurityConstants {
     public static final String OTP_FIELD = "otp";
     public static final String SESSION_COOKIE_PATH = "/";
     public static final String SESSION_COOKIE_NAME = "SESSIONID";
+    public static final String USERNAME_FIELD = "j_username";
     public static final String LOGIN_AUDIT_ID = "login_audit_id";
     public static final String LOGIN_IP_ADDRESS = "login_ip";
     public static final String USER_AGENT_HEADER = "User-Agent";

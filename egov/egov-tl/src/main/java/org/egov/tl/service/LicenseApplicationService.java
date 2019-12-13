@@ -48,20 +48,7 @@
 
 package org.egov.tl.service;
 
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.WorkflowBean;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -75,6 +62,28 @@ import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.VIEW_LINK;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.struts2.ServletActionContext;
+import org.egov.commons.entity.Source;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.contracts.WorkflowBean;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
@@ -85,10 +94,38 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
+    @Autowired
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     @Transactional
     public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
         return create(license, wfBean);
+    }
+
+    @Transactional
+    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
+        try {
+            license.setApplicationSource(Source.WARDSECRETARY.toString());
+            license = create(license, wfBean);
+            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+                    .withApplicationNumber(license.getApplicationNumber())
+                    .withViewLink(format(VIEW_LINK,
+                            WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), license.getUid()))
+                    .withTransactionStatus(TransactionStatus.SUCCESS)
+                    .withApplicationStatus(ApplicationStatus.INPROGRESS)
+                    .withRemark("License created")
+                    .withTransactionId(tpTransactionId)
+                    .build());
+
+        } catch (Exception e) {
+            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+                    .withTransactionStatus(TransactionStatus.FAILED)
+                    .withRemark("License creation failed")
+                    .withTransactionId(tpTransactionId)
+                    .withRemark(e.toString())
+                    .build());
+        }
+        return license;
     }
 
     @Transactional
