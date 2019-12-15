@@ -407,6 +407,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         }
+
+        if (isWardSecretaryUser && (transactionId == null || applicationSource == null)) {
+            addActionError("TransactionId and source is required.");
+            return NEW;
+        }
         transitionWorkFlow(propertyMutation);
         propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
                 ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
