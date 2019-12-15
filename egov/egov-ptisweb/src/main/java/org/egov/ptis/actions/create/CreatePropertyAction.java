@@ -459,7 +459,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
         if (isWardSecretaryUser) {
-            property.setSource(Source.WARDSECRETARY.toString());
+            if (wsTransactionId == null) {
+                addActionError("TransactionId is required.");
+                return RESULT_NEW;
+            } else
+                property.setSource(Source.WARDSECRETARY.toString());
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
