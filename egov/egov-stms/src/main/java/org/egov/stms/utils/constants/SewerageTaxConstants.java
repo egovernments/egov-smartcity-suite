@@ -304,5 +304,7 @@ public class SewerageTaxConstants {
     public static Map<Integer, Integer> getPipeScrewSizes() {
         return Collections.unmodifiableMap(PIPE_SCREW_SIZE);
     }
+    
+    public static final String WARDSECRETARY_OPERATOR_ROLE = "WardSecretary Operator";
 
 }
