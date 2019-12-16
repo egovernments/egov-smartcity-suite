@@ -187,8 +187,15 @@ public class NewRegistrationController extends MarriageRegistrationController {
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
                 isEmployee);
-        if (!isAssignmentPresent || errors.hasErrors()) 
-            return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent, isWardSecretaryUser, request);
+        String wsTransactionId = request.getParameter("wsTransactionId");
+        String wsSource = request.getParameter("wsSource");
+        
+		if (isWardSecretaryUser && (StringUtils.isBlank(wsTransactionId) || StringUtils.isBlank(wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+        
+		if (!isAssignmentPresent || errors.hasErrors())
+			return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent,
+					isWardSecretaryUser, wsTransactionId, wsSource);
       
         String message;
         String approverName = null;
@@ -237,7 +244,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
 			final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent, boolean isWardSecretaryUser,
-			HttpServletRequest request) {
+			String transactionId, String source) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
             model.addAttribute(MESSAGE, messageSource.getMessage("notexists.position",
@@ -247,8 +254,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
 		if (isWardSecretaryUser) {
-			model.addAttribute("wsTransactionId", request.getParameter("wsTransactionId"));
-			model.addAttribute("wsSource", request.getParameter("wsSource"));
+			model.addAttribute("wsTransactionId", transactionId);
+			model.addAttribute("wsSource", source);
 		}
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
