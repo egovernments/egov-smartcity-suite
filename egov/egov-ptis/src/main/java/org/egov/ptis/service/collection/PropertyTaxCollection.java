@@ -76,7 +76,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUPER_STRUCTURE;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_CLOSURE_STATUS_URL;
+import static java.lang.String.format;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,13 +88,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
@@ -115,10 +120,10 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
@@ -130,8 +135,10 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * This class is used to persist Collections .This is used for the integration of Collections and Bills and property tax.
@@ -174,6 +181,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     protected Module module() {
@@ -963,6 +973,27 @@ public class PropertyTaxCollection extends TaxCollection {
     private boolean isPenaltyReceipt(ReceiptDetail receiptDetail) {
         return PURPOSE.ARREAR_LATEPAYMENT_CHARGES.toString().equals(receiptDetail.getPurpose())
                 || PURPOSE.CURRENT_LATEPAYMENT_CHARGES.toString().equals(receiptDetail.getPurpose());
+    }
+
+    @Override
+    public ReceiptCancellationInfo validateCancelReceipt(final String receiptNumber, final String consumerCode) {
+        ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+        final HttpServletRequest request = ServletActionContext.getRequest();
+
+        String statusUrl = format(WTMS_CLOSURE_STATUS_URL, WebUtils.extractRequestDomainURL(request, false),
+                consumerCode);
+        String response = restTemplate.getForObject(statusUrl, String.class);
+        JSONObject jsonObject = new JSONObject(response);
+
+        boolean isCloserInprogress;
+        isCloserInprogress = (Boolean) jsonObject.get("closerInprogress");
+        if (isCloserInprogress) {
+            receiptCancellationInfo.setCancellationAllowed(false);
+            receiptCancellationInfo.setValidationMessage(
+                    "User cannot cancel the receipt as closure of connection application is under workflow.");
+        }
+
+        return receiptCancellationInfo;
     }
 
 }
