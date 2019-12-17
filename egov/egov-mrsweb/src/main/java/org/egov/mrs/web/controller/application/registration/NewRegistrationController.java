@@ -66,6 +66,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -143,12 +144,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
             }
         }
 		if (isWardSecretaryUser) {
-			if (StringUtils.isBlank(request.getParameter("transactionId"))
-					|| StringUtils.isBlank(request.getParameter("source")))
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (isWardSecretaryUser
+					&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
-				model.addAttribute("wsSource", request.getParameter("source"));
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
 			}
 		}
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(logedinUser));
@@ -190,7 +193,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
         String wsTransactionId = request.getParameter("wsTransactionId");
         String wsSource = request.getParameter("wsSource");
         
-		if (isWardSecretaryUser && (StringUtils.isBlank(wsTransactionId) || StringUtils.isBlank(wsSource)))
+        if (isWardSecretaryUser
+				&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
         
 		if (!isAssignmentPresent || errors.hasErrors())

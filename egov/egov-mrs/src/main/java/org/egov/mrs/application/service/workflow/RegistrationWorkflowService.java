@@ -47,6 +47,7 @@
  */
 
 package org.egov.mrs.application.service.workflow;
+import static java.lang.String.format;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.egov.mrs.application.MarriageConstants.CMO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.COMMISSIONER;
@@ -75,6 +76,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -89,7 +92,11 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -289,9 +296,11 @@ public class RegistrationWorkflowService {
         String currentState;
         Assignment assignment = getWorkFlowInitiatorForReissue(reIssue);
         final Boolean isCscOperator = isCscOperator(user);
+        boolean isWardSecretaryUser = isWardSecretaryUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
         // In case of CSC Operator will execute this block
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())|| citizenPortalUser) {
+		if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+				|| citizenPortalUser || isWardSecretaryUser) {
             currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -304,6 +313,8 @@ public class RegistrationWorkflowService {
             nextAction = workflowMatrix.getNextAction();
             if (citizenPortalUser)
                 reIssue.setSource(Source.CITIZENPORTAL.name());
+            else if(isWardSecretaryUser)
+            	reIssue.setSource(Source.WARDSECRETARY.name());
             else
                 reIssue.setSource(isCscOperator ? Source.CSC.name() : Source.ONLINE.name());
 
@@ -646,10 +657,11 @@ public class RegistrationWorkflowService {
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
     
-    public boolean isWardSecretaryUser(final User user) {
-        for (final Role role : user.getRoles())
-                if (role != null && role.getName().equalsIgnoreCase(WARDSECRETARY_OPERATOR_ROLE))
-                        return true;
-        return false;
-    }
+	public boolean isWardSecretaryUser(final User user) {
+		for (final Role role : user.getRoles())
+			if (role != null && role.getName().equalsIgnoreCase(WARDSECRETARY_OPERATOR_ROLE))
+				return true;
+		return false;
+	}
+	
 }

@@ -48,6 +48,18 @@
 
 package org.egov.mrs.domain.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.service.EisCommonService;
@@ -83,16 +95,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -437,5 +439,21 @@ public class ReIssueService {
                 reIssue.getApplicationNo(),
                 String.format(REISSUE_APPLICATION_VIEW, reIssue.getId()));
     }
+    
+	@Transactional
+	public String reIssueCertificateAndPublishEventForWardSecretary(ReIssue reIssue, HttpServletRequest request,
+			WorkflowContainer workflowContainer, boolean loggedUserIsWardSecretaryUser) {
+		String applicationNo = StringUtils.EMPTY;
+		try {
+			createReIssueApplication(reIssue, workflowContainer);
+			applicationNo = reIssue.getApplicationNo();
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, true);
+
+		} catch (Exception e) {
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, false);
+		}
+
+		return applicationNo;
+	}
 
 }

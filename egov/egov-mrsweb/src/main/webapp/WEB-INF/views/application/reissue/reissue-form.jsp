@@ -85,6 +85,10 @@
 			<input type="hidden" id="reIssueId" value="${reIssue.id}" />
 			<input type="hidden" id="reIssueStatus"
 				value="${reIssue.status.code}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId"
+				value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource"
+				value="${wsSource}" />
 			<form:hidden path="" name="registration.id"
 				id="reIssueRegistrationId" value="${reIssue.registration.id}" />
 			<ul class="nav nav-tabs" id="settingstab">

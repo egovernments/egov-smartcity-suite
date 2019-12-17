@@ -48,12 +48,23 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
@@ -83,13 +94,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Handles Marriage Registration ReIssue transaction
@@ -150,10 +154,11 @@ public class NewReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
-    public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
+    public String showReIssueForm(@PathVariable final Long registrationId, final Model model, HttpServletRequest request) {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
         final User logedinUser = securityUtils.getCurrentUser();
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         if (registration == null) {
             model.addAttribute(MESSAGE, "msg.invalid.request");
             return "marriagecommon-error";
@@ -169,6 +174,17 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter("wsTransactionId");
+			String wsSource = request.getParameter("wsSource");
+			if (isWardSecretaryUser
+					&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
+			}
+		}
         prepareNewForm(model, reIssue);
 
         return "reissue-form";
@@ -192,8 +208,15 @@ public class NewReIssueController extends GenericWorkFlowController {
             final RedirectAttributes redirectAttributes) {
         final User logedinUser = securityUtils.getCurrentUser();
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
+		String wsTransactionId = request.getParameter("wsTransactionId");
+		String wsSource = request.getParameter("wsSource");
+		if (isWardSecretaryUser
+				&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+        
         marriageFormValidator.validateReIssue(reIssue, errors);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee);
         if (!isAssignmentPresent) {
@@ -222,8 +245,14 @@ public class NewReIssueController extends GenericWorkFlowController {
             approverName = request.getParameter("approverName");
             nextDesignation = request.getParameter("nextDesignation");
         }
-        final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
+        String appNo = StringUtils.EMPTY;
 
+		if (isWardSecretaryUser) {
+			appNo = reIssueService.reIssueCertificateAndPublishEventForWardSecretary(reIssue, request,
+					workflowContainer, isWardSecretaryUser);
+		} else {
+			appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
+		}
         if (approverName != null)
             message = messageSource.getMessage("msg.reissue.forward",
                     new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
