@@ -47,7 +47,6 @@
  */
 
 package org.egov.mrs.application.service.workflow;
-import static java.lang.String.format;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.egov.mrs.application.MarriageConstants.CMO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.COMMISSIONER;
@@ -57,11 +56,11 @@ import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.MHO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_REGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_REGISTRARAR;
 import static org.egov.mrs.application.MarriageConstants.MRS_ROLEFORNONEMPLOYEE;
-import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
-import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.ROLE_CITIZEN;
 import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
@@ -75,8 +74,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
@@ -92,11 +89,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.integration.event.model.ApplicationDetails;
-import org.egov.infra.integration.event.model.enums.ApplicationStatus;
-import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
