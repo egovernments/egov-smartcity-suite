@@ -108,7 +108,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
@@ -149,6 +148,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -205,6 +205,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -358,6 +359,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean blockActive;
     private Boolean wardActive;
     private Boolean electionWardActive;
+    private boolean isWardSecretaryUser;
+    private String transactionId;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -411,6 +414,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private DemandVoucherService demandVoucherService;
+    
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService;
 
     public ModifyPropertyAction() {
         super();
@@ -447,6 +453,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+        isWardSecretaryUser = propService.isWardSecretaryUser(currentUser);
+
+        if (isWardSecretaryUser
+                && ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(transactionId, applicationSource)) {
+            addActionError(getText("WS.001"));
+            return COMMON_FORM;
+        }
+
         showTaxCalculateButton();
         if (isBlank(applicationSource) && !citizenPortalUser
                 && propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
@@ -657,8 +671,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             allowEditDocument = Boolean.TRUE;
         }
         checkToDisplayAckButton();
+        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        if (isWardSecretaryUser) {
+            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(transactionId, applicationSource)) {
+                addActionError(getText("WS.001"));
+                return NEW;
+            } else {
+                propertyModel.setSource(Source.WARDSECRETARY.toString());
+            }
+        }
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-
         if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
             propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
             propertyModel.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
@@ -730,7 +752,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
-        if (!isMeesevaUser)
+        
+        if (isWardSecretaryUser) {
+            propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel,
+                    ServletActionContext.getRequest(), transactionId);
+        } else if (!isMeesevaUser)
             basicPropertyService.update(basicProp);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -2600,5 +2626,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setElectionWardActive(final Boolean electionWardActive) {
         this.electionWardActive = electionWardActive;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }

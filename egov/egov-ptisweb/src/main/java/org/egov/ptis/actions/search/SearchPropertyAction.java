@@ -75,6 +75,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -112,7 +113,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER",
                 "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "applicationType",
-                "${applicationType}", "applicationSource", "${applicationSource}" }),
+                "${applicationType}", "transactionId","${transactionId}","applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
                 "${applicationType}" }),
@@ -315,12 +316,12 @@ public class SearchPropertyAction extends SearchFormAction {
                 setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
             }
         } else if (isWardSecretaryUser) {
-            if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
-                    || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
+
+            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
             } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
-
                 setTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
                 setApplicationSource(Source.WARDSECRETARY.toString());
             }
@@ -476,9 +477,13 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_MEESEVA_RP;
 
         isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
-        if (isWardSecretaryUser && APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+        if (isWardSecretaryUser) {
+            if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+                return MUTATION_TYPE_REGISTERED_TRANSFER;
+            } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                return APPLICATION_TYPE_ALTER_ASSESSENT;
+            }
 
-            return MUTATION_TYPE_REGISTERED_TRANSFER;
         }
 
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {

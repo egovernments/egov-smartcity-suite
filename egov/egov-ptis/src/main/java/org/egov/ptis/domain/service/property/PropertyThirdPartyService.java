@@ -328,5 +328,27 @@ public class PropertyThirdPartyService {
                     property.getApplicationNo(), null, null, "Property Creation Failed");
         }
     }
+    
+    /*
+     * api to update bsic property and publishing the event for ward secretary
+     */
+    @Transactional
+    public void updateBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
+            final HttpServletRequest request, final String transactionId) {
+
+        try {
+            basicPropertyService.update(basicProperty);
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
+                    property.getApplicationNo(), APPLICATION_TYPE_ALTER_ASSESSENT);
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Addition/Alteration Done");
+
+        } catch (Exception ex) {
+            LOGGER.error("exception while saving basic proeprty", ex);
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, "Property Addition/Alteration Failed");
+        }
+    }
 
 }
