@@ -136,6 +136,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -421,8 +422,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
         } else if (isWardSecretaryUser) {
-            if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
-                    || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
+            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
             } else {
@@ -459,8 +460,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
         if (isWardSecretaryUser) {
-            if (wsTransactionId == null) {
-                addActionError("TransactionId is required.");
+            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, applicationSource)) {
+                addActionError(getText("WS.001"));
                 return RESULT_NEW;
             } else
                 property.setSource(Source.WARDSECRETARY.toString());
