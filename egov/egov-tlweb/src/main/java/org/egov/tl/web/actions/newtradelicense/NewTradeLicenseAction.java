@@ -233,7 +233,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 		}
 		if (isWardSecretaryUser) {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+			if (ThirdPartyService.validateWardSecretaryRequest(
 					request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
 					request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
 				addActionMessage(getText("WS.001"));
@@ -257,7 +257,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 		supportDocumentsValidation();
 		if (isWardSecretaryUser) {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+			if (ThirdPartyService.validateWardSecretaryRequest(
 					request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
 					request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
 				addActionMessage(getText("WS.001"));

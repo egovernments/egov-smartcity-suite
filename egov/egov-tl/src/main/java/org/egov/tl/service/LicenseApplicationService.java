@@ -115,9 +115,9 @@ public class LicenseApplicationService extends TradeLicenseService {
                 LOGGER.error("WARDSECRETARY:source and transactionId are mandatory fields");
                 throw new ApplicationRuntimeException("source and transactionId are mandatory fields");
             }
-            if(wfBean.getActionName().contentEquals(NEW_APPTYPE_CODE)) {
+            if(NEW_APPTYPE_CODE.toString().equals(wfBean.getActionName())) {
             	license = create(license, wfBean);
-            }else if(wfBean.getActionName().contentEquals(RENEW_APPTYPE_CODE)) {
+            }else if(RENEW_APPTYPE_CODE.toString().equals(wfBean.getActionName())) {
             	license = renew(license, wfBean);
             }            
             thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
