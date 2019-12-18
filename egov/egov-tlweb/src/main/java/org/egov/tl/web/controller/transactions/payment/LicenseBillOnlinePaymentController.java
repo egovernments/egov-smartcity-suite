@@ -47,10 +47,16 @@
  */
 package org.egov.tl.web.controller.transactions.payment;
 
+import org.apache.struts2.ServletActionContext;
+import org.egov.commons.entity.Source;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,7 +72,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.net.URLEncoder;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.utils.Constants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.tl.utils.Constants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -81,6 +91,11 @@ public class LicenseBillOnlinePaymentController {
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
+    @Autowired
+    protected transient SecurityUtils securityUtils;
+    
+    private boolean isWardSecretaryUser;
+    
     @ModelAttribute("onlineSearchForm")
     public OnlineSearchForm onlineSearchForm() {
         return new OnlineSearchForm();
@@ -99,9 +114,21 @@ public class LicenseBillOnlinePaymentController {
     }
 
     @GetMapping
-    public String searchForPayment() {
-        return "searchtrade-licenseforpay";
-    }
+	public String searchForPayment(final Model model, final HttpServletRequest request) {
+		isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
+
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+			String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
+		}
+		return "searchtrade-licenseforpay";
+	}
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
