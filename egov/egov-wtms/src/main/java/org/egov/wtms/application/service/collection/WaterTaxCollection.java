@@ -741,10 +741,11 @@ public class WaterTaxCollection extends TaxCollection {
                 .getAllConnectionDetailsByConsumerCode(consumerCode);
         if (waterConnectionDetailsList != null && !waterConnectionDetailsList.isEmpty()) {
             for (WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
-                if (!APPLICATIONSTATUSCLOSED.equals(waterConnectionDetails.getState().getValue())
-                        && ((REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                                && waterConnectionDetails.getExecutionDate() != null)
-                                || CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
+                if (((REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                        && waterConnectionDetails.getExecutionDate() != null)
+                        || CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                        && waterConnectionDetails.getState() != null
+                        && !APPLICATIONSTATUSCLOSED.equals(waterConnectionDetails.getState().getValue())) {
                     receiptCancellationInfo.setCancellationAllowed(false);
                     receiptCancellationInfo.setValidationMessage("User Cannot cancel the receipt as "
                             + waterConnectionDetails.getApplicationType().getName() + " application is under workflow");
