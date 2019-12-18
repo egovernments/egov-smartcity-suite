@@ -80,6 +80,8 @@
 				<form:hidden path="meesevaApplicationNumber" value="${addConnection.meesevaApplicationNumber}"/>
 				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
+				<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+				<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<c:if test="${validationMessage==''}">	
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	

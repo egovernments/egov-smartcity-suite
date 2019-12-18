@@ -1925,24 +1925,26 @@ public class WaterConnectionDetailsService {
         return value;
     }
 
-    @Transactional
-    public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
-            HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
-        try {
-            createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
-                    waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
-            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-                    .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
-                    .withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
-                            waterConnectionDetails.getApplicationNumber()))
-                    .withTransactionStatus(TransactionStatus.SUCCESS)
-                    .withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Water connection created")
-                    .withTransactionId(request.getParameter("wsTransactionId")).build());
+	@Transactional
+	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
+		try {
+			createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
+					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+					.withApplicationNumber(waterConnectionDetails.getApplicationNumber())
+					.withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
+							waterConnectionDetails.getApplicationNumber()))
+					.withTransactionStatus(TransactionStatus.SUCCESS)
+					.withApplicationStatus(ApplicationStatus.INPROGRESS)
+					.withRemark(waterConnectionDetails.getApplicationType().getName().concat(" created"))
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
 
-        } catch (Exception e) {
-            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-                    .withTransactionStatus(TransactionStatus.FAILED).withRemark("Water connection creation failed")
-                    .withTransactionId(request.getParameter("wsTransactionId")).build());
-        }
-    }
+		} catch (Exception e) {
+			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+					.withTransactionStatus(TransactionStatus.FAILED)
+					.withRemark(waterConnectionDetails.getApplicationType().getName().concat(" creation failed"))
+					.withTransactionId(request.getParameter("wsTransactionId")).build());
+		}
+	}
 }
