@@ -49,6 +49,7 @@
 package org.egov.ptis.domain.service.demolition;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandDetails;
@@ -60,9 +61,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -82,6 +86,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.FlushMode;
@@ -105,6 +110,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyDemolitionService extends PersistenceService<PropertyImpl, Long> {
@@ -158,6 +164,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
+    private EventPublisher eventPublisher;
+    
     public PropertyDemolitionService() {
         super(PropertyImpl.class);
     }
@@ -659,6 +668,33 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 ? BigDecimal.ZERO : new BigDecimal(
                         Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
                                 .get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+
+    @Transactional
+    public BasicProperty savePropertyAndPublishEvent(final Property oldProperty, final Property newProperty,
+            final Character status,
+            final String comments,
+            final String workFlowAction, final Long approverPosition, final String additionalRule, final String transactionId)
+            throws TaxCalculatorExeption {
+        BasicProperty basicProperty = null;
+
+        try {
+            basicProperty = saveProperty(oldProperty, newProperty, status,
+                    comments,
+                    workFlowAction, approverPosition, additionalRule);
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    newProperty.getApplicationNo(), APPLICATION_TYPE_DEMOLITION);
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    newProperty.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Demolition Initiated");
+
+        } catch (Exception ex) {
+            LOGGER.error("exception while doing property demolition.", ex);
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    newProperty.getApplicationNo(), null, null, "Property Demolition Failed");
+        }
+        return basicProperty;
     }
 
 }

@@ -345,7 +345,7 @@ public class PropertyThirdPartyService {
                     property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Addition/Alteration Done");
 
         } catch (Exception ex) {
-            LOGGER.error("exception while saving basic proeprty", ex);
+            LOGGER.error("exception while updating basic proeprty in addition/alteration.", ex);
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, "Property Addition/Alteration Failed");
         }

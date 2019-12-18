@@ -156,7 +156,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_COURT_VERDICT, type = "redirect", location = "../courtverdict/viewform/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}","transactionId","${transactionId}" }),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}", params = {
                "mode", OWNERDETAILS_EDIT_MODE }),
         @Result(name = APPLICATION_TYPE_EDIT_MOBILE_NO, type = "redirect", location = "../editowner/${assessmentNum}", params = {
@@ -482,6 +482,8 @@ public class SearchPropertyAction extends SearchFormAction {
                 return MUTATION_TYPE_REGISTERED_TRANSFER;
             } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                 return APPLICATION_TYPE_ALTER_ASSESSENT;
+            } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
+                return APPLICATION_TYPE_DEMOLITION;
             }
 
         }
