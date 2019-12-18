@@ -104,7 +104,6 @@ public final class Constants {
     public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
-    public static final String RENEW_APPTYPE_CODE = "RENEW";
     public static final String SEARCH_BY_APPNO = "ApplicationNumber";
     public static final String SEARCH_BY_LICENSENO = "LicenseNumber";
     public static final String SEARCH_BY_OLDLICENSENO = "OldLicenseNumber";
@@ -134,6 +133,7 @@ public final class Constants {
     public static final String RENEW_ADDITIONAL_RULE = "RENEWTRADELICENSE";
     public static final String NEW_ADDITIONAL_RULE = "NEWTRADELICENSE";
     public static final String NEW_APPTYPE_CODE = "NEW";
+    public static final String RENEW_APPTYPE_CODE = "RENEW";
     public static final String DELIMITER_COLON = "::";
     public static final String EDIT_APPROVAL_MODE = "editForApproval";
     public static final String DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED = "Digital sign-Second level fee collected";
@@ -187,6 +187,10 @@ public final class Constants {
             .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
 
     public static final String VIEW_LINK = "%s/tl/license/show/%s";
+
+    public static final String WARDSCRETARY_OPERATOR_ROLE = "WardSecretary Operator";
+    public static final String WARDSECRETARY_TRANSACTIONID_CODE = "transactionId";
+    public static final String WARDSECRETARY_SOURCE_CODE = "source";
 
     private Constants() {
         // only invariants

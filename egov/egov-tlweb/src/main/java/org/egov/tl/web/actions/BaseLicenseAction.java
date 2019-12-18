@@ -68,6 +68,8 @@ import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
 import static org.egov.tl.utils.Constants.GENERATE_PROVISIONAL_CERTIFICATE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
@@ -212,7 +214,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else if (tradeLicenseService.currentUserIsWardSecretary()) {
             license.setApplicationSource(source);
-            licenseApplicationService.createWithWardSecretary(license, workflowBean,
+            workflowBean.setActionName(NEW_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license, workflowBean,
                     transactionId);
         } else {
             licenseApplicationService.create(license, workflowBean);
@@ -304,6 +307,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
+        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+            license().setApplicationSource(source);
+            workflowBean.setActionName(RENEW_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license(), workflowBean,
+                    transactionId);
         } else {
             licenseApplicationService.renew(license(), workflowBean);
             setMessage(this.getText("license.renew.submission.succesful")

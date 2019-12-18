@@ -63,6 +63,8 @@ import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.VIEW_LINK;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 
 import java.util.Date;
 import java.util.UUID;
@@ -106,15 +108,18 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     @Transactional
-    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
+    public TradeLicense processWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
         try {
             if (!Source.WARDSECRETARY.toString().equals(license.getApplicationSource()) ||
                     StringUtils.isEmpty(tpTransactionId)) {
                 LOGGER.error("WARDSECRETARY:source and transactionId are mandatory fields");
                 throw new ApplicationRuntimeException("source and transactionId are mandatory fields");
             }
-            license.setApplicationSource(Source.WARDSECRETARY.toString());
-            license = create(license, wfBean);
+            if(wfBean.getActionName().contentEquals(NEW_APPTYPE_CODE)) {
+            	license = create(license, wfBean);
+            }else if(wfBean.getActionName().contentEquals(RENEW_APPTYPE_CODE)) {
+            	license = renew(license, wfBean);
+            }            
             thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
                     .withApplicationNumber(license.getApplicationNumber())
                     .withViewLink(format(VIEW_LINK,
