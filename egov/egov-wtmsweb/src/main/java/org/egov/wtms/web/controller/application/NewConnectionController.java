@@ -209,12 +209,13 @@ public class NewConnectionController extends GenericConnectionController {
 			else
 				waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
 		if (isWardSecretaryUser) {
-			if (StringUtils.isBlank(request.getParameter("transactionId"))
-					|| StringUtils.isBlank(request.getParameter("source")))
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
-				model.addAttribute("wsSource", request.getParameter("source"));
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
 			}
 		}
         return NEWCONNECTION_FORM;
@@ -269,7 +270,7 @@ public class NewConnectionController extends GenericConnectionController {
             throw new ValidationException("err.creator.application");
 		
 		if (loggedUserIsWardSecretaryUser
-				&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
 		
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);

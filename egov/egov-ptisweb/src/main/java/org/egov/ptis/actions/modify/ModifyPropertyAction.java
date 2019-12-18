@@ -456,7 +456,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         isWardSecretaryUser = propService.isWardSecretaryUser(currentUser);
 
         if (isWardSecretaryUser
-                && ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(transactionId, applicationSource)) {
+                && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return COMMON_FORM;
         }
@@ -673,7 +673,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         checkToDisplayAckButton();
         isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         if (isWardSecretaryUser) {
-            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(transactionId, applicationSource)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return NEW;
             } else {

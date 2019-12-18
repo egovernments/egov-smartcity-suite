@@ -147,7 +147,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 			String wsTransactionId = request.getParameter("transactionId");
 			String wsSource = request.getParameter("source");
 			if (isWardSecretaryUser
-					&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
 				model.addAttribute("wsTransactionId", wsTransactionId);
@@ -194,7 +194,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         String wsSource = request.getParameter("wsSource");
         
         if (isWardSecretaryUser
-				&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
         
 		if (!isAssignmentPresent || errors.hasErrors())

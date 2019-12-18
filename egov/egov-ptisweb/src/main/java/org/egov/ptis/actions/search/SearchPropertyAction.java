@@ -317,7 +317,7 @@ public class SearchPropertyAction extends SearchFormAction {
             }
         } else if (isWardSecretaryUser) {
 
-            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+            if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;

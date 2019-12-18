@@ -422,7 +422,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
         } else if (isWardSecretaryUser) {
-            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(
+            if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
@@ -460,7 +460,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
         if (isWardSecretaryUser) {
-            if (ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, applicationSource)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return RESULT_NEW;
             } else

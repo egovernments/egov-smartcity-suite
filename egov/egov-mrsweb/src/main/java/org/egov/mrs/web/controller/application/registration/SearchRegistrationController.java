@@ -238,7 +238,7 @@ public class SearchRegistrationController {
 			String wsTransactionId = request.getParameter("transactionId");
 			String wsSource = request.getParameter("source");
 			if (isWardSecretaryOperator
-					&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
 				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));

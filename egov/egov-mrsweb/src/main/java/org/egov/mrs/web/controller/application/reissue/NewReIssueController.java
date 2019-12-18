@@ -178,7 +178,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 			String wsTransactionId = request.getParameter("wsTransactionId");
 			String wsSource = request.getParameter("wsSource");
 			if (isWardSecretaryUser
-					&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
 				model.addAttribute("wsTransactionId", wsTransactionId);
@@ -214,7 +214,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 		String wsTransactionId = request.getParameter("wsTransactionId");
 		String wsSource = request.getParameter("wsSource");
 		if (isWardSecretaryUser
-				&& ThirdPartyService.validateTransactionIdAndSourceForWardSecretary(wsTransactionId, wsSource))
+				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
         
         marriageFormValidator.validateReIssue(reIssue, errors);
