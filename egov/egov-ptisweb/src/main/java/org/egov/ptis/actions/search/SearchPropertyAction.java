@@ -116,7 +116,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${applicationType}", "transactionId","${transactionId}","applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
-                "${applicationType}" }),
+                "${applicationType}", "transactionId", "${transactionId}", "applicationSource", "${applicationSource}" }),
         @Result(name = MUTATION_TYPE_REGISTERED_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
@@ -484,7 +484,9 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_ALTER_ASSESSENT;
             } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
                 return APPLICATION_TYPE_DEMOLITION;
-            }
+            } else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
+                return APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+            } 
 
         }
 
