@@ -101,7 +101,7 @@
 					<s:text name="service.master.bankmappping.view.header" />
 				</div>
 
-				<table width="100%" border="0" cellspacing="0" cellpadding="0"
+				 <table width="100%" border="0" cellspacing="0" cellpadding="0"
 					style="max-width: 960px; margin: 0 auto;">
 					<tr>
 						<td class="bluebox">&nbsp;</td>
@@ -136,7 +136,7 @@
 								list="dropdownData.bankAccountIdList" listKey="id"
 								listValue="accountnumber" value="%{bankAccountId.id}" /></td>
 					</tr>
-					<tr>
+				 	<tr>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox"><s:text
 								name="service.master.search.category" /></td>
@@ -156,13 +156,13 @@
 								id="serviceDetailsId" cssClass="selectwk"
 								list="dropdownData.serviceDetailsList" listKey="id"
 								listValue="name" value="%{serviceDetails.id}" /></td>
-					</tr>
+					</tr> 
 				</table>
 				<div align="left" class="mandatorycoll">
 					&nbsp;&nbsp;&nbsp;
 					<s:text name="common.mandatoryfields" />
 				</div>
-				<br />
+				<br /> 
 			</div>
 			<div class="buttonbottom">
 				<s:submit name="sumbit" cssClass="buttonsubmit" id="button32"

@@ -47,85 +47,113 @@
  */
 package org.egov.collection.web.actions.service;
 
+import java.util.Collection;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.service.CategoryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceCategory;
-import org.egov.infstr.services.PersistenceService;
-
-import java.util.Collection;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),
-        @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
-        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp"),
-        @Result(name = ServiceCategoryAction.MESSAGE, location = "serviceCategory-message.jsp") })
+		@Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
+		@Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp"),
+		@Result(name = ServiceCategoryAction.MESSAGE, location = "serviceCategory-message.jsp") })
 public class ServiceCategoryAction extends BaseFormAction {
 
-    private static final long serialVersionUID = 1L;
-    private PersistenceService<ServiceCategory, Long> serviceCategoryService;
-    private Collection<ServiceCategory> serviceCategoryList = null;
-    private ServiceCategory serviceCategoryInstance = new ServiceCategory();
-    private String code;
-    protected static final String MESSAGE = "message";
+	private static final long serialVersionUID = 1L;
+	private Collection<ServiceCategory> serviceCategoryList = null;
+	private ServiceCategory serviceCategoryInstance = new ServiceCategory();
+	private String code;
+	protected static final String MESSAGE = "message";
 
-    @Action(value = "/service/serviceCategory-newform")
-    public String newform() {
-        return NEW;
-    }
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Action(value = "/service/serviceCategory-list")
-    public String list() {
-        serviceCategoryList = serviceCategoryService.findAll(CollectionConstants.SERVICECATEGORY_CODE);
-        return INDEX;
-    }
+	@Autowired
+	private CategoryService serviceCategoryService;
 
-    @Action(value = "/service/serviceCategory-edit")
-    public String edit() {
-        serviceCategoryInstance = serviceCategoryService
-                .findByNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE, code);
-        return EDIT;
-    }
+	@Action(value = "/service/serviceCategory-newform")
+	public String newform() {
+		return NEW;
+	}
 
-    @Action(value = "/service/serviceCategory-save")
-    public String save() {
-        serviceCategoryService.update(serviceCategoryInstance);
-        return list();
-    }
+	@Action(value = "/service/serviceCategory-list")
+	public String list() {
+		final Query query = entityManager.createQuery("from ServiceCategory order by code ");
+		serviceCategoryList = query.getResultList();
+		return INDEX;
+	}
 
-    @Action(value = "/service/serviceCategory-create")
-    public String create() {
-        serviceCategoryService.create(serviceCategoryInstance);
-        addActionMessage(getText("service.create.success.msg",
-                new String[] { serviceCategoryInstance.getCode(), serviceCategoryInstance.getName() }));
-        return MESSAGE;
+	@Action(value = "/service/serviceCategory-edit")
+	public String edit() {
+		final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE);
+		query.setParameter(1, code);
+		serviceCategoryInstance = (ServiceCategory) query.getSingleResult();
+		return EDIT;
+	}
 
-    }
+	@Action(value = "/service/serviceCategory-save")
+	public String save() {
+		validateServiceCategory();
+		if (hasActionErrors())
+			return NEW;
+		serviceCategoryService.persist(serviceCategoryInstance);
+		return list();
+	}
 
-    @Override
-    public Object getModel() {
-        return serviceCategoryInstance;
-    }
+	@Action(value = "/service/serviceCategory-create")
+	public String create() {
+		if (serviceCategoryService.getServiceCategoryByCode(serviceCategoryInstance.getCode()).isPresent())
+			addActionError(getText("masters.serviceCategoryCode.isunique"));
+		if (hasActionErrors())
+			return NEW;
+		serviceCategoryService.persist(serviceCategoryInstance);
+		addActionMessage(getText("service.create.success.msg",
+				new String[] { serviceCategoryInstance.getCode(), serviceCategoryInstance.getName() }));
+		return MESSAGE;
 
-    /**
-     * @return the serviceCategoryList
-     */
-    public Collection<ServiceCategory> getServiceCategoryList() {
-        return serviceCategoryList;
-    }
+	}
 
-    public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
-        this.serviceCategoryService = serviceCategoryService;
-    }
+	public void validateServiceCategory() {
+		if (StringUtils.isEmpty(serviceCategoryInstance.getName()))
+			addActionError(getText("serviceCategoryName.null.validation"));
+		if (StringUtils.isEmpty(serviceCategoryInstance.getCode()))
+			addActionError(getText("serviceCategoryCode.null.validation"));
+	}
 
-    public String getCode() {
-        return code;
-    }
+	@Override
+	public Object getModel() {
+		return serviceCategoryInstance;
+	}
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
+	/**
+	 * @return the serviceCategoryList
+	 */
+	public Collection<ServiceCategory> getServiceCategoryList() {
+		return serviceCategoryList;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 }

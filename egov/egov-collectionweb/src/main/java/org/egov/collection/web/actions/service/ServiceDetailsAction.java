@@ -68,6 +68,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.service.CategoryService;
 import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Accountdetailtype;
@@ -141,6 +142,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
 	@Autowired
 	private ServiceDetailsService serviceDetailsService;
+	@Autowired
+	private CategoryService serviceCategoryService;
 
 	public ServiceDetailsAction() {
 		addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -155,15 +158,14 @@ public class ServiceDetailsAction extends BaseFormAction {
 
 	@Action(value = "/service/serviceDetails-newform")
 	public String newform() {
-		addDropdownData("serviceCategoryList",
-				entityManager.createNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY).getResultList());
+		addDropdownData("serviceCategoryList", serviceCategoryService.getActiveServiceCategoryList());
 		return NEW;
 	}
 
 	@Override
 	@Action(value = "/service/serviceDetails")
 	public String execute() {
-		return com.opensymphony.xwork2.Action.SUCCESS;
+		return SUCCESS;
 	}
 
 	@Override
@@ -200,14 +202,50 @@ public class ServiceDetailsAction extends BaseFormAction {
 			setServiceCategoryId(serviceDetails.getServiceCategory().getId());
 			serviceDetails.setServiceCategory(category);
 		} else if (null != serviceCategoryId) {
-			final ServiceCategory category = entityManager.find(ServiceCategory.class, -1);
+			final ServiceCategory category = entityManager.find(ServiceCategory.class, serviceCategoryId);
 			serviceDetails.setServiceCategory(category);
 		}
 		headerFields = new ArrayList<>(0);
 		mandatoryFields = new ArrayList<>(0);
 		getHeaderMandateFields();
 		setupDropdownDataExcluding();
+		addHeaderMandateDropDown();
+		prepareServiceTypeMap();
+		setHeaderFields(headerFields);
+		setMandatoryFields(mandatoryFields);
+		setVoucherCreateFlag();
+	}
 
+	private void setVoucherCreateFlag() {
+		if (collectionsUtil
+				.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+						CollectionConstants.APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY)
+				.equals(CollectionConstants.YES))
+			isVoucherOnReceiptAndStatusDisplay = Boolean.TRUE;
+	}
+
+	private void prepareServiceTypeMap() {
+		serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+		serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
+		serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
+	}
+
+	protected void getHeaderMandateFields() {
+		final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
+				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+				CollectionConstants.MISMandatoryAttributesKeyCollection);
+
+		for (final AppConfigValues appConfigVal : appConfigValuesList) {
+			final String value = appConfigVal.getValue();
+			final String header = value.substring(0, value.indexOf(CollectionConstants.PIPE));
+			headerFields.add(header);
+			final String mandate = value.substring(value.indexOf(CollectionConstants.PIPE) + 1);
+			if (mandate.equalsIgnoreCase(CollectionConstants.Mandatory))
+				mandatoryFields.add(header);
+		}
+	}
+
+	private void addHeaderMandateDropDown() {
 		if (headerFields.contains(CollectionConstants.DEPARTMENT))
 			addDropdownData("departmentList",
 					entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS).getResultList());
@@ -224,16 +262,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 		if (headerFields.contains(CollectionConstants.FUNDSOURCE))
 			addDropdownData("fundsourceList",
 					entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE).getResultList());
-		serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
-		serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
-		serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
-		setHeaderFields(headerFields);
-		setMandatoryFields(mandatoryFields);
-		if (collectionsUtil
-				.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-						CollectionConstants.APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY)
-				.equals(CollectionConstants.YES))
-			isVoucherOnReceiptAndStatusDisplay = Boolean.TRUE;
 	}
 
 	@Action(value = "/service/serviceDetails-beforeCreate")
@@ -357,9 +385,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 	private void formatServiceDetails() {
 
 		for (final Long departId : departmentList) {
-
-			final Department dept = departmentService.getDepartmentById(departId);
-			serviceDetails.addServiceDept(dept);
+			final Department department = departmentService.getDepartmentById(departId);
+			serviceDetails.addServiceDept(department);
 		}
 		for (final ServiceAccountDetails account : accountDetails) {
 
@@ -421,7 +448,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 		for (final ServiceAccountDetails account : accountDetails)
 			if (account.getAmount().compareTo(BigDecimal.ZERO) > 0
 					&& (null == account.getGlCodeId() || null == account.getGlCodeId().getId())) {
-				addActionError(getText("service.accdetail.accmissing", new String[] { "" + ++index }));
+				addActionError(
+						getText("service.accdetail.accmissing", new String[] { CollectionConstants.BLANK + ++index }));
 				return Boolean.FALSE;
 			}
 		return validateSubledger();
@@ -453,9 +481,10 @@ public class ServiceDetailsAction extends BaseFormAction {
 						.get(subledger.getServiceAccountDetail().getGlCodeId().getGlcode());
 				subledgerAmount.put(subledger.getServiceAccountDetail().getGlCodeId().getGlcode(),
 						amount.add(subledger.getAmount()));
-			} else
+			} else {
 				subledgerAmount.put(subledger.getServiceAccountDetail().getGlCodeId().getGlcode(),
 						subledger.getAmount());
+			}
 
 		for (final Map.Entry<String, BigDecimal> entry : accountDetailAmount.entrySet()) {
 
@@ -481,34 +510,13 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return headerFields.contains(field);
 	}
 
-	protected void getHeaderMandateFields() {
-		final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
-				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-				CollectionConstants.MISMandatoryAttributesKeyCollection);
-
-		for (final AppConfigValues appConfigVal : appConfigValuesList) {
-			final String value = appConfigVal.getValue();
-			final String header = value.substring(0, value.indexOf('|'));
-			headerFields.add(header);
-			final String mandate = value.substring(value.indexOf('|') + 1);
-			if (mandate.equalsIgnoreCase(CollectionConstants.Mandatory))
-				mandatoryFields.add(header);
-		}
-	}
-
 	@Action(value = "/service/serviceDetails-codeUniqueCheck")
 	public String codeUniqueCheck() {
-		return "codeUniqueCheck";
+		return CODEUNIQUECHECK;
 	}
 
 	public boolean getCodeCheck() {
-		boolean codeExistsOrNot = false;
-		final List<ServiceDetails> service = entityManager
-				.createNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE, ServiceDetails.class)
-				.setParameter(1, serviceDetails.getCode()).getResultList();
-		if (!service.isEmpty())
-			codeExistsOrNot = true;
-		return codeExistsOrNot;
+		return serviceDetailsService.findServiceDetailsByCode(serviceDetails.getCode()).isPresent();
 	}
 
 	public ServiceDetails getServiceDetails() {

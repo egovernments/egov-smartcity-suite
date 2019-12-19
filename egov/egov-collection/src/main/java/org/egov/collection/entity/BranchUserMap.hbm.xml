@@ -57,10 +57,10 @@
 			</generator>
 		</id>
 		<many-to-one name="bankbranch" class="org.egov.commons.Bankbranch" fetch="select">
-            <column name="bankbranch" precision="22" scale="0" />
+            <column name="bankbranch" precision="22" scale="0"  not-null="true"/>
         </many-to-one>
         <many-to-one name="bankuser" class="org.egov.infra.admin.master.entity.User" fetch="select">
-            <column name="bankuser" precision="22" scale="0" />
+            <column name="bankuser" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <property name="isActive" type="java.lang.Boolean">
 			<column name="isActive" precision="1" scale="0" />

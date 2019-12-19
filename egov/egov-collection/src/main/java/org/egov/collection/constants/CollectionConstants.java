@@ -62,6 +62,7 @@ public final class CollectionConstants {
     public static final String COMMA = ", ";
     public static final String OPENBRACKET = "[ ";
     public static final String CLOSEBRACKET = " ]";
+    public static final char PIPE = '|';
 
     // Service types
     public static final String SERVICE_TYPE_BILLING = "B";

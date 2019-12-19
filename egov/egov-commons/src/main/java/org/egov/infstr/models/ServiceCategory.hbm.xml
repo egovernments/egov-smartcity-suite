@@ -57,8 +57,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 				<param name="sequence_name">SEQ_EGCL_SERVICECATEGORY</param>
 			</generator>
 		</id>
-		<property name="name" column="NAME" type="string" />
-		<property name="code" column="CODE" type="string" />
+		<property name="name" column="NAME" type="string"  not-null="true"/>
+		<property name="code" column="CODE" type="string"  not-null="true"/>
 		<property name="isActive" column="ISACTIVE" type="java.lang.Boolean" />
 		<many-to-one name="createdBy"
 			class="org.egov.infra.admin.master.entity.User" fetch="select">

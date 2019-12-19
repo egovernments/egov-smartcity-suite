@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,92 +48,60 @@
 
 package org.egov.collection.service;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.entity.BranchUserMap;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infstr.models.ServiceAccountDetails;
-import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.infra.admin.master.service.UserService;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ServiceDetailsService extends PersistenceService<ServiceDetails, Long> {
-	public ServiceDetailsService(Class<ServiceDetails> type) {
-		super(type);
-		// TODO Auto-generated constructor stub
-	}
+@Service
+@Transactional(readOnly = true)
+public class BranchUserService {
 
-	public ServiceDetailsService() {
-		super(ServiceDetails.class);
-	}
-
-	private static final long serialVersionUID = 5581301494846870670L;
-	private static final Logger LOGGER = Logger.getLogger(ServiceDetailsService.class);
+	private static final Logger LOGGER = Logger.getLogger(BranchUserService.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
 	@Autowired
-	private CollectionsUtil collectionsUtil;
+	private UserService userService;
 
-	@Override
 	@Transactional
-	public ServiceDetails persist(ServiceDetails serviceDetails) {
-		final List<ServiceAccountDetails> accountList = entityManager
-				.createQuery(" from ServiceAccountDetails sa where sa.serviceDetails.id =:serviceDetailId",
-						ServiceAccountDetails.class)
-				.setParameter("serviceDetailId", serviceDetails.getId()).getResultList();
-
-		for (final ServiceAccountDetails serviceAccountDetails : accountList) {
-			entityManager.createQuery("delete from ServiceSubledgerInfo where serviceAccountDetail.id=:accountId")
-					.setParameter("accountId", serviceAccountDetails.getId()).executeUpdate();
-		}
-
-		if (serviceDetails.getId() == null)
-			getCurrentSession().save(serviceDetails);
-		else {
-			entityManager.createQuery(" delete from ServiceAccountDetails where serviceDetails.id=:serviceId")
-					.setParameter("serviceId", serviceDetails.getId()).executeUpdate();
-			if (ApplicationThreadLocals.getUserId() != null) {
-				final User user = collectionsUtil.getUserById(ApplicationThreadLocals.getUserId());
-				serviceDetails.setCreatedBy(user);
-				serviceDetails.setModifiedBy(user);
-				serviceDetails.setCreatedDate(new Date());
-				serviceDetails.setModifiedDate(new Date());
-			}
-			entityManager.merge(serviceDetails);
-		}
-		return serviceDetails;
+	public BranchUserMap persist(BranchUserMap branchUserMap) {
+		LOGGER.info("Before saving branch user");
+		getCurrentSession().save(branchUserMap);
+		LOGGER.info("Branch user persisted");
+		return branchUserMap;
 	}
 
-	public Optional<ServiceDetails> findServiceDetailsByCode(String code) {
-		return entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE, ServiceDetails.class)
-				.setParameter(1, code).getResultList().stream().findFirst();
+	public List<User> getBankCollectionOperator() {
+		LOGGER.info("Fetching bank collection operator users.");
+		List<User> bankCollOpUserList = new ArrayList<>(
+				userService.getUsersByRoleName(CollectionConstants.BANK_COLLECTION_OPERATOR));
+		final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_ACTIVE_BRANCHUSER, User.class);
+		List<User> userMapToBranchList = query.getResultList();
+		if (!userMapToBranchList.isEmpty())
+			bankCollOpUserList.removeAll(userMapToBranchList);
+		if (bankCollOpUserList.isEmpty())
+			return Collections.emptyList();
+		else
+			return bankCollOpUserList;
 	}
 
-	public List<ServiceDetails> findActiveServiceDetailsByCategoryId(Long serviceCategoryId) {
-		Query query = (Query) entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY);
-		query.setParameter(1, serviceCategoryId);
-		query.setParameter(2, Boolean.TRUE);
-		return query.getResultList();
-	}
-
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-
-	public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-		this.collectionsUtil = collectionsUtil;
+	private Session getCurrentSession() {
+		return this.entityManager.unwrap(Session.class);
 	}
 
 }
