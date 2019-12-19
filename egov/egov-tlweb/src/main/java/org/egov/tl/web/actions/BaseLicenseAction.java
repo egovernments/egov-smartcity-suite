@@ -98,6 +98,8 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -213,6 +215,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+			if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+				throw new ApplicationRuntimeException("WS.001");
+			}
             license.setApplicationSource(source);
             workflowBean.setActionName(NEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license, workflowBean,
@@ -308,6 +313,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
         } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+        	if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+				throw new ApplicationRuntimeException("WS.001");
+			}
             license().setApplicationSource(source);
             workflowBean.setActionName(RENEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license(), workflowBean,

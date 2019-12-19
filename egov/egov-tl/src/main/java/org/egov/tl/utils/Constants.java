@@ -134,6 +134,7 @@ public final class Constants {
     public static final String NEW_ADDITIONAL_RULE = "NEWTRADELICENSE";
     public static final String NEW_APPTYPE_CODE = "NEW";
     public static final String RENEW_APPTYPE_CODE = "RENEW";
+    public static final String CLOSURE_APPTYPE_CODE = "CLOSURE";
     public static final String DELIMITER_COLON = "::";
     public static final String EDIT_APPROVAL_MODE = "editForApproval";
     public static final String DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED = "Digital sign-Second level fee collected";
@@ -156,7 +157,6 @@ public final class Constants {
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String TRADE_LICENSE = "Trade License";
     public static final String TL_SERVICE_CODE = "TL";
-    public static final String CLOSURE_APPTYPE_CODE = "CLOSURE";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVAOPERATOR = "MeeSeva Operator";
