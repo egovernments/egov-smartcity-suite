@@ -120,7 +120,9 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         }
-        licenseClosureService.createClosure(tradeLicense, request);
+        String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource );
         redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");
         return REDIRECT_TO_VIEW + tradeLicense.getId();
     }

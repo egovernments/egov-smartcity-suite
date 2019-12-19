@@ -143,8 +143,8 @@ public class LicenseApplicationService extends TradeLicenseService {
 			throw validationException;
 		} catch (Exception e) {
 			LOGGER.error("Ward Secretary : License process failed");
-			String message = (NEW_APPTYPE_CODE.equals(wfBean.getActionName())) ? LICENSE_CREATION_FAILED
-					: (RENEW_APPTYPE_CODE.equals(wfBean.getActionName())) ? LICENSE_RENEWAL_FAILED
+			String message = NEW_APPTYPE_CODE.equals(wfBean.getActionName()) ? LICENSE_CREATION_FAILED
+					: RENEW_APPTYPE_CODE.equals(wfBean.getActionName()) ? LICENSE_RENEWAL_FAILED
 							: LICENSE_CLOSURE_FAILED;
 			thirdPartyApplicationEventPublisher
 					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)

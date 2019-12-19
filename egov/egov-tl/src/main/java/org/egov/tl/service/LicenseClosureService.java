@@ -169,9 +169,7 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-	public TradeLicense createClosure(TradeLicense license, final HttpServletRequest request) {
-    	String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
-		String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+	public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource) {
 		boolean isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser) {
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)) {
@@ -189,7 +187,7 @@ public class LicenseClosureService extends LicenseService {
 		update(license);
 		if (isWardSecretaryUser) {
 			WorkflowBean wfBean = new WorkflowBean();
-			wfBean.setActionName(Constants.CLOSURE_APPTYPE_CODE);
+			wfBean.setActionName(CLOSURE_APPTYPE_CODE);
 			licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
 		}
 		licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
