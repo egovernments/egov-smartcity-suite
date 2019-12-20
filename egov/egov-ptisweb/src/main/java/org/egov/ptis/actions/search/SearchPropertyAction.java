@@ -180,7 +180,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
                 "modifyRsn", "AMALG" }),
         @Result(name = APPLICATION_TYPE_MARKASCOURTCASE, type = "redirect", location = "../markascourtcase/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_WRITE_OFF, type = "redirect", location = "../writeoff/viewform/${assessmentNum}")})
+        @Result(name = APPLICATION_TYPE_WRITE_OFF, type = "redirect", location = "../writeoff/viewform/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_APPEAL_PETITION, type = "redirectAction", location = "appealpetition-newform", params = {
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", WFLOW_ACTION_APPEALPETITION, "applicationSource",
+                "${applicationSource}" })})
 
 public class SearchPropertyAction extends SearchFormAction {
     private static final String ADDRESS = "address";
@@ -347,7 +350,7 @@ public class SearchPropertyAction extends SearchFormAction {
 				return COMMON_FORM;
 		}
         if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
-                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(applicationType)) {
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION,APPLICATION_TYPE_APPEAL_PETITION).contains(applicationType)) {
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
             if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
                 addActionError(getText("msg.no.tax"));
@@ -355,7 +358,7 @@ public class SearchPropertyAction extends SearchFormAction {
             }
         }
         if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
-                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_VACANCY_REMISSION, APPLICATION_TYPE_GRP).contains(applicationType)) {
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_VACANCY_REMISSION, APPLICATION_TYPE_GRP,APPLICATION_TYPE_APPEAL_PETITION).contains(applicationType)) {
             String errorMessage = propertyService.validationForBifurcation(null, basicProperty,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
             if (StringUtils.isNotBlank(errorMessage)) {
@@ -443,7 +446,8 @@ public class SearchPropertyAction extends SearchFormAction {
         } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
-                || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
+                || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)
+                || APPLICATION_TYPE_APPEAL_PETITION.equals(applicationType)) {
             if (!isDemandActive) {
                 addActionError(
                         getText(INACTIVE_DEMAND_ERROR, propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
@@ -1169,6 +1173,13 @@ public class SearchPropertyAction extends SearchFormAction {
     @Action(value = "/search/searchproperty-writeoff")
     public String writeOff() {
         setApplicationType(APPLICATION_TYPE_WRITE_OFF);
+        return commonForm();
+    }
+        
+    @Action(value = "/search/searchproperty-appealpetition")
+    public String appealPetition() {
+        setActionNamespace("/revPetition");
+        setApplicationType(APPLICATION_TYPE_APPEAL_PETITION);
         return commonForm();
     }
     

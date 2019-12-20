@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="appealPetitionProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="100"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="commName" class="java.lang.String"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<field name="buildingClassification" class="java.lang.String"/>
+	<field name="natureOfUsage" class="java.lang.String"/>
+	<field name="plinthArea" class="java.math.BigDecimal"/>
+	<field name="yearlyRentalValue" class="java.math.BigDecimal"/>
+	<field name="bldngFloorNo" class="java.lang.String"/>
+	<field name="disposalDate" class="java.lang.String"/>
+	<title>
+		<band height="348" splitType="Stretch">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="47" y="60" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="85" y="12" width="407" height="28" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<textElement textAlignment="Left" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROCEEDINGS OF COMMISSIONER, "+$P{cityName}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="2" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="false" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="170" y="40" width="258" height="20" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
+				<textElement textAlignment="Left" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{ownerInfo}.getApproverName()+"\n\tCommissioner"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="46" y="150" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
+				<textElement markup="styled">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="160" width="452" height="180" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="8" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tIn the reference 1st read above a "+$P{natureOfWork}+" has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getDoorNo())+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getActualHearingDate()+"</style> to represent the case before the Appellate Commissioner. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter  careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below by the Regional Director cum Appellate Commissioner, in terms of rule-22(1) ofby the Regional Director cum Appellate Commissioner, in terms of rule-22(1) of Taxation and Finance Rules issued under Schedule II of A.P. Municipalities Act, 1965. \n\n\t The petitioner is therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="369" y="60" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="47" y="90" width="451" height="49" uuid="788c7290-008f-4829-a9de-efa5d66d7a19"/>
+				<textElement markup="styled">
+					<font size="8"/>
+					<paragraph lineSpacingSize="1.8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tRead: 1) <style forecolor=\"#000000\" isBold=\"true\">"+$P{natureOfWork} +" dt :"+$P{ownerInfo}.getApplicationDate()+" </style>from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"R/O  "+$P{cityName}+"</style>\n\t           2) Hearing Notice dt :<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+".</style>\n\t        3)Orders of the Regional Director cum Appellate Commissioner, Dt."+$P{ownerInfo}.getDisposalDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="213" y="140" width="103" height="20" uuid="37b269fc-ec10-44d8-8ee7-52ed1946d0e5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[*  *  *  *]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="47" y="74" width="451" height="16" uuid="659c0df3-0b37-420f-a3f6-517aa9ae101c"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tSub: Property Tax- "+$P{natureOfWork}+" -Disposal of "+$P{natureOfWork}+" -Orders-issued."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="37">
+			<printWhenExpression><![CDATA[$F{bldngFloorNo}!=null && $F{bldngFloorNo}!=""]]></printWhenExpression>
+			<staticText>
+				<reportElement x="140" y="0" width="66" height="37" uuid="25689885-7165-4d44-8086-3078a8c34cf8"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Building Floor No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="0" width="72" height="37" uuid="6757d76d-07fa-4880-bcb3-f38e02bbd72a"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nature of Construction]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="0" width="61" height="37" uuid="68efea58-44a3-4135-8c1a-3fdbe2dc6d35"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plinth Area (in sq.mt)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="0" width="61" height="37" uuid="d02bf885-dcc9-44e9-87ff-e6ff64c6c9bb"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usage of Building]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="53" height="37" uuid="4c02a2b5-ada0-46f1-bf7b-b3434ffc396f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Annual Rental Value]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="0" width="71" height="37" uuid="3383476c-82c8-4cbd-ac6e-20a928b7a02b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zone & Sub-Zone]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="28">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="69" y="0" width="71" height="28" isPrintWhenDetailOverflows="true" uuid="4c758357-ff51-4a94-8532-03b5c26c180d"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getZoneName()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="206" y="0" width="72" height="28" isPrintWhenDetailOverflows="true" uuid="8957bca9-614b-485e-94ad-df5b964f0453"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{buildingClassification}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="278" y="0" width="61" height="28" isPrintWhenDetailOverflows="true" uuid="fae351be-980f-44c1-ad91-ba13c1a11183"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="339" y="0" width="61" height="28" isPrintWhenDetailOverflows="true" uuid="69f98db7-45f3-47c7-b5fa-d961279e6bbf"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="###0" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="53" height="28" isPrintWhenDetailOverflows="true" uuid="1dd84d75-12a1-428b-bb6c-124582b39615"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{yearlyRentalValue}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="66" height="28" isPrintWhenDetailOverflows="true" uuid="e2127003-e3b6-4f80-89b4-c056556e92bd"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bldngFloorNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="130" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="330" y="36" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="317" y="87" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="205" y="102" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="43" y="66" width="66" height="13" uuid="ee0b46ab-d6b5-4f26-81dd-585a6ebe8465"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[To:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="40" y="81" width="168" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Sri/Smt: "+$P{ownerInfo}.getOwnerName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="39" y="95" width="191" height="13" uuid="b50f95e8-f4a9-4069-8f15-9b9d1af70911"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Door No:"+$P{ownerInfo}.getDoorNo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="108" width="240" height="13" uuid="8cff0ec8-5c70-40be-a013-a7ab11eae922"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Locality:"+$P{ownerInfo}.getLocalityName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="42" y="22" width="430" height="22" uuid="e1d23d6e-fba2-476f-b79a-40d96c2d1ba9"/>
+				<textFieldExpression><![CDATA["[This has the approval of the Regional Director cum Appellate Commissioner]."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="43" y="6" width="112" height="15" uuid="69ba0e53-d1af-4879-93e0-2e9dcf226a12"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Half Year Property Tax :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="160" y="5" width="74" height="15" uuid="e850ff15-f634-463c-b184-0bcd261b5356"/>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewTotalTax()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

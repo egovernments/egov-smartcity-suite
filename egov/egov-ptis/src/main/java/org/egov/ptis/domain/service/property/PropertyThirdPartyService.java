@@ -94,7 +94,7 @@ import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -175,7 +175,7 @@ public class PropertyThirdPartyService {
         PropertyImpl property = null;
         PropertyMutation mutation = null;
         VacancyRemission vacancyRemission = null;
-        RevisionPetition revisionPetition = null;
+        Petition petition = null;
         StateHistory stateHistory = null;
         Map<String, String> statusCommentsMap = new HashMap<String, String>();
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
@@ -272,31 +272,31 @@ public class PropertyThirdPartyService {
             }
         } else if (applicationType.equals(APPLICATION_TYPE_REVISION_PETITION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
-                revisionPetition = (RevisionPetition) persistenceService.find(
-                        "From RevisionPetition where objectionNumber = ? ", applicationNo);
+                petition = (Petition) persistenceService.find(
+                        "From Petition where objectionNumber = ? ", applicationNo);
             }
-            if (null != revisionPetition) {
+            if (null != petition) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Inside applicationType:" + applicationType + "for property revision petition"
-                            + revisionPetition);
-                if (!revisionPetition.getState().getHistory().isEmpty()) {
-                    int size = revisionPetition.getState().getHistory().size();
-                    stateHistory = revisionPetition.getStateHistory().get(size - 1);
+                            + petition);
+                if (!petition.getState().getHistory().isEmpty()) {
+                    int size = petition.getState().getHistory().size();
+                    stateHistory = petition.getStateHistory().get(size - 1);
                 }
-                if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
+                if (petition.getState().getValue().equals(WFLOW_ACTION_END)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
                                 .endsWith(WF_STATE_COMMISSIONER_APPROVED))) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-                } else if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)) {
+                } else if (petition.getState().getValue().equals(WFLOW_ACTION_END)) {
                     statusCommentsMap.put("status", STATUS_REJECTED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
                 } else {
                     statusCommentsMap.put("status", STATUS_OPEN);
-                    statusCommentsMap.put("comments", revisionPetition.getState().getComments());
-                    statusCommentsMap.put("updatedBy", revisionPetition.getState().getLastModifiedBy().getName());
+                    statusCommentsMap.put("comments", petition.getState().getComments());
+                    statusCommentsMap.put("updatedBy", petition.getState().getLastModifiedBy().getName());
                 }
             }
         }

@@ -56,7 +56,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
@@ -100,9 +100,9 @@ public class RevisionPetitionRestService {
     @RequestMapping(value = "/property/revisionPetition", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String getRevisionPetitionDetails(@RequestParam String applicationNo)
             throws IOException {
-        RevisionPetition revisionPetition = revisionPetitionService.getRevisionPetitionByApplicationNumber(applicationNo);
-        if (revisionPetition != null)
-            return convertRevisionPetitionObjectToJson(revisionPetition);
+        Petition petition = revisionPetitionService.getRevisionPetitionByApplicationNumber(applicationNo);
+        if (petition != null)
+            return convertRevisionPetitionObjectToJson(petition);
         else {
             ErrorDetails errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_REVISIONPETITION_INVALID);
@@ -147,14 +147,14 @@ public class RevisionPetitionRestService {
 							PropertyTaxConstants.THIRD_PARTY_ERR_MSG_REVISIONPETITION_ALREADYINWORKFLOW);
 					return getJSONResponse(errorDetails);
 				}
-				RevisionPetition revPetition = new RevisionPetition();
-				revPetition.setBasicProperty(basicProperty);
-				revPetition.setRecievedBy(receivedBy);
-				revPetition.setDetails(details);
+				Petition petition = new Petition();
+				petition.setBasicProperty(basicProperty);
+				petition.setRecievedBy(receivedBy);
+				petition.setDetails(details);
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-				revPetition.setRecievedOn(sdf.parse(receivedOn));
+				petition.setRecievedOn(sdf.parse(receivedOn));
 				responseJson = convertRevisionPetitionObjectToJson(
-						revisionPetitionService.createRevisionPetitionForRest(revPetition));
+						revisionPetitionService.createRevisionPetitionForRest(petition));
 			} catch (ParseException e) {
 
 			}
@@ -213,7 +213,7 @@ public class RevisionPetitionRestService {
      */
     private String convertRevisionPetitionObjectToJson(final Object object) {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.registerTypeAdapter(RevisionPetition.class, new RevisionPetitionAdaptor()).create();
+        Gson gson = gsonBuilder.registerTypeAdapter(Petition.class, new RevisionPetitionAdaptor()).create();
         String json = gson.toJson(object);
         return json;
     }

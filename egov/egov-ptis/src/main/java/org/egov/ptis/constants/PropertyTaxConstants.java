@@ -62,6 +62,10 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -136,7 +140,7 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE = "PENALTY_WAIVER_CUTOFF_DATE";
 
     // objection status CODE values
-    public static final String OBJECTION_MODULE = "PTObejction";
+    public static final String OBJECTION_MODULE = "PTPetition";
     public static final String OBJECTION_CREATED = "CREATED";
     public static final String OBJECTION_HEARING_FIXED = "HEARING DATE FIXED";
     public static final String OBJECTION_HEARING_COMPLETED = "HEARING COMPLETED";
@@ -1843,5 +1847,22 @@ public interface PropertyTaxConstants {
     public static final String REJECTION_NOTICE_TEMPLATE = "RejectionNotice";
     public static final String WFLOW_ACTION_STEP_REJECT_TO_CANCEL = "Reject To Cancel";
     public static final String WF_STATE_REJECTED_TO_CANCEL = "Rejected to Cancel";
+    
+  //Appeal petition 
+    public static final String APPLICATION_TYPE_APPEAL_PETITION = "Appeal_Petition";
+    public static final String NATURE_APPEALPETITION = "Appeal Petition";
+    public static final String WFLOW_ACTION_APPEALPETITION = "APPEAL PETITION";
+    public static final String APPEAL_HEARINGCOMPLETED = "Appeal:Hearing completed";
+    public static final String APPEAL_INSPECTIONVERIFIED = "Appeal:Inspection verified";
+    public static final String APPEAL_INSPECTION_COMPLETE = "Appeal:Inspection completed";
+    public static final String APPEAL_WF_REGISTERED = "Appeal:Registered";
+    public static final String APPEAL_APP_STATUS_REJECTED = "Appeal:Rejected";
+    public static final String APPEAL_NEW = "Appeal:NEW";
+    public static final String APPEAL_CREATED = "Appeal:CREATED";
+    public static final String REPORT_TEMPLATENAME_APPEAL_SPECIAL_NOTICE = "mainAppealProceeding";
+    public static final String APPEALPETITION_CODE = "APPEAL PETITION";
+    public static final String APPEAL_PETITION = "APPEAL_PETETION";
+    public static final String NOTICE_TYPE_APPEALPROCEEDINGS = "Appeal Petition Proceedings";
+    public static final String NOTICE_TYPE_APPEALPETITION_HEARINGNOTICE = "Appeal Petition Hearing Notice";
     
 }

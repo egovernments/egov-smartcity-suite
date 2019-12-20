@@ -51,17 +51,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 
 import java.lang.reflect.Type;
 
-public class RevisionPetitionAdaptor implements JsonSerializer<RevisionPetition> {
+public class RevisionPetitionAdaptor implements JsonSerializer<Petition> {
 
     @Override
-    public JsonElement serialize(final RevisionPetition revPetition, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final Petition petition, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("applicationNumber", revPetition.getObjectionNumber());
-        jsonObject.addProperty("accessmentnumber", "" + revPetition.getBasicProperty().getUpicNo());
+        jsonObject.addProperty("applicationNumber", petition.getObjectionNumber());
+        jsonObject.addProperty("accessmentnumber", "" + petition.getBasicProperty().getUpicNo());
         return jsonObject;
     }
 

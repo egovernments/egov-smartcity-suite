@@ -61,7 +61,7 @@ public class Inspection extends BaseModel {
 	 */
     private static final long serialVersionUID = 1L;
 
-    private RevisionPetition objection;
+    private Petition objection;
 
     @Length(max = 1024, message = "inspection.remarks.length")
     private String inspectionRemarks;
@@ -84,11 +84,11 @@ public class Inspection extends BaseModel {
         this.documentNumber = documentNumber;
     }
 
-    public RevisionPetition getObjection() {
+    public Petition getObjection() {
         return objection;
     }
 
-    public void setObjection(RevisionPetition objection) {
+    public void setObjection(Petition objection) {
         this.objection = objection;
     }
     

@@ -82,7 +82,8 @@ function hideApprovalHeaderTab() {
 }
 function checkLength(obj) {
 	if (obj.value.length > 1024) {
-		bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+		bootbox
+				.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
 		obj.value = obj.value.substring(1, 1024);
 	}
 }
@@ -148,20 +149,25 @@ function validateRecordHearing() {
 }
 
 function validateRecordInspection() {
-	
 	if (dom.get('inspectionRemarks').value == "") {
 		bootbox.alert('Please enter Inspection Remark');
 		return false;
 	}
-	 if (dom.get('actualHearingDtId').value == "") {
+	if (dom.get('actualHearingDtId').value == "") {
 		bootbox.alert('Please enter Actual Hearing Date');
+		return false;
+	}
+	if (document.getElementById("wfType").value == 'APPEAL PETITION'
+			&& (document.getElementById('disposalDate').value == null || document
+					.getElementById('disposalDate').value == "")) {
+		bootbox.alert('Please enter Disposal Date');
 		return false;
 	}
 	return true;
 }
 
 function validateObjectionOutcome(obj) {
-	
+
 	if (dom.get('dateOfOutcome').value == '') {
 		bootbox.alert('Please enter Outcome Date');
 		return false;
@@ -202,7 +208,7 @@ function showDocumentManager() {
 	window.open(url, 'docupload', 'width=1000,height=400');
 }
 
-jQuery( document ).ready(function() {
+jQuery(document).ready(function() {
 	jQuery('#ownerdetails').hide();
 	jQuery('#docdetails').hide();
 	jQuery('#attachments').hide();
