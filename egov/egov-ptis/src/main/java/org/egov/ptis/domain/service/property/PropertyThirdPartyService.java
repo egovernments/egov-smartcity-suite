@@ -61,6 +61,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
@@ -84,6 +86,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
@@ -330,24 +333,39 @@ public class PropertyThirdPartyService {
     }
     
     /*
-     * api to update bsic property and publishing the event for ward secretary
+     * api to update basic property and publishing the event for ward secretary
      */
     @Transactional
     public void updateBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
-            final HttpServletRequest request, final String transactionId) {
+            final String modifyReason, final String transactionId) {
 
+        String viewURL = null;
+        String succeessMsg = null;
+        String failureMsg = null;
+
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(modifyReason)) {
+            viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    property.getApplicationNo(), APPLICATION_TYPE_ALTER_ASSESSENT);
+            succeessMsg = "Property Addition/Alteration Initiated";
+            failureMsg = "Property Addition/Alteration Failed";
+        } else if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyReason)) {
+            viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    property.getApplicationNo(), APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+            succeessMsg = "Property Bifurcation Initiated";
+            failureMsg = "Property Bifurcation Failed";
+        }
         try {
             basicPropertyService.update(basicProperty);
-            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
-                    property.getApplicationNo(), APPLICATION_TYPE_ALTER_ASSESSENT);
 
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
-                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Addition/Alteration Done");
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
 
         } catch (Exception ex) {
             LOGGER.error("exception while updating basic proeprty in addition/alteration.", ex);
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
-                    property.getApplicationNo(), null, null, "Property Addition/Alteration Failed");
+                    property.getApplicationNo(), null, null, failureMsg);
         }
     }
 

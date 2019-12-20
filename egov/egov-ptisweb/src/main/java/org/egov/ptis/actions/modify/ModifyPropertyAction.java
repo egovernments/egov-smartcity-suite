@@ -754,8 +754,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
         
         if (isWardSecretaryUser) {
-            propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel,
-                    ServletActionContext.getRequest(), transactionId);
+            propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel, modifyRsn, transactionId);
         } else if (!isMeesevaUser)
             basicPropertyService.update(basicProp);
         else {
