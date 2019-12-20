@@ -52,6 +52,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.NOOFDAYSTOPRINT;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_OPERATOR_ROLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,8 @@ import javax.validation.Valid;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
@@ -317,8 +320,24 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
     public String reissueCertificateSearch(final Model model, final HttpServletRequest request) {
-    	model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
-        prepareSearchForm(model);
+		List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
+				.filter(role -> WARDSECRETARY_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
+				.collect(Collectors.toList());
+		boolean isWardSecretaryOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
+		model.addAttribute("isWardSecretaryOperator", isWardSecretaryOperator);
+		if (isWardSecretaryOperator) {
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (isWardSecretaryOperator
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
+				model.addAttribute("wsSource", request.getParameter("source"));
+			}
+		}
+		model.addAttribute(REGISTRATION, new MarriageRegistration());
+		prepareSearchForm(model);
         return "registration-search-certificateissue";
     }
 

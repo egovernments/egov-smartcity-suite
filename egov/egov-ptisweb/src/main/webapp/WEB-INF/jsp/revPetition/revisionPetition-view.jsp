@@ -67,6 +67,10 @@
 <s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 <s:text name="objection.GRPView.title" />
 </s:if>
+ <s:elseif
+		test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+		<s:text name="appealView.title"></s:text>
+	</s:elseif>
 <s:else>
 <s:text name="objectionView.title" />
 </s:else>
@@ -119,9 +123,10 @@
   		var e = dom.get('approverDepartment');
   		var dept = e.options[e.selectedIndex].text;
   			var currentState = dom.get('currentState').value;
+  			alert("current value is "+currentState);
   			var amountRule="";
   		var pendingAction=document.getElementById('pendingActions').value;
-  		loadDesignationByDeptAndType('RevisionPetition',dept,currentState,amountRule,"",pendingAction); 
+  		loadDesignationByDeptAndType('Petition',dept,currentState,amountRule,"",pendingAction); 
   	}
 
 	function toggleFloorDetailsView() {
@@ -166,7 +171,7 @@
 					action = 'revPetition-addHearingDate.action';
 				} else
 					return false;
-			}else if((state == 'GRP:Rejected to Cancel' ||state == 'RP:Rejected to Cancel') && actionName == 'Forward'){
+			}else if((state == 'GRP:Rejected to Cancel' ||state == 'RP:Rejected to Cancel' || state == 'appeal:Rejected to Cancel') && actionName == 'Forward'){
 				action = 'revPetition-recordObjectionOutcome.action';
 			} 
 			else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED}"/>') {
@@ -191,7 +196,7 @@
 				action = 'revPetition-recordObjectionOutcome.action';				
 			}
 			
-		} else if((state == 'GRP:Rejected to Cancel' || state == 'RP:Rejected to Cancel')){
+		} else if((state == 'GRP:Rejected to Cancel' || state == 'RP:Rejected to Cancel' || state == 'Appeal:Rejected to Cancel')){
 			var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_REJECTION}"/>';
 			if(actionName == 'Preview'){
 			 popupWindow = window.open('/ptis/rejectionnotice/generaterejectionnotice?'
@@ -392,8 +397,10 @@
 									href="#" onclick="showObjectionHeaderTab();">
 									<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 									<s:text	name="objection.grp.details.heading"></s:text>
-											</s:if>
-											<s:else>
+											</s:if> <s:elseif
+											test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+											<s:text name="appeal.petition.details.heading"></s:text>
+										</s:elseif> <s:else>
 									<s:text
 											name="objection.details.heading"></s:text>
 											</s:else>

@@ -61,7 +61,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
@@ -79,9 +79,9 @@ public class RejectionLetterAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(RejectionLetterAction.class);
-	private RevisionPetition objection = new RevisionPetition();
+	private Petition petition = new Petition();
 	private static final String REJECTIONLETTERTEMPLATE = "objectionRejectionLetter";
-	private PersistenceService<RevisionPetition, Long> objectionService;
+	private PersistenceService<Petition, Long> objectionService;
 	protected ReportService reportService;
 	public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 	private String reportId;
@@ -93,21 +93,21 @@ public class RejectionLetterAction extends BaseFormAction {
 	@Override
 	public Object getModel() {
 
-		return objection;
+		return petition;
 	}
 
 	@Override
 	public void prepare() {
 
-		if (null != objection.getId()) {
-			objection = objectionService.findById(objection.getId(), false);
+		if (null != petition.getId()) {
+			petition = objectionService.findById(petition.getId(), false);
 		}
 	}
 
 	@SkipValidation
 	public String print() {
 
-		ReportRequest reportRequest = new ReportRequest(REJECTIONLETTERTEMPLATE, objection, getParamMap());
+		ReportRequest reportRequest = new ReportRequest(REJECTIONLETTERTEMPLATE, petition, getParamMap());
 		reportRequest.setPrintDialogOnOpenReport(true);
 		ReportOutput reportOutput = reportService.createReport(reportRequest);
 		reportId = addingReportToSession(reportOutput);
@@ -118,14 +118,14 @@ public class RejectionLetterAction extends BaseFormAction {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("date", DDMMYYYYFORMATS.format(new Date()));
-		paramMap.put("objectionNo", objection.getObjectionNumber());
-		paramMap.put("description", objection.getDetails());
-		paramMap.put("objectionDate", DDMMYYYYFORMATS.format(objection.getRecievedOn()));
-		Boundary zone = objection.getBasicProperty().getBoundary().getParent();
+		paramMap.put("objectionNo", petition.getObjectionNumber());
+		paramMap.put("description", petition.getDetails());
+		paramMap.put("objectionDate", DDMMYYYYFORMATS.format(petition.getRecievedOn()));
+		Boundary zone = petition.getBasicProperty().getBoundary().getParent();
 		paramMap.put("zoneNo", zone != null ? zone.getBoundaryNum().toString() : "");
 		paramMap.put("slNo", propertyTaxNumberGenerator.getRejectionLetterSerialNum());
-		paramMap.put("owner", objection.getBasicProperty().getFullOwnerName());
-		paramMap.put("address", objection.getBasicProperty().getAddress().toString());
+		paramMap.put("owner", petition.getBasicProperty().getFullOwnerName());
+		paramMap.put("address", petition.getBasicProperty().getAddress().toString());
 		return paramMap;
 	}
 
@@ -133,15 +133,15 @@ public class RejectionLetterAction extends BaseFormAction {
 		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
-	public RevisionPetition getObjection() {
-		return objection;
+	public Petition getObjection() {
+		return petition;
 	}
 
-	public void setObjection(RevisionPetition objection) {
-		this.objection = objection;
+	public void setObjection(Petition petition) {
+		this.petition = petition;
 	}
 
-	public void setObjectionService(PersistenceService<RevisionPetition, Long> objectionService) {
+	public void setObjectionService(PersistenceService<Petition, Long> objectionService) {
 		this.objectionService = objectionService;
 	}
 

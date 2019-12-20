@@ -54,6 +54,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -76,7 +77,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -102,6 +102,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_F
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
 
 @Controller
 @RequestMapping(value = {"/property/demolition"})
@@ -179,6 +181,16 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 property.setMeesevaApplicationNumber(meesevaApplicationNumber);
+
+        if (propertyService.isWardSecretaryUser(loggedInUser)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
+                model.addAttribute(ERROR_MSG, "WS.001");
+                return PROPERTY_VALIDATION_FOR_SPRING;
+            } else {
+                model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+            }
+        }
         model.addAttribute("property", property);
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(property
                 .getBasicProperty().getActiveProperty());
@@ -229,6 +241,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
         Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
+        if (propertyService.isWardSecretaryUser(loggedInUser) && ThirdPartyService.validateWardSecretaryRequest(
+                request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+            errorMessages.put("ws.source.invalid", "WS.001");
+        }
 		if (errorMessages.isEmpty()) {
 			final Character status = STATUS_WORKFLOW;
 			Long approvalPosition = 0l;
@@ -248,7 +264,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 				}
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams);
-			} else {
+                     	} else if (propertyService.isWardSecretaryUser(loggedInUser)) {
+                               propertyDemolitionService.savePropertyAndPublishEvent(property.getBasicProperty().getActiveProperty(), property,
+                                status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                     	} else {
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION);
 			}

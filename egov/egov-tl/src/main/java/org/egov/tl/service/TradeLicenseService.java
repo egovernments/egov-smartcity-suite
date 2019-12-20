@@ -64,6 +64,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -1089,4 +1090,12 @@ public class TradeLicenseService {
         licenseDetails.put("applicantAddress", tradeLicense.getLicensee().getAddress());
         return licenseDetails;
     }
+    
+    public Boolean isWardSecretaryUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && WARDSCRETARY_OPERATOR_ROLE.equalsIgnoreCase( role.getName()))
+                return true;
+        return false;
+    }
+    
 }

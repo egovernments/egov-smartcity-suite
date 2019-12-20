@@ -48,18 +48,53 @@
 
 package org.egov.ptis.domain.service.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_END;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
+
+import static java.lang.String.format;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -150,7 +185,7 @@ public class PropertyThirdPartyService {
         PropertyImpl property = null;
         PropertyMutation mutation = null;
         VacancyRemission vacancyRemission = null;
-        RevisionPetition revisionPetition = null;
+        Petition petition = null;
         StateHistory stateHistory = null;
         Map<String, String> statusCommentsMap = new HashMap<>();
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
@@ -240,28 +275,31 @@ public class PropertyThirdPartyService {
             }
         } else if (applicationType.equals(APPLICATION_TYPE_REVISION_PETITION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
-				revisionPetition = (RevisionPetition) entityManager.createNamedQuery("RP_BY_APPLICATIONNO")
-						.setParameter("applicatiNo", applicationNo);
+                petition = (Petition) entityManager.createNamedQuery("RP_BY_APPLICATIONNO")
+			.setParameter("applicatiNo", applicationNo);
             }
-            if (null != revisionPetition) {
-                if (!revisionPetition.getState().getHistory().isEmpty()) {
-                    int size = revisionPetition.getState().getHistory().size();
-                    stateHistory = revisionPetition.getStateHistory().get(size - 1);
+            if (null != petition) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Inside applicationType:" + applicationType + "for property revision petition"
+                            + petition);
+                if (!petition.getState().getHistory().isEmpty()) {
+                    int size = petition.getState().getHistory().size();
+                    stateHistory = petition.getStateHistory().get(size - 1);
                 }
-                if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
+                if (petition.getState().getValue().equals(WFLOW_ACTION_END)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
                                 .endsWith(WF_STATE_COMMISSIONER_APPROVED))) {
                     statusCommentsMap.put("status", STATUS_APPROVED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
-                } else if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)) {
+                } else if (petition.getState().getValue().equals(WFLOW_ACTION_END)) {
                     statusCommentsMap.put("status", STATUS_REJECTED);
                     statusCommentsMap.put("comments", stateHistory.getComments());
                     statusCommentsMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
                 } else {
                     statusCommentsMap.put("status", STATUS_OPEN);
-                    statusCommentsMap.put("comments", revisionPetition.getState().getComments());
-                    statusCommentsMap.put("updatedBy", revisionPetition.getState().getLastModifiedBy().getName());
+                    statusCommentsMap.put("comments", petition.getState().getComments());
+                    statusCommentsMap.put("updatedBy", petition.getState().getLastModifiedBy().getName());
                 }
             }
         }
@@ -284,6 +322,43 @@ public class PropertyThirdPartyService {
             LOGGER.error("exception while saving basic proeprty", ex);
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, "Property Creation Failed");
+        }
+    }
+    
+    /*
+     * api to update basic property and publishing the event for ward secretary
+     */
+    @Transactional
+    public void updateBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
+            final String modifyReason, final String transactionId) {
+
+        String viewURL = null;
+        String succeessMsg = null;
+        String failureMsg = null;
+
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(modifyReason)) {
+            viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    property.getApplicationNo(), APPLICATION_TYPE_ALTER_ASSESSENT);
+            succeessMsg = "Property Addition/Alteration Initiated";
+            failureMsg = "Property Addition/Alteration Failed";
+        } else if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyReason)) {
+            viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    property.getApplicationNo(), APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+            succeessMsg = "Property Bifurcation Initiated";
+            failureMsg = "Property Bifurcation Failed";
+        }
+        try {
+            basicPropertyService.update(basicProperty);
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
+
+        } catch (Exception ex) {
+            LOGGER.error("exception while updating basic proeprty in addition/alteration.", ex);
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, failureMsg);
         }
     }
 

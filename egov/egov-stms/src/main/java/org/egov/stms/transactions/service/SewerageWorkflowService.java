@@ -48,7 +48,18 @@
 
 package org.egov.stms.transactions.service;
 
-import java.util.*;
+import static org.apache.commons.lang.StringUtils.upperCase;
+import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -73,19 +84,12 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
-import static org.egov.infra.utils.StringUtils.upperCase;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
 @Service
 @Transactional(readOnly = true)
 public class SewerageWorkflowService {
@@ -246,6 +250,13 @@ public class SewerageWorkflowService {
                 return true;
         return false;
     }
+    
+	public boolean isWardSecretaryUser(final User user) {
+		for (Role role : user.getRoles())
+			if (SewerageTaxConstants.WARDSECRETARY_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
+				return true;
+		return false;
+	}
 
     public String getDepartmentForReassignment() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,

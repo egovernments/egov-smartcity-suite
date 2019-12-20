@@ -75,6 +75,8 @@
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
                 <s:hidden name="newWorkflow" id="newWorkflow"/>
+                <s:hidden name="source" id="id"/>
+                <s:hidden name="transactionId" id="transactionId"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}"
                        id="applicationNo"/>
                 <s:if test="%{status=='Active'}">

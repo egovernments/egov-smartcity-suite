@@ -146,7 +146,7 @@ import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -1546,6 +1546,8 @@ public class PropertyService {
             newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
         if (modifyRsn.equalsIgnoreCase(NATURE_OF_WORK_RP))
             newProperty.setPropertyModifyReason(NATURE_OF_WORK_RP);
+        else if(modifyRsn.equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION))
+            newProperty.setPropertyModifyReason(APPEAL_PETITION);
         else
             newProperty.setPropertyModifyReason(NATURE_OF_WORK_GRP);
         newProperty.setStatus(STATUS_WORKFLOW);
@@ -1964,7 +1966,8 @@ public class PropertyService {
         if (!applicationType.isEmpty() && propertyApplicationTypes().contains(applicationType))
             updatePropertyIndex(stateAwareObject, applicationType, stateOwner, sla);
         else if (!applicationType.isEmpty() && (applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
+                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_GRP)
+                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_APPEAL_PETITION)))
             updateRevisionPetitionIndex(stateAwareObject, applicationType, stateOwner, sla);
         else if (!applicationType.isEmpty()
                 && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applicationType))
@@ -2113,38 +2116,38 @@ public class PropertyService {
     @Transactional
     public void updateRevisionPetitionIndex(final StateAware stateAwareObject, final String applictionType,
             final User stateOwner, final int sla) {
-        final RevisionPetition revisionPetition = (RevisionPetition) stateAwareObject;
+        final Petition petition = (Petition) stateAwareObject;
         final ApplicationIndex applicationIndex = applicationIndexService
-                .findByApplicationNumber(revisionPetition.getObjectionNumber());
-        final String source = propertyTaxCommonUtils.getObjectionSource(revisionPetition);
+                .findByApplicationNumber(petition.getObjectionNumber());
+        final String source = propertyTaxCommonUtils.getObjectionSource(petition);
         if (applicationIndex == null)
-            createRevisionPetitionApplicationIndex(applictionType, stateOwner, sla, revisionPetition, source);
+            createRevisionPetitionApplicationIndex(applictionType, stateOwner, sla, petition, source);
         else
-            updateRevisionPetitionApplicationIndex(applictionType, stateOwner, revisionPetition, applicationIndex);
+            updateRevisionPetitionApplicationIndex(applictionType, stateOwner, petition, applicationIndex);
     }
 
     @Transactional
     public void createRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
-            final int sla, final RevisionPetition revisionPetition, final String source) {
+            final int sla, final Petition petition, final String source) {
         ApplicationIndex applicationIndex;
-        final User owner = revisionPetition.getBasicProperty().getPrimaryOwner();
-        final Date applicationDate = revisionPetition.getCreatedDate() != null ? revisionPetition.getCreatedDate()
+        final User owner = petition.getBasicProperty().getPrimaryOwner();
+        final Date applicationDate = petition.getCreatedDate() != null ? petition.getCreatedDate()
                 : new Date();
-        final ClosureStatus closureStatus = revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+        final ClosureStatus closureStatus = petition.getState().getValue().contains(WF_STATE_CLOSED)
                 ? ClosureStatus.YES : ClosureStatus.NO;
         applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                .withApplicationNumber(revisionPetition.getObjectionNumber()).withApplicationDate(applicationDate)
+                .withApplicationNumber(petition.getObjectionNumber()).withApplicationDate(applicationDate)
                 .withApplicationType(applictionType).withApplicantName(owner.getName())
-                .withStatus(revisionPetition.getState().getValue())
-                .withUrl(format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType))
-                .withApplicantAddress(revisionPetition.getBasicProperty().getAddress().toString())
+                .withStatus(petition.getState().getValue())
+                .withUrl(format(APPLICATION_VIEW_URL, petition.getObjectionNumber(), applictionType))
+                .withApplicantAddress(petition.getBasicProperty().getAddress().toString())
                 .withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName().trim())
                 .withChannel(source).withMobileNumber(owner.getMobileNumber())
                 .withAadharNumber(owner.getAadhaarNumber())
-                .withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
-                .withApproved(revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                .withConsumerCode(petition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
+                .withApproved(petition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
-                        : revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+                        : petition.getState().getValue().contains(WF_STATE_CLOSED)
                                 ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
                 .withSla(sla).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2152,19 +2155,20 @@ public class PropertyService {
 
     @Transactional
     public void updateRevisionPetitionApplicationIndex(final String applictionType, final User stateOwner,
-            final RevisionPetition revisionPetition, final ApplicationIndex applicationIndex) {
-        applicationIndex.setStatus(revisionPetition.getState().getValue());
+            final Petition petition, final ApplicationIndex applicationIndex) {
+        applicationIndex.setStatus(petition.getState().getValue());
         if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_APPEAL_PETITION)) {
             applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
-            applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+            applicationIndex.setClosed(petition.getState().getValue().contains(WF_STATE_CLOSED)
                     ? ClosureStatus.YES : ClosureStatus.NO);
             if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved())
-                    || revisionPetition.getState().getValue().contains(WF_STATE_REJECTED))
+                    || petition.getState().getValue().contains(WF_STATE_REJECTED))
                 applicationIndex
-                        .setApproved(revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                        .setApproved(petition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                                 ? ApprovalStatus.APPROVED
-                                : revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
+                                : petition.getState().getValue().contains(WF_STATE_CLOSED)
                                         ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
         }
         applicationIndexService.updateApplicationIndex(applicationIndex);
@@ -4008,11 +4012,12 @@ public class PropertyService {
                     .append(property.getPropertyModifyReason() + " " + module.getDisplayName()).append(" in ")
                     .append(property.getBasicProperty().getStatus().getName()).append(STATUS);
         } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
-            final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
-            detailedMessage.append(APPLICATION_NO).append(revisionPetition.getObjectionNumber()).append(REGARDING)
-                    .append(revisionPetition.getType() + " " + module.getDisplayName()).append(" in ")
-                    .append(revisionPetition.getBasicProperty().getStatus().getName()).append(STATUS);
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_APPEAL_PETITION))) {
+            final Petition petition = (Petition) stateAware;
+            detailedMessage.append(APPLICATION_NO).append(petition.getObjectionNumber()).append(REGARDING)
+                    .append(petition.getType() + " " + module.getDisplayName()).append(" in ")
+                    .append(petition.getBasicProperty().getStatus().getName()).append(STATUS);
         } else if (!applictionType.isEmpty()
                 && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
@@ -4153,15 +4158,15 @@ public class PropertyService {
     @Transactional
     public void pushRevisionPetitionPortalMessage(final StateAware stateAware, final String applictionType) {
         final Module module = moduleService.getModuleByName(PTMODULENAME);
-        final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
-        final BasicProperty basicProperty = revisionPetition.getBasicProperty();
+        final Petition petition = (Petition) stateAware;
+        final BasicProperty basicProperty = petition.getBasicProperty();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
-                revisionPetition.getType() + " " + module.getDisplayName(), revisionPetition.getObjectionNumber(),
-                basicProperty.getUpicNo(), basicProperty.getId(), revisionPetition.getType(),
+                petition.getType() + " " + module.getDisplayName(), petition.getObjectionNumber(),
+                basicProperty.getUpicNo(), basicProperty.getId(), petition.getType(),
                 getDetailedMessage(stateAware, applictionType),
-                format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType),
+                format(APPLICATION_VIEW_URL, petition.getObjectionNumber(), applictionType),
                 isResolved(stateAware), basicProperty.getStatus().getName(), getSlaEndDate(applictionType),
-                revisionPetition.getState(), Arrays.asList(securityUtils.getCurrentUser()));
+                petition.getState(), Arrays.asList(securityUtils.getCurrentUser()));
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
@@ -4172,12 +4177,12 @@ public class PropertyService {
     @Transactional
     public void updateRevisionPetitionPortalmessage(final StateAware stateAware, final String applictionType) {
         final Module module = moduleService.getModuleByName(PTMODULENAME);
-        final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
-        final BasicProperty basicProperty = revisionPetition.getBasicProperty();
-        portalInboxService.updateInboxMessage(revisionPetition.getObjectionNumber(), module.getId(),
-                revisionPetition.getState().getValue(), isResolved(stateAware), getSlaEndDate(applictionType),
-                revisionPetition.getState(), null, basicProperty.getUpicNo(),
-                format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
+        final Petition petition = (Petition) stateAware;
+        final BasicProperty basicProperty = petition.getBasicProperty();
+        portalInboxService.updateInboxMessage(petition.getObjectionNumber(), module.getId(),
+                petition.getState().getValue(), isResolved(stateAware), getSlaEndDate(applictionType),
+                petition.getState(), null, basicProperty.getUpicNo(),
+                format(APPLICATION_VIEW_URL, petition.getObjectionNumber(), applictionType));
     }
 
     @Transactional

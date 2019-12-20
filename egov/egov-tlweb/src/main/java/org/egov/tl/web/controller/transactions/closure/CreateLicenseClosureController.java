@@ -47,10 +47,17 @@
  */
 package org.egov.tl.web.controller.transactions.closure;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.web.validator.closure.CreateLicenseClosureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -58,6 +65,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static org.egov.tl.utils.Constants.AUTO;
@@ -73,20 +81,38 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
 
     @Autowired
     private CreateLicenseClosureValidator createLicenseClosureValidator;
+    
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
+    @Autowired
+    protected transient SecurityUtils securityUtils;
+    
     @GetMapping
-    public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes) {
+	public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
+			final Model model, final HttpServletRequest request) {
         if (license.transitionInprogress()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return REDIRECT_TO_VIEW + license.getId();
         }
+        if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
+			String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+			String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
+		}
         license.setApplicationNumber(AUTO);
         return LICENSECLOSURE;
     }
 
     @PostMapping
-    public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes) {
+	public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
         createLicenseClosureValidator.validate(tradeLicense, bindingResult);
         validateButtons(tradeLicense, tradeLicense.getWorkflowContainer(), bindingResult);
         if (bindingResult.hasErrors())
@@ -95,7 +121,9 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         }
-        licenseClosureService.createClosure(tradeLicense);
+        String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource );
         redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");
         return REDIRECT_TO_VIEW + tradeLicense.getId();
     }

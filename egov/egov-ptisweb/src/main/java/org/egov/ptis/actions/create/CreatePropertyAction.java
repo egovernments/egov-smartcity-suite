@@ -137,6 +137,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -452,14 +453,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
         } else if (isWardSecretaryUser) {
-            if (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
-                    || request.getParameter(WARDSECRETARY_SOURCE_CODE) == null) {
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
-            } else {
-                if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
-                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+                applicationSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
             }
 
         }
@@ -490,7 +490,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
         if (isWardSecretaryUser) {
-            property.setSource(Source.WARDSECRETARY.toString());
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, applicationSource)) {
+                addActionError(getText("WS.001"));
+                return RESULT_NEW;
+            } else
+                property.setSource(Source.WARDSECRETARY.toString());
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());

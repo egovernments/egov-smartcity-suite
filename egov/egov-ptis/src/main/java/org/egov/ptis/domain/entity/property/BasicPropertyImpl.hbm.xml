@@ -161,9 +161,9 @@
 			<one-to-many class="org.egov.ptis.notice.PtNotice" />
 		</set>
 		
-		<set name="objections" cascade="all-delete-orphan" table="EGPT_OBJECTION">
+		<set name="objections" cascade="all-delete-orphan" table="EGPT_PETITION">
 			<key column="ID_BASICPROPERTY"  />
-			<one-to-many class="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+			<one-to-many class="org.egov.ptis.domain.entity.objection.Petition" />
 		</set>
 		
 		<set name="recoveries" cascade="all-delete-orphan" table="EGPT_RECOVERY">

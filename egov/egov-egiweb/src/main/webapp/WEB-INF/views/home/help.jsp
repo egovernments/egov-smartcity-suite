@@ -76,28 +76,22 @@ function property(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ptis.pdf');
 }
-
-
 function water(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/wcms.pdf');
 }
-
 function grievance(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
 }
-
 function council(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/council.pdf');
 }
-
 function lcms(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
 }
-
 function ntr(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
@@ -113,10 +107,6 @@ function fin(src){
 function tl(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/tl.pdf');
-}
-function coll(src){
-	//bootbox.alert(src);
-	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/coll.pdf');
 }
 function asset(src){
 	//bootbox.alert(src);
@@ -134,7 +124,6 @@ function mrgreg(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/mrgreg.pdf');
 }
-
 function swtx(src){
 	//bootbox.alert(src);
 	$('#getiframe').attr('src', 'https://www.egovernments.org/docs/usermanuals/ap/swtx.pdf');
@@ -193,12 +182,6 @@ function swtx(src){
 						<div class="text-center">
 							<i class="fa fa-outdent"></i>
 						</div> <span class="hidden-xs padding-left-right">Trade License</span>
-				</a></li>
-				<li class="source" data-src="coll"><a
-					href="javascript:void(0);">
-						<div class="text-center">
-							<i class="fa fa-inr"></i>
-						</div> <span class="hidden-xs padding-left-right">Collections</span>
 				</a></li>
 				<li class="source" data-src="asset"><a
 					href="javascript:void(0);">

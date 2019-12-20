@@ -49,7 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 
@@ -175,13 +175,13 @@ public interface BasicProperty extends Serializable {
 
     void removeNotice(PtNotice ptNotice);
 
-    Set<RevisionPetition> getObjections();
+    Set<Petition> getObjections();
 
-    void setObjections(Set<RevisionPetition> objections);
+    void setObjections(Set<Petition> objections);
 
-    void addObjection(RevisionPetition objection);
+    void addObjection(Petition objection);
 
-    void removeObjection(RevisionPetition objection);
+    void removeObjection(Petition objection);
 
     Map<String, String> getPropertyWfStatus();
 

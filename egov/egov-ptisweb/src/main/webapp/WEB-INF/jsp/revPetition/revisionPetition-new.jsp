@@ -57,6 +57,9 @@
 		<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 					<s:text name="recordGRP.title"></s:text>
 			    </s:if>
+			    <s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<s:text name="recordAppeal.title"></s:text>
+			    </s:elseif>
 			    <s:else>
 		<s:text name="recordObjection.title"></s:text>
 		</s:else>
@@ -70,7 +73,11 @@
 				}
 			function validateRecordObjection(){
 				document.getElementById("lblError").style.display='none';
-			if(dom.get('details').value==''){
+				
+			if(dom.get('details').value == '' || dom.get('details').value == null){
+				if (dom.get('wfType').value == 'Appeal Petition')
+					bootbox.alert('Please enter Appeal Petition Details');
+				else
 					bootbox.alert('Please enter Revision Petition Details');
 					return false;
 				}
@@ -116,6 +123,9 @@
 					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 					<s:text name="objection.grp.details.heading"></s:text>
 			    </s:if>
+			   <s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<s:text name="appeal.petition.details.heading"></s:text>
+			    </s:elseif> 
 			    <s:else><s:text name="objection.details.heading"></s:text></s:else>
 					
 					</a></li>

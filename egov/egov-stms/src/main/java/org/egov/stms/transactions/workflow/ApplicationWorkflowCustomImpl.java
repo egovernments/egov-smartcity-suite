@@ -167,10 +167,11 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
             Boolean citizenPortalUser = sewerageTaxUtils.isCitizenPortalUser(user);
+            boolean isWardSecretaryOperator = sewerageWorkflowService.isWardSecretaryUser(user);
             if (sewerageApplicationDetails.getState() == null
-                    && (cscOperatorLoggedIn || citizenPortalUser
+                    && (cscOperatorLoggedIn || citizenPortalUser || isWardSecretaryOperator
                     || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
-                if (cscOperatorLoggedIn)
+                if (cscOperatorLoggedIn || isWardSecretaryOperator)
                     currState = THIRD_PARTY_OPERATOR_CREATED;
                 else if (citizenPortalUser && sewerageApplicationDetails.getState() == null)
                     currState = CITIZEN_CREATED;

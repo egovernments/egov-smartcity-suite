@@ -56,11 +56,11 @@ import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.MHO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_REGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_REGISTRARAR;
 import static org.egov.mrs.application.MarriageConstants.MRS_ROLEFORNONEMPLOYEE;
-import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
-import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.ROLE_CITIZEN;
 import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
@@ -291,9 +291,11 @@ public class RegistrationWorkflowService {
         String currentState;
         Assignment assignment = getWorkFlowInitiatorForReissue(reIssue);
         final Boolean isCscOperator = isCscOperator(user);
+        boolean isWardSecretaryUser = isWardSecretaryUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
         // In case of CSC Operator will execute this block
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())|| citizenPortalUser) {
+		if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+				|| citizenPortalUser || isWardSecretaryUser) {
             currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -309,6 +311,8 @@ public class RegistrationWorkflowService {
             nextAction = workflowMatrix.getNextAction();
             if (citizenPortalUser)
                 reIssue.setSource(Source.CITIZENPORTAL.name());
+            else if(isWardSecretaryUser)
+            	reIssue.setSource(Source.WARDSECRETARY.name());
             else
                 reIssue.setSource(isCscOperator ? Source.CSC.name() : Source.ONLINE.name());
 

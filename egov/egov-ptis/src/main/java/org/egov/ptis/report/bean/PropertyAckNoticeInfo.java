@@ -128,7 +128,8 @@ public class PropertyAckNoticeInfo {
     private String eastBoundary;
     private String westBoundary;
     private String ownershipType;
-
+    private String disposalDate;
+    
     public String getCreationReason() {
         return creationReason;
     }
@@ -735,6 +736,14 @@ public class PropertyAckNoticeInfo {
 
     public void setOwnershipType(String ownershipType) {
         this.ownershipType = ownershipType;
+    }
+   
+    public String getDisposalDate() {
+        return disposalDate;
+    }
+
+    public void setDisposalDate(String disposalDate) {
+        this.disposalDate = disposalDate;
     }
 
 }

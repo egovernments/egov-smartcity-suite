@@ -55,6 +55,9 @@
 			    <s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 			    <s:text name="recordGRP.title"></s:text>
 			    </s:if>
+			    <s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+				<s:text name="recordAppeal.title" />
+				</s:elseif>
 			    <s:else>
 				<s:text name="recordObjection.title"></s:text>
 				</s:else>
@@ -70,6 +73,9 @@
 				<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 				<s:text name="objection.grp.received.date" />
 				</s:if>
+				<s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+				<s:text name="appeal.received.date" />
+				</s:elseif>
 				<s:else>
 				<s:text name="objection.received.date" />
 				</s:else>
@@ -85,6 +91,9 @@
 								<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 				<s:text name="objection.grp.received.by"/>
 				</s:if>
+				<s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+				<s:text name="appeal.received.by"/>
+				</s:elseif>
 				<s:else>
 				<s:text name="objection.received.by"/>
 				</s:else>
@@ -97,6 +106,9 @@
 				<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 				<s:text name="objection.grp.details"/>
 				</s:if>
+				<s:elseif test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+				<s:text name="appeal.comment"/>
+				</s:elseif>
 				<s:else>
 				<s:text name="objection.details"/>
 				</s:else>

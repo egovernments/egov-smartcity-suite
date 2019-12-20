@@ -256,14 +256,14 @@
 		</tr>
 	</s:if>
 	<s:if
-		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && (!wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP) || !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@NATURE_APPEALPETITION))}">
 		<tr>
 			<td colspan="5"><%@ include
 					file="document-typedetails-view-rp.jsp"%></td>
 		</tr>
 	</s:if>
 	<s:if
-		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && (!wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP) || !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@NATURE_APPEALPETITION))}">
 		<tr>
 			<td colspan="5"><%@ include
 					file="doctype-attachments-view-rp.jsp"%></td>

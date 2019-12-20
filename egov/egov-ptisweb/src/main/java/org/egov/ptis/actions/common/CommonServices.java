@@ -74,6 +74,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_N
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
 
 
 public class CommonServices {
@@ -115,6 +116,7 @@ public class CommonServices {
                 noticeTypeMap.put(NOTICE_TYPE_EXEMPTION, NOTICE_TYPE_EXEMPTIONPROCEEDINGS);
                 noticeTypeMap.put(NOTICE_TYPE_SURVEY_COMPARISON, NOTICE_TYPE_SURVEY_COMPARISON);
                 noticeTypeMap.put(NOTICE_TYPE_REJECTION, NOTICE_TYPE_REJECTION);
+                noticeTypeMap.put(NOTICE_TYPE_APPEALPROCEEDINGS, NOTICE_TYPE_APPEALPROCEEDINGS);
 		return noticeTypeMap;
 	}
 

@@ -80,6 +80,10 @@ body
 		      		</div>
 				</spring:hasBindErrors>
 			</div>
+			<input type="hidden" id="transactionId" name="transactionId"
+				value="${transactionId}" />
+			<input type="hidden" id="source" name="source"
+				value="${applicationSource}" />
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 			<jsp:include page="../common/ownerDetailsView.jsp"></jsp:include>
 

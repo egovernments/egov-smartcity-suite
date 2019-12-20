@@ -68,6 +68,8 @@ import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
 import static org.egov.tl.utils.Constants.GENERATE_PROVISIONAL_CERTIFICATE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
@@ -89,7 +91,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -97,6 +98,8 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -211,9 +214,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary() &&
-                Source.WARDSECRETARY.toString().equals(source)) {
-            licenseApplicationService.createWithWardSecretary(license, workflowBean,
+        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+			if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+				throw new ApplicationRuntimeException("WS.001");
+			}
+            license.setApplicationSource(source);
+            workflowBean.setActionName(NEW_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license, workflowBean,
                     transactionId);
         } else {
             licenseApplicationService.create(license, workflowBean);
@@ -318,6 +325,14 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
+        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+        	if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+				throw new ApplicationRuntimeException("WS.001");
+			}
+            license().setApplicationSource(source);
+            workflowBean.setActionName(RENEW_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license(), workflowBean,
+                    transactionId);
         } else {
             licenseApplicationService.renew(license(), workflowBean);
             setMessage(this.getText("license.renew.submission.succesful")

@@ -124,6 +124,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DE
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSCRETARY_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -181,7 +183,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
@@ -627,8 +629,8 @@ public class PropertyTaxCommonUtils {
         return propertyMutation.getSource() != null ? propertyMutation.getSource() : null;
     }
 
-    public String getObjectionSource(final RevisionPetition objection) {
-        return objection.getSource() != null ? objection.getSource() : null;
+    public String getObjectionSource(final Petition petition) {
+        return petition.getSource() != null ? petition.getSource() : null;
     }
 
     public String getVRSource(final VacancyRemission vacancyRemission) {
@@ -761,12 +763,12 @@ public class PropertyTaxCommonUtils {
                         property.getStateHistory().get(property.getStateHistory().size() - 1));
     }
 
-    public void buildMailAndSMS(final RevisionPetition revisionPetition) {
-        for (final PropertyOwnerInfo ownerInfo : revisionPetition.getBasicProperty().getPropertyOwnerInfo())
+    public void buildMailAndSMS(final Petition petition) {
+        for (final PropertyOwnerInfo ownerInfo : petition.getBasicProperty().getPropertyOwnerInfo())
             if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
-                buildSmsAndMail(revisionPetition.getObjectionNumber(), ownerInfo.getOwner(),
-                        revisionPetition.getProperty().getPropertyModifyReason(),
-                        revisionPetition.getStateHistory().get(revisionPetition.getStateHistory().size() - 1));
+                buildSmsAndMail(petition.getObjectionNumber(), ownerInfo.getOwner(),
+                        petition.getProperty().getPropertyModifyReason(),
+                        petition.getStateHistory().get(petition.getStateHistory().size() - 1));
     }
 
     public void buildMailAndSMS(final PropertyMutation propertyMutation) {
@@ -794,38 +796,37 @@ public class PropertyTaxCommonUtils {
         String emailSubject = "";
         String emailBody = "";
         String noticeNumber = getNoticeNumber(applicationNumber, workFlowAction, stateHistory.getValue());
-        String str = "Your application ";
-        String str1 = ", for "; 
-        String appnText =  str+ applicationNumber + str1 + workFlowAction;
-        String noticeText = ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-                + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
-                + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
-        ;
+        String yourApplication = "Your application ";
+        StringBuilder appnText = new StringBuilder(yourApplication).append(applicationNumber).append(", for ")
+                .append(workFlowAction);
+        String noticeText = new StringBuilder(ApplicationThreadLocals.getDomainURL())
+                .append("/ptis/reports/searchNotices-showNotice.action?noticeNumber=").append(noticeNumber)
+                .append("&moduleName=PTIS   or approach to Puraseva Center ")
+                .append(ApplicationThreadLocals.getMunicipalityName()).append(" to obtain the same.").toString();
         if (mobileNumber != null)
             if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL))
-                smsMsg = appnText + " is rejected. Download your digitally signed copy of Rejection Notice from the below " +
-                        noticeText;
+                smsMsg = new StringBuilder(appnText)
+                        .append(" is rejected. Download your digitally signed copy of Rejection Notice from the below ")
+                        .append(noticeText).toString();
             else
-                smsMsg = appnText
-                        + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                        + noticeText;
+                smsMsg = new StringBuilder(appnText)
+                        .append(" is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below ")
+                        .append(noticeText).toString();
         if (emailid != null) {
             if (stateHistory.getValue().contains(WF_STATE_REJECTED_TO_CANCEL)) {
-                emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
-                        + " is rejected and digitally signed.";
-                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
-                        + workFlowAction
-                        + " is rejected. Download your digitally signed copy of Rejection Notice from the below "
-                        +noticeText +"\n\nThanks,\n"
-                        + ApplicationThreadLocals.getMunicipalityName();
+                emailSubject = new StringBuilder(workFlowAction).append(" application request with acknowledgement No: ").append(applicationNumber)
+                        .append(" is rejected and digitally signed.").toString();
+                emailBody = new StringBuilder("Dear ").append(user.getName()).append(",\n\n").append(yourApplication).append(applicationNumber).append(", for ")
+                        .append(workFlowAction).append(" is rejected. Download your digitally signed copy of Rejection Notice from the below ")
+                        .append(noticeText).append("\n\nThanks,\n").append(ApplicationThreadLocals.getMunicipalityName()).toString();
             } else {
-                emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
-                        + " is approved and digitally signed.";
-                emailBody = "Dear " + user.getName() + ",\n\n" + str + applicationNumber + str1
-                        + workFlowAction
-                        + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                        + noticeText +"\n\nThanks,\n"
-                        + ApplicationThreadLocals.getMunicipalityName();
+                emailSubject = new StringBuilder(" application request with acknowledgement No: ").append(applicationNumber)
+                        .append(" is approved and digitally signed.").toString();
+                emailBody = new StringBuilder("Dear ").append(user.getName()).append(",\n\n").append(yourApplication).append(applicationNumber).append(", for ")
+                        .append(workFlowAction)
+                        .append(" is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below ")
+                        .append(noticeText).append("\n\nThanks,\n")
+                        .append(ApplicationThreadLocals.getMunicipalityName()).toString();
             }
         }
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
@@ -850,7 +851,9 @@ public class PropertyTaxCommonUtils {
             noticeType = NOTICE_TYPE_VRPROCEEDINGS;
 	else if (workFlowAction.equalsIgnoreCase(WRITE_OFF))
             noticeType = NOTICE_TYPE_WRITEOFFROCEEDINGS;
-	PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+        else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION))
+            noticeType = NOTICE_TYPE_APPEALPROCEEDINGS;
+        PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
 		.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())
 		.getSingleResult();
         return notice.getNoticeNo();

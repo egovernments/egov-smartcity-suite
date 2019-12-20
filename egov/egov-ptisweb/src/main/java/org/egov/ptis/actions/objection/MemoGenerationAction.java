@@ -60,7 +60,7 @@ import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -82,10 +82,10 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class MemoGenerationAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(MemoGenerationAction.class);
-	private RevisionPetition objection = new RevisionPetition();
+	private Petition petition = new Petition();
 	private static final String OBJECTIONMEMO = "ObjectionMemo";
 	private static final String PROPERTYSATUSFORMEMO = "getPropertySatusForMemo";
-	private PersistenceService<RevisionPetition, Long> objectionService;
+	private PersistenceService<Petition, Long> objectionService;
 	protected ReportService reportService;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private String reportId;
@@ -103,16 +103,16 @@ public class MemoGenerationAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 
-		if (null != objection.getId()) {
-			objection = objectionService.findById(objection.getId(), false);
+		if (null != petition.getId()) {
+		    petition = objectionService.findById(petition.getId(), false);
 		}
 	}
 
-	public PersistenceService<RevisionPetition, Long> getObjectionService() {
+	public PersistenceService<Petition, Long> getObjectionService() {
 		return objectionService;
 	}
 
-	public void setObjectionService(PersistenceService<RevisionPetition, Long> objectionService) {
+	public void setObjectionService(PersistenceService<Petition, Long> objectionService) {
 		this.objectionService = objectionService;
 	}
 
@@ -129,14 +129,14 @@ public class MemoGenerationAction extends BaseFormAction {
 		LOGGER.debug("Memo Print Started...");
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 		// checking to see the active property's mutation is is objection
-		if (objection.getBasicProperty().getProperty().getPropertyDetail().getPropertyMutationMaster().getCode()
+		if (petition.getBasicProperty().getProperty().getPropertyDetail().getPropertyMutationMaster().getCode()
 				.equalsIgnoreCase(PropertyTaxConstants.MUTATIONRS_OBJECTION_CODE)) {
 
-			List obj = persistenceService.findAllByNamedQuery(PROPERTYSATUSFORMEMO, objection.getBasicProperty()
-					.getUpicNo(), PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY, objection.getDateOfOutcome());
+			List obj = persistenceService.findAllByNamedQuery(PROPERTYSATUSFORMEMO, petition.getBasicProperty()
+					.getUpicNo(), PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY, petition.getDateOfOutcome());
 			if (obj != null && !obj.isEmpty()) {
-				reasonwiseDues = propertyTaxUtil.getDemandDues(objection.getBasicProperty().getUpicNo());
-				PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, objection.getBasicProperty(),
+				reasonwiseDues = propertyTaxUtil.getDemandDues(petition.getBasicProperty().getUpicNo());
+				PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, petition.getBasicProperty(),
 						null);
 				ReportRequest reportRequest = new ReportRequest(OBJECTIONMEMO, propertyBillInfo, getParamMap());
 				reportRequest.setPrintDialogOnOpenReport(true);
@@ -154,12 +154,12 @@ public class MemoGenerationAction extends BaseFormAction {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("date", dateFormat.format(new Date()));
-		paramMap.put("objectionNo", objection.getObjectionNumber());
-		paramMap.put("dateOfOutcome", dateFormat.format(objection.getDateOfOutcome()));
-		paramMap.put("objectionDate", dateFormat.format(objection.getRecievedOn()));
-		Boundary zone = objection.getBasicProperty().getBoundary().getParent();
+		paramMap.put("objectionNo", petition.getObjectionNumber());
+		paramMap.put("dateOfOutcome", dateFormat.format(petition.getDateOfOutcome()));
+		paramMap.put("objectionDate", dateFormat.format(petition.getRecievedOn()));
+		Boundary zone = petition.getBasicProperty().getBoundary().getParent();
 		paramMap.put("zoneNo", zone != null ? zone.getBoundaryNum().toString() : "");
-		paramMap.put("owner", objection.getBasicProperty().getFullOwnerName());
+		paramMap.put("owner", petition.getBasicProperty().getFullOwnerName());
 		paramMap.put("memoNo", propertyTaxNumberGenerator.generateMemoNumber());
 
 		return paramMap;
@@ -169,12 +169,12 @@ public class MemoGenerationAction extends BaseFormAction {
 		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
-	public RevisionPetition getObjection() {
-		return objection;
+	public Petition getPetition() {
+		return petition;
 	}
 
-	public void setObjection(RevisionPetition objection) {
-		this.objection = objection;
+	public void setPetition(Petition petition) {
+		this.petition = petition;
 	}
 
 	public String getReportId() {

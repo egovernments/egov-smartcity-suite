@@ -48,6 +48,18 @@
 
 package org.egov.mrs.domain.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.service.EisCommonService;
@@ -83,16 +95,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -163,53 +165,50 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
-		workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
+    public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
+        final boolean citizenPortalUser = workflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        if (StringUtils.isBlank(reIssue.getApplicationNo())) {
+            reIssue.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextReIssueApplicationNumber(reIssue));
+            reIssue.setApplicationDate(new Date());
+        }
+        if (reIssue.getFeeCriteria() != null)
+            reIssue.setFeeCriteria(marriageFeeService.getFee(reIssue.getFeeCriteria().getId()));
+        reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
+                MarriageConstants.MODULE_NAME));
+        reIssue.setSource(Source.SYSTEM.toString());
+        if (reIssue.getFeePaid() != null && reIssue.getDemand() == null)
+            reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
 
-		if (reIssue.isValidApprover()) {
-			if (StringUtils.isBlank(reIssue.getApplicationNo())) {
-				reIssue.setApplicationNo(
-						marriageRegistrationApplicationNumberGenerator.getNextReIssueApplicationNumber(reIssue));
-				reIssue.setApplicationDate(new Date());
-			}
-			if (reIssue.getFeeCriteria() != null)
-				reIssue.setFeeCriteria(marriageFeeService.getFee(reIssue.getFeeCriteria().getId()));
-			reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
-					MarriageConstants.MODULE_NAME));
-			if (StringUtils.isBlank(reIssue.getSource()))
-				reIssue.setSource(Source.SYSTEM.toString());
-			if (reIssue.getFeePaid() != null && reIssue.getDemand() == null)
-				reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
+        final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<>();
+        marriageDocumentService.getIndividualDocuments()
+                .forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
-			final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<>();
-			marriageDocumentService.getIndividualDocuments()
-					.forEach(document -> applicantDocumentAndId.put(document.getId(), document));
+        marriageApplicantService.addDocumentsToFileStore(reIssue.getApplicant(), applicantDocumentAndId);
 
-			marriageApplicantService.addDocumentsToFileStore(reIssue.getApplicant(), applicantDocumentAndId);
-			create(reIssue);
-			reiSsueUpdateIndexesService.createReIssueAppIndex(reIssue);
-			marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
-			final boolean citizenPortalUser = workflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
-			if (citizenPortalUser)
-				pushPortalMessage(reIssue);
-			marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
-		}
-		return reIssue;
+        workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
+
+        create(reIssue);
+        reiSsueUpdateIndexesService.createReIssueAppIndex(reIssue);
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        if (citizenPortalUser)
+            pushPortalMessage(reIssue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
+        return reIssue.getApplicationNo();
     }
-    
+
     @Transactional
     public ReIssue forwardReIssue(final Long id, final ReIssue reissue,
                                   final WorkflowContainer workflowContainer) {
-		workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
-		if (reissue.isValidApprover()) {
-			updateReIssueData(reissue);
-			reissue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
-					MarriageConstants.MODULE_NAME));
-			update(reissue);
-			if (reissue.getSource() != null && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
-					&& getPortalInbox(reissue.getApplicationNo()) != null)
-				updatePortalMessage(reissue);
-		}
+        updateReIssueData(reissue);
+        reissue.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
+                        MarriageConstants.MODULE_NAME));
+        update(reissue);
+        workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
+        if (reissue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
+                && getPortalInbox(reissue.getApplicationNo()) != null)
+            updatePortalMessage(reissue);
         return reissue;
     }
 
@@ -440,5 +439,21 @@ public class ReIssueService {
                 reIssue.getApplicationNo(),
                 String.format(REISSUE_APPLICATION_VIEW, reIssue.getId()));
     }
+    
+	@Transactional
+	public String reIssueCertificateAndPublishEventForWardSecretary(ReIssue reIssue, HttpServletRequest request,
+			WorkflowContainer workflowContainer, boolean loggedUserIsWardSecretaryUser) {
+		String applicationNo = StringUtils.EMPTY;
+		try {
+			createReIssueApplication(reIssue, workflowContainer);
+			applicationNo = reIssue.getApplicationNo();
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, true);
+
+		} catch (Exception e) {
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, false);
+		}
+
+		return applicationNo;
+	}
 
 }

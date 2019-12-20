@@ -95,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLIST
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETETION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_PETITION;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -1583,7 +1584,7 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        if (!Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE).contains(applicationType))
+        if (!Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE,APPEAL_PETITION).contains(applicationType))
             reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
         else
             reportParams.put(ACK_NO, applicationNo);

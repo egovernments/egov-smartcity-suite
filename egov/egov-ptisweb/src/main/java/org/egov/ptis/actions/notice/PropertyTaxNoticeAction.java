@@ -82,6 +82,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -135,7 +137,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -344,17 +346,17 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         BasicPropertyImpl basicProperty;
         PtNotice notice;
         Position ownerPosition;
-        RevisionPetition revisionPetition = null;
+        Petition petition = null;
         VacancyRemissionApproval vacancyRemissionApproval = null;
-        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type)) {
-            revisionPetition = revisionPetitionService.findById(basicPropertyId, false);
-            ownerPosition = revisionPetition.getCurrentState().getOwnerPosition();
-            basicProperty = (BasicPropertyImpl) revisionPetition.getBasicProperty();
+        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(type)) {
+            petition = revisionPetitionService.findById(basicPropertyId, false);
+            ownerPosition = petition.getCurrentState().getOwnerPosition();
+            basicProperty = (BasicPropertyImpl) petition.getBasicProperty();
             property = (PropertyImpl) basicProperty.getProperty();
             if (property == null)
                 property = (PropertyImpl) basicProperty.getWFProperty();
             notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
-                    revisionPetition.getObjectionNumber());
+                    petition.getObjectionNumber());
         } else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type)) {
             vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(basicPropertyId);
             ownerPosition = vacancyRemissionApproval.getCurrentState().getOwnerPosition();
@@ -373,35 +375,40 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         PropertyNoticeInfo propertyNotice;
         final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
         propertyNotice = new PropertyNoticeInfo(property, noticeNo);
-        ReportRequest reportInput = getReportInputs(basicProperty, ownerPosition, revisionPetition, vacancyRemissionApproval,
+        ReportRequest reportInput = getReportInputs(basicProperty, ownerPosition, petition, vacancyRemissionApproval,
                 propertyNotice, noticeNo);
         reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
         PtNotice savedNotice;
-        if (notice == null) {
-            savedNotice = saveAllNotice(type, basicProperty, revisionPetition, vacancyRemissionApproval, noticeNo);
-        } else
+        if (notice == null)
+            savedNotice = saveAllNotice(type, basicProperty, petition, vacancyRemissionApproval, noticeNo);
+        else
             savedNotice = noticeService.updateNotice(notice, NoticePDF);
         return savedNotice.getFileStore().getFileStoreId();
     }
 
-    private ReportRequest generateObjectionReportRequest(final RevisionPetition revisionPetition,
+    private ReportRequest generateObjectionReportRequest(final Petition petition,
             final PropertyNoticeInfo propertyNotice, final Position ownerPosition) {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
         String natureOfWork;
         getCommonReportParams(ownerPosition, reportParams);
-        if (NATURE_OF_WORK_RP.equalsIgnoreCase(revisionPetition.getType()))
+        if (NATURE_OF_WORK_RP.equalsIgnoreCase(petition.getType()))
             natureOfWork = NATURE_REVISION_PETITION;
+        else if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(petition.getType()))
+            natureOfWork = NATURE_APPEALPETITION;
         else
             natureOfWork = NATURE_GENERAL_REVISION_PETITION;
         reportParams.put("natureOfWork", natureOfWork);
-        revisionPetitionService.setNoticeInfo(revisionPetition.getProperty(), propertyNotice, revisionPetition.getBasicProperty(),
-                revisionPetition);
+        reportParams.put("disposalDate", petition.getDisposalDate().toString());
+        revisionPetitionService.setNoticeInfo(petition.getProperty(), propertyNotice,
+                (BasicPropertyImpl) petition.getBasicProperty(), petition);
         final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
         propertyNotice.setFloorDetailsForNotice(floorDetails);
-        reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE, propertyNotice,
+        reportInput = new ReportRequest((petition.getType().equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION)
+                ? PropertyTaxConstants.REPORT_TEMPLATENAME_APPEAL_SPECIAL_NOTICE
+                : PropertyTaxConstants.REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE), propertyNotice,
                 reportParams);
         reportInput.setPrintDialogOnOpenReport(true);
         reportInput.setReportFormat(ReportFormat.PDF);
@@ -939,15 +946,15 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return property.getSource() != null ? property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA) : false;
     }
 
-    private PtNotice saveAllNotice(final String type, BasicPropertyImpl basicProperty, RevisionPetition revisionPetition,
+    private PtNotice saveAllNotice(final String type, BasicPropertyImpl basicProperty, Petition petition,
             VacancyRemissionApproval vacancyRemissionApproval, final String noticeNo) {
         PtNotice savedNotice;
-        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type))
-            savedNotice = noticeService.saveNotice(revisionPetition.getObjectionNumber(),
+        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(type))
+            savedNotice = noticeService.saveNotice(petition.getObjectionNumber(),
                     noticeNo,
                     type.equalsIgnoreCase(RP)
                             ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS,
-                    revisionPetition.getBasicProperty(),
+                    petition.getBasicProperty(),
                     NoticePDF);
         else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type))
             savedNotice = noticeService.saveNotice(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(),
@@ -960,7 +967,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     }
 
     private ReportRequest getReportInputs(BasicPropertyImpl basicProperty, Position ownerPosition,
-            RevisionPetition revisionPetition, VacancyRemissionApproval vacancyRemissionApproval,
+            Petition petition, VacancyRemissionApproval vacancyRemissionApproval,
             PropertyNoticeInfo propertyNotice, final String noticeNo) {
         ReportRequest reportInput = null;
         if (!noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION) && !noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL)
@@ -969,7 +976,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         else if (noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION))
             reportInput = generateExemptedNoticeReportRequest(basicProperty, propertyNotice, noticeNo);
         else if (noticeMode.equalsIgnoreCase(OBJECTION))
-            reportInput = generateObjectionReportRequest(revisionPetition, propertyNotice, ownerPosition);
+            reportInput = generateObjectionReportRequest(petition, propertyNotice, ownerPosition);
         else if (noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL))
             reportInput = vacancyRemissionService.generateVRReportRequest(vacancyRemissionApproval.getVacancyRemission(),
                     noticeNo, ServletActionContext.getRequest(),

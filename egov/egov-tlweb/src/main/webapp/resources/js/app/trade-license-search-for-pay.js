@@ -220,17 +220,28 @@ $(document).ready(function () {
 function goToView(id) {
     window.open("/tl/license/show/" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
-
+var wsSource = $("#wsSource").val();
+var wsTransactionId = $("#wsTransactionId").val();
 function goToAction(obj,uid, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
         window.open("/tl/pay/online/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
         window.open("/tl/dcb/view/" + uid);
-    else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
-        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id);
-    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("/tl/license/closure/" + id, id);
-    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License') {
+    	var renewalUrl = "/tl/newtradelicense/newTradeLicense-beforeRenew.action?";
+    	if(wsSource == 'WARDSECRETARY'){
+    		window.open(renewalUrl+"model.id=" + id+"&transactionId="+wsTransactionId+"&source="+wsSource);
+    	} else {
+    		window.open(renewalUrl+"model.id=" + id);
+    	}	
+    } else if (obj.options[obj.selectedIndex].innerHTML == 'Closure'){
+    	var clouserUrl = "/tl/license/closure/"+id;
+    	if(wsSource == 'WARDSECRETARY'){
+    		window.open(clouserUrl+"?transactionId="+wsTransactionId+"&source="+wsSource);
+    	} else {
+    		window.open(clouserUrl, id);
+    	}
+    } else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
         window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
         window.open("/tl/license/generate-provisionalcertificate/" + uid);

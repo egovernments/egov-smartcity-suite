@@ -53,7 +53,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.OwnerNameComparator;
@@ -90,7 +90,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private String gisReferenceNo;
     private String partNo;
     private Set<PtNotice> notices = new HashSet<>();
-    private Set<RevisionPetition> objections = new HashSet<>();
+    private Set<Petition> objections = new HashSet<>();
     private Set<Recovery> recoveries = new HashSet<>();
     private Character source = 'A';
     private Set<PropertyDocs> propertyDocsSet = new HashSet<>();
@@ -390,22 +390,22 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     @Override
-    public Set<RevisionPetition> getObjections() {
+    public Set<Petition> getObjections() {
         return objections;
     }
 
     @Override
-    public void setObjections(final Set<RevisionPetition> objections) {
+    public void setObjections(final Set<Petition> objections) {
         this.objections = objections;
     }
 
     @Override
-    public void addObjection(final RevisionPetition objection) {
+    public void addObjection(final Petition objection) {
         getObjections().add(objection);
     }
 
     @Override
-    public void removeObjection(final RevisionPetition objection) {
+    public void removeObjection(final Petition objection) {
         getObjections().remove(objection);
     }
 
@@ -469,8 +469,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
     private Map<String, String> propertyInObjectionWf() {
         final Map<String, String> wfMap = new HashMap<>();
-        RevisionPetition wfObjection = null;
-        for (final RevisionPetition objection : getObjections()) {
+        Petition wfObjection = null;
+        for (final Petition objection : getObjections()) {
             wfObjection = objection;
             if (wfObjection.hasState() && !wfObjection.transitionCompleted())
                 break;

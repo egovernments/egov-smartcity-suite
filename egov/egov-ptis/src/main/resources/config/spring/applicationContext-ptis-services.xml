@@ -66,7 +66,7 @@
     <bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 
     <bean id="objectionService" parent="abstractPersistenceService" scope="prototype">
-        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.Petition" />
     </bean>
 
     <bean id="ptRecoveryPeristenceService" parent="abstractPersistenceService" scope="prototype">
@@ -135,12 +135,12 @@
          <constructor-arg index="0" ref="vacancyRemissionApprovalPersistenceService"/>
     </bean>
     
-    <bean id="revisionPetitionPersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+    <bean id="PetitionPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.Petition" />
     </bean>
     
-    <bean id="RevisionPetitionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
-         <constructor-arg index="0" ref="revisionPetitionPersistenceService"/>
+    <bean id="PetitionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
+         <constructor-arg index="0" ref="PetitionPersistenceService"/>
     </bean>
     
     <bean id="propertyMutationPersistenceService" parent="abstractPersistenceService" scope="prototype">

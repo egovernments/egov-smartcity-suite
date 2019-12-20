@@ -63,13 +63,15 @@ import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.VIEW_LINK;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.egov.commons.entity.Source;
 import org.egov.infra.integration.event.model.ApplicationDetails;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
@@ -80,6 +82,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.WorkflowBean;
+import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +90,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
+
+    private static final String LICENSE_CLOSURE_FAILED = "License closure failed";
+
+	private static final String LICENSE_RENEWAL_FAILED = "License renewal failed";
+
+	private static final String LICENSE_CREATION_FAILED = "License creation failed";
+
+	private static final String LICENSE_CLOSED = "License closed";
+
+	private static final String LICENSE_RENEWED = "License renewed";
+
+	private static final String LICENSE_CREATED = "License created";
+
+	private static final Logger LOGGER = Logger.getLogger(LicenseApplicationService.class);
 
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
@@ -102,31 +119,41 @@ public class LicenseApplicationService extends TradeLicenseService {
         return create(license, wfBean);
     }
 
-    @Transactional
-    public TradeLicense createWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
-        try {
-            license.setApplicationSource(Source.WARDSECRETARY.toString());
-            license = create(license, wfBean);
-            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-                    .withApplicationNumber(license.getApplicationNumber())
-                    .withViewLink(format(VIEW_LINK,
-                            WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), license.getUid()))
-                    .withTransactionStatus(TransactionStatus.SUCCESS)
-                    .withApplicationStatus(ApplicationStatus.INPROGRESS)
-                    .withRemark("License created")
-                    .withTransactionId(tpTransactionId)
-                    .build());
+	@Transactional
+	public TradeLicense processWithWardSecretary(TradeLicense license, WorkflowBean wfBean, String tpTransactionId) {
+		try {
+			String remarks = null;
+			if (NEW_APPTYPE_CODE.equals(wfBean.getActionName())) {
+				license = create(license, wfBean);
+				remarks = LICENSE_CREATED;
+			} else if (RENEW_APPTYPE_CODE.equals(wfBean.getActionName())) {
+				license = renew(license, wfBean);
+				remarks = LICENSE_RENEWED;
+			} else if (Constants.CLOSURE_APPTYPE_CODE.equals(wfBean.getActionName())) {
+				remarks = LICENSE_CLOSED;
+			}
+			thirdPartyApplicationEventPublisher
+					.publishEvent(ApplicationDetails.builder().withApplicationNumber(license.getApplicationNumber())
+							.withViewLink(format(VIEW_LINK,
+									WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+									license.getUid()))
+							.withTransactionStatus(TransactionStatus.SUCCESS)
+							.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark(remarks)
+							.withTransactionId(tpTransactionId).build());
 
-        } catch (Exception e) {
-            thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-                    .withTransactionStatus(TransactionStatus.FAILED)
-                    .withRemark("License creation failed")
-                    .withTransactionId(tpTransactionId)
-                    .withRemark(e.toString())
-                    .build());
-        }
-        return license;
-    }
+		} catch (ValidationException validationException) {
+			throw validationException;
+		} catch (Exception e) {
+			LOGGER.error("Ward Secretary : License process failed");
+			String message = NEW_APPTYPE_CODE.equals(wfBean.getActionName()) ? LICENSE_CREATION_FAILED
+					: RENEW_APPTYPE_CODE.equals(wfBean.getActionName()) ? LICENSE_RENEWAL_FAILED
+							: LICENSE_CLOSURE_FAILED;
+			thirdPartyApplicationEventPublisher
+					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
+							.withRemark(message).withTransactionId(tpTransactionId).withRemark(e.toString()).build());
+		}
+		return license;
+	}
 
     @Transactional
     public TradeLicense renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {

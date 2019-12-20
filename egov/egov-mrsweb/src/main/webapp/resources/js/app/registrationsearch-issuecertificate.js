@@ -50,6 +50,7 @@
 $(document).ready( function () {
 	
 	var updateurl;
+	var isWardSecretary = $('#isWardSecretaryOperator').val();
 	 updateurl='/mrs/reissue/create/';
 	
 
@@ -175,6 +176,9 @@ $(document).ready( function () {
 
 	$(document).on('click','.reissue',function(){
 	    var url = $(this).val();
+	    if(isWardSecretary){
+	    	url = url+'?wsTransactionId='+$('#wsTransactionId').val()+'&wsSource='+$('#wsSource').val();
+	    }
 	    if(url){
 	    	openPopup(url);
 	    }

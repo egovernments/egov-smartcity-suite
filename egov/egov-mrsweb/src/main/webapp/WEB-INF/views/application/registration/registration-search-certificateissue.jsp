@@ -53,7 +53,13 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" method="post"
 	cssClass="form-horizontal form-groups-bordered" id="usageform"
-	modelAttribute="searchFilter">	
+	modelAttribute="registration">	
+	<input type="hidden" id="isWardSecretaryOperator" name="isWardSecretaryOperator"
+				value="${isWardSecretaryOperator}" />
+	<input type="hidden" id="wsTransactionId" name="wsTransactionId"
+				value="${wsTransactionId}" />
+	<input type="hidden" id="wsSource" name="wsSource"
+				value="${wsSource}" />
 	<jsp:include page="registration-searchform.jsp"></jsp:include>
 </form:form>
 <div class="row display-hide report-section" id="table_container">

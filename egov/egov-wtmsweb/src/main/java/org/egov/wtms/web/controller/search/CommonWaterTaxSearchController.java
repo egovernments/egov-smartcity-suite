@@ -88,13 +88,41 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.GENERATEBILL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MIGRATED_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+
+import java.math.BigDecimal;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
+import org.egov.wtms.entity.es.ConnectionSearchRequest;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
@@ -128,6 +156,9 @@ public class CommonWaterTaxSearchController {
     
     @Autowired
     private WaterDemandConnectionService waterDemandConnectionService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -151,6 +182,17 @@ public class CommonWaterTaxSearchController {
 
     @GetMapping(value = "commonSearch/additionalconnection")
     public String getAdditionalWaterConnection(Model model, HttpServletRequest request) {
+		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
+			}
+		}
         return commonSearchForm(model, ADDNLCONNECTION, request.getParameter(APPLICATION_NUMBER));
     }
 
@@ -195,6 +237,12 @@ public class CommonWaterTaxSearchController {
                                          BindingResult resultBinder, Model model, HttpServletRequest request) {
         WaterConnectionDetails waterConnectionDetails = null;
         String applicationType = request.getParameter(APPLICATIONTYPE);
+		String wsTransactionId = request.getParameter("wsTransactionId");
+		String wsSource = request.getParameter("wsSource");
+		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+
         if (searchRequest.getMeesevaApplicationNumber() != null)
             model.addAttribute(MEESEVA_APPLICATION_NUMBER, searchRequest.getMeesevaApplicationNumber());
         if (isNotBlank(applicationType) && applicationType.equals(RECONNECTION))
@@ -261,8 +309,15 @@ public class CommonWaterTaxSearchController {
                     || NEWCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
                     || RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
                     && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
-                    && waterConnectionDetails.getConnection().getParentConnection() == null)
-                return "redirect:/application/addconnection/" + waterConnectionDetails.getConnection().getConsumerCode();
+                    && waterConnectionDetails.getConnection().getParentConnection() == null){
+				if (isWardSecretaryUser)
+					return "redirect:/application/addconnection/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode())
+							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+				else
+					return "redirect:/application/addconnection/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode());
+            }
             else {
                 model.addAttribute(MODE, ERROR_MODE);
                 model.addAttribute(APPLICATIONTYPE, applicationType);

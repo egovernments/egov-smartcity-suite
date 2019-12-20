@@ -83,7 +83,7 @@ import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -326,7 +326,7 @@ public class ViewPropertyAction extends BaseFormAction {
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                 final Query query = entityManager.createNamedQuery("RP_BY_APPLICATIONNO");
                 query.setParameter("applicatiNo", appNo);
-                RevisionPetition rp = (RevisionPetition) query.getSingleResult();
+                Petition rp = (Petition) query.getSingleResult();
                 setBasicProperty(rp.getBasicProperty());
                 setHistoryMap(propService.populateHistory(rp));
                 property = (PropertyImpl) rp.getBasicProperty().getProperty();

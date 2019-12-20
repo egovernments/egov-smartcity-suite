@@ -63,7 +63,7 @@ public class Hearing extends BaseModel {
     protected static final long serialVersionUID = 1L;
    
 
-    protected RevisionPetition objection;
+    protected Petition objection;
 
     @DateFormat(message = "invalid.fieldvalue.hearingDate")
     private Date plannedHearingDt;
@@ -100,7 +100,7 @@ public class Hearing extends BaseModel {
         this.hearingVenue = hearingVenue;
     }
 
-    public RevisionPetition getObjection() {
+    public Petition getObjection() {
         return objection;
     }
 
@@ -112,7 +112,7 @@ public class Hearing extends BaseModel {
         return documentNumber;
     }
 
-    public void setObjection(RevisionPetition objection) {
+    public void setObjection(Petition objection) {
         this.objection = objection;
     }
 

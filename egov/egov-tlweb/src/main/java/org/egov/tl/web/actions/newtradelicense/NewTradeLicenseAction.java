@@ -48,13 +48,16 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -80,17 +83,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static java.lang.String.format;
 import static org.egov.tl.utils.Constants.*;
 
 @ParentPackage("egov")
-@Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
+@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
         @Result(name = NewTradeLicenseAction.ERROR, location = "newTradeLicense-error.jsp"),
         @Result(name = NewTradeLicenseAction.SUCCESS, location = "newTradeLicense-message.jsp"),
-        @Result(name = MESSAGE, type = "redirectAction", location = "success", params = {"message", "${message}"}),
+        @Result(name = MESSAGE, type = "redirectAction", location = "success", params = { "message", "${message}" }),
         @Result(name = BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
-        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp")})
+        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp") })
 public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
@@ -115,6 +120,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private transient LicenseService licenseService;
 
+    private static final String RESULT_ERROR = "error";
+    private boolean isWardSecretaryUser;
+
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
     }
@@ -136,6 +144,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             return MESSAGE;
         }
         supportDocumentsValidation();
+        renewAppType = NEW_APPTYPE_CODE;
         return super.create(tradeLicense);
     }
 
@@ -156,7 +165,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
-                    .getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
+                            .getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
                 mode = ACK_MODE;
                 message = PENDING_COLLECTION_MSG;
             } else if (license().getState().getValue().equals(WF_FIRST_LVL_FEECOLLECTED)
@@ -168,7 +177,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 mode = EDIT_APPROVAL_MODE;
             else if (license().getState().getValue().contains(WF_SECOND_LVL_FEECOLLECTED)
                     || license().getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
-                    && license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR))
+                            && license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR))
                 mode = DISABLE_APPROVER_MODE;
             else if (this.isDigitalSignatureEnabled()
                     && license().getState().getValue().equals(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
@@ -223,9 +232,21 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     public String beforeRenew() {
         prepareNewForm();
         documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
+        isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
                     format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
+        }
+        if (isWardSecretaryUser) {
+            HttpServletRequest request = ServletActionContext.getRequest();
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
+                    request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            } else {
+                license().setApplicationSource(Source.WARDSECRETARY.toString());
+            }
         }
         if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
             currentState = "";
@@ -242,7 +263,17 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             addActionMessage(this.getText(INVALID_WORKFLOWACTION));
             return MESSAGE;
         }
+        isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
         supportDocumentsValidation();
+        if (isWardSecretaryUser) {
+            HttpServletRequest request = ServletActionContext.getRequest();
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
+                    request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            }
+        }
         return super.renew();
     }
 
@@ -326,7 +357,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                 return NEW_ADDITIONAL_RULE;
         }
     }
-
 
     public void prepareSave() {
         prepareNewForm();

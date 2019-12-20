@@ -48,12 +48,15 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
@@ -153,10 +156,11 @@ public class NewReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
-    public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
+    public String showReIssueForm(@PathVariable final Long registrationId, final Model model, HttpServletRequest request) {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
         final User logedinUser = securityUtils.getCurrentUser();
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         if (registration == null) {
             model.addAttribute(MESSAGE, "msg.invalid.request");
             return "marriagecommon-error";
@@ -172,6 +176,17 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter("wsTransactionId");
+			String wsSource = request.getParameter("wsSource");
+			if (isWardSecretaryUser
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
+			}
+		}
         prepareNewForm(model, reIssue);
 
         return "reissue-form";
@@ -195,8 +210,15 @@ public class NewReIssueController extends GenericWorkFlowController {
             final RedirectAttributes redirectAttributes) {
         final User logedinUser = securityUtils.getCurrentUser();
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
+		String wsTransactionId = request.getParameter("wsTransactionId");
+		String wsSource = request.getParameter("wsSource");
+		if (isWardSecretaryUser
+				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+        
         marriageFormValidator.validateReIssue(reIssue, errors);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee);
         if (!isAssignmentPresent) {
@@ -226,26 +248,33 @@ public class NewReIssueController extends GenericWorkFlowController {
             nextDesignation = request.getParameter("nextDesignation");
         }
 
-        final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer).getApplicationNo();
-        
-		if (!reIssue.isValidApprover()) {
-			model.addAttribute(MESSAGE, messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
-			return buildFormOnValidation(reIssue, isEmployee, model);
+        String appNo = StringUtils.EMPTY;
+
+		if (isWardSecretaryUser) {
+			appNo = reIssueService.reIssueCertificateAndPublishEventForWardSecretary(reIssue, request,
+					workflowContainer, isWardSecretaryUser);
 		} else {
-			if (approverName != null)
-				message = messageSource.getMessage("msg.reissue.forward",
-						new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
-			model.addAttribute(MESSAGE, message);
-
-			model.addAttribute("ackNumber", appNo);
-			model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
-			if (!isEmployee) {
-				redirectAttributes.addFlashAttribute(MESSAGE, message);
-				return "redirect:/reissue/reissue-certificate-ackowledgement/".concat(appNo);
-
-			} else
-				return "reissue-ack";
+			appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
 		}
+        
+                if (!reIssue.isValidApprover()) {
+                        model.addAttribute(MESSAGE, messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+                        return buildFormOnValidation(reIssue, isEmployee, model);
+                } else {
+                        if (approverName != null)
+                                message = messageSource.getMessage("msg.reissue.forward",
+                                                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+                        model.addAttribute(MESSAGE, message);
+
+                        model.addAttribute("ackNumber", appNo);
+                        model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
+                        if (!isEmployee) {
+                                redirectAttributes.addFlashAttribute(MESSAGE, message);
+                                return "redirect:/reissue/reissue-certificate-ackowledgement/".concat(appNo);
+
+                        } else
+                                return "reissue-ack";
+                }
     }
 
     private String buildFormOnValidation(final ReIssue reIssue, final Boolean isEmployee, final Model model) {

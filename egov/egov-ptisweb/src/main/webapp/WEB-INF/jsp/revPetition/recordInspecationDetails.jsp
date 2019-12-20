@@ -87,7 +87,20 @@
 					<td class="bluebox" width="25%">
 						<s:radio name="generateSpecialNotice"
 							list="#{'true':'Yes','false':'No'}" id="generateSpecialNotice" value="%{generateSpecialNotice}" />
-					</td>		
+					</td>	
+					<s:if
+		test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<td class="bluebox" width="25%">
+						<s:text name="appeal.disposal.date" />	<span class="mandatory1">*</span>
+					</td>
+					<td class="bluebox" width="25%"><s:date
+							name="objection.disposalDate"
+							var="disposalDates" format="dd/MM/yyyy" /> <s:textfield
+							cssClass="datepicker"
+							name="objection.disposalDate"
+							 value="%{#disposalDates}" autocomplete="off"
+							id="disposalDate" size="12" maxlength="12" data-errormsg="disposal date is required!" ></s:textfield></td>	
+				</s:if>
 				</tr>
 			</table>
 		</td>

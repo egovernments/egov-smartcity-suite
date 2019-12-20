@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,10 +45,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.infra.integration.service;
 
-package org.egov.ptis.domain.entity.enums;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
-public enum TransactionType {
-	CREATE, MODIFY, TRANSFER, WRITEOFF, DEACTIVATE, OBJECTION, VACANCYREMISSION, VRMONTHLYUPDATE, CREATE_ASMT_DOC, TE_PUBLIC_WORSHIP,
-	TE_CHOULTRY, TE_EDU_INST, TE_EXSERVICE, TE_PENSIONER_NGO, SUCCESSION_TRANSFER,APPEALPETITION
+@Service
+public class ThirdPartyService {
+
+	private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
+
+	public static boolean validateWardSecretaryRequest(String transactionId, String source) {
+		boolean isInvalidRequest = false;
+		if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
+				|| (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
+			isInvalidRequest = true;
+
+		return isInvalidRequest;
+	}
 }

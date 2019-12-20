@@ -67,6 +67,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -147,12 +148,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
             }
         }
 		if (isWardSecretaryUser) {
-			if (StringUtils.isBlank(request.getParameter("transactionId"))
-					|| StringUtils.isBlank(request.getParameter("source")))
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (isWardSecretaryUser
+					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
-				model.addAttribute("wsSource", request.getParameter("source"));
+				model.addAttribute("wsTransactionId", wsTransactionId);
+				model.addAttribute("wsSource", wsSource);
 			}
 		}
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(logedinUser));
@@ -188,8 +191,16 @@ public class NewRegistrationController extends MarriageRegistrationController {
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
                 isEmployee);
-        if (!isAssignmentPresent || errors.hasErrors()) 
-            return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent, isWardSecretaryUser, request);
+        String wsTransactionId = request.getParameter("wsTransactionId");
+        String wsSource = request.getParameter("wsSource");
+        
+        if (isWardSecretaryUser
+				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+        
+		if (!isAssignmentPresent || errors.hasErrors())
+			return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent,
+					isWardSecretaryUser, wsTransactionId, wsSource);
       
         String message;
         String approverName = null;
@@ -251,7 +262,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
 			final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent, boolean isWardSecretaryUser,
-			HttpServletRequest request) {
+			String transactionId, String source) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
             model.addAttribute(MESSAGE, messageSource.getMessage(NOTEXISTS_POSITION,
@@ -261,8 +272,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
 		if (isWardSecretaryUser) {
-			model.addAttribute("wsTransactionId", request.getParameter("wsTransactionId"));
-			model.addAttribute("wsSource", request.getParameter("wsSource"));
+			model.addAttribute("wsTransactionId", transactionId);
+			model.addAttribute("wsSource", source);
 		}
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return REGISTRATION_FORM;

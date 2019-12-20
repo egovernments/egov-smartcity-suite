@@ -69,6 +69,8 @@
 					<input type="hidden"  id="mode" name="mode" name="mode"  value="${mode}" />
 					<input type="hidden"  id="applicationType" name="applicationType" value="${applicationType}" />
 					<input type="hidden"  id="meesevaApplicationNumber" name="meesevaApplicationNumber" value="${meesevaApplicationNumber}" />
+					<input type="hidden"  id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+					<input type="hidden"  id="wsSource" name="wsSource" value="${wsSource}" />
 					<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 						<div class="col-md-4 add-margin">

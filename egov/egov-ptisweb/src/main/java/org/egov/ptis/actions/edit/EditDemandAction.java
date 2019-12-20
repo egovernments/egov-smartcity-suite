@@ -105,7 +105,7 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DemandAudit;
 import org.egov.ptis.domain.entity.property.DemandAuditDetails;
@@ -369,7 +369,7 @@ public class EditDemandAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into newEditForm");
         String resultPage;
-        final RevisionPetition generalRevisionPetition = revisionPetitionService.getExistingGRP(basicProperty);
+        final Petition generalRevisionPetition = revisionPetitionService.getExistingGRP(basicProperty);
         Date effectiveDate = null;
         PropertyImpl propertyModel = null;
         if (generalRevisionPetition == null) {

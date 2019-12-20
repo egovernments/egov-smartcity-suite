@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,7 +88,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.Amalgamation;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -144,7 +145,7 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     @Qualifier("workflowService")
-    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
+    protected SimpleWorkflowService<Petition> revisionPetitionWorkFlowService;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -217,10 +218,10 @@ public class DigitalSignatureWorkflowController {
     }
 
     private void updateOthers(final String applicationNumber) {
-        final RevisionPetition revisionPetition = getRevisionPetitionByApplicationNo(applicationNumber);
+        final Petition petition = getRevisionPetitionByApplicationNo(applicationNumber);
         final WriteOff writeOff = getWriteOffByApplicationNo(applicationNumber);
-        if (revisionPetition != null)
-            updateRevisionPetition(revisionPetition);
+        if (petition != null)
+            updateRevisionPetition(petition);
         else {
             final PropertyMutation propertyMutation = getPropertyMutationByApplicationNo(applicationNumber);
             if (propertyMutation != null)
@@ -240,15 +241,13 @@ public class DigitalSignatureWorkflowController {
         basicPropertyService.persist(basicProperty);
     }
 
-    private void updateRevisionPetition(final RevisionPetition revisionPetition) {
-        transition(revisionPetition);
-        revisionPetitionService.updateRevisionPetition(revisionPetition);
-        propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
-                ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(revisionPetition.getSource()))
-            propertyService.updatePortal(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
-                    ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-        propertyTaxCommonUtils.buildMailAndSMS(revisionPetition);
+    private void updateRevisionPetition(Petition petition) {
+        transition(petition);
+        revisionPetitionService.updateRevisionPetition(petition);
+        propertyService.updateIndexes(petition,revisionPetitionService.returnApplicationtype(petition.getType()));
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(petition.getSource()))
+            propertyService.updatePortal(petition, revisionPetitionService.returnApplicationtype(petition.getType()));
+        propertyTaxCommonUtils.buildMailAndSMS(petition);
     }
 
     private void updatePropertyMutation(final PropertyMutation propertyMutation) {
@@ -292,9 +291,9 @@ public class DigitalSignatureWorkflowController {
                 .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
     }
 
-    private RevisionPetition getRevisionPetitionByApplicationNo(final String applicationNumber) {
-        return (RevisionPetition) getCurrentSession()
-                .createQuery("from RevisionPetition where objectionNumber = :applicationNo")
+    private Petition getRevisionPetitionByApplicationNo(final String applicationNumber) {
+        return (Petition) getCurrentSession()
+                .createQuery("from Petition where objectionNumber = :applicationNo")
                 .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
     }
 
@@ -333,13 +332,13 @@ public class DigitalSignatureWorkflowController {
         return applicationType;
     }
 
-    private void transition(final RevisionPetition revPetition) {
-        revPetition.getBasicProperty().setStatus(
+    private void transition(final Petition petition) {
+        petition.getBasicProperty().setStatus(
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
-        revPetition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
-        revPetition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-        revPetition.getProperty().setStatus(STATUS_ISACTIVE);
-        revPetition.transition().end().withOwner(revPetition.getCurrentState().getOwnerPosition()).withNextAction(null);
+        petition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
+        petition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
+        petition.getProperty().setStatus(STATUS_ISACTIVE);
+        petition.transition().end().withOwner(petition.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
 
     public void transition(final PropertyMutation propertyMutation) {

@@ -311,7 +311,8 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration createRegistration(final MarriageRegistration registration,
-        final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser, boolean loggedUserIsWardSecretaryUser) {
+	final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser,
+	final boolean citizenPortalUser, boolean loggedUserIsWardSecretaryUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
@@ -1027,20 +1028,41 @@ public class MarriageRegistrationService {
 		try {
 			createRegistration(registration, workflowContainer, false, false, loggedUserIsWardSecretaryUser);
 			applicationNo = registration.getApplicationNo();
-			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-					.withApplicationNumber(applicationNo)
-					.withViewLink(format(MarriageConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
-							applicationNo))
-					.withTransactionStatus(TransactionStatus.SUCCESS)
-					.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark("Marriage registration created")
-					.withTransactionId(request.getParameter("wsTransactionId")).build());
+			publishEventForWardSecretary(request, applicationNo, false, true);
 
 		} catch (Exception e) {
-			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-					.withTransactionStatus(TransactionStatus.FAILED).withRemark("Marriage registration failed")
-					.withTransactionId(request.getParameter("wsTransactionId")).build());
+			publishEventForWardSecretary(request, applicationNo, false, false);
 		}
 
 		return applicationNo;
+	}
+
+	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, boolean isReIssue,
+			boolean isSuccess) {
+		if (isSuccess) {
+			String viewLink = StringUtils.EMPTY;
+			if (isReIssue)
+				viewLink = MarriageConstants.REISSUE_VIEW_LINK;
+			else
+				viewLink = MarriageConstants.MARRIAGEREGISTRATION_VIEW_LINK;
+
+			thirdPartyApplicationEventPublisher
+					.publishEvent(
+							ApplicationDetails.builder().withApplicationNumber(applicationNo)
+									.withViewLink(format(viewLink, WebUtils.extractRequestDomainURL(request, false),
+											applicationNo))
+									.withTransactionStatus(TransactionStatus.SUCCESS)
+									.withApplicationStatus(ApplicationStatus.INPROGRESS)
+									.withRemark(
+											isReIssue ? "Reissue certificate created" : "Marriage registration created")
+									.withTransactionId(request.getParameter("wsTransactionId")).build());
+		} else {
+			thirdPartyApplicationEventPublisher
+					.publishEvent(
+							ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
+									.withRemark(
+											isReIssue ? "Reissue certificate failed" : "Marriage registration failed")
+									.withTransactionId(request.getParameter("wsTransactionId")).build());
+		}
 	}
 }

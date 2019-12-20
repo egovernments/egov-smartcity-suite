@@ -68,7 +68,7 @@ import java.util.Locale;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
-public class RevisionPetition extends StateAware<Position> implements Auditable {
+public class Petition extends StateAware<Position> implements Auditable {
 
     public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private static final long serialVersionUID = 1L;
@@ -84,7 +84,7 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
 
     private Date recievedOn;
 
-    @Length(max = 256, message = "objection.objectionNumber.length")
+   @Length(max = 256, message = "objection.objectionNumber.length")
     private String recievedBy;
 
     private String details;
@@ -111,7 +111,8 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
     private List<Document> documents = new ArrayList<>();
     private String type;
     private String source;
-
+    private Date disposalDate;
+    
     @Override
     public String getStateDetails() {
         final StringBuilder stateDetails = new StringBuilder("");
@@ -140,7 +141,7 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
         this.objectionNumber = objectionNumber;
     }
 
-    @Required(message = "objection.receiviedOn.null")
+   // @Required(message = "objection.receiviedOn.null")
     public Date getRecievedOn() {
         return recievedOn;
     }
@@ -149,7 +150,6 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
         this.recievedOn = recievedOn;
     }
 
-    @Required(message = "objection.receiviedBy.null")
     /* @Length(max = 256, message = "objection.receivedBy.length") */
     public String getRecievedBy() {
         return recievedBy;
@@ -316,5 +316,13 @@ public class RevisionPetition extends StateAware<Position> implements Auditable 
 
     public void setSource(String source) {
         this.source = source;
+    }
+    
+    public Date getDisposalDate() {
+        return disposalDate;
+    }
+
+    public void setDisposalDate(final Date disposalDate) {
+        this.disposalDate = disposalDate;
     }
 }

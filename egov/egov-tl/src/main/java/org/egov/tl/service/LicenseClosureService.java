@@ -49,16 +49,20 @@
 package org.egov.tl.service;
 
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,6 +123,14 @@ public class LicenseClosureService extends LicenseService {
     @Autowired
     private DemandGenerationService demandGenerationService;
 
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
+
+    @Autowired
+    @Qualifier("licenseApplicationService")
+    protected transient LicenseApplicationService licenseApplicationService;
+
     public ReportOutput generateClosureEndorsementNotice(TradeLicense license) {
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("License", license);
@@ -154,7 +166,13 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-    public TradeLicense createClosure(TradeLicense license) {
+    public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource) {
+        boolean isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        if (isWardSecretaryUser) {
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)) {
+                throw new ApplicationRuntimeException("WS.001");
+            }
+        }
         processSupportDocuments(license);
         licenseClosureProcessflowService.startClosureProcessflow(license);
         if (AUTO.equals(license.getApplicationNumber()))
@@ -164,8 +182,14 @@ public class LicenseClosureService extends LicenseService {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE));
         update(license);
+        if (isWardSecretaryUser) {
+            WorkflowBean wfBean = new WorkflowBean();
+            wfBean.setActionName(CLOSURE_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
+        }
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, license.getWorkflowContainer().getWorkFlowAction());
+        tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license,
+                license.getWorkflowContainer().getWorkFlowAction());
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
         return license;
