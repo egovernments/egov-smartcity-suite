@@ -112,7 +112,7 @@ body {
 				bootbox.alert("penalty should be collected first!!");
 				jQuery(obj).val("");
 				return false;
-			} else if (Number(penaltyamount) > Number(penaltycollection)
+			} else if (Number(penaltyamount) > Number(penaltycollection) + Number(actualcollection)
 					&& penaltycollection) {
 				bootbox.alert("penalty amount should be fully collected!");
 				jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val("");
@@ -125,7 +125,7 @@ body {
 				return false;
 
 			}
-		} else if (Number(penaltyamount) > Number(penaltycollection)
+		} else if (Number(penaltyamount) > Number(penaltycollection) + Number(actualcollection)
 				&& penaltycollection) {
 			bootbox.alert("penalty amount should be fully collected!");
 			jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val("");
