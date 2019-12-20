@@ -477,7 +477,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return COMMON_FORM;
         }
         
-       /* if((NATURE_APPEALPETITION.equalsIgnoreCase(wfType))){
+        if((NATURE_APPEALPETITION.equalsIgnoreCase(wfType))){
         if ((odlObjection == null)) {
             isGenerateAck = false;
             addActionError(getText("cannot.apply.appeal.petition"));
@@ -488,7 +488,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionError(getText("cannot.apply.appeal.petition"));
             return COMMON_FORM;
         }
-        }*/
+        }
         getPropertyView(propertyId);
 
         if (objection != null && objection.getBasicProperty() != null
