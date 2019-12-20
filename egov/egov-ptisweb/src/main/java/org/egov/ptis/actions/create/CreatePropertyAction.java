@@ -426,9 +426,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
-            } else {
-                if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
-                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
                 applicationSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
             }
