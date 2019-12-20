@@ -2425,6 +2425,9 @@ public class PropertyService {
         else if (APPLICATION_TYPE_COURT_VERDICT.equals(applicationType))
             sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "COURTVERDICT")
                     .getResolutionTime().intValue();
+        else if (APPLICATION_TYPE_APPEAL_PETITION.equals(applicationType))
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "APPEAL_PETETION")
+                    .getResolutionTime().intValue();
         return sla;
     }
 
