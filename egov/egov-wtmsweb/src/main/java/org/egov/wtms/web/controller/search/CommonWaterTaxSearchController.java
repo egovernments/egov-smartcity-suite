@@ -69,13 +69,14 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_AP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -152,6 +153,17 @@ public class CommonWaterTaxSearchController {
 
     @GetMapping(value = "commonSearch/changeofuse")
     public String waterConnectionChangeOfUsage(Model model, HttpServletRequest request) {
+    	boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter("transactionId");
+			String wsSource = request.getParameter("source");
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
+		}
         return commonSearchForm(model, CHANGEOFUSE, request.getParameter(APPLICATION_NUMBER));
     }
 
@@ -164,8 +176,8 @@ public class CommonWaterTaxSearchController {
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
 		}
         return commonSearchForm(model, ADDNLCONNECTION, request.getParameter(APPLICATION_NUMBER));
@@ -212,8 +224,8 @@ public class CommonWaterTaxSearchController {
                                          BindingResult resultBinder, Model model, HttpServletRequest request) {
         WaterConnectionDetails waterConnectionDetails = null;
         String applicationType = request.getParameter(APPLICATIONTYPE);
-		String wsTransactionId = request.getParameter("wsTransactionId");
-		String wsSource = request.getParameter("wsSource");
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
@@ -341,9 +353,14 @@ public class CommonWaterTaxSearchController {
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
                     || RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-                return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
-            else {
+                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)){
+            	 if (isWardSecretaryUser)
+ 					return "redirect:/application/changeOfUse/"
+ 							.concat(waterConnectionDetails.getConnection().getConsumerCode())
+ 							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+ 				else
+ 					return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
+             } else {
                 model.addAttribute(APPLICATIONTYPE, applicationType);
                 model.addAttribute(MODE, ERROR_MODE);
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
