@@ -320,8 +320,8 @@ public class RemittanceServiceImpl extends RemittanceService {
 		final List<ReceiptHeader> receiptHeaders = persistenceService.getSession()
 				.createNamedQuery(CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
 						ReceiptHeader.class)
-				.setParameter(1, serviceDetails.getCode(), StringType.INSTANCE).setParameter("param_2", instHeaderList)
-				.getResultList();
+				.setParameter(1, serviceDetails.getCode(), StringType.INSTANCE)
+				.setParameterList("param_2", instHeaderList).getResultList();
 		bankRemittanceList.addAll(receiptHeaders);
 		return bankRemittanceList;
 	}
