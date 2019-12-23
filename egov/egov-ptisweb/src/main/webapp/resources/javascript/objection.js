@@ -163,6 +163,13 @@ function validateRecordInspection() {
 		bootbox.alert('Please enter Disposal Date');
 		return false;
 	}
+	if (document.getElementById("wfType").value == 'APPEAL PETITION'
+			&& (document.getElementById('appellateComments').value == null || document
+					.getElementById('appellateComments').value == "")) {
+		bootbox
+				.alert('Please enter Gist of Order of the Appellate Commissioner');
+		return false;
+	}
 	return true;
 }
 

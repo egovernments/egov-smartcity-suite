@@ -186,19 +186,6 @@
 					<th class="bluebgheadtd">
 						<s:text name="objection.status" />
 					</th>
-					<s:if
-						test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
-						<s:if test ="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ||
-							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)))">
-					<th class="bluebgheadtd">
-						<s:text name="appeal.disposal.date" />
-					</th>
-					</s:if>
-					</s:if>
 				</tr>
 				<tr>
 					<td class="blueborderfortd">
@@ -233,22 +220,6 @@
 							<s:property default="N/A" value="%{egwStatus.description}" />
 						</div>
 					</td>
-					<s:if
-						test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
-						<s:if test ="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
-							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ||
-							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)))">
-						<td class="blueborderfortd">
-							<div align="center">
-							<s:date name="disposalDate" var="disposalDates" format="dd/MM/yyyy" />
-								<s:property default="N/A" value="%{disposalDates}" />
-							</div>
-						</td>
-					</s:if>
-					</s:if>
 				</tr>
 			</table>
 		</td>
@@ -353,6 +324,22 @@
 						<th class="bluebgheadtd">
 							<s:text name="revisionPetition.generateProceedings" />
 						</th>
+						<s:if
+						test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+						<s:if test ="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ||
+							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)))">
+					<th class="bluebgheadtd">
+						<s:text name="appeal.disposal.date" />
+					</th>
+					<th class="bluebgheadtd">
+						<s:text name="gist.appeallate.comment" />
+					</th>
+					</s:if>
+					</s:if>
 			
 					</tr>
 					<s:iterator value="%{inspections}">
@@ -372,8 +359,30 @@
 							<s:if test="%{generateSpecialNotice}">Yes</s:if>
 									<s:else>No</s:else>
 							</div></td>
+							<s:if
+						test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+						<s:if test ="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ||
+							 model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED_TO_CANCEL)))">
+						<td class="blueborderfortd">
+							<div align="center">
+							<s:date name="disposalDate" var="disposalDates" format="dd/MM/yyyy" />
+								<s:property default="N/A" value="%{disposalDates}" />
+							</div>
+						</td>
+						<td class="blueborderfortd">
+							<div align="center">
+								<s:property default="N/A" value="%{appellateComments}" />
+							</div>
+						</td>
+					</s:if>
+					</s:if>
 						</tr>
 					</s:iterator>
+					
 				</table>
 			</td>
 		</tr>

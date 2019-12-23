@@ -144,7 +144,8 @@
 
 	function onSubmit() {
 		var actionName = document.getElementById('workFlowAction').value;
-		if(actionName == 'Reject Inspection') {
+		var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+		  if(actionName == 'Reject Inspection') {
 			var comments = jQuery("#approverComments").val();
 			if(comments == null || comments == '') {
 				bootbox.alert("Please Enter Remarks ");
@@ -157,7 +158,7 @@
 		var statusCode = '<s:property value="%{model.egwStatus.code}"/>';
 		var state = '<s:property value="%{model.state.value}"/>';
 		var stateId = '<s:property value="%{model.state.id}"/>';
-		var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+		
 
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
@@ -474,7 +475,7 @@
 							">
 							</s:elseif>
 							<s:if test="%{!documentTypes.isEmpty() && allowEditDocument}">
-								<%@ include file="../common/DocumentUploadForm.jsp"%>
+								<%@ include file="../revPetition/petition_document_upload_form.jsp"%>
 							</s:if>
 							<s:elseif test="%{!documentTypes.isEmpty()}">
 								<%@ include file="../common/DocumentUploadView.jsp"%>

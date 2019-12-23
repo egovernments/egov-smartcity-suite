@@ -104,6 +104,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRI
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -1291,9 +1292,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String rejectRevisionPetition() {
 
         revisionPetitionService.cancelObjection(objection);
+        objection.getDocuments().clear();
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
-        addActionMessage(getText("objection.cancelled"));
+        if (objection.getType().equalsIgnoreCase(APPLICATION_TYPE_GRP))
+            addActionMessage(getText("objection.cancelled"));
+        else
+            addActionMessage(getText("petition.appeal.cancelled"));    
         return STRUTS_RESULT_MESSAGE;
     }
 

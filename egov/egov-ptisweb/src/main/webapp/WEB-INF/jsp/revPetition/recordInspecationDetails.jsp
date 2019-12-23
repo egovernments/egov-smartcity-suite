@@ -100,8 +100,20 @@
 							name="objection.disposalDate"
 							 value="%{#disposalDates}" autocomplete="off"
 							id="disposalDate" size="12" maxlength="12" data-errormsg="disposal date is required!" ></s:textfield></td>	
-				</s:if>
+							</s:if>
 				</tr>
+				<s:if
+		test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+				<tr>
+				<td class="bluebox" width="25%">
+						<s:text name="gist.appeallate.comment" />	<span class="mandatory1">*</span>
+					</td>
+					<td class="bluebox" width="25%">
+						<s:textarea name="objection.appellateComments"
+							id="appellateComments" cols="40" rows="2"></s:textarea>
+					</td>
+				</tr>
+				</s:if>
 			</table>
 		</td>
 	</tr>
