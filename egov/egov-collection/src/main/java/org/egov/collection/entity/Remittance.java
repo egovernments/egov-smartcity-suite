@@ -47,6 +47,11 @@
  */
 package org.egov.collection.entity;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
@@ -57,141 +62,140 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public class Remittance extends StateAware<Position> implements Auditable {
-    private static final long serialVersionUID = 1L;
-    private Long id;
-    @SafeHtml
-    private String referenceNumber;
-    private Date referenceDate;
-    private CVoucherHeader voucherHeader;
-    private CFunction function;
-    private Fund fund;
-    @SafeHtml
-    private String remarks;
-    @SafeHtml
-    private String reasonForDelay;
-    private EgwStatus status;
-    private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<>();
-    private Set<ReceiptHeader> collectionRemittance = new HashSet<>();
-    private Set<RemittanceInstrument> remittanceInstruments = new LinkedHashSet<>();
+	private static final long serialVersionUID = 1L;
+	private Long id;
+	@SafeHtml
+	private String referenceNumber;
+	private Date referenceDate;
+	private CVoucherHeader voucherHeader;
+	private CFunction function;
+	private Fund fund;
+	@SafeHtml
+	private String remarks;
+	@SafeHtml
+	private String reasonForDelay;
+	private EgwStatus status;
+	private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<>();
+	private Set<ReceiptHeader> collectionRemittance = new HashSet<>();
+	private Set<RemittanceInstrument> remittanceInstruments = new LinkedHashSet<>();
 
-    private Bankaccount bankAccount;
+	private Bankaccount bankAccount;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    @Override
-    public String getStateDetails() {
-        return "";
-    }
+	@Override
+	public String getStateDetails() {
+		return "";
+	}
 
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
 
-    public void setReferenceNumber(final String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
+	public void setReferenceNumber(final String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
 
-    public Date getReferenceDate() {
-        return referenceDate;
-    }
+	public Date getReferenceDate() {
+		return referenceDate;
+	}
 
-    public void setReferenceDate(final Date referenceDate) {
-        this.referenceDate = referenceDate;
-    }
+	public void setReferenceDate(final Date referenceDate) {
+		this.referenceDate = referenceDate;
+	}
 
-    public CVoucherHeader getVoucherHeader() {
-        return voucherHeader;
-    }
+	public CVoucherHeader getVoucherHeader() {
+		return voucherHeader;
+	}
 
-    public void setVoucherHeader(final CVoucherHeader voucherHeader) {
-        this.voucherHeader = voucherHeader;
-    }
+	public void setVoucherHeader(final CVoucherHeader voucherHeader) {
+		this.voucherHeader = voucherHeader;
+	}
 
-    public CFunction getFunction() {
-        return function;
-    }
+	public CFunction getFunction() {
+		return function;
+	}
 
-    public void setFunction(final CFunction function) {
-        this.function = function;
-    }
+	public void setFunction(final CFunction function) {
+		this.function = function;
+	}
 
-    public Fund getFund() {
-        return fund;
-    }
+	public Fund getFund() {
+		return fund;
+	}
 
-    public void setFund(final Fund fund) {
-        this.fund = fund;
-    }
+	public void setFund(final Fund fund) {
+		this.fund = fund;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(final String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(final String remarks) {
+		this.remarks = remarks;
+	}
 
-    public String getReasonForDelay() {
-        return reasonForDelay;
-    }
+	public String getReasonForDelay() {
+		return reasonForDelay;
+	}
 
-    public void setReasonForDelay(final String reasonForDelay) {
-        this.reasonForDelay = reasonForDelay;
-    }
+	public void setReasonForDelay(final String reasonForDelay) {
+		this.reasonForDelay = reasonForDelay;
+	}
 
-    public EgwStatus getStatus() {
-        return status;
-    }
+	public EgwStatus getStatus() {
+		return status;
+	}
 
-    public void setStatus(final EgwStatus status) {
-        this.status = status;
-    }
+	public void setStatus(final EgwStatus status) {
+		this.status = status;
+	}
 
-    public Set<ReceiptHeader> getCollectionRemittance() {
-        return collectionRemittance;
-    }
+	public Set<ReceiptHeader> getCollectionRemittance() {
+		return collectionRemittance;
+	}
 
-    public void setCollectionRemittance(final Set<ReceiptHeader> collectionRemittance) {
-        this.collectionRemittance = collectionRemittance;
-    }
+	public void setCollectionRemittance(final Set<ReceiptHeader> collectionRemittance) {
+		this.collectionRemittance = collectionRemittance;
+	}
 
-    public Set<RemittanceDetail> getRemittanceDetails() {
-        return remittanceDetails;
-    }
+	public Set<RemittanceDetail> getRemittanceDetails() {
+		return remittanceDetails;
+	}
 
-    public void setRemittanceDetails(Set<RemittanceDetail> remittanceDetails) {
-        this.remittanceDetails = remittanceDetails;
-    }
+	public void setRemittanceDetails(Set<RemittanceDetail> remittanceDetails) {
+		this.remittanceDetails = remittanceDetails;
+	}
 
-    public Bankaccount getBankAccount() {
-        return bankAccount;
-    }
+	public Bankaccount getBankAccount() {
+		return bankAccount;
+	}
 
-    public void setBankAccount(Bankaccount bankAccount) {
-        this.bankAccount = bankAccount;
-    }
+	public void setBankAccount(Bankaccount bankAccount) {
+		this.bankAccount = bankAccount;
+	}
 
-    public Set<RemittanceInstrument> getRemittanceInstruments() {
-        return remittanceInstruments;
-    }
+	public Set<RemittanceInstrument> getRemittanceInstruments() {
+		return remittanceInstruments;
+	}
 
-    public void setRemittanceInstruments(Set<RemittanceInstrument> remittanceInstruments) {
-        this.remittanceInstruments = remittanceInstruments;
-    }
+	public void setRemittanceInstruments(Set<RemittanceInstrument> remittanceInstruments) {
+		this.remittanceInstruments = remittanceInstruments;
+	}
+
+	public void addRemittanceInstruments(Set<RemittanceInstrument> remittanceInstruments) {
+		this.remittanceInstruments.addAll(remittanceInstruments);
+	}
 
 	public void addRemittanceInstruments(final RemittanceInstrument remittanceInstruments) {
 		getRemittanceInstruments().add(remittanceInstruments);

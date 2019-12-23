@@ -142,7 +142,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 		return getCurrentSession()
 				.createNamedQuery(CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES, EgwStatus.class)
 				.setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE)
-				.setParameter("param_1", statusCodes).getResultList();
+				.setParameter("param_2", statusCodes).getResultList();
 	}
 
 	@Action(value = "/citizen/searchOnlineReceipt-search")
@@ -192,6 +192,8 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 		}
 		queryString.append(StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " where ")
 				.append(criteria).append(" order by id desc");
+		
+		getOnlineReceiptTransitionStatuses();
 		return queryString.toString();
 	}
 

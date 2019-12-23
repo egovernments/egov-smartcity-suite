@@ -90,6 +90,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -315,9 +316,18 @@ public class RemittanceServiceImpl extends RemittanceService {
 		for (final InstrumentHeader instHead : instrumentHeaderList)
 			instHeaderList.add(instHead.getId());
 		final List<ReceiptHeader> bankRemittanceList = new ArrayList<>();
-		final List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
-				CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE, serviceDetails.getCode(),
-				instHeaderList);
+
+		final List<ReceiptHeader> receiptHeaders = persistenceService.getSession()
+				.createNamedQuery(CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+						ReceiptHeader.class)
+				.setParameter(1, serviceDetails.getCode(), StringType.INSTANCE).setParameter("param_2", instHeaderList)
+				.getResultList();
+		/*
+		 * final List<ReceiptHeader> receiptHeaders =
+		 * persistenceService.findAllByNamedQuery( CollectionConstants.
+		 * QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
+		 * serviceDetails.getCode(), instHeaderList);
+		 */
 		bankRemittanceList.addAll(receiptHeaders);
 		return bankRemittanceList;
 	}
@@ -369,7 +379,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 				for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument())
 					if (!isChequeAmount || isChequeAmount && instrumentId.contains(instHead.getId().toString()))
 						remittanceInstrumentSet.add(prepareRemittanceInstrument(remittance, instHead));
-			remittance.setRemittanceInstruments(remittanceInstrumentSet);
+			remittance.addRemittanceInstruments(remittanceInstrumentSet);
 			remittancePersistService.persist(remittance);
 		}
 		return remittance;
@@ -491,7 +501,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 		queryStringForCash.append(groupByClause);
 
 		final Query query = receiptHeaderService.getSession()
-	                .createNativeQuery(queryStringForCash.toString() + orderBy);
+				.createNativeQuery(queryStringForCash.toString() + orderBy);
 
 		final List<Object[]> queryResults = query.list();
 
@@ -582,8 +592,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 		} else
 			chequeRemittanceListQuery.append(" AND ch.lastmodifiedby in (" + approverIdList + ")");
 		chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
-		final Query query = receiptHeaderService.getSession()
-	                .createNativeQuery(chequeRemittanceListQuery.toString());
+		final Query query = receiptHeaderService.getSession().createNativeQuery(chequeRemittanceListQuery.toString());
 
 		final List<Object[]> queryResults = query.list();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
