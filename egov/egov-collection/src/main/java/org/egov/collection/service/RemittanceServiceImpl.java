@@ -322,12 +322,6 @@ public class RemittanceServiceImpl extends RemittanceService {
 						ReceiptHeader.class)
 				.setParameter(1, serviceDetails.getCode(), StringType.INSTANCE).setParameter("param_2", instHeaderList)
 				.getResultList();
-		/*
-		 * final List<ReceiptHeader> receiptHeaders =
-		 * persistenceService.findAllByNamedQuery( CollectionConstants.
-		 * QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
-		 * serviceDetails.getCode(), instHeaderList);
-		 */
 		bankRemittanceList.addAll(receiptHeaders);
 		return bankRemittanceList;
 	}
@@ -810,9 +804,27 @@ public class RemittanceServiceImpl extends RemittanceService {
 				if (allInstrumentsRemitted)
 					receiptHeader.setStatus(receiptStatusRemitted);
 				else
-					receiptHeader.setStatus(receiptStatusPartialRemitted);// check receipt has multiple instruments and if few
-                														 // instrument deposited few are not deposite then set
-																		// 	receipt status as partial remitted.
+					receiptHeader.setStatus(receiptStatusPartialRemitted);// check
+																			// receipt
+																			// has
+																			// multiple
+																			// instruments
+																			// and
+																			// if
+																			// few
+																			// instrument
+																			// deposited
+																			// few
+																			// are
+																			// not
+																			// deposite
+																			// then
+																			// set
+																			// receipt
+																			// status
+																			// as
+																			// partial
+																			// remitted.
 			}
 			receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
 			receiptHeaderService.update(receiptHeader);
