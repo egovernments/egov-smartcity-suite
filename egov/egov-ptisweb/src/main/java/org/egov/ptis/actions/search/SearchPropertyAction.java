@@ -148,7 +148,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "../exemption/form/${assessmentNum}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}","transactionId","${transactionId}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
@@ -480,20 +480,6 @@ public class SearchPropertyAction extends SearchFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
-        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
-        if (isWardSecretaryUser) {
-            if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
-                return MUTATION_TYPE_REGISTERED_TRANSFER;
-            } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
-                return APPLICATION_TYPE_ALTER_ASSESSENT;
-            } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
-                return APPLICATION_TYPE_DEMOLITION;
-            } else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
-                return APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-            } 
-
-        }
-
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
             if (basicProperty.isUnderWorkflow() && !propertyTaxCommonUtils.isUnderMutationWorkflow(basicProperty)) {
                 addActionError(getText("error.underworkflow"));
@@ -529,6 +515,22 @@ public class SearchPropertyAction extends SearchFormAction {
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
+        
+        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
+        if (isWardSecretaryUser) {
+            if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+                return MUTATION_TYPE_REGISTERED_TRANSFER;
+            } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                return APPLICATION_TYPE_ALTER_ASSESSENT;
+            } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
+                return APPLICATION_TYPE_DEMOLITION;
+            } else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
+                return APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+            } else if (APPLICATION_TYPE_TAX_EXEMTION.equals(applicationType)) {
+                return APPLICATION_TYPE_TAX_EXEMTION;
+            }
+
+        }
         if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType))
             if (!basicProperty.isEligible()) {
                 addActionError(getText("error.msg.editCollection.noteligible"));
