@@ -68,6 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_REASSIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_APPEAL_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
@@ -76,6 +77,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETI
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 
 @Service
 @Transactional
@@ -115,10 +117,13 @@ public class ReassignService {
             stateAware = vacancyRemissionService.getVacancyRemissionById(stateAwareId);
         } else if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equalsIgnoreCase(transactionType)) {
             stateAware = persistenceService.find("From PropertyMutation where id = ? ", stateAwareId);
-        } else if (GENERAL_REVISION_PETITION.equalsIgnoreCase(transactionType) || REVISION_PETITION.equalsIgnoreCase(transactionType)) {
+        } else if (GENERAL_REVISION_PETITION.equalsIgnoreCase(transactionType)
+                || REVISION_PETITION.equalsIgnoreCase(transactionType)
+                || WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(transactionType)) {
             stateAware = revisionPetitionService.findById(Long.valueOf(stateAwareId), false);
             transactionType = transactionType.equalsIgnoreCase(REVISION_PETITION) ? APPLICATION_TYPE_REVISION_PETITION
-                    : APPLICATION_TYPE_GRP;
+                    : transactionType.equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION) ? APPLICATION_TYPE_APPEAL_PETITION
+                            : APPLICATION_TYPE_GRP;
         } else {
             stateAware = persistenceService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(stateAwareId));
         }
