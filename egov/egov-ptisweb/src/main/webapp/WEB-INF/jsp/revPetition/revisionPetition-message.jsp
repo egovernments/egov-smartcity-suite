@@ -54,12 +54,15 @@
 <html>
 <head>
 <title>
-<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
-					<s:text name="objection.GRPView.title"></s:text>
-			    </s:if>
-			    <s:else>
-<s:text name='objection.record.message.title' />
-</s:else>
+<s:if
+		test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+		<s:text name="objection.GRPView.title"></s:text>
+	</s:if> <s:elseif
+		test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+		<s:text name="appealView.title"></s:text>
+	</s:elseif> <s:else>
+		<s:text name='objection.record.message.title' />
+	</s:else>
 </title>
 </head>
 

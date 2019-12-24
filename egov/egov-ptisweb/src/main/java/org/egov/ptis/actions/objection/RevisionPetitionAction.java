@@ -105,6 +105,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -989,7 +990,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
                     objection.getObjectionNumber()
                             .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
+                    (WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                            : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT));
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -1038,7 +1041,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         noticeService.saveNotice(objection.getObjectionNumber(),
                 objection.getObjectionNumber()
                         .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
+                WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                        ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                        : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT,
+                objection.getBasicProperty(),
                 endoresementPdf);
         revisionPetitionService.updateRevisionPetition(objection);
         addActionMessage(
@@ -1047,7 +1053,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
                     objection.getObjectionNumber()
                             .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
+                    WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                            : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -1295,7 +1303,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         objection.getDocuments().clear();
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
-        if (objection.getType().equalsIgnoreCase(APPLICATION_TYPE_GRP))
+        if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_GRP))
             addActionMessage(getText("objection.cancelled"));
         else
             addActionMessage(getText("petition.appeal.cancelled"));    

@@ -1864,5 +1864,6 @@ public interface PropertyTaxConstants {
     public static final String APPEAL_PETITION = "APPEAL_PETETION";
     public static final String NOTICE_TYPE_APPEALPROCEEDINGS = "Appeal Petition Proceedings";
     public static final String NOTICE_TYPE_APPEALPETITION_HEARINGNOTICE = "Appeal Petition Hearing Notice";
+    public static final String NOTICE_TYPE_APPEALPETITION_ENDORSEMENT = "Appeal Petition Endorsement";
     
 }
