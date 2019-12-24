@@ -145,6 +145,8 @@
 	function onSubmit() {
 		var actionName = document.getElementById('workFlowAction').value;
 		var natureoftask = '<s:property value="%{model.state.natureOfTask}"/>';
+		var state = '<s:property value="%{model.state.value}"/>';
+		var statusCode = '<s:property value="%{model.egwStatus.code}"/>';
 		  if(actionName == 'Reject Inspection') {
 			var comments = jQuery("#approverComments").val();
 			if(comments == null || comments == '') {
@@ -152,11 +154,15 @@
 				return false;
 			}
 	    }
+		if (natureoftask == 'Appeal Petition' && statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED}"/>'){
+			var mandatorydocumnt = document.getElementById("documentrequired");
+			 if (actionName == 'Withdraw') {
+				jQuery('#documentrequired').attr('required',false); 
+			}		
+		}
 		var action = null;
 		var userDesg = '<s:property value="%{userDesgn}"/>';
 		var statusModuleType = '<s:property value="%{model.egwStatus.moduletype}"/>';
-		var statusCode = '<s:property value="%{model.egwStatus.code}"/>';
-		var state = '<s:property value="%{model.state.value}"/>';
 		var stateId = '<s:property value="%{model.state.id}"/>';
 		
 

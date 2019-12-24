@@ -1537,9 +1537,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         StringBuilder build = new StringBuilder(" ").append(securityUtils.getCurrentUser().getName())
                 .append(" with Assessment Number: ")
                 .append(objection.getBasicProperty().getUpicNo());
+        String message = getText("petition.forward.cancel")+build.toString();
         addActionMessage(
-                getText(("petition.forward.cancel" )+ build.toString(),
-                        new String[] { revisionPetitionService.returWorkflowType(wfType) }));
+                getText(message,
+                        new String[] { revisionPetitionService.returWorkflowType(wfType)}));
         return STRUTS_RESULT_MESSAGE;
     }
 
