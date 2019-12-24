@@ -108,15 +108,14 @@ public class ServiceCategoryAction extends BaseFormAction {
 	public String save() {
 		validateServiceCategory();
 		if (hasActionErrors())
-			return NEW;
+			return EDIT;
 		serviceCategoryService.persist(serviceCategoryInstance);
 		return list();
 	}
 
 	@Action(value = "/service/serviceCategory-create")
 	public String create() {
-		if (serviceCategoryService.getServiceCategoryByCode(serviceCategoryInstance.getCode()).isPresent())
-			addActionError(getText("masters.serviceCategoryCode.isunique"));
+		validateServiceCategory();
 		if (hasActionErrors())
 			return NEW;
 		serviceCategoryService.persist(serviceCategoryInstance);
@@ -126,11 +125,21 @@ public class ServiceCategoryAction extends BaseFormAction {
 
 	}
 
+
 	public void validateServiceCategory() {
 		if (StringUtils.isEmpty(serviceCategoryInstance.getName()))
 			addActionError(getText("serviceCategoryName.null.validation"));
 		if (StringUtils.isEmpty(serviceCategoryInstance.getCode()))
 			addActionError(getText("serviceCategoryCode.null.validation"));
+		else {
+			if ((serviceCategoryInstance.getId() == null
+					&& serviceCategoryService.getServiceCategoryByCode(serviceCategoryInstance.getCode()).isPresent())
+					|| (serviceCategoryInstance.getId() != null
+							&& serviceCategoryService.getServiceCategoryByCodeAndId(serviceCategoryInstance.getCode(),
+									serviceCategoryInstance.getId()).isPresent()))
+				addActionError(getText("masters.serviceCategoryCode.isunique"));
+		}
+
 	}
 
 	@Override

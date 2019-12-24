@@ -61,6 +61,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -89,7 +92,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -120,6 +125,10 @@ public class RemittanceServiceImpl extends RemittanceService {
 	@Autowired
 	private transient RemittanceSchedulerService remittanceSchedulerService;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	
 	/**
 	 * Create Contra Vouchers for String array passed of serviceName,
 	 * totalCashAmount, totalChequeAmount, totalCardAmount and
@@ -316,13 +325,12 @@ public class RemittanceServiceImpl extends RemittanceService {
 		for (final InstrumentHeader instHead : instrumentHeaderList)
 			instHeaderList.add(instHead.getId());
 		final List<ReceiptHeader> bankRemittanceList = new ArrayList<>();
-
-		final List<ReceiptHeader> receiptHeaders = persistenceService.getSession()
-				.createNamedQuery(CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
-						ReceiptHeader.class)
-				.setParameter(1, serviceDetails.getCode(), StringType.INSTANCE)
-				.setParameterList("param_2", instHeaderList).getResultList();
-		bankRemittanceList.addAll(receiptHeaders);
+		
+		final Query query =getCurrentSession()
+				.createQuery("select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where  rh.service.code=:serviceCode and ri.id in (:instrumentHeaderIdList)");
+		query.setParameter("serviceCode", serviceDetails.getCode(), StringType.INSTANCE);
+		query.setParameterList("instrumentHeaderIdList",instHeaderList);
+		bankRemittanceList.addAll(query.list());
 		return bankRemittanceList;
 	}
 
@@ -833,4 +841,9 @@ public class RemittanceServiceImpl extends RemittanceService {
 		return bankRemitList;
 	}
 
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+	
 }

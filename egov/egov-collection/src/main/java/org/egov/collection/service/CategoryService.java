@@ -83,6 +83,13 @@ public class CategoryService {
 		return query.getResultList().stream().findFirst();
 	}
 
+	public Optional<ServiceCategory> getServiceCategoryByCodeAndId(String code, long id) {
+		final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE_ID);
+		query.setParameter(1, code);
+		query.setParameter(2, id);
+		return query.getResultList().stream().findFirst();
+	}
+
 	public List<ServiceCategory> getActiveServiceCategoryList() {
 		return entityManager.createNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY).getResultList();
 	}

@@ -85,4 +85,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	<query name="SERVICE_CATEGORY_BY_CODE">
 		<![CDATA[select s from  org.egov.infstr.models.ServiceCategory s where s.code=?1]]>
 	</query>
+	
+	<query name="SERVICE_CATEGORY_BY_CODE_ID">
+		<![CDATA[select s from  org.egov.infstr.models.ServiceCategory s where s.code=?1 and s.id !=?2]]>
+	</query>
 </hibernate-mapping>
