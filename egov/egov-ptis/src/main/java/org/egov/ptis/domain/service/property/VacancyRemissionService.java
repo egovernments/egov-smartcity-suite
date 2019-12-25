@@ -48,6 +48,7 @@
 package org.egov.ptis.domain.service.property;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
@@ -94,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_NOTICE_GENE
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
@@ -103,6 +105,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
@@ -137,6 +140,8 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -146,6 +151,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -169,6 +175,7 @@ import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -242,6 +249,9 @@ public class VacancyRemissionService {
     
     @Autowired
     private DemandVoucherService demandVoucherService;
+    
+    @Autowired
+    private EventPublisher eventPublisher;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo).get(0);
@@ -1088,5 +1098,28 @@ public class VacancyRemissionService {
                 .withComments(approvarComments).withStateValue(WF_STATE_REJECTED_TO_CANCEL)
                 .withDateInfo(currentDate.toDate()).withOwner(vacancyRemissionApproval.getState().getOwnerPosition())
                 .withNextAction(nextAction);
+    }
+
+    @Transactional
+    public void saveVacancyRemissionAndPublishEvent(final VacancyRemission vacancyRemission, final Long approvalPosition,
+            final String approvalComent, final String workFlowAction,
+            final Boolean propertyByEmployee, final HttpServletRequest request) {
+        try {
+            saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,workFlowAction,
+                    propertyByEmployee);
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(request, false),
+                    vacancyRemission.getApplicationNumber(), APPLICATION_TYPE_VACANCY_REMISSION);
+
+            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
+                    vacancyRemission.getApplicationNumber(), ApplicationStatus.INPROGRESS, viewURL,
+                    "Property Vacancy Remission Initiated");
+
+        } catch (Exception ex) {
+            LOG.error("exception while saving vacancy remission.", ex);
+            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
+                    vacancyRemission.getApplicationNumber(), null, null, "Property Vacancy Remission Failed");
+        }
+
     }
 }

@@ -146,7 +146,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}","transactionId","${transactionId}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "../exemption/form/${assessmentNum}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}","transactionId","${transactionId}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
@@ -528,7 +528,9 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_BIFURCATE_ASSESSENT;
             } else if (APPLICATION_TYPE_TAX_EXEMTION.equals(applicationType)) {
                 return APPLICATION_TYPE_TAX_EXEMTION;
-            }
+            } else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType)) {
+                return APPLICATION_TYPE_VACANCY_REMISSION;
+            } 
 
         }
         if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType))
