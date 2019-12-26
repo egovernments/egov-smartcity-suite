@@ -49,6 +49,8 @@ package org.egov.wtms.application.service;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -118,4 +120,23 @@ public class ReconnectionService {
         return updateReConnection(closeConnection, approvalPosition, approvalComent, additionalRule, workFlowAction,
                 sourceChannel);
     }
+    
+    @Transactional
+	public WaterConnectionDetails persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+			HttpServletRequest request, Long approvalPosition, String approvalComent, String additionalRule,
+            String workFlowAction, String sourceChannel) {
+    	WaterConnectionDetails savedwaterConnectionDetails = null;
+		try {
+			savedwaterConnectionDetails = updateReConnection(waterConnectionDetails,
+					approvalPosition, approvalComent, additionalRule, workFlowAction, sourceChannel);
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), true);
+		} catch (Exception e) {
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), false);
+		}
+		return savedwaterConnectionDetails;
+	}
 }

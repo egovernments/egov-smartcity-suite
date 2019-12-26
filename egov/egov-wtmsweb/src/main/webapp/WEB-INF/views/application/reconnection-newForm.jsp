@@ -73,7 +73,9 @@
 			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 			<form:hidden path="meesevaApplicationNumber" value="${waterConnectionDetails.meesevaApplicationNumber}"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
-				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
+			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				

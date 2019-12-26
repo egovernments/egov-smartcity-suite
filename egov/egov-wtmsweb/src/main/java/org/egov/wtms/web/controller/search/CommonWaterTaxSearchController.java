@@ -171,6 +171,7 @@ public class CommonWaterTaxSearchController {
 
     @GetMapping(value = "commonSearch/reconnection")
     public String getReconnectionForm(Model model, HttpServletRequest request) {
+    	validateWardSecretaryRequest(model, request);
         return commonSearchForm(model, RECONNECTION, request.getParameter(APPLICATION_NUMBER));
     }
 
@@ -437,12 +438,13 @@ public class CommonWaterTaxSearchController {
 
             if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE)) {
             	if(APPLICATION_STATUS_CLOSERSANCTIONED.equals(waterConnectionDetails.getStatus().getCode())){
-
-                model.addAttribute(MODE, ERROR_MODE);
-                model.addAttribute(APPLICATIONTYPE, applicationType);
-                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
-                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
-                return COMMON_FORM_SEARCH;
+	                model.addAttribute(MODE, ERROR_MODE);
+	                model.addAttribute(APPLICATIONTYPE, applicationType);
+	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
+	                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
+	                if(isWardSecretaryUser)
+	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                return COMMON_FORM_SEARCH;
             	}
             	else
             	{
@@ -450,6 +452,8 @@ public class CommonWaterTaxSearchController {
                     model.addAttribute(APPLICATIONTYPE, applicationType);
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
+                    if(isWardSecretaryUser)
+	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
                     return COMMON_FORM_SEARCH;
                 }	
             		
@@ -457,14 +461,22 @@ public class CommonWaterTaxSearchController {
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)
                     && waterConnectionDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CLOSERSANCTIONED)
-                    && waterConnectionDetails.getCloseConnectionType().equals("T"))
-                return "redirect:/application/reconnection/" + waterConnectionDetails.getConnection().getConsumerCode();
-            else {
-                model.addAttribute(MODE, ERROR_MODE);
-                model.addAttribute(APPLICATIONTYPE, applicationType);
-                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
-                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
-                return COMMON_FORM_SEARCH;
+                    && waterConnectionDetails.getCloseConnectionType().equals("T")){
+				if (isWardSecretaryUser)
+					return "redirect:/application/reconnection/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode())
+							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+				else
+					return "redirect:/application/reconnection/"
+							+ waterConnectionDetails.getConnection().getConsumerCode();
+            } else {
+	                model.addAttribute(MODE, ERROR_MODE);
+	                model.addAttribute(APPLICATIONTYPE, applicationType);
+	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
+	                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
+	                if(isWardSecretaryUser)
+	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                return COMMON_FORM_SEARCH;
                  }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_METERED))
             if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
