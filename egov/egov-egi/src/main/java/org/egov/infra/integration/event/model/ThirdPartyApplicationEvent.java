@@ -48,20 +48,12 @@
 
 package org.egov.infra.integration.event.model;
 
-import org.springframework.context.ApplicationEvent;
+import org.egov.infra.event.model.AbstractApplicationEvent;
 
-public class ThirdPartyApplicationEvent extends ApplicationEvent {
+public class ThirdPartyApplicationEvent extends AbstractApplicationEvent<ApplicationDetails> {
 
-    private static final long serialVersionUID = 1L;
-    private final ApplicationDetails wSApplicationDetails;
-
-    public ThirdPartyApplicationEvent(final Object source, final ApplicationDetails wSApplicationDetails) {
-        super(source);
-        this.wSApplicationDetails = wSApplicationDetails;
-    }
-
-    public ApplicationDetails getwSApplicationDetails() {
-        return wSApplicationDetails;
+    public ThirdPartyApplicationEvent(ApplicationDetails applicationDetails) {
+        super(applicationDetails);
     }
 
 }

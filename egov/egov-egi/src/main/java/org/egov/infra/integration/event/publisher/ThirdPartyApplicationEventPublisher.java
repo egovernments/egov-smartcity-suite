@@ -61,6 +61,6 @@ public class ThirdPartyApplicationEventPublisher {
     private ApplicationEventPublisher applicationEventPublisher;
 
     public void publishEvent(final ApplicationDetails wsApplicationDetails) {
-        applicationEventPublisher.publishEvent(new ThirdPartyApplicationEvent(this, wsApplicationDetails));
+        applicationEventPublisher.publishEvent(new ThirdPartyApplicationEvent(wsApplicationDetails));
     }
 }
