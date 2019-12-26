@@ -75,10 +75,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -105,9 +107,11 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -145,6 +149,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.property.SurroundingsAuditService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
@@ -218,6 +223,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
+    private boolean isWardSecretaryUser;
+    private String transactionId;
+    private String applicationSource;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -260,6 +268,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private SurroundingsAuditService surroundingsAuditService;
     @Autowired
     private DemandVoucherService demandVoucherService;
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService;
 
     public AmalgamationAction() {
         super();
@@ -290,6 +300,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         setUserDesignations();
         PropertyImpl propertyById;
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp(basicPropertyDAO.getBasicPropertyByProperty(Long.valueOf(getModelId())));
             if (logger.isDebugEnabled())
@@ -348,6 +359,18 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 return RESULT_ERROR;
             } else
                 propertyModel.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+        }
+        if (isWardSecretaryUser) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter("applicationSource"))) {
+                transactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+                applicationSource = request.getParameter("applicationSource");
+            }
+
         }
         return NEW;
     }
@@ -509,6 +532,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         validateVacantLandConversion();
         if (loggedUserIsMeesevaUser && StringUtils.isBlank(propertyModel.getMeesevaApplicationNumber()))
             propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+
+        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
+            addActionMessage(getText("WS.001"));
+            return RESULT_ERROR;
+        }
+        
         if (hasErrors())
             if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
@@ -555,7 +584,11 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
-        if (!propService.isMeesevaUser(securityUtils.getCurrentUser()))
+        
+        if (propService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
+            propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel,
+                    PROPERTY_MODIFY_REASON_AMALG, transactionId);
+        } else if (!propService.isMeesevaUser(securityUtils.getCurrentUser()))
             basicPropertyService.update(basicProp);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -1437,5 +1470,20 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
+    }
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+    
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 }

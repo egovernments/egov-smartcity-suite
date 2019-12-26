@@ -178,7 +178,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirectAction", location = "amalgamation-newForm", params = {
                 "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
-                "modifyRsn", "AMALG" }),
+                "modifyRsn", "AMALG","transactionId","${transactionId}","applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_MARKASCOURTCASE, type = "redirect", location = "../markascourtcase/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_WRITE_OFF, type = "redirect", location = "../writeoff/viewform/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_APPEAL_PETITION, type = "redirectAction", location = "appealpetition-newform", params = {
@@ -530,6 +530,8 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_TAX_EXEMTION;
             } else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType)) {
                 return APPLICATION_TYPE_VACANCY_REMISSION;
+            } else if (APPLICATION_TYPE_AMALGAMATION.equals(applicationType)) {
+                return APPLICATION_TYPE_AMALGAMATION;
             } 
 
         }
