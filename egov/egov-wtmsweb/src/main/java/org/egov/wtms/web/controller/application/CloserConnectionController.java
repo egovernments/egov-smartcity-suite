@@ -51,8 +51,11 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -65,8 +68,10 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -148,7 +153,17 @@ public class CloserConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode,
             final HttpServletRequest request) {
-
+    	boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
+		}
         final String meesevaApplicationNumber = request.getParameter(MEESEVA_APPLICATION_NUMBER);
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
         if (waterConnectionDetails.getCloseConnectionType() != null &&
@@ -218,18 +233,27 @@ public class CloserConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, final BindingResult errors,
             @RequestParam("files") final MultipartFile[] files) {
-        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+
+    	User currentUser = securityUtils.getCurrentUser();
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
+        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
+        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
         model.addAttribute("isAnonymousUser", isAnonymousUser);
         if (loggedUserIsMeesevaUser && request.getParameter(MEESEVA_APPLICATION_NUMBER) != null)
             waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter(MEESEVA_APPLICATION_NUMBER));
 
-        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
+        
+        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+		
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser && !isWardSecretaryUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
-                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+                    .isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
@@ -246,11 +270,15 @@ public class CloserConnectionController extends GenericConnectionController {
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
         if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser
-                || isAnonymousUser) {
+                || isAnonymousUser || isWardSecretaryUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
+                if (isWardSecretaryUser) {
+    				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+    				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    			}
                 return "connection-closeForm";
             } else
                 approvalPosition = userPosition.getId();
@@ -281,12 +309,19 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setSource(ONLINE);
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || isBlank(waterConnectionDetails.getSource().toString())))
-            waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+            waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
         if (loggedUserIsMeesevaUser) {
             waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setSource(MEESEVA);
+        } else if(isWardSecretaryUser) {
+        	waterConnectionDetails.setSource(WARDSECRETARY);
         }
-        closerConnectionService.updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent, workFlowAction);
+		if (isWardSecretaryUser)
+			closerConnectionService.persistAndPublishEventForWardSecretary(waterConnectionDetails, request,
+					approvalPosition, approvalComent, workFlowAction);
+		else
+			closerConnectionService.updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent,
+					workFlowAction);
         model.addAttribute(WATERCONNECTIONDETAILS, waterConnectionDetails);
         model.addAttribute(MODE, "ack");
         if (loggedUserIsMeesevaUser)
