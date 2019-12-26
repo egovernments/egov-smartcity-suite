@@ -1314,3 +1314,24 @@ function setEffectiveDate(){
 		jQuery('#dateOfCompletion').val(effectiveDate);
 	}
 
+function validateParentProperty(obj) {
+	var parent = obj.value;
+	jQuery
+			.ajax({
+				url : "/ptis/common/bifurcation/validate-parentproperty",
+				type : "GET",
+				data : {
+					"parentAssessmentNo" : parent
+				},
+				dataType : "json",
+			})
+			.done(
+					function(response) {
+						if (!response) {
+							jQuery('#parentIndex').val("");
+							bootbox
+									.alert("Entered parent property is either inactive or exempted.");
+						}
+					});
+}
+
