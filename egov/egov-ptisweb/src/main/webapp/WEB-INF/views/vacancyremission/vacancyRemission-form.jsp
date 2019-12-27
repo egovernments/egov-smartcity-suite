@@ -100,6 +100,7 @@ jQuery(document).on('click', "#Forward", function () {
 						<div class="panel panel-primary" data-collapsed="0">
 							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<form:hidden path="" name="applicationSource" value="${applicationSource}"/>
+							<form:hidden path="" name="transactionId" value="${transactionId}"/>
 							<div class="panel-body custom-form ">
 								<div class="panel-heading" style="text-align: left">
 									<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>

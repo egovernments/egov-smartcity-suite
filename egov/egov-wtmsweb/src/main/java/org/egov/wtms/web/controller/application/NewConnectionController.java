@@ -58,6 +58,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONN_NAME_ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PRIMARYCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 import java.util.ArrayList;
@@ -70,7 +72,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -214,8 +215,8 @@ public class NewConnectionController extends GenericConnectionController {
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
 		}
         return NEWCONNECTION_FORM;
@@ -255,8 +256,8 @@ public class NewConnectionController extends GenericConnectionController {
     	User currentUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
         boolean loggedUserIsWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
-        String wsTransactionId = request.getParameter("wsTransactionId");
-        String wsSource = request.getParameter("wsSource");
+        String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 
         boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
         boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
@@ -315,8 +316,8 @@ public class NewConnectionController extends GenericConnectionController {
             model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
 			if (loggedUserIsWardSecretaryUser) {
 				model.addAttribute("isWardSecretaryUser", loggedUserIsWardSecretaryUser);
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
             return NEWCONNECTION_FORM;
         }

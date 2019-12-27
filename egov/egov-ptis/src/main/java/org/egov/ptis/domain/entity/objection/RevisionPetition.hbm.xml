@@ -137,6 +137,7 @@
 		</bag>
 		<property name="source" column="source" type="java.lang.String"/>
 		 <property name="disposalDate" column="DISPOSAL_DATE" type="java.util.Date" not-null="false"/>
+		 <property name="appellateComments" column="APPEALLATE_COMMENTS" type="java.lang.String"/>
     </class>
     
     <query name="RP_BY_APPLICATIONNO">

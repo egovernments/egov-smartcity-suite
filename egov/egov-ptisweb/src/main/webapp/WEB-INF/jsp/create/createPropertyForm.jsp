@@ -182,7 +182,7 @@
 			<div class="parentIndexText">
 				<s:textfield name="parentIndex" id="parentIndex" size="12"
 					maxlength="10"
-					onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield>
+					onblur="validNumber(this);checkZero(this,'Parent Index');validateParentProperty(this);"></s:textfield>
 			</div>
 		</td>
 	</tr>

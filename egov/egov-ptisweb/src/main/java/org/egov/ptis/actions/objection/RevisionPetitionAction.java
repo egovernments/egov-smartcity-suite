@@ -104,6 +104,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRI
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -1021,7 +1023,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
                     objection.getObjectionNumber()
                             .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
+                    (WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                            : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT));
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -1070,7 +1074,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         noticeService.saveNotice(objection.getObjectionNumber(),
                 objection.getObjectionNumber()
                         .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
+                WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                        ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                        : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT,
+                objection.getBasicProperty(),
                 endoresementPdf);
         revisionPetitionService.updateRevisionPetition(objection);
         addActionMessage(
@@ -1079,7 +1086,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
                     objection.getObjectionNumber()
                             .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
+                    WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.NOTICE_TYPE_APPEALPETITION_ENDORSEMENT
+                            : PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -1324,9 +1333,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String rejectRevisionPetition() {
 
         revisionPetitionService.cancelObjection(objection);
+        objection.getDocuments().clear();
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
-        addActionMessage(getText("objection.cancelled"));
+        if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_GRP))
+            addActionMessage(getText("objection.cancelled"));
+        else
+            addActionMessage(getText("petition.appeal.cancelled"));    
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -1553,9 +1566,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         StringBuilder build = new StringBuilder(" ").append(securityUtils.getCurrentUser().getName())
                 .append(" with Assessment Number: ")
                 .append(objection.getBasicProperty().getUpicNo());
+        String message = getText("petition.forward.cancel")+build.toString();
         addActionMessage(
-                getText(("petition.forward.cancel" )+ build.toString(),
-                        new String[] { revisionPetitionService.returWorkflowType(wfType) }));
+                getText(message,
+                        new String[] { revisionPetitionService.returWorkflowType(wfType)}));
         return STRUTS_RESULT_MESSAGE;
     }
 

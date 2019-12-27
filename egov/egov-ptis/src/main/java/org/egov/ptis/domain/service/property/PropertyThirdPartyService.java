@@ -73,6 +73,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 
 import static java.lang.String.format;
 
@@ -348,6 +349,13 @@ public class PropertyThirdPartyService {
                     property.getApplicationNo(), APPLICATION_TYPE_BIFURCATE_ASSESSENT);
             succeessMsg = "Property Bifurcation Initiated";
             failureMsg = "Property Bifurcation Failed";
+        } else if (PROPERTY_MODIFY_REASON_AMALG.equalsIgnoreCase(modifyReason)) {
+            viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                    property.getApplicationNo(), APPLICATION_TYPE_AMALGAMATION);
+            succeessMsg = "Property Amalgamation Initiated";
+            failureMsg = "Property Amalgamation Failed";
+
         }
         try {
             basicPropertyService.update(basicProperty);
@@ -356,7 +364,7 @@ public class PropertyThirdPartyService {
                     property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
 
         } catch (Exception ex) {
-            LOGGER.error("exception while updating basic proeprty in addition/alteration.", ex);
+            LOGGER.error("exception while updating basic property.", ex);
             eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, failureMsg);
         }

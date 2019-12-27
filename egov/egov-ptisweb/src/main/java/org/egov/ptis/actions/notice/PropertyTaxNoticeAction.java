@@ -401,7 +401,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         else
             natureOfWork = NATURE_GENERAL_REVISION_PETITION;
         reportParams.put("natureOfWork", natureOfWork);
-        reportParams.put("disposalDate", petition.getDisposalDate().toString());
         revisionPetitionService.setNoticeInfo(petition.getProperty(), propertyNotice,
                 (BasicPropertyImpl) petition.getBasicProperty(), petition);
         final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();

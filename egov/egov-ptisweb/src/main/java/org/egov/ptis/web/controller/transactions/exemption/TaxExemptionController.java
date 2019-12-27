@@ -56,6 +56,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -70,6 +71,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -193,6 +195,16 @@ public class TaxExemptionController extends GenericWorkFlowController {
         User loggedInUser = securityUtils.getCurrentUser();
         citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
         boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
+
+        if (propertyService.isWardSecretaryUser(loggedInUser)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
+                model.addAttribute(ERROR_MSG, "WS.001");
+                return PROPERTY_VALIDATION_FOR_SPRING;
+            } else {
+                model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+            }
+        }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
                 && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
                 && !citizenPortalUser) {
@@ -264,6 +276,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
+        boolean isWardSecretaryUser = propertyService.isWardSecretaryUser(loggedInUser);
+        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(
+                request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
+            model.addAttribute(ERROR_MSG, "WS.001");
+            return PROPERTY_VALIDATION_FOR_SPRING;
+
+        }
         PropertyImpl oldProperty = property.getBasicProperty().getActiveProperty();
         final Assignment assignment = propertyService.isCscOperator(loggedInUser)
                 ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
@@ -323,6 +342,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
+            } else if (isWardSecretaryUser) {
+                taxExemptionService.savePropertyAndPublishEvent(property, oldProperty, status, approvalComent, workFlowAction,
+                        approvalPosition, taxExemptedReason, request);
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);

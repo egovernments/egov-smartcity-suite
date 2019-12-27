@@ -219,5 +219,15 @@ public class AjaxCommonController {
             @RequestParam("resolutionType") final String resolutionType, HttpServletRequest request) {
         return propertyTaxCommonUtils.getCouncilDetails(resolutionNo, resolutionType, request);
     }
+    
+    @RequestMapping(value = "/bifurcation/validate-parentproperty", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public boolean validateParentPropertyForBifurcation(@RequestParam("parentAssessmentNo") final String parentAssessmentNo) {
+        boolean isValid = true;
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(parentAssessmentNo);
+        if (!basicProperty.isActive() || basicProperty.getProperty().getIsExemptedFromTax())
+            isValid = false;
+        return isValid;
+    }
 
 }

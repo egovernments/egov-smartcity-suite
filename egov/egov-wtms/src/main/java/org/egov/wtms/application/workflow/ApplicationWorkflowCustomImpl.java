@@ -364,8 +364,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END")
                             || "Cancelled".equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue()))) {
-                if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
-                        || waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user)))
+				if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
+						|| waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user)
+						|| waterTaxUtils.isWardSecretaryUser(user)))
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, currState, null);
                 else

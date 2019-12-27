@@ -2296,6 +2296,9 @@ public class PropertyService {
         else if (APPLICATION_TYPE_COURT_VERDICT.equals(applicationType))
                 sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
                                         "COURTVERDICT").getSingleResult()).getResolutionTime().intValue();
+        else if (APPLICATION_TYPE_APPEAL_PETITION.equals(applicationType))
+		sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+                                        "APPEAL_PETETION").getSingleResult()).getResolutionTime().intValue();
         return sla;
     }
 

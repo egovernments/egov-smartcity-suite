@@ -61,9 +61,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -88,6 +91,7 @@ import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionReposito
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.TaxExemptionReasonService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -115,6 +119,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Service
@@ -181,6 +186,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     
     @Autowired
     private TaxExemptionReasonService taxExemptionReasonService;
+
+    private EventPublisher eventPublisher;
 
     Property property = null;
 
@@ -659,5 +666,26 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     public Date getExemptionEffectivedDate(final Date effectiveDate) {
         return new DateTime(getEffectiveInst(effectiveDate).getToDate()).plusDays(1).toDate();
+    }
+
+    @Transactional
+    public void savePropertyAndPublishEvent(final Property newProperty, final Property oldProperty, final Character status,
+            final String approvalComment, final String workFlowAction, final Long approvalPosition,
+            final String taxExemptedReason, final HttpServletRequest request) {
+        try {
+            saveProperty(newProperty, oldProperty, status, approvalComment, workFlowAction, approvalPosition, taxExemptedReason,
+                    false, EXEMPTION);
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                    WebUtils.extractRequestDomainURL(request, false),
+                    newProperty.getApplicationNo(), APPLICATION_TYPE_TAX_EXEMTION);
+
+            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
+                    newProperty.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Tax Exemption Initiated");
+
+        } catch (Exception ex) {
+            LOGGER.error("exception while updating basic proeprty in tax exemption.", ex);
+            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
+                    property.getApplicationNo(), null, null, "Property Tax Exemption Failed");
+        }
     }
 }

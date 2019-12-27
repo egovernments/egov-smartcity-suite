@@ -149,6 +149,7 @@ function validateRecordHearing() {
 }
 
 function validateRecordInspection() {
+	var actionName = document.getElementById('workFlowAction').value;
 	if (dom.get('inspectionRemarks').value == "") {
 		bootbox.alert('Please enter Inspection Remark');
 		return false;
@@ -157,11 +158,20 @@ function validateRecordInspection() {
 		bootbox.alert('Please enter Actual Hearing Date');
 		return false;
 	}
-	if (document.getElementById("wfType").value == 'APPEAL PETITION'
-			&& (document.getElementById('disposalDate').value == null || document
-					.getElementById('disposalDate').value == "")) {
-		bootbox.alert('Please enter Disposal Date');
-		return false;
+	if (actionName != 'Withdraw') {
+		if (document.getElementById("wfType").value == 'APPEAL PETITION'
+				&& (document.getElementById('disposalDate').value == null || document
+						.getElementById('disposalDate').value == "")) {
+			bootbox.alert('Please enter Disposal Date');
+			return false;
+		}
+		if (document.getElementById("wfType").value == 'APPEAL PETITION'
+				&& (document.getElementById('appellateComments').value == null || document
+						.getElementById('appellateComments').value == "")) {
+			bootbox
+					.alert('Please enter Gist of Order of the Appellate Commissioner');
+			return false;
+		}
 	}
 	return true;
 }

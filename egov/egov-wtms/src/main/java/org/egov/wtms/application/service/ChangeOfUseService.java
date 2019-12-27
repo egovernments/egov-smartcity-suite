@@ -49,6 +49,8 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -197,5 +199,21 @@ public class ChangeOfUseService {
         }
         return validationMsg;
     }
+    
+	@Transactional
+	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
+		try {
+			createChangeOfUseApplication(waterConnectionDetails, approvalPosition, approvalComent,
+					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), true);
+		} catch (Exception e) {
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), false);
+		}
+	}
 
 }

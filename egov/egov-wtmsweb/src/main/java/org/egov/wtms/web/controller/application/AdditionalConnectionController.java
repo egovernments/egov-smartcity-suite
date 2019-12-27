@@ -51,6 +51,8 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -135,13 +137,13 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
 		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter("wsTransactionId");
-			String wsSource = request.getParameter("wsSource");
+			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
 		}
         workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
@@ -194,8 +196,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
 		final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
 		final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
 		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
-		String wsTransactionId = request.getParameter("wsTransactionId");
-		String wsSource = request.getParameter("wsSource");
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 
 		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
@@ -215,10 +217,15 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final WaterConnectionDetails parent = waterConnectionDetailsService.getActiveConnectionDetailsByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
-        if (!message.isEmpty() && !"".equals(message))
-            return "redirect:/application/addconnection/"
-                    + addConnection.getConnection().getParentConnection().getConsumerCode();
-
+        if (!message.isEmpty() && !"".equals(message)){
+			if (isWardSecretaryUser)
+				return "redirect:/application/addconnection/".concat(addConnection.getConnection().getParentConnection().getConsumerCode())
+						.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+			else
+				return "redirect:/application/addconnection/"
+						+ addConnection.getConnection().getParentConnection().getConsumerCode();
+        }
+        
         final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!addConnection.getApplicationDocs().isEmpty())
@@ -252,8 +259,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
             model.addAttribute(STATETYPE, addConnection.getClass().getSimpleName());
             model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(currentUser));
 			if (isWardSecretaryUser) {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
             return ADDCONNECTION_FORM;
         }
@@ -296,6 +303,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
+                if (isWardSecretaryUser) {
+    				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+    				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    			}
                 return ADDCONNECTION_FORM;
 
             }

@@ -54,6 +54,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -112,6 +113,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
 @Controller
 @RequestMapping(value = { "/vacancyremission" })
@@ -175,6 +177,15 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
             citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
             model.addAttribute("citizenPortalUser", citizenPortalUser);
+            if (propertyService.isWardSecretaryUser(loggedInUser)) {
+                if (ThirdPartyService.validateWardSecretaryRequest(
+                        request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
+                    model.addAttribute(ERROR_MSG, "WS.001");
+                    return PROPERTY_VALIDATION_FOR_SPRING;
+                } else {
+                    model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                }
+            }
             if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
                         && propertyService.isEmployee(loggedInUser)
                         && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
@@ -331,6 +342,13 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
+        if (propertyService.isWardSecretaryUser(vacancyRemissionService.getLoggedInUser())
+                && ThirdPartyService.validateWardSecretaryRequest(
+                        request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
+            model.addAttribute(ERROR_MSG, "Invalid Request. TransactionId or Source is not valid.");
+            return VACANCYREMISSION_FORM;
+
+        }
         validateDates(vacancyRemission, resultBinder);
         vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
@@ -377,6 +395,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
                         workFlowAction, propertyByEmployee, meesevaParams);
+            } else if (propertyService.isWardSecretaryUser(vacancyRemissionService.getLoggedInUser())) {
+                vacancyRemissionService.saveVacancyRemissionAndPublishEvent(vacancyRemission, approvalPosition, approvalComent, workFlowAction,
+                        propertyByEmployee, request);
+
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);

@@ -52,6 +52,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 
 import java.math.BigDecimal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -165,4 +167,19 @@ public class CloserConnectionService {
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
         return savedwaterConnectionDetails;
     }
+    
+	@Transactional
+	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+			HttpServletRequest request, Long approvalPosition, String approvalComent, String workFlowAction) {
+		try {
+			updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent, workFlowAction);
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), true);
+		} catch (Exception e) {
+			waterConnectionDetailsService.publishEventForWardSecretary(request,
+					waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), false);
+		}
+	}
 }

@@ -130,6 +130,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SYSTEM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE;
@@ -150,6 +151,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROVE_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -1932,20 +1934,31 @@ public class WaterConnectionDetailsService {
 		try {
 			createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
 					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
-			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-					.withApplicationNumber(waterConnectionDetails.getApplicationNumber())
-					.withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
-							waterConnectionDetails.getApplicationNumber()))
-					.withTransactionStatus(TransactionStatus.SUCCESS)
-					.withApplicationStatus(ApplicationStatus.INPROGRESS)
-					.withRemark(waterConnectionDetails.getApplicationType().getName().concat(" created"))
-					.withTransactionId(request.getParameter("wsTransactionId")).build());
+			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), true);
 
 		} catch (Exception e) {
+			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
+					waterConnectionDetails.getApplicationType().getName(), false);
+		}
+	}
+
+	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, String applicationType,
+			boolean isSuccess) {
+		if (isSuccess) {
 			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-					.withTransactionStatus(TransactionStatus.FAILED)
-					.withRemark(waterConnectionDetails.getApplicationType().getName().concat(" creation failed"))
-					.withTransactionId(request.getParameter("wsTransactionId")).build());
+					.withApplicationNumber(applicationNo)
+					.withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
+							applicationNo))
+					.withTransactionStatus(TransactionStatus.SUCCESS)
+					.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark(applicationType.concat(" created"))
+					.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+
+		} else {
+			thirdPartyApplicationEventPublisher
+					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
+							.withRemark(applicationType.concat(" creation failed"))
+							.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
 		}
 	}
 }

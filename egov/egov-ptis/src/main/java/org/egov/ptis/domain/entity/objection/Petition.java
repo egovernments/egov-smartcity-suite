@@ -112,6 +112,7 @@ public class Petition extends StateAware<Position> implements Auditable {
     private String type;
     private String source;
     private Date disposalDate;
+    private String appellateComments;
     
     @Override
     public String getStateDetails() {
@@ -324,5 +325,12 @@ public class Petition extends StateAware<Position> implements Auditable {
 
     public void setDisposalDate(final Date disposalDate) {
         this.disposalDate = disposalDate;
+    }
+    public String getAppellateComments() {
+        return appellateComments;
+    }
+
+    public void setAppellateComments(String appellateComments) {
+        this.appellateComments = appellateComments;
     }
 }

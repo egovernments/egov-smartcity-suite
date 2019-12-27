@@ -124,7 +124,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DE
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSCRETARY_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
 
 import java.io.UnsupportedEncodingException;
@@ -851,7 +851,7 @@ public class PropertyTaxCommonUtils {
             noticeType = NOTICE_TYPE_VRPROCEEDINGS;
 	else if (workFlowAction.equalsIgnoreCase(WRITE_OFF))
             noticeType = NOTICE_TYPE_WRITEOFFROCEEDINGS;
-        else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION))
+        else if (workFlowAction.equalsIgnoreCase(APPEAL_PETITION))
             noticeType = NOTICE_TYPE_APPEALPROCEEDINGS;
         PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
 		.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())

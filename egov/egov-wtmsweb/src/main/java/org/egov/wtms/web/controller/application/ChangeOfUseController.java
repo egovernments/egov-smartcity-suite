@@ -50,6 +50,9 @@ package org.egov.wtms.web.controller.application;
 import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.commons.entity.Source.WARDSECRETARY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,7 +66,9 @@ import javax.validation.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -119,6 +124,17 @@ public class ChangeOfUseController extends GenericConnectionController {
             @ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode, final HttpServletRequest request) {
         final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
+		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		if (isWardSecretaryUser) {
+			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+				throw new ApplicationRuntimeException("WS.001");
+			else {
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
+		}
         WaterConnectionDetails connectionDetails = null;
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
@@ -144,17 +160,24 @@ public class ChangeOfUseController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
             final BindingResult errors) {
-        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
-        final Boolean loggedInMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+		User currentUser = securityUtils.getCurrentUser();
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
+        final Boolean loggedInMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
+        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
         model.addAttribute("isAnonymousUser", isAnonymousUser);
         if (loggedInMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
             changeOfUse.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser && !isAnonymousUser) {
+        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser && !isAnonymousUser && !isWardSecretaryUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
-                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+                    .isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
@@ -173,7 +196,11 @@ public class ChangeOfUseController extends GenericConnectionController {
                 consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
             else
                 consumerCode = changeOfUse.getConnection().getConsumerCode();
-            return "redirect:/application/changeOfUse/" + consumerCode;
+			if (isWardSecretaryUser)
+				return "redirect:/application/changeOfUse/".concat(consumerCode).concat("?wsTransactionId=")
+						.concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+			else
+				return "redirect:/application/changeOfUse/" + consumerCode;
         }
         int i = 0;
         if (!changeOfUse.getApplicationDocs().isEmpty())
@@ -203,7 +230,11 @@ public class ChangeOfUseController extends GenericConnectionController {
             model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
                     + resultBinder.getFieldErrors().get(0).getDefaultMessage());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(currentUser));
+            if (isWardSecretaryUser) {
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			}
 
             return CHANGEOFUSE_FORM;
 
@@ -225,7 +256,7 @@ public class ChangeOfUseController extends GenericConnectionController {
 
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
 
         if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
@@ -241,10 +272,14 @@ public class ChangeOfUseController extends GenericConnectionController {
                 prepareWorkflow(model, changeOfUse, workflowContainer);
                 model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
                 model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(currentUser));
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
+                if (isWardSecretaryUser) {
+    				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+    				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    			}
                 return CHANGEOFUSE_FORM;
             }
         }
@@ -253,17 +288,24 @@ public class ChangeOfUseController extends GenericConnectionController {
             changeOfUse.setSource(ONLINE);
         else if (isCSCOperator)
             changeOfUse.setSource(CSC);
+        else if (isWardSecretaryUser)
+        	changeOfUse.setSource(WARDSECRETARY);
         else if (citizenPortalUser
                 && (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
-            changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+            changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
         else if (loggedInMeesevaUser) {
             changeOfUse.setSource(MEESEVA);
             if (changeOfUse.getMeesevaApplicationNumber() != null)
                 changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
         } else
             changeOfUse.setSource(Source.SYSTEM);
-        changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
-                .getApplicationType().getCode(), workFlowAction);
+        
+		if (isWardSecretaryUser)
+			changeOfUseService.persistAndPublishEventForWardSecretary(changeOfUse, request, workFlowAction,
+					approvalPosition, approvalComent);
+		else
+			changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
+					changeOfUse.getApplicationType().getCode(), workFlowAction);
 
         if (loggedInMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + changeOfUse.getApplicationNumber();

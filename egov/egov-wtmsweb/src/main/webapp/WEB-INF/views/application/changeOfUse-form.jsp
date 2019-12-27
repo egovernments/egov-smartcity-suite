@@ -83,6 +83,8 @@
 				<form:hidden path="meesevaApplicationNumber" value="${changeOfUse.meesevaApplicationNumber}" />
 				<form:hidden path="connectionType" value="${changeOfUse.connectionType}"/>
 				<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
+				<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+				<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 			</div>	
 			<c:if test="${validationMessage==''}">
