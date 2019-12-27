@@ -97,6 +97,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
@@ -104,7 +105,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRI
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 
 import java.io.ByteArrayInputStream;
@@ -124,11 +124,13 @@ import java.util.SortedMap;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -149,6 +151,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -248,6 +251,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public static final String MEESEVA_ERROR = "error";
     public static final String OBJECTION_FORWARD = "objection.forward";
     public static final String REJECT_INSPECTION = "objection.inspection.rejection";
+    public static final String APPLICATION_SOURCE = "applicationSource";
 
     private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
     private Petition objection = new Petition();
@@ -303,6 +307,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean editOwnerDetails = false;
+    private boolean isWardSecretaryUser;
+    private String transactionId;
 
     @Autowired
     private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -404,6 +410,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
@@ -500,12 +507,25 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return STRUTS_RESULT_MESSAGE;
         }
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if (isMeesevaUser)
+        if (isMeesevaUser) {
             if (getMeesevaApplicationNumber() == null) {
                 addActionMessage(getText("MEESEVA.005"));
                 return MEESEVA_ERROR;
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+        } else if (isWardSecretaryUser) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(APPLICATION_SOURCE))) {
+                addActionMessage(getText("WS.001"));
+                return COMMON_FORM;
+            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))) {
+                transactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+                applicationSource = request.getParameter(APPLICATION_SOURCE);
+            }
+
+        }
         setFloorDetails(objection.getBasicProperty().getProperty());
         if (StringUtils.isBlank(applicationSource) && !citizenPortalUser
                 && propService.isEmployee(securityUtils.getCurrentUser())
@@ -534,17 +554,24 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     getText("property.state.objected", new String[] { objection.getBasicProperty().getUpicNo() }));
             return STRUTS_RESULT_MESSAGE;
         }
-        if (objection.getRecievedOn() == null && getWfType() != null) {
-           if( !WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())) {
+        if (objection.getRecievedOn() == null && getWfType() != null
+                && !WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType())) {
+
             addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
             return NEW;
-        }
+
         }
         if (StringUtils.isBlank(objection.getSource()))
             objection.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
                     SOURCE_ONLINE.equalsIgnoreCase(applicationSource)));
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+        
+        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
+            addActionError(getText("WS.001"));
+            return NEW;
+        }
+
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (objection.getObjectionNumber() == null)
             if (isMeesevaUser && getMeesevaApplicationNumber() != null)
@@ -568,15 +595,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         else
             addActionMessage(getText("objection.grp.success") + objection.getObjectionNumber());
         revisionPetitionService.applyAuditing(objection.getState());
-        if (!isMeesevaUser)
-            revisionPetitionService.createRevisionPetition(objection);
-        else {
+
+        if (isWardSecretaryUser) {
+            revisionPetitionService.createObjectionAndPublishEvent(objection,wfType,transactionId);
+        } else if (isMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
             objection.setApplicationNo(objection.getMeesevaApplicationNumber());
             revisionPetitionService.createRevisionPetition(objection, meesevaParams);
+        } else {
+            revisionPetitionService.createRevisionPetition(objection);
         }
+        
         if (citizenPortalUser)
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
                 propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_REVISION_PETITION);
@@ -2015,5 +2046,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setEditOwnerDetails(boolean editOwnerDetails) {
         this.editOwnerDetails = editOwnerDetails;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }

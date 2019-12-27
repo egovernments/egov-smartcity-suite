@@ -180,6 +180,7 @@
 		<s:hidden name="applicationSource" value="%{applicationSource}" />
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 		<s:hidden name="wfType" id="wfType" value="%{wfType}" />
+		<s:hidden name="transactionId" id="transactionId" value="%{transactionId}" />
 		</s:push>
 	</s:form>
 </body>
