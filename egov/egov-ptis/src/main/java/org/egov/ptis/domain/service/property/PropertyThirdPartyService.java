@@ -388,9 +388,8 @@ public class PropertyThirdPartyService {
                     "Created Appurtenant Property – VLT Application Number:" + vacantPropAppNo);
         } else {
 
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
-                    nonVacantPropAppNo, ApplicationStatus.INPROGRESS, viewURL,
-                    "Appurtenant Property Creation Failed");
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+                    nonVacantPropAppNo, null, null, "Appurtenant Property Creation Failed.");
         }
 
     }
