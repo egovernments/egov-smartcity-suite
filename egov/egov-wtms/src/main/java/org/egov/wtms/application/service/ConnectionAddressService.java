@@ -52,6 +52,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -93,7 +94,18 @@ public class ConnectionAddressService {
         if (assessmentDetails == null)
             throw new ApplicationRuntimeException("err.assessment.details.not.present");
         else {
+            String errorKey = StringUtils.EMPTY;
             ConnectionAddress connectionAddress = new ConnectionAddress();
+            if (assessmentDetails.getBoundaryDetails().getZoneId() == null)
+                errorKey = "err.zone.id.not.present";
+            if (assessmentDetails.getBoundaryDetails().getWardId() == null)
+                errorKey = "err.ward.id.not.present";
+            if (assessmentDetails.getBoundaryDetails().getAdminWardId() == null)
+                errorKey = "err.adminward.id.not.present";
+            if (assessmentDetails.getBoundaryDetails().getLocalityId() == null)
+                errorKey = "err.locality.id.not.present";
+            if (StringUtils.isNoneBlank(errorKey))
+                throw new ApplicationRuntimeException(errorKey);
             connectionAddress.setZone(boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getZoneId()));
             connectionAddress.setRevenueWard(boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getWardId()));
             connectionAddress
