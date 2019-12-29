@@ -376,5 +376,23 @@ public class PropertyThirdPartyService {
                     property.getApplicationNo(), null, null, failureMsg);
         }
     }
+    
+    public void publishEventForAppurTenant(final String transactionId, final String nonVacantPropAppNo,
+            final String vacantPropAppNo, final boolean isCreated) {
+        String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
+                WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
+                nonVacantPropAppNo, APPLICATION_TYPE_NEW_ASSESSENT);
+        if (isCreated) {
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    nonVacantPropAppNo, ApplicationStatus.INPROGRESS, viewURL,
+                    "Created Appurtenant Property – VLT Application Number:" + vacantPropAppNo);
+        } else {
+
+            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+                    nonVacantPropAppNo, ApplicationStatus.INPROGRESS, viewURL,
+                    "Appurtenant Property Creation Failed");
+        }
+
+    }
 
 }
