@@ -46,59 +46,73 @@
  *
  */
 
-jQuery('#selectAll').click(function(e){
-    var table= jQuery(e.target).closest('table');
-    jQuery('td input:checkbox',table).prop('checked',e.target.checked);  
+jQuery('#selectAll').click(function(e) {
+	var table = jQuery(e.target).closest('table');
+	jQuery('td input:checkbox', table).prop('checked', e.target.checked);
 });
 
-function generateNotice(obj, actionName, currentState){
-	var rowobj=getRow(obj);
+function generateNotice(obj, actionName, currentState) {
+	var rowobj = getRow(obj);
 	var tbl = document.getElementById('digSignDetailsTab');
-	var basicPropertyId=getControlInBranch(tbl.rows[rowobj.rowIndex],'objectId').value;
+	var basicPropertyId = getControlInBranch(tbl.rows[rowobj.rowIndex],
+			'objectId').value;
 	var noticeType = 'Special Notice';
-	var params = [
-		   			'height='+screen.height, 
-		   		    'width='+screen.width,
-		   		    'fullscreen=yes' 
-		   		].join(',');
-	var noticeType='Special Notice';  
+	var params = [ 'height=' + screen.height, 'width=' + screen.width,
+			'fullscreen=yes' ].join(',');
+	var noticeType = 'Special Notice';
 	var type = currentState.split(":");
 	var url = null;
-	if (type[0] == 'Create' || type[0] == 'Bifurcate' || type[0] == 'Amalgamation') {
-		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=create&actionType="+actionName;
-	}else if (type[0] == 'Alter') {
-		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=modify&actionType="+actionName;
-	}else if (type[0] == 'Exemption') {
-		url = "/ptis/notice/propertyTaxNotice-generateNoticeForActionExemption.action?basicPropId="+basicPropertyId+"&actionType="+actionName;
-	}else if (type[0] == 'Demolition') {
-        url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=Demolition&actionType="+actionName;
-	}else if (type[0] == 'RP' || type[0] == 'GRP') {
-		url = "/ptis/revPetition/revPetition-generateSpecialNotice.action?actionType="+ actionName + '&objectionId=' + basicPropertyId;
+	if (type[0] == 'Create' || type[0] == 'Bifurcate'
+			|| type[0] == 'Amalgamation') {
+		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+				+ basicPropertyId
+				+ "&noticeType="
+				+ noticeType
+				+ "&noticeMode=create&actionType=" + actionName;
+	} else if (type[0] == 'Alter') {
+		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+				+ basicPropertyId
+				+ "&noticeType="
+				+ noticeType
+				+ "&noticeMode=modify&actionType=" + actionName;
+	} else if (type[0] == 'Exemption') {
+		url = "/ptis/notice/propertyTaxNotice-generateNoticeForActionExemption.action?basicPropId="
+				+ basicPropertyId + "&actionType=" + actionName;
+	} else if (type[0] == 'Demolition') {
+		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+				+ basicPropertyId
+				+ "&noticeType="
+				+ noticeType
+				+ "&noticeMode=Demolition&actionType=" + actionName;
+	} else if (type[0] == 'RP' || type[0] == 'GRP' || type[0] == 'Appeal') {
+		url = "/ptis/revPetition/revPetition-generateSpecialNotice.action?actionType="
+				+ actionName + '&objectionId=' + basicPropertyId;
 	} else {
-		url = "/ptis/property/transfer/printNotice.action?actionType="+ actionName + '&mutationId=' + basicPropertyId;
+		url = "/ptis/property/transfer/printNotice.action?actionType="
+				+ actionName + '&mutationId=' + basicPropertyId;
 	}
 	if (actionName == 'Preview') {
 		window.open(url, "NoticeWindow", params);
-		return false; 
+		return false;
 	} else {
 		window.location = url;
 	}
 }
 
 function previewSignedNotice(signedFileStoreId) {
-	var params = [
-		'height='+screen.height, 
-	    'width='+screen.width,
-	    'fullscreen=yes' 
-	].join(',');
-	window.open('/ptis/notice/previewSignedNotice.action?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+	var params = [ 'height=' + screen.height, 'width=' + screen.width,
+			'fullscreen=yes' ].join(',');
+	window.open('/ptis/notice/previewSignedNotice.action?signedFileStoreId='
+			+ signedFileStoreId, "NoticeWindow", params);
 }
 
 jQuery('#submitButton')
 		.click(
 				function(e) {
-					if (jQuery('#digSignDetailsTab').find('input[type=checkbox]:checked').length == 0) {
-						bootbox.alert('Please select atleast one document to sign');
+					if (jQuery('#digSignDetailsTab').find(
+							'input[type=checkbox]:checked').length == 0) {
+						bootbox
+								.alert('Please select atleast one document to sign');
 						return false;
 					} else {
 						var tbl = document.getElementById("digSignDetailsTab");
@@ -107,8 +121,15 @@ jQuery('#submitButton')
 						var j = 0;
 						for (var i = 1; i <= lastRow; i++) {
 							if (getControlInBranch(tbl.rows[i], 'rowCheckBox').checked) {
-								idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value
-										+ "~" + getControlInBranch(tbl.rows[i],'currentState').value.split(":")[0]+"~"+getControlInBranch(tbl.rows[i],'natureOfTask').value;
+								idArray[j++] = getControlInBranch(tbl.rows[i],
+										'objectId').value
+										+ "~"
+										+ getControlInBranch(tbl.rows[i],
+												'currentState').value
+												.split(":")[0]
+										+ "~"
+										+ getControlInBranch(tbl.rows[i],
+												'natureOfTask').value;
 							}
 						}
 						window.location = "/ptis/notice/propertyTaxNotice-generateBulkNotice.action?basicPropertyIds="
@@ -117,10 +138,9 @@ jQuery('#submitButton')
 				});
 
 function downloadSignedNotice(signedFileStoreId) {
-	var params = [
-		'height='+screen.height, 
-	    'width='+screen.width,
-	    'fullscreen=yes' 
-	].join(',');
-	window.open('/ptis/digitalSignature/propertyTax/downloadSignedNotice?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+	var params = [ 'height=' + screen.height, 'width=' + screen.width,
+			'fullscreen=yes' ].join(',');
+	window.open(
+			'/ptis/digitalSignature/propertyTax/downloadSignedNotice?signedFileStoreId='
+					+ signedFileStoreId, "NoticeWindow", params);
 }
