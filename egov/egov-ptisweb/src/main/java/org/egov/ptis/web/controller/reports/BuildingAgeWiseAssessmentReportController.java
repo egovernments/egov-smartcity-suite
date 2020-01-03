@@ -63,7 +63,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.service.report.ReportService;
 import org.egov.ptis.report.bean.BuidingAgeWiseReportHelperAdaptor;
 import org.egov.ptis.report.bean.BuidingAgeWiseReportResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,9 +81,6 @@ public class BuildingAgeWiseAssessmentReportController {
 
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-
-    @Autowired
-    private ReportService reportService;
 
     @ModelAttribute("ownershiptype")
     public Map<Long, String> propertyType() {
