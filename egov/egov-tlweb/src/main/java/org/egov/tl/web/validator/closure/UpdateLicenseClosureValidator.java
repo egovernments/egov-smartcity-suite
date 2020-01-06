@@ -53,7 +53,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseClosureProcessflowService;
+import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.service.LicenseService;
+import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -75,16 +77,24 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
 
     @Autowired
     private LicenseService licenseService;
+    
+    @Autowired
+    private LicenseClosureService licenseClosureService;
 
     @Override
     public void validate(Object target, Errors errors) {
         super.validate(target, errors);
         TradeLicense license = (TradeLicense) target;
+        if(Constants.BUTTONFORWARD.equalsIgnoreCase(license.getWorkflowContainer().getWorkFlowAction())) {
+        	if (!licenseClosureService.isValidApprover(license)) {
+    			errors.reject("validate.approver.position");
+    		}
+        }		
 
-        if (licenseService.validateMandatoryDocument(license)) {
-            errors.reject("validate.supportDocs");
-        }
-    }
+		if (licenseService.validateMandatoryDocument(license)) {
+			errors.reject("validate.supportDocs");
+		}
+	}
 
     public boolean closureInProgress(TradeLicense license, RedirectAttributes redirectAttributes) {
 

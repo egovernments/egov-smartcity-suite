@@ -54,6 +54,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseClosureProcessflowService;
+import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.service.LicenseProcessWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -76,6 +77,9 @@ public class CreateLicenseClosureValidator extends LicenseClosureValidator {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private LicenseClosureService licenseClosureService;
 
     @Override
     public void validate(Object target, Errors errors) {
@@ -88,7 +92,6 @@ public class CreateLicenseClosureValidator extends LicenseClosureValidator {
             if (assignmentList.isEmpty())
                 errors.reject("validate.initiator.not.defined");
         } else {
-
             List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(securityUtils.getCurrentUser().getId());
             if (assignments.isEmpty()) {
                 errors.reject("validate.assignee");
@@ -99,6 +102,9 @@ public class CreateLicenseClosureValidator extends LicenseClosureValidator {
                         .filter(assignment -> designation.contains(assignment.getDesignation().getName())).findAny();
                 if (!empAssignment.isPresent())
                     errors.reject("validate.assignee");
+                if (!licenseClosureService.isValidApprover(license)) {
+                	errors.reject("validate.approver.position");
+                }
             }
         }
 
