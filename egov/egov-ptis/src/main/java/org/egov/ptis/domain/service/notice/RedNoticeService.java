@@ -182,7 +182,7 @@ public class RedNoticeService {
             }
             if (redNoticeInfo.getMinDate() != null && redNoticeInfo.getMaxDate() != null) {
                 List<Installment> countInstallments = installmentDao.getInstallmentsByModuleBetweenFromDateAndToDate(moduleService.getModuleByName(PTMODULENAME),redNoticeInfo.getMinDate(),redNoticeInfo.getMaxDate());
-                if ((countInstallments.size()-1) <= noOfCount ) {
+                if ((countInstallments.size()-1) < noOfCount ) {
                     redNoticeInfo.setInstallmentCount(true);
                 }
             }else if (minInstallment == null || maxInstallment == null)
