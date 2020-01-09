@@ -269,105 +269,105 @@ public class RedNoticeService {
     }
 
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
-        return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
-                .getAggrCurrSecondHalfPenalyColl() : ZERO;
+        return propView.getAggrCurrSecondHalfPenalyColl() == null ? ZERO : propView
+                .getAggrCurrSecondHalfPenalyColl();
     }
 
     private BigDecimal getAggCurrFirstHalfPenColl(final PropertyMaterlizeView propView) {
-        return propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
-                .getAggrCurrFirstHalfPenalyColl() : ZERO;
+        return propView.getAggrCurrFirstHalfPenalyColl() == null ? ZERO : propView
+                .getAggrCurrFirstHalfPenalyColl();
     }
 
     private BigDecimal getAggCurrSecHalfPenalty(final PropertyMaterlizeView propView) {
-        return propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO;
+        return propView.getAggrCurrSecondHalfPenaly() == null ? ZERO : propView.getAggrCurrSecondHalfPenaly();
     }
 
     private BigDecimal getAggCurrFirstHalfPenalty(final PropertyMaterlizeView propView) {
-        return propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO;
+        return propView.getAggrCurrFirstHalfPenaly() == null ? ZERO : propView.getAggrCurrFirstHalfPenaly();
     }
 
     private BigDecimal getAggArrPenaltyDue(final PropertyMaterlizeView propView) {
-        return (propView.getAggrArrearPenaly() != null ? propView
-                .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
-                        .getAggrArrearPenalyColl() : ZERO);
+        return (propView.getAggrArrearPenaly() == null ? ZERO : propView
+                .getAggrArrearPenaly()).subtract(propView.getAggrArrearPenalyColl() == null ? ZERO : propView
+                        .getAggrArrearPenalyColl());
     }
 
     private String getOwerName(final PropertyMaterlizeView propView) {
-        return propView.getOwnerName() != null ? propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
-                " & ") : propView.getOwnerName() : "NA";
+        return propView.getOwnerName() == null ? "NA"
+                : propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
+                        " & ") : propView.getOwnerName();
     }
 
     private String getLocality(final PropertyMaterlizeView propView) {
-        return propView.getLocality() != null ? propView.getLocality().getName()
-                : "NA";
+        return propView.getLocality() == null ? "NA" : propView.getLocality().getName();
     }
 
     private String getMobileNo(final PropertyMaterlizeView propView) {
-        return StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
-                .getMobileNumber() : "NA";
+        return StringUtils.isBlank(propView.getMobileNumber()) ?  "NA": propView
+                .getMobileNumber();
     }
 
     private BigDecimal getVacLandTax(final InstDmdCollMaterializeView idc) {
-        return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : ZERO;
+        return idc.getVacantLandTax() == null ? ZERO : idc.getVacantLandTax();
     }
 
     private BigDecimal getUnaPenalty(final InstDmdCollMaterializeView idc) {
-        return idc.getUnauthPenaltyTax() != null ? idc.getUnauthPenaltyTax() : ZERO;
+        return idc.getUnauthPenaltyTax() == null ? ZERO :idc.getUnauthPenaltyTax();
     }
 
     private BigDecimal getSewTax(final InstDmdCollMaterializeView idc) {
-        return idc.getSewTax() != null ? idc.getSewTax() : ZERO;
+        return idc.getSewTax() == null ? ZERO: idc.getSewTax();
     }
 
     private BigDecimal getPubSerCharge(final InstDmdCollMaterializeView idc) {
-        return idc.getPubSerChrgTax() != null ? idc.getPubSerChrgTax() : ZERO;
+        return idc.getPubSerChrgTax() == null ? ZERO: idc.getPubSerChrgTax();
     }
 
     private BigDecimal getPenaltyFines(final InstDmdCollMaterializeView idc) {
-        return idc.getPenaltyFinesTax() != null ? idc.getPenaltyFinesTax() : ZERO;
+        return idc.getPenaltyFinesTax() == null ? ZERO: idc.getPenaltyFinesTax();
     }
 
     private BigDecimal getLibCess(final InstDmdCollMaterializeView idc) {
-        return idc.getLibCessTax() != null ? idc.getLibCessTax() : ZERO;
+        return idc.getLibCessTax() == null ? ZERO:idc.getLibCessTax();
     }
 
     private BigDecimal getEduCess(final InstDmdCollMaterializeView idc) {
-        return idc.getEduCessTax() != null ? idc.getEduCessTax() : ZERO;
+        return idc.getEduCessTax() == null ? ZERO :idc.getEduCessTax();
     }
 
     private BigDecimal getGenTax(final InstDmdCollMaterializeView idc) {
-        return idc.getGeneralTax() != null ? idc.getGeneralTax() : ZERO;
+        return idc.getGeneralTax() == null ? ZERO: idc.getGeneralTax();
     }
 
     private BigDecimal getVacLColl(final InstDmdCollMaterializeView idc) {
-        return idc.getVacantLandTaxColl() != null ? idc.getVacantLandTaxColl() : ZERO;
+        return idc.getVacantLandTaxColl() == null ? ZERO :idc.getVacantLandTaxColl();
     }
 
     private BigDecimal getUnauthPenColl(final InstDmdCollMaterializeView idc) {
-        return idc.getUnauthPenaltyTaxColl() != null ? idc.getUnauthPenaltyTaxColl() : ZERO;
+        return idc.getUnauthPenaltyTaxColl() == null ? ZERO:idc.getUnauthPenaltyTaxColl();
     }
 
     private BigDecimal getSewColl(final InstDmdCollMaterializeView idc) {
-        return idc.getSewTaxColl() != null ? idc.getSewTaxColl() : ZERO;
+        return idc.getSewTaxColl() == null ? ZERO: idc.getSewTaxColl();
     }
 
     private BigDecimal getPubServiceColl(final InstDmdCollMaterializeView idc) {
-        return idc.getPubSerChrgTaxColl() != null ? idc.getPubSerChrgTaxColl() : ZERO;
+        return idc.getPubSerChrgTaxColl() == null ? ZERO :idc.getPubSerChrgTaxColl();
     }
 
     private BigDecimal getPenaltyFineColl(final InstDmdCollMaterializeView idc) {
-        return idc.getPenaltyFinesTaxColl() != null ? idc.getPenaltyFinesTaxColl() : ZERO;
+        return idc.getPenaltyFinesTaxColl() == null ? ZERO: idc.getPenaltyFinesTaxColl();
     }
 
     private BigDecimal getLibCessColl(final InstDmdCollMaterializeView idc) {
-        return idc.getLibCessTaxColl() != null ? idc.getLibCessTaxColl() : ZERO;
+        return idc.getLibCessTaxColl() == null ? ZERO : idc.getLibCessTaxColl();
     }
 
     private BigDecimal getEduCessColl(final InstDmdCollMaterializeView idc) {
-        return idc.getEduCessTaxColl() != null ? idc.getEduCessTaxColl() : ZERO;
+        return idc.getEduCessTaxColl() == null ? ZERO: idc.getEduCessTaxColl();
     }
 
     private BigDecimal getGenTaxColl(final InstDmdCollMaterializeView idc) {
-        return idc.getGeneralTaxColl() != null ? idc.getGeneralTaxColl() : ZERO;
+        return idc.getGeneralTaxColl() == null ? ZERO:idc.getGeneralTaxColl();
     }
 }
