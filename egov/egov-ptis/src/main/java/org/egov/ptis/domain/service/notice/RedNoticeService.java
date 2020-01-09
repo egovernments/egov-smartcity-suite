@@ -49,12 +49,14 @@ package org.egov.ptis.domain.service.notice;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -63,15 +65,16 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -96,9 +99,11 @@ public class RedNoticeService {
     @Autowired
     private ReportService reportService;
     @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
-    @Autowired
     private transient CityService cityService;
+    @Autowired
+    private InstallmentHibDao<?, ?> installmentDao;
+    @Autowired
+    private ModuleService moduleService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -175,10 +180,9 @@ public class RedNoticeService {
                 redNoticeInfo.setMaxDate(maxInstallment.getFromDate());
                 redNoticeInfo.setToInstallment(maxInstallment.getDescription());
             }
-            int yrs = 0;
             if (redNoticeInfo.getMinDate() != null && redNoticeInfo.getMaxDate() != null) {
-                yrs = propertyTaxUtil.getNoOfYears(redNoticeInfo.getMinDate(), redNoticeInfo.getMaxDate());
-                if (yrs * 2 - 1 < noOfCount) {
+                List<Installment> countInstallments = installmentDao.getInstallmentsByModuleBetweenFromDateAndToDate(moduleService.getModuleByName(PTMODULENAME),redNoticeInfo.getMinDate(),redNoticeInfo.getMaxDate());
+                if ((countInstallments.size()-1) <= noOfCount ) {
                     redNoticeInfo.setInstallmentCount(true);
                 }
             }else if (minInstallment == null || maxInstallment == null)
@@ -191,11 +195,12 @@ public class RedNoticeService {
     public Installment getMinInstallment(final Installment minInstallment, final InstDmdCollMaterializeView idc,
             final BigDecimal dmdtot, final BigDecimal colltot) {
         Installment inst = null;
-        if (dmdtot.compareTo(colltot) > 0)
+        if (dmdtot.compareTo(colltot) > 0){
             if (minInstallment == null)
                 return idc.getInstallment();
             else if (minInstallment.getFromDate().after(idc.getInstallment().getFromDate()))
                 inst = idc.getInstallment();
+        }
         return inst == null ? minInstallment : inst;
     }
 

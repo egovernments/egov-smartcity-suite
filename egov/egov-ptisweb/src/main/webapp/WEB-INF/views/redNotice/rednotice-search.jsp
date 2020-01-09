@@ -94,5 +94,6 @@
 			<button type="button" id="btnclose" class="btn btn-default"
 				onclick="window.close();">Close</button>
 		</div>
+	<spring:message code="reports.note.text" />
 	</div>
 </form:form>

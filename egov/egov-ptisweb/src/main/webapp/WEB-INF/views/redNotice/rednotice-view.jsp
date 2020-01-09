@@ -61,8 +61,8 @@
 	class="form-horizontal form-groups-bordered">
 	<input type="hidden" name="assessmentNo" id="assessmentNo"
 		value="${redNoticeInfo.assessmentNo}" />
-	<div>
-		<div class="panel-body">
+	<div style="overflow:scroll;height:500px;width:110%;overflow:auto"> 
+		<div class="panel-body" >
 			<table
 				class="table table-bordered datatable dt-responsive table-hover"
 				id="redNoticeTable">
@@ -70,52 +70,52 @@
 					<tr>
 						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
 								code="assessment.no" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%"><spring:message
 								code="lbl.ownerName" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%" ><spring:message
 								code="lbl.revenue.ward" /></th>
 						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
 								code="lbl.doorNumber" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%"><spring:message
 								code="lbl.locality" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%"><spring:message
 								code="lbl.mobileNumber" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 10%" ><spring:message
 								code="due.from" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%"><spring:message
 								code="due.to" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 15%" ><spring:message
 								code="arrear.due" /></th>
 						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
 								code="arrear.penalty.due" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 10%" ><spring:message
 								code="current.due" /></th>
 						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
 								code="current.penalty.due" /></th>
-						<th align="center" class="bluebgheadtd" style="width: 10%"><spring:message
+						<th align="center" class="bluebgheadtd" style="width: 8%" ><spring:message
 								code="total.due" /></th>
 					</tr>
 				</thead>
 				<tr>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.assessmentNo}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.ownerName}" /></td>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.ownerName}" /></td>
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.revenueWard}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.doorNo}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.locality}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.mobileNo}" /></td>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.doorNo}" /></td>
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.locality}" /></td>
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.mobileNo}" /></td>
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.fromInstallment}" /></td>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.toInstallment}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.arrearTax}" /></td>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.arrearTax}" /></td>
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.arrearPenaltyTax}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.currentTax}" /></td>
-					<td class="greybox"><c:out
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.currentTax}" /></td>
+					<td class="blueborderfortd"><c:out
 							value="${redNoticeInfo.currentTaxPenalty}" /></td>
-					<td class="greybox"><c:out value="${redNoticeInfo.totalDue}" /></td>
+					<td class="blueborderfortd"><c:out value="${redNoticeInfo.totalDue}" /></td>
 
 				</tr>
 			</table>

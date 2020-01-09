@@ -73,8 +73,8 @@
 	<parameter name="currentTaxInterest" class="java.lang.String"/>
 	<parameter name="total" class="java.lang.String"/>
 	<parameter name="locality" class="java.lang.String"/>
-	<parameter name="assessmentNo" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String"/>
 	<title>
 		<band height="693" splitType="Stretch">
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
@@ -99,7 +99,7 @@
 				<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="41" y="110" width="495" height="90" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="41" y="110" width="495" height="90" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
@@ -114,23 +114,14 @@
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="242" y="213" width="50" height="15" uuid="e850ff15-f634-463c-b184-0bcd261b5356">
+				<reportElement x="41" y="213" width="332" height="15" uuid="e850ff15-f634-463c-b184-0bcd261b5356">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement>
+				<textElement markup="styled">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DateUtils.getDefaultFormattedDate(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["The Details of Property Tax to be paid as on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+" "+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="41" y="213" width="200" height="15" uuid="69ba0e53-d1af-4879-93e0-2e9dcf226a12">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[The Details of Property Tax to be paid as on]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="41" y="228" width="166" height="21" uuid="b89d18c1-552a-49f1-afee-5896c29c24ab"/>
 				<text><![CDATA[Arrears Tax			:]]></text>
@@ -221,7 +212,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="408" y="530" width="114" height="15" isPrintWhenDetailOverflows="true" uuid="df7732ec-166e-44e5-85a3-2177c0a75150"/>
@@ -238,10 +229,10 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
+				<textElement markup="styled">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["The Details of Property Tax to be paid as on :"+DateUtils.getDefaultFormattedDate(new Date())+"\n Arrear Tax   		:"+$P{arrearTax}+"\n ArrearTax Interest 	:"+$P{arrearTaxInterest}+"\n CurrentTax		:"+$P{currentTax}+"\n CurrentTax Interest	:"+$P{currentTaxInterest}+"\n Total			:"+$P{total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\">"+"The Details of Property Tax to be paid as on :"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"+"\n Arrear Tax   		:"+$P{arrearTax}+"\n ArrearTax Interest 	:"+$P{arrearTaxInterest}+"\n CurrentTax		:"+$P{currentTax}+"\n CurrentTax Interest	:"+$P{currentTaxInterest}+"\n Total			:"+$P{total}]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="150" y="460" width="235" height="40" uuid="bb4c74e8-2a5c-4a82-bb3f-afe57a414403"/>
@@ -258,20 +249,15 @@
 				</textElement>
 				<text><![CDATA[Signature of Tax Payer]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="30" y="530" width="60" height="15" uuid="92d95f39-236f-4e67-b38b-b5b32cb80b56">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="30" y="530" width="170" height="15" uuid="6cb79797-1640-4f1f-ad0e-469e8bf6c697">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<text><![CDATA[Notice No: ]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="90" y="530" width="110" height="15" uuid="6cb79797-1640-4f1f-ad0e-469e8bf6c697">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement>
-					<font isBold="true"/>
+				<textElement markup="styled">
+					<font size="8" isBold="true"/>
+					<paragraph lineSpacingSize="1.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{noticeNo}!=null?$P{noticeNo}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Notice No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

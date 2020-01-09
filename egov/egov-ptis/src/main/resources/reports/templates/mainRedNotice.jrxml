@@ -52,6 +52,9 @@
 				<subreportParameter name="year">
 					<subreportParameterExpression><![CDATA[$P{year}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="assessmentNo">
+					<subreportParameterExpression><![CDATA[$P{assessmentNo}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("RedNotice_Corporation.jasper"):ReportUtil.getTemplateAsStream("RedNotice_Municplaity.jasper")]]></subreportExpression>
 			</subreport>

@@ -73,7 +73,7 @@
 	<parameter name="currentTaxInterest" class="java.lang.String"/>
 	<parameter name="total" class="java.lang.String"/>
 	<parameter name="locality" class="java.lang.String"/>
-	<parameter name="assessmentNo" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="year" class="java.lang.String"/>
 	<title>
 		<band height="686" splitType="Stretch">
@@ -104,7 +104,7 @@
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn exercise of the power conferred under Section 266 of Municipal Corporations Act, 1955 (formerly known as GHMC Act, 1955) with the Commissioner, you are hereby informed that a demand for a of sum Rs. "+$P{total}+"is due from you towards property tax in respect of the premises bearing No"+$P{assessmentNo}+"locality"+$P{locality}+"owned / Occupied on account of the tax is leviable for the year ending on the 31st March,"+$P{year}+". If the said sum is not paid into the Municipal Office counter/e-Seva center/On-line, and if sufficient cause for the non-payment of the sum is not shown to the best satisfaction of the undersigned with in (15) days from the date of the service of this notice, a"+"<style forecolor=\"#000000\" isBold=\"true\">"+" Warrant of Distress will be issued for the recovery of the same with cost under Section 269 of the said Act, distaining by the attachment of your Movable/Immovable properties.</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn exercise of the power conferred under Section 266 of Municipal Corporations Act, 1955 (formerly known as GHMC Act, 1955) with the Commissioner, you are hereby informed that a demand for a of sum Rs. "+$P{total}+" is due from you towards property tax in respect of the premises bearing No "+$P{assessmentNo}+" locality "+$P{locality}+" owned / Occupied on account of the tax is leviable for the year ending on the 31st March,"+$P{year}+". If the said sum is not paid into the Municipal Office counter/e-Seva center/On-line, and if sufficient cause for the non-payment of the sum is not shown to the best satisfaction of the undersigned with in (15) days from the date of the service of this notice, a"+"<style forecolor=\"#000000\" isBold=\"true\">"+" Warrant of Distress will be issued for the recovery of the same with cost under Section 269 of the said Act, distaining by the attachment of your Movable/Immovable properties.</style>"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="373" y="89" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
@@ -114,23 +114,14 @@
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="240" y="204" width="70" height="15" uuid="e850ff15-f634-463c-b184-0bcd261b5356">
+				<reportElement x="41" y="204" width="331" height="15" uuid="e850ff15-f634-463c-b184-0bcd261b5356">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement>
+				<textElement markup="styled">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DateUtils.getDefaultFormattedDate(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["The Details of Property Tax to be paid as on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+" "+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="40" y="204" width="200" height="15" uuid="69ba0e53-d1af-4879-93e0-2e9dcf226a12">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[The Details of Property Tax to be paid as on]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="41" y="219" width="166" height="20" uuid="b89d18c1-552a-49f1-afee-5896c29c24ab"/>
 				<text><![CDATA[Arrears Tax			:]]></text>
@@ -197,7 +188,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="560" width="160" height="77" uuid="567c3ada-24ab-4f2b-9d34-4681b003c41a"/>
+				<reportElement x="30" y="560" width="160" height="90" uuid="567c3ada-24ab-4f2b-9d34-4681b003c41a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -231,14 +222,15 @@
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="190" y="560" width="332" height="77" uuid="e36bb032-efe3-40c1-b1b0-268ddbb7d868"/>
+				<reportElement x="190" y="560" width="332" height="90" uuid="e36bb032-efe3-40c1-b1b0-268ddbb7d868"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textFieldExpression><![CDATA["The Details of Property Tax to be paid as on :"+DateUtils.getDefaultFormattedDate(new Date())+"\n Arrear Tax   		:"+$P{arrearTax}+"\n ArrearTax Interest 	:"+$P{arrearTaxInterest}+"\n CurrentTax		:"+$P{currentTax}+"\n CurrentTax Interest	:"+$P{currentTaxInterest}+"\n Total			:"+$P{total}]]></textFieldExpression>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\">"+"The Details of Property Tax to be paid as on :"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"+"\n Arrear Tax   		:"+$P{arrearTax}+"\n ArrearTax Interest 	:"+$P{arrearTaxInterest}+"\n CurrentTax		:"+$P{currentTax}+"\n CurrentTax Interest	:"+$P{currentTaxInterest}+"\n Total			:"+$P{total}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="70" y="60" width="390" height="29" uuid="d83784f1-e6e9-463a-9858-4fb3c6e26f78"/>
@@ -259,21 +251,21 @@
 				<imageExpression><![CDATA[ReportUtil.redNoticeAbsolutePath()]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="380" y="650" width="134" height="20" uuid="caf8b38f-6b42-44ef-be55-a9dd4b813f7c"/>
+				<reportElement x="380" y="660" width="134" height="20" uuid="caf8b38f-6b42-44ef-be55-a9dd4b813f7c"/>
 				<textElement>
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of Tax Payer]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="90" y="540" width="110" height="15" uuid="0622c5b9-93fc-40bc-9f58-5d52199d663a">
+				<reportElement x="30" y="540" width="170" height="15" uuid="0622c5b9-93fc-40bc-9f58-5d52199d663a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
-				<textElement>
+				<textElement markup="styled">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{noticeNo}!=null?$P{noticeNo}:"")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Notice No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="70" y="499" width="431" height="30" uuid="2a4508cc-eebd-426f-beba-751d82da5bf7"/>
@@ -281,12 +273,6 @@
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[(Issued under Rule 29(1) of Taxation and Finance Rules under Schedule-II of AP		 Municipalities Act, 1965.)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="30" y="540" width="60" height="15" uuid="14133776-5fd9-4ed7-a95e-9af2c6322d31">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<text><![CDATA[Notice No: ]]></text>
 			</staticText>
 		</band>
 	</title>
