@@ -1855,5 +1855,9 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_APPEALPROCEEDINGS = "Appeal Petition Proceedings";
     public static final String NOTICE_TYPE_APPEALPETITION_HEARINGNOTICE = "Appeal Petition Hearing Notice";
     public static final String NOTICE_TYPE_APPEALPETITION_ENDORSEMENT = "Appeal Petition Endorsement";
+    public static final String APPEAL = "Appeal";
     
+    //Red Notice
+    public static final String NOTICE_TYPE_RED_NOTICE = "Red Notice";
+    public static final String TEMPLATENAME_MAIN_RED_NOTICE = "mainRedNotice";
 }

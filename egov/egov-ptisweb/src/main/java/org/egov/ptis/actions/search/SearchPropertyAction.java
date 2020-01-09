@@ -137,10 +137,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
-                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "RP", "applicationSource",
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "RP", "transactionId","${transactionId}","applicationSource",
                 "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "genRevPetition-newForm", params = {
-                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP", "applicationSource",
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP","transactionId","${transactionId}", "applicationSource",
                 "${applicationSource}" }),
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
@@ -198,9 +198,7 @@ public class SearchPropertyAction extends SearchFormAction {
     private static final String EXCEPTION_IN_SEARCH_PROPERTY_BY_BNDRY = "Exception in Search Property By Bndry ";
     private static final String EXCEPTION = "Exception : ";
     private static final String ASSESSMENT_NUMBER = "Assessment Number : ";
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 6978874588028662454L;
     protected static final String COMMON_FORM = "commonForm";
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -537,7 +535,11 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_VACANCY_REMISSION;
             } else if (APPLICATION_TYPE_AMALGAMATION.equals(applicationType)) {
                 return APPLICATION_TYPE_AMALGAMATION;
-            } 
+            } else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
+                return APPLICATION_TYPE_REVISION_PETITION;
+            } else if (APPLICATION_TYPE_GRP.equals(applicationType)) {
+                return APPLICATION_TYPE_GRP;
+            }
 
         }
         if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType))

@@ -874,4 +874,22 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/transactions/rejectionNotice/rejectionnotice-digitalsignature.jsp" />
 	</definition>
+	<definition name="buildingagewise-form" extends="base_layout">
+		<put-attribute name="page-title"
+			value="lbl.title.buidingagewise.report" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/buildingagewisereport-form.jsp" />
+	</definition>
+	<definition name="rednotice-search" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.title.red.notice"
+		cascade="true" />
+	<put-attribute name="body"
+		value="/WEB-INF/views/redNotice/rednotice-search.jsp" />
+	</definition>
+	<definition name="rednotice-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.red.notice"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/redNotice/rednotice-view.jsp" />
+	</definition>
 </tiles-definitions> 

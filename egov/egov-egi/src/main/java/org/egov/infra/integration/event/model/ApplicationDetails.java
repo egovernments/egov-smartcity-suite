@@ -48,103 +48,117 @@
 
 package org.egov.infra.integration.event.model;
 
+import java.util.Date;
+
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
 
 public class ApplicationDetails {
 
-    private static final long serialVersionUID = 1L;
-    private String transactionId;
-    private TransactionStatus transactionStatus;
-    private String remark;
-    private String applicationNumber;
-    private ApplicationStatus applicationStatus;
-    private String viewLink;
+	private static final long serialVersionUID = 1L;
+	private String transactionId;
+	private TransactionStatus transactionStatus;
+	private String remark;
+	private String applicationNumber;
+	private ApplicationStatus applicationStatus;
+	private String viewLink;
+	private Date dateOfCompletion;
 
-    private ApplicationDetails() {
+	private ApplicationDetails() {
 
-    }
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-    public static final class Builder {
+	public static final class Builder {
 
-        private String transactionId;
-        private TransactionStatus transactionStatus;
-        private String remark;
-        private String applicationNumber;
-        private ApplicationStatus applicationStatus;
-        private String viewLink;
+		private String transactionId;
+		private TransactionStatus transactionStatus;
+		private String remark;
+		private String applicationNumber;
+		private ApplicationStatus applicationStatus;
+		private String viewLink;
+		private Date dateOfCompletion;
 
-        private Builder() {
-        }
+		private Builder() {
+		}
 
-        public Builder withTransactionId(final String transactionId) {
-            this.transactionId = transactionId;
-            return this;
-        }
+		public Builder withTransactionId(final String transactionId) {
+			this.transactionId = transactionId;
+			return this;
+		}
 
-        public Builder withTransactionStatus(final TransactionStatus transactionStatus) {
-            this.transactionStatus = transactionStatus;
-            return this;
-        }
+		public Builder withTransactionStatus(final TransactionStatus transactionStatus) {
+			this.transactionStatus = transactionStatus;
+			return this;
+		}
 
-        public Builder withRemark(final String remark) {
-            this.remark = remark;
-            return this;
-        }
+		public Builder withRemark(final String remark) {
+			this.remark = remark;
+			return this;
+		}
 
-        public Builder withApplicationNumber(final String applicationNumber) {
-            this.applicationNumber = applicationNumber;
-            return this;
-        }
+		public Builder withApplicationNumber(final String applicationNumber) {
+			this.applicationNumber = applicationNumber;
+			return this;
+		}
 
-        public Builder withApplicationStatus(final ApplicationStatus applicationStatus) {
-            this.applicationStatus = applicationStatus;
-            return this;
-        }
+		public Builder withApplicationStatus(final ApplicationStatus applicationStatus) {
+			this.applicationStatus = applicationStatus;
+			return this;
+		}
 
-        public Builder withViewLink(final String viewLink) {
-            this.viewLink = viewLink;
-            return this;
-        }
+		public Builder withViewLink(final String viewLink) {
+			this.viewLink = viewLink;
+			return this;
+		}
 
-        public ApplicationDetails build() {
-            final ApplicationDetails wSApplicationDetails = new ApplicationDetails();
-            wSApplicationDetails.transactionId = this.transactionId;
-            wSApplicationDetails.transactionStatus = this.transactionStatus;
-            wSApplicationDetails.remark = this.remark;
-            wSApplicationDetails.applicationNumber = this.applicationNumber;
-            wSApplicationDetails.applicationStatus = this.applicationStatus;
-            wSApplicationDetails.viewLink = this.viewLink;
-            return wSApplicationDetails;
-        }
+		public Builder withDateOfCompletion(final Date dateOfCompletion) {
+			this.dateOfCompletion = dateOfCompletion;
+			return this;
+		}
 
-    }
+		public ApplicationDetails build() {
+			final ApplicationDetails wSApplicationDetails = new ApplicationDetails();
+			wSApplicationDetails.transactionId = this.transactionId;
+			wSApplicationDetails.transactionStatus = this.transactionStatus;
+			wSApplicationDetails.remark = this.remark;
+			wSApplicationDetails.applicationNumber = this.applicationNumber;
+			wSApplicationDetails.applicationStatus = this.applicationStatus;
+			wSApplicationDetails.viewLink = this.viewLink;
+			wSApplicationDetails.dateOfCompletion = this.dateOfCompletion;
+			return wSApplicationDetails;
+		}
 
-    public String getTransactionId() {
-        return transactionId;
-    }
+	}
 
-    public TransactionStatus getTransactionStatus() {
-        return transactionStatus;
-    }
+	public String getTransactionId() {
+		return transactionId;
+	}
 
-    public String getRemark() {
-        return remark;
-    }
+	public TransactionStatus getTransactionStatus() {
+		return transactionStatus;
+	}
 
-    public String getApplicationNumber() {
-        return applicationNumber;
-    }
+	public String getRemark() {
+		return remark;
+	}
 
-    public ApplicationStatus getApplicationStatus() {
-        return applicationStatus;
-    }
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
 
-    public String getViewLink() {
-        return viewLink;
-    }
+	public ApplicationStatus getApplicationStatus() {
+		return applicationStatus;
+	}
+
+	public String getViewLink() {
+		return viewLink;
+	}
+
+	public Date getDateOfCompletion() {
+		return dateOfCompletion;
+	}
 }

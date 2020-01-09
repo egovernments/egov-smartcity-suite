@@ -84,6 +84,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOT
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -296,10 +298,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 }
                 fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
                 noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
-            } else if (GRP.equalsIgnoreCase(id[1]) || RP.equalsIgnoreCase(id[1])) {
+            } else if (GRP.equalsIgnoreCase(id[1]) || RP.equalsIgnoreCase(id[1]) || APPEAL.equalsIgnoreCase(id[1])) {
                 noticeMode = OBJECTION;
                 noticeType = id[1].equalsIgnoreCase(RP)
-                        ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS;
+                        ? NOTICE_TYPE_RPPROCEEDINGS
+                        : returnNoticeType(id[1]);
                 fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
             } else if (DEMOLITION.equalsIgnoreCase(id[1])) {
                 noticeMode = APPLICATION_TYPE_DEMOLITION;
@@ -348,7 +351,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         Position ownerPosition;
         Petition petition = null;
         VacancyRemissionApproval vacancyRemissionApproval = null;
-        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(type)) {
+        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || APPEAL.equalsIgnoreCase(type)) {
             petition = revisionPetitionService.findById(basicPropertyId, false);
             ownerPosition = petition.getCurrentState().getOwnerPosition();
             basicProperty = (BasicPropertyImpl) petition.getBasicProperty();
@@ -948,11 +951,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private PtNotice saveAllNotice(final String type, BasicPropertyImpl basicProperty, Petition petition,
             VacancyRemissionApproval vacancyRemissionApproval, final String noticeNo) {
         PtNotice savedNotice;
-        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(type))
+        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type) || APPEAL.equalsIgnoreCase(type))
             savedNotice = noticeService.saveNotice(petition.getObjectionNumber(),
                     noticeNo,
                     type.equalsIgnoreCase(RP)
-                            ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS,
+                            ? NOTICE_TYPE_RPPROCEEDINGS
+                            : returnNoticeType(type),
                     petition.getBasicProperty(),
                     NoticePDF);
         else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type))
@@ -983,6 +987,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return reportInput;
     }
 
+    public String returnNoticeType(String type)
+    {
+       return type.equalsIgnoreCase(APPEAL) ? NOTICE_TYPE_APPEALPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS;
+    }
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }

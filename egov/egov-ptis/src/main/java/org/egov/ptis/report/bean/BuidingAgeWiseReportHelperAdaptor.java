@@ -46,20 +46,37 @@
  *
  */
 
-package org.egov.infra.reporting.engine;
+package org.egov.ptis.report.bean;
 
-public final class ReportConstants {
+import java.lang.reflect.Type;
 
-    public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
-    public static final String DEFAULT_REPORT_FILE_PATH = "/reports/templates/%s";
-    public static final String TENANT_REPORT_FILE_PATH = DEFAULT_REPORT_FILE_PATH + "/%s";
-    public static final String REPORT_CONFIG_FILE = "/config/reports.properties";
-    public static final String REQ_PARAM_REPORT_ID = "reportId";
-    public static final String TENANT_COMMON_REPORT_FILE_LOCATION = "common";
-    public static final String CANCELLED_WATERMARK_IMAGE_PATH = "%s/egi/resources/global/images/cancelled_watermark.png";
-    public static final String RED_NOTICE_IMAGE_PATH = "%s/egi/resources/global/images/red_notice.png";
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    private ReportConstants() {
-        // only static final fields
+public class BuidingAgeWiseReportHelperAdaptor implements JsonSerializer<BuidingAgeWiseReportResult> {
+
+    @Override
+    public JsonElement serialize(final BuidingAgeWiseReportResult buildingAgeWiseReportObj, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (buildingAgeWiseReportObj != null) {
+            jsonObject.addProperty("assessmentNo", buildingAgeWiseReportObj.getAssessmentNo());
+            jsonObject.addProperty("doorNo", buildingAgeWiseReportObj.getDoorNo());
+            jsonObject.addProperty("ownerName", buildingAgeWiseReportObj.getOwnerName());
+            jsonObject.addProperty("revenueZone", buildingAgeWiseReportObj.getRevenueZone());
+            jsonObject.addProperty("revenueWard", buildingAgeWiseReportObj.getRevenueWard());
+            jsonObject.addProperty("revenueBlock", buildingAgeWiseReportObj.getRevenueBlock());
+
+            jsonObject.addProperty("locality", buildingAgeWiseReportObj.getLocality());
+            jsonObject.addProperty("propertyTax", buildingAgeWiseReportObj.getPropertyTax());
+            jsonObject.addProperty("libraryCess", buildingAgeWiseReportObj.getLibraryCess());
+
+            jsonObject.addProperty("educationTax", buildingAgeWiseReportObj.getEducationTax());
+            jsonObject.addProperty("assessmentCount", buildingAgeWiseReportObj.getAssessmentCount());
+
+        }
+        return jsonObject;
     }
 }

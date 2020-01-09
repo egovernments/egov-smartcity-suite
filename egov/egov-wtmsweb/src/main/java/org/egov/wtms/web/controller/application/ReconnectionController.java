@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
@@ -68,6 +69,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -305,7 +307,8 @@ public class ReconnectionController extends GenericConnectionController {
             waterConnectionDetails.setSource(ONLINE);
             sourceChannel = SOURCECHANNEL_ONLINE;
         }
-
+        if(isCSCOperator)
+        	waterConnectionDetails.setSource(CSC);
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainRedNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="40" whenResourceMissingType="Error" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="arrearTax" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="arrearTaxInterest" class="java.lang.String"/>
+	<parameter name="currentTax" class="java.lang.String"/>
+	<parameter name="currentTaxInterest" class="java.lang.String"/>
+	<parameter name="total" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="35" isRemoveLineWhenBlank="true" uuid="28effcea-ccef-4dfd-98e6-300b1de4a221"/>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="arrearTax">
+					<subreportParameterExpression><![CDATA[$P{arrearTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="arrearTaxInterest">
+					<subreportParameterExpression><![CDATA[$P{arrearTaxInterest}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentTax">
+					<subreportParameterExpression><![CDATA[$P{currentTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentTaxInterest">
+					<subreportParameterExpression><![CDATA[$P{currentTaxInterest}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total">
+					<subreportParameterExpression><![CDATA[$P{total}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="year">
+					<subreportParameterExpression><![CDATA[$P{year}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="assessmentNo">
+					<subreportParameterExpression><![CDATA[$P{assessmentNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("RedNotice_Corporation.jasper"):ReportUtil.getTemplateAsStream("RedNotice_Municplaity.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

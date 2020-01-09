@@ -260,7 +260,7 @@ public class FinancialUtils {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     workflowHistory
-                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put("user", null != user ? user.getUsername() + "::" + user.getName() : "");
                     workflowHistory.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }

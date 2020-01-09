@@ -48,6 +48,7 @@
 
 package org.egov.tl.service;
 
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -57,6 +58,10 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
@@ -66,6 +71,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +133,13 @@ public class LicenseClosureService extends LicenseService {
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
+    @Autowired
+    private PositionMasterService positionMasterService;
+       
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<?> workflowService;
+    
     @Autowired
     @Qualifier("licenseApplicationService")
     protected transient LicenseApplicationService licenseApplicationService;
@@ -226,5 +239,26 @@ public class LicenseClosureService extends LicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
     }
+    
+    public Boolean isValidApprover(final StateAware<?> state) {
+        String currentState = null;
+        Long approverPositionId = ((TradeLicense) state).getWorkflowContainer().getApproverPositionId();
+        if (state.getCurrentState() != null)
+            currentState = state.getCurrentState().getValue();
+        final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null, currentState, null);
+        if (null != approverPositionId && approverPositionId != -1) {
+            Position pos = (Position) positionMasterService.getPositionById(approverPositionId);
+            return isValidAppover(wfmatrix, pos);
+        }
+        return Boolean.FALSE;
+    }
+    
+	public Boolean isValidAppover(WorkFlowMatrix workFlowMatrix, Position position) {
+		if (workFlowMatrix.getNextDesignation() != null) {
+			return Arrays.asList(workFlowMatrix.getNextDesignation().split(",")).stream()
+					.anyMatch(position.getDeptDesig().getDesignation().getName()::equalsIgnoreCase);
+		}
+		return Boolean.FALSE;
+	}
 
 }

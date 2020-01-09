@@ -458,6 +458,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
             } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
                 wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
                 applicationSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
             }
@@ -560,16 +561,28 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final BasicProperty nonVacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
         updatePropertyStatusValuesRemarks(nonVacantBasicProperty);
         PropertyImpl nonVacantProperty = null;
+        PropertyImpl vacantProperty =null;
         try {
             nonVacantProperty = createNonVacantProperty(status, nonVacantBasicProperty);
             final BasicProperty vacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
             updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
-            createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
+            vacantProperty = createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
+            if (isWardSecretaryUser) {
+                propertyThirdPartyService.publishEventForAppurTenant(wsTransactionId, nonVacantProperty.getApplicationNo(),
+                        vacantProperty.getApplicationNo(), true);
+            }
         } catch (final TaxCalculatorExeption e) {
             nonVacantBasicProperty.setPropertyOwnerInfoProxy(nonVacantBasicProperty.getPropertyOwnerInfo());
             addActionError(getText(UNIT_RATE_ERROR));
             logger.error("create : There are no Unit rates defined for chosen combinations", e);
             return RESULT_NEW;
+        } catch (final Exception e) {
+            logger.error("Exception while creating appurtenant property. ", e);
+            if (isWardSecretaryUser) {
+                propertyThirdPartyService.publishEventForAppurTenant(wsTransactionId,
+                        nonVacantProperty == null ? "" : nonVacantProperty.getApplicationNo(),
+                        vacantProperty == null ? "" : vacantProperty.getApplicationNo(), false);
+            }
         }
 
         setBasicProp(nonVacantBasicProperty);
@@ -600,7 +613,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return nonVacantProperty;
     }
 
-    private void createVacantProperty(final Character status, final PropertyImpl nonVacantProperty,
+    private PropertyImpl createVacantProperty(final Character status, final PropertyImpl nonVacantProperty,
             final BasicProperty vacantBasicProperty) throws TaxCalculatorExeption {
         final PropertyImpl vacantProperty = createAppurTenantProperty(status, vacantBasicProperty, Boolean.FALSE);
         vacantProperty.setPropertyDetail(changePropertyDetail(vacantProperty));
@@ -608,6 +621,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         vacantProperty.getPropertyDetail().setAppurtenantLandChecked(null);
         vacantBasicProperty.getAddress().setHouseNoBldgApt(null);
         persistAndMessage(vacantBasicProperty, vacantProperty);
+        return vacantProperty;
     }
 
     private void updatePropertyStatusValuesRefProperty(final BasicProperty nonVacantBasicProperty,

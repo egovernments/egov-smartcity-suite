@@ -46,20 +46,90 @@
  *
  */
 
-package org.egov.infra.reporting.engine;
+package org.egov.ptis.report.bean;
 
-public final class ReportConstants {
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-    public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
-    public static final String DEFAULT_REPORT_FILE_PATH = "/reports/templates/%s";
-    public static final String TENANT_REPORT_FILE_PATH = DEFAULT_REPORT_FILE_PATH + "/%s";
-    public static final String REPORT_CONFIG_FILE = "/config/reports.properties";
-    public static final String REQ_PARAM_REPORT_ID = "reportId";
-    public static final String TENANT_COMMON_REPORT_FILE_LOCATION = "common";
-    public static final String CANCELLED_WATERMARK_IMAGE_PATH = "%s/egi/resources/global/images/cancelled_watermark.png";
-    public static final String RED_NOTICE_IMAGE_PATH = "%s/egi/resources/global/images/red_notice.png";
-
-    private ReportConstants() {
-        // only static final fields
+public class BuidingAgeWiseReportResult {
+    
+    private String assessmentNo;
+    private String doorNo;
+    private String ownerName;
+    private String revenueZone;
+    private String revenueWard;
+    private String revenueBlock;
+    private String locality;
+    private BigDecimal propertyTax = BigDecimal.ZERO;
+    private BigDecimal libraryCess = BigDecimal.ZERO;
+    private BigDecimal educationTax = BigDecimal.ZERO;
+    private BigInteger assessmentCount;
+    
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
+    public String getDoorNo() {
+        return doorNo;
+    }
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
+    }
+    public String getOwnerName() {
+        return ownerName;
+    }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+    public String getRevenueZone() {
+        return revenueZone;
+    }
+    public void setRevenueZone(String revenueZone) {
+        this.revenueZone = revenueZone;
+    }
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+    public String getRevenueBlock() {
+        return revenueBlock;
+    }
+    public void setRevenueBlock(String revenueBlock) {
+        this.revenueBlock = revenueBlock;
+    }
+    public String getLocality() {
+        return locality;
+    }
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+    public BigDecimal getPropertyTax() {
+        return propertyTax;
+    }
+    public void setPropertyTax(BigDecimal propertyTax) {
+        this.propertyTax = propertyTax;
+    }
+    public BigDecimal getLibraryCess() {
+        return libraryCess;
+    }
+    public void setLibraryCess(BigDecimal libraryCess) {
+        this.libraryCess = libraryCess;
+    }
+    public BigDecimal getEducationTax() {
+        return educationTax;
+    }
+    public void setEducationTax(BigDecimal educationTax) {
+        this.educationTax = educationTax;
+    }
+    public BigInteger getAssessmentCount() {
+        return assessmentCount;
+    }
+    public void setAssessmentCount(BigInteger assessmentCount) {
+        this.assessmentCount = assessmentCount;
+    }
+    
 }
