@@ -83,6 +83,7 @@ import static org.egov.infra.reporting.engine.ReportConstants.TENANT_COMMON_REPO
 import static org.egov.infra.reporting.engine.ReportConstants.TENANT_REPORT_FILE_PATH;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
+import static org.egov.infra.reporting.engine.ReportConstants.RED_NOTICE_IMAGE_PATH;
 
 public final class ReportUtil {
 
@@ -188,6 +189,10 @@ public final class ReportUtil {
 
     public static String cancelledWatermarkAbsolutePath() {
         return format(CANCELLED_WATERMARK_IMAGE_PATH, getDomainURL());
+    }
+    
+    public static String redNoticeAbsolutePath() {
+        return format(RED_NOTICE_IMAGE_PATH, getDomainURL());
     }
 
     public static ResponseEntity<InputStreamResource> reportAsResponseEntity(ReportOutput reportOutput) {

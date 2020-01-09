@@ -57,6 +57,7 @@ public final class ReportConstants {
     public static final String REQ_PARAM_REPORT_ID = "reportId";
     public static final String TENANT_COMMON_REPORT_FILE_LOCATION = "common";
     public static final String CANCELLED_WATERMARK_IMAGE_PATH = "%s/egi/resources/global/images/cancelled_watermark.png";
+    public static final String RED_NOTICE_IMAGE_PATH = "%s/egi/resources/global/images/red_notice.png";
 
     private ReportConstants() {
         // only static final fields

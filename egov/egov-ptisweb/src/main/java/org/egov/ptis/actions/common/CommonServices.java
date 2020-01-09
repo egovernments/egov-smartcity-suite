@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEED
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RED_NOTICE;
 
 
 public class CommonServices {
@@ -117,6 +118,7 @@ public class CommonServices {
                 noticeTypeMap.put(NOTICE_TYPE_SURVEY_COMPARISON, NOTICE_TYPE_SURVEY_COMPARISON);
                 noticeTypeMap.put(NOTICE_TYPE_REJECTION, NOTICE_TYPE_REJECTION);
                 noticeTypeMap.put(NOTICE_TYPE_APPEALPROCEEDINGS, NOTICE_TYPE_APPEALPROCEEDINGS);
+                noticeTypeMap.put(NOTICE_TYPE_RED_NOTICE, NOTICE_TYPE_RED_NOTICE);
 		return noticeTypeMap;
 	}
 
