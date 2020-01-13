@@ -85,5 +85,8 @@
 	<query name="QUERY_ACTIVE_BRANCHUSER">
 	<![CDATA[select bu.bankuser from org.egov.collection.entity.BranchUserMap bu where bu.isActive=true]]>
 	</query>
+	<query name="QUERY_BRANCHUSER">
+	<![CDATA[select bu.bankuser from org.egov.collection.entity.BranchUserMap bu ]]>
+	</query>
 	
 </hibernate-mapping>

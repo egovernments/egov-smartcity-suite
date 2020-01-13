@@ -48,6 +48,14 @@
 
 package org.egov.collection.web.actions.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,39 +72,36 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @ParentPackage("egov")
 @Results({
         @Result(name = BranchUserMapAction.BANKBRANCHLIST, location = "branchUserMap-bankBranchList.jsp"),
         @Result(name = BranchUserMapAction.SUCCESS, location = "branchUserMap-success.jsp"),
-        @Result(name = BranchUserMapAction.BEFORESEARCH, location = "branchUserMap-search.jsp"),
-        @Result(name = BranchUserMapAction.SEARCH, location = "branchUserMap-search.jsp"),
-        @Result(name = BranchUserMapAction.NEW, location = "branchUserMap-new.jsp") })
+        @Result(name = BranchUserMapAction.BEFORESEARCH, location = "branchUserMap-index.jsp"),
+        @Result(name = BranchUserMapAction.INDEX, location = "branchUserMap-index.jsp"),
+        @Result(name = BranchUserMapAction.NEW, location = "branchUserMap-new.jsp"),
+        @Result(name = BranchUserMapAction.MODIFY, location = "branchUserMap-modify.jsp") })
 
 public class BranchUserMapAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(BranchUserMapAction.class);
     private static final long serialVersionUID = 1L;
     protected static final String BEFORECREATE = "beforeCreate";
-    protected static final String SEARCH = "search";
     protected static final String BEFORESEARCH = "beforesearch";
-    protected static final String MESSAGE = "message";
+    protected static final String MODIFY = "modify";
     private BranchUserMap branchUserMap = new BranchUserMap();
     private static final String BANK_BRANCH_LIST = "bankBranchList";
     private static final String BANK_NAME_LIST = "bankNameList";
     private static final String BANK_COLLECTION_OPERATOR_USER_LIST = "bankCollectionOperatorUserList";
     protected static final String BANKBRANCHLIST = "bankBranchList";
+    private static final String MAPPED_BANK_COLLECTION_OPERATOR_USER_LIST = "mappedBankCollectionOperatorUserList";
     private List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
     private List<BranchUserMap> branchUserList = null;
     private Integer bankId;
     private Integer branchId;
     private Long userId;
+    private Long branchUserMapId;
+    private Boolean isActive = Boolean.FALSE;
+    private String mode;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
     @Autowired
@@ -105,7 +110,6 @@ public class BranchUserMapAction extends BaseFormAction {
     private BankBranchHibernateDAO bankBranchHibernateDAO;
     @PersistenceContext
     private EntityManager entityManager;
-    private Boolean isActive = Boolean.FALSE;
 
     public BranchUserMapAction() {
         addRelatedEntity("bankbranch", Bankbranch.class);
@@ -117,12 +121,16 @@ public class BranchUserMapAction extends BaseFormAction {
         return branchUserMap;
     }
 
+    @Override
+    public void prepare() {
+        addDropdownData(BANK_NAME_LIST, bankHibernateDAO.getAllBankHavingBranchAndAccounts());
+        addDropdownData(BANK_BRANCH_LIST, (validateIntegerField(bankId))
+                ? bankBranchHibernateDAO.getAllBankBranchsByBankForReceiptPayments(bankId) : Collections.emptyList());
+        addDropdownData(BANK_COLLECTION_OPERATOR_USER_LIST, getBankCollectionOperator());
+    }
+
     @Action(value = "/service/branchUserMap-newform")
     public String newform() {
-        addDropdownData(BANK_NAME_LIST, bankHibernateDAO.getAllBankHavingBranchAndAccounts());
-        System.out.println(branchUserMap.getIsActive());
-        addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
-        addDropdownData(BANK_COLLECTION_OPERATOR_USER_LIST, getBankCollectionOperator());
         return NEW;
     }
 
@@ -137,6 +145,12 @@ public class BranchUserMapAction extends BaseFormAction {
             return Collections.emptyList();
         else
             return bankCollOpUserList;
+    }
+
+    private List<User> getMappedBankCollectionOperator() {
+        Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_BRANCHUSER, User.class);
+        List<User> userList = query.getResultList();
+        return userList.isEmpty() ? Collections.emptyList() : userList;
     }
 
     @Action(value = "/service/branchUserMap-bankBranchsByBankForReceiptPayments")
@@ -161,6 +175,89 @@ public class BranchUserMapAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("end create");
         return SUCCESS;
+    }
+
+    @Action(value = "/service/branchUserMap-beforeSearch")
+    public String beforeSearch() {
+        mode = VIEW;
+        addDropdownData(MAPPED_BANK_COLLECTION_OPERATOR_USER_LIST, getMappedBankCollectionOperator());
+        return INDEX;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/service/branchUserMap-search")
+    public String search() {
+        final StringBuilder searchQueryString = new StringBuilder(
+                "select bu from  org.egov.collection.entity.BranchUserMap bu where 1=1  ");
+        if (userId != null && userId != -1)
+            searchQueryString.append(" and bu.bankuser.id =:bankUserId");
+        if (validateIntegerField(bankId))
+            searchQueryString.append(" and  bu.bankbranch.bank.id =:bankId ");
+        if (validateIntegerField(branchId))
+            searchQueryString.append(" and bu.bankbranch.id =:branchId ");
+        final Query searchQuery = entityManager.createQuery(
+                searchQueryString.toString());
+
+        if (userId != null && userId != -1)
+            searchQuery.setParameter("bankUserId", userId);
+        if (validateIntegerField(bankId))
+            searchQuery.setParameter("bankId", bankId);
+        if (validateIntegerField(branchId))
+            searchQuery.setParameter("branchId", branchId);
+        branchUserList = searchQuery.getResultList();
+        addDropdownData(MAPPED_BANK_COLLECTION_OPERATOR_USER_LIST, getMappedBankCollectionOperator());
+        return INDEX;
+    }
+
+    @Action(value = "/service/branchUserMap-searchModify")
+    public String searchModify() {
+        mode = MODIFY;
+        addDropdownData(MAPPED_BANK_COLLECTION_OPERATOR_USER_LIST, getMappedBankCollectionOperator());
+        return INDEX;
+    }
+
+    @Action(value = "/service/branchUserMap-beforeModify")
+    public String beforeModify() {
+        if (branchUserMapId != null) {
+            branchUserMap = entityManager.find(BranchUserMap.class, branchUserMapId);
+            addDropdownData(MAPPED_BANK_COLLECTION_OPERATOR_USER_LIST, getMappedBankCollectionOperator());
+            if (branchUserMap != null && branchUserMap.getBankbranch() != null && branchUserMap.getBankbranch().getBank() != null
+                    && branchUserMap.getBankbranch().getBank().getId() != null)
+                addDropdownData(BANK_BRANCH_LIST, bankBranchHibernateDAO
+                        .getAllBankBranchsByBankForReceiptPayments(branchUserMap.getBankbranch().getBank().getId()));
+
+        } else {
+            addActionError(getText("branchuser.master.modify.validate.selectrecord"));
+            return search();
+        }
+
+        return MODIFY;
+    }
+
+    @Action(value = "/service/branchUserMap-modify")
+    public String modify() {
+        BranchUserMap branchUser = null;
+        if (branchUserMap != null && branchUserMap.getId() != null) {
+            branchUser = entityManager.find(BranchUserMap.class, branchUserMap.getId());
+            if (branchUserMap.getBankbranch() != null &&
+                    validateIntegerField(branchUserMap.getBankbranch().getId()))
+                branchUser.setBankbranch(bankBranchHibernateDAO.findById(branchUserMap.getBankbranch().getId(), Boolean.FALSE));
+            else {
+                addActionError(getText("branchuser.master.branch.error"));
+                branchUserMapId = branchUserMap.getId();
+                return beforeModify();
+            }
+            branchUser.setIsActive(isActive);
+            branchUserMapService.persist(branchUser);
+            addActionMessage(getText("branchuser.master.success", new String[] { branchUser.getBankuser().getUsername(),
+                    bankBranchHibernateDAO.findById(branchUser.getBankbranch().getId(), Boolean.FALSE).getBranchname() }));
+
+        }
+        return SUCCESS;
+    }
+
+    private boolean validateIntegerField(Integer field) {
+        return (field != null && field != -1) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     public Integer getBankId() {
@@ -209,6 +306,30 @@ public class BranchUserMapAction extends BaseFormAction {
 
     public List<BranchUserMap> getBranchUserList() {
         return branchUserList;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public Long getBranchUserMapId() {
+        return branchUserMapId;
+    }
+
+    public void setBranchUserMapId(Long branchUserMapId) {
+        this.branchUserMapId = branchUserMapId;
+    }
+
+    public BranchUserMap getBranchUserMap() {
+        return branchUserMap;
+    }
+
+    public void setBranchUserMap(BranchUserMap branchUserMap) {
+        this.branchUserMap = branchUserMap;
     }
 
 }

@@ -63,5 +63,10 @@
 		<font style='color: green; font-weight: bold'> <s:actionmessage />
 		</font>
 	</s:if>
+	 
+	 <div class="buttonbottom">
+				<input name="close" type="button" class="button" id="button"
+					onclick="window.close()" value="Close" />
+	</div> 
 </body>
 </html>
