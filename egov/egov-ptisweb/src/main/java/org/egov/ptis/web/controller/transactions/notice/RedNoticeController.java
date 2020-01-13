@@ -101,22 +101,13 @@ public class RedNoticeController {
             model.addAttribute(ERROR_MSG, "invalid.assessment");
             modelAndView.setViewName(REDNOTICESEARCH_FORM);
             return modelAndView;
-        }else if(basicProperty.getProperty().getIsExemptedFromTax())
-        {
+        } else if (basicProperty.getProperty().getIsExemptedFromTax()) {
             model.addAttribute(REDNOTICEINFO, redNoticeInfo);
             model.addAttribute(ERROR_MSG, "exempted.assessment");
             modelAndView.setViewName(REDNOTICESEARCH_FORM);
             return modelAndView;
-        }
-        else {
-            int noOfCount = 0;
-            final String cityGrade = cityService.getCityGrade();
-            if (org.apache.commons.lang.StringUtils.isNotEmpty(cityGrade)
-                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
-                noOfCount = 1;
-            else
-                noOfCount = 5;
-            redNotice = redNoticeService.getRedNoticeInformation(redNoticeInfo.getAssessmentNo(), noOfCount);
+        } else {
+            redNotice = redNoticeService.getRedNoticeInformation(redNoticeInfo.getAssessmentNo());
             model.addAttribute(REDNOTICEINFO, redNotice);
             if (redNotice.getInstallmentCount()) {
                 model.addAttribute(ERROR_MSG, "rednotice.no.due");
