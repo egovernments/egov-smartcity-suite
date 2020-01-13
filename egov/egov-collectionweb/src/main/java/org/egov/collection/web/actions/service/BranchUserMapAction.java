@@ -137,8 +137,7 @@ public class BranchUserMapAction extends BaseFormAction {
     private List<User> getBankCollectionOperator() {
         List<User> bankCollOpUserList = new ArrayList<User>(
                 userService.getUsersByRoleName(CollectionConstants.BANK_COLLECTION_OPERATOR));
-        final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_ACTIVE_BRANCHUSER, User.class);
-        List<User> userMapToBranchList = query.getResultList();
+        List<User> userMapToBranchList = getMappedBankCollectionOperator();
         if (!userMapToBranchList.isEmpty())
             bankCollOpUserList.removeAll(userMapToBranchList);
         if (bankCollOpUserList.isEmpty())
