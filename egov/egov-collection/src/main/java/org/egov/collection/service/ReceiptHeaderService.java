@@ -1054,9 +1054,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public String getReceiptHeaderforDishonor(final String instrumentType, final Long bankAccId, final Long bankId,
             final String chequeDDNo, final String chqueDDDate) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,")
+        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egf_instrumenttype iht,egw_status status,bank b,")
                 .append("bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status ")
-                .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '")
+                .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = iht.id and iht.type= '")
                 .append(instrumentType).append("' AND ((ih.ispaycheque ='0' AND status.moduletype ='")
                 .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER).append("' AND status.description = '")
                 .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS).append("'))");
