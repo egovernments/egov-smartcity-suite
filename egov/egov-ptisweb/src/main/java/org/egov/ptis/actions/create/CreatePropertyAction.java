@@ -1056,6 +1056,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(property.getSource())) {
+            publishUpdateEvent(WFLOW_ACTION_STEP_APPROVE,false);
+        }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         final Assignment userAssignment = assignmentService
@@ -1095,6 +1098,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(property.getSource())) {
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT,"Closed".equals(property.getState().getValue()));
+        }
+        
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
@@ -1731,9 +1739,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource())) {
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         }
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(property.getSource())) {
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT_TO_CANCEL, true);
+        }
         setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to : " + securityUtils.getCurrentUser().getName()
                 + " with Application Number: ");
         return RESULT_ACK;
+    }
+    
+    private void publishUpdateEvent(final String action, final boolean isCancelled) {
+        propertyThirdPartyService.publishPropertyUpdateEvent(basicProp, property.getApplicationNo(), action, isCancelled);
+
     }
 
     @Override

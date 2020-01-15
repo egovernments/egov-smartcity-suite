@@ -74,12 +74,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 
 import static java.lang.String.format;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,6 +105,7 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.notice.PtNotice;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -322,13 +325,13 @@ public class PropertyThirdPartyService {
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
                     property.getApplicationNo(),APPLICATION_TYPE_NEW_ASSESSENT);
 
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                     property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created");
 
         } catch (Exception ex) {
 
             LOGGER.error("exception while saving basic proeprty", ex);
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, "Property Creation Failed");
         }
     }
@@ -367,12 +370,12 @@ public class PropertyThirdPartyService {
         try {
             basicPropertyService.update(basicProperty);
 
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                     property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
 
         } catch (Exception ex) {
             LOGGER.error("exception while updating basic property.", ex);
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, failureMsg);
         }
     }
@@ -383,13 +386,67 @@ public class PropertyThirdPartyService {
                 WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
                 nonVacantPropAppNo, APPLICATION_TYPE_NEW_ASSESSENT);
         if (isCreated) {
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                     nonVacantPropAppNo, ApplicationStatus.INPROGRESS, viewURL,
                     "Created Appurtenant Property – VLT Application Number:" + vacantPropAppNo);
         } else {
 
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                     nonVacantPropAppNo, null, null, "Appurtenant Property Creation Failed.");
+        }
+
+    } 
+    
+    public void publishPropertyUpdateEvent(final BasicProperty basicProperty, final String applicationNumber, final String action,
+            final boolean isCancelled) {
+        PropertyImpl appurtenantProperty = getAppurtenantPropertByBasicProperty(basicProperty);
+        String remarks;
+        if (appurtenantProperty == null) {
+            if (isCancelled)
+                remarks = "New Property Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "New Property Approved" : "New Property Rejected";
+
+        } else {
+            if (isCancelled)
+                remarks = "Appurtenant Property Cancelled.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo();
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action)
+                        ? "Appurtenant Property Approved.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo()
+                        : "Appurtenant Property Rejected.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo();
+        }
+        publishUpdateEvent(applicationNumber, action, remarks);
+    }
+
+    /*
+     * api to publish update event
+     */
+    public void publishUpdateEvent(final String applicationNumber, final String action, final String remarks) {
+        ApplicationStatus applicationStatus;
+        String applicationRemarks = remarks;
+        if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action)) {
+            applicationStatus = ApplicationStatus.APPROVED;
+        } else {
+            applicationStatus = ApplicationStatus.REJECTED;
+        }
+        try {
+            eventPublisher.publishWSUpdateEvent(applicationNumber, applicationStatus, applicationRemarks);
+        } catch (Exception ex) {
+            LOGGER.info("exception while publishing update event.Application No:" + applicationNumber, ex);
+        }
+    }
+
+    private PropertyImpl getAppurtenantPropertByBasicProperty(BasicProperty basicProperty) {
+        List<PropertyImpl> appurtenantPropertyList;
+        final Query qry = persistenceService.getSession()
+                .createQuery(
+                        "select P from PropertyStatusValues PSV,PropertyImpl P  where PSV.referenceBasicProperty.id =:BasicPropertyId and P.basicProperty = PSV.basicProperty.id and PSV.isActive='Y' ");
+        qry.setParameter("BasicPropertyId", basicProperty.getId());
+        appurtenantPropertyList = qry.list();
+        if (appurtenantPropertyList.isEmpty()) {
+            return null;
+        } else {
+            return appurtenantPropertyList.get(0);
         }
 
     }

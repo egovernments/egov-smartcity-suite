@@ -928,12 +928,12 @@ public class PropertyTransferService {
             mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
                     propertyMutation.getApplicationNo(), APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
-            eventPublisher.wsPublishEvent(transactionId,
+            eventPublisher.publishWSEvent(transactionId,
                     TransactionStatus.SUCCESS, propertyMutation.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL,
                     "Title Transfer Application Created");
         } catch (Exception ex) {
             LOGGER.error("exception while initiating registered transfer", ex);
-            eventPublisher.wsPublishEvent(transactionId,
+            eventPublisher.publishWSEvent(transactionId,
                     TransactionStatus.FAILED, propertyMutation.getApplicationNo(), null, null,
                     "Title Transfer Application Creation Failed");
 

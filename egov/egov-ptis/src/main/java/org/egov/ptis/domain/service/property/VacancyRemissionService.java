@@ -1111,13 +1111,13 @@ public class VacancyRemissionService {
                     WebUtils.extractRequestDomainURL(request, false),
                     vacancyRemission.getApplicationNumber(), APPLICATION_TYPE_VACANCY_REMISSION);
 
-            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
                     vacancyRemission.getApplicationNumber(), ApplicationStatus.INPROGRESS, viewURL,
                     "Property Vacancy Remission Initiated");
 
         } catch (Exception ex) {
             LOG.error("exception while saving vacancy remission.", ex);
-            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
                     vacancyRemission.getApplicationNumber(), null, null, "Property Vacancy Remission Failed");
         }
 
