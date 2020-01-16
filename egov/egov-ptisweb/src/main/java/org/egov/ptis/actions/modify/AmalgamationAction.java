@@ -83,6 +83,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_I
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -1163,7 +1164,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel, getApplicationType());
         
         if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
-            propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_REJECT,
+            propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_REJECT_TO_CANCEL,
                     "Property Amalgamation Rejected to Cancel");
         }
 

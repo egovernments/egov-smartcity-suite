@@ -1797,7 +1797,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel, getApplicationType());
 
         if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
-            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT, true);
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT_TO_CANCEL, true);
         }
         setAckMessage(
                 getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(),
