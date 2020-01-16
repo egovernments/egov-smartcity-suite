@@ -1164,7 +1164,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         
         if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
             propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_REJECT,
-                    "Property Amalgamation Cancelled");
+                    "Property Amalgamation Rejected to Cancel");
         }
 
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());

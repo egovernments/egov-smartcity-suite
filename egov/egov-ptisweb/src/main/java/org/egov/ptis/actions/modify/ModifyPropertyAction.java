@@ -115,6 +115,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -1808,13 +1809,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         String remarks = null;
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
             if (isCancelled)
-                remarks = "Property Addition/Alteration Cancelled";
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                        ? "Property Addition/Alteration Rejected to Cancel" : "Property Addition/Alteration Cancelled";
             else
                 remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property Addition/Alteration Approved"
                         : "Property Addition/Alteration Rejected";
         } else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))
             if (isCancelled)
-                remarks = "Property Bifurcation Cancelled";
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action) ? "Property Bifurcation Rejected to Cancel"
+                        : "Property Bifurcation Cancelled";
             else
                 remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property Bifurcation Approved"
                         : "Property Bifurcation Rejected";

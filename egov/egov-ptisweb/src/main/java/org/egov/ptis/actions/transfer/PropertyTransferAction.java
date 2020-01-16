@@ -1131,7 +1131,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyMutation.getSource())) {
             propertyThirdPartyService.publishUpdateEvent(propertyMutation.getApplicationNo(), WFLOW_ACTION_STEP_REJECT,
-                    "Property Transfer Cancelled");
+                    "Property Transfer Rejected to Cancel");
         }
         setAckMessage(
                 "Transfer of ownership rejected successfuly and forwarded to : " + securityUtils.getCurrentUser().getName());

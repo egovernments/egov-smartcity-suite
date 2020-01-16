@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import static java.lang.String.format;
 
@@ -399,17 +400,20 @@ public class PropertyThirdPartyService {
     
     public void publishPropertyUpdateEvent(final BasicProperty basicProperty, final String applicationNumber, final String action,
             final boolean isCancelled) {
-        PropertyImpl appurtenantProperty = getAppurtenantPropertByBasicProperty(basicProperty);
+        PropertyImpl appurtenantProperty = getAppurtenantPropertyByBasicProperty(basicProperty);
         String remarks;
         if (appurtenantProperty == null) {
             if (isCancelled)
-                remarks = "New Property Cancelled";
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action) ? "New Property Rejected to Cancel"
+                        : "New Property Cancelled";
             else
                 remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "New Property Approved" : "New Property Rejected";
 
         } else {
             if (isCancelled)
-                remarks = "Appurtenant Property Cancelled.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo();
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                        ? "Appurtenant Property Rejected to Cancel.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo()
+                        : "Appurtenant Property Cancelled.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo();
             else
                 remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action)
                         ? "Appurtenant Property Approved.VLT ApplicationNo:" + appurtenantProperty.getApplicationNo()
@@ -436,7 +440,7 @@ public class PropertyThirdPartyService {
         }
     }
 
-    private PropertyImpl getAppurtenantPropertByBasicProperty(BasicProperty basicProperty) {
+    private PropertyImpl getAppurtenantPropertyByBasicProperty(BasicProperty basicProperty) {
         List<PropertyImpl> appurtenantPropertyList;
         final Query qry = persistenceService.getSession()
                 .createQuery(
