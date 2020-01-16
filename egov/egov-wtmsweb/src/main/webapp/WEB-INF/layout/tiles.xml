@@ -510,4 +510,9 @@
   	  <put-attribute name="page-title" value="title.generateEstimationNotice" cascade="true"></put-attribute>
   	  <put-attribute name="body" value="/WEB-INF/views/application/generateEstimationNotice.jsp"></put-attribute>  
     </definition>
+    
+    <definition name="waterValidation" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/waterValidation.jsp"/>
+    </definition>
 </tiles-definitions>
