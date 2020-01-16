@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_AEE_TI_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
@@ -510,25 +511,26 @@ public class WaterTaxCollection extends TaxCollection {
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(
-                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
-                            && installment.equalsIgnoreCase(
-                                    demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-                        if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
-                            throw new ApplicationRuntimeException(
-                                    "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
-                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
-                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
-                                            + " for demandDetail " + demandDetail);
+                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                        if (reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)
+                                || installment.equalsIgnoreCase(
+                                        demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                            if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
+                                throw new ApplicationRuntimeException(
+                                        "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
+                                                + "to be deducted amount " + rcptAccInfo.getCrAmount()
+                                                + " is greater than the collected amount " + demandDetail.getAmtCollected()
+                                                + " for demandDetail " + demandDetail);
 
-                        demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
-                        if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
-                                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                            demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                            demandDetail
+                                    .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                            if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                                    && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                                demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
-                        LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason
-                                + " and installment : " + installment);
-                    }
+                            LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason
+                                    + " and installment : " + installment);
+                        }
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
         LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
