@@ -130,6 +130,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SYSTEM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
@@ -151,7 +153,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROVE_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -634,7 +635,8 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails updateWaterConnection(WaterConnectionDetails waterConnectionDetails,
             Long approvalPosition, String approvalComent, String additionalRule, String workFlowAction, String mode,
             ReportOutput reportOutput, String sourceChannel) {
-
+    	
+    	String applicationType = waterConnectionDetails.getApplicationType().getName();
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
@@ -737,7 +739,15 @@ public class WaterConnectionDetailsService {
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
-
+		
+		if (Source.WARDSECRETARY.equals(waterConnectionDetails.getSource())
+				&& (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+						|| ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+						|| CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+				&& (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+						|| WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)))
+			publishEventForWardSecretary(null, waterConnectionDetails.getApplicationNumber(), applicationType, true,
+					WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction);
         updateIndexes(waterConnectionDetails);
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -1929,30 +1939,42 @@ public class WaterConnectionDetailsService {
 
 	@Transactional
 	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
-			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
+			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent,
+			String mode) {
 		try {
 			createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
 					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
 			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), true);
+					waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 
 		} catch (Exception e) {
 			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), false);
+					waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
 		}
 	}
 
 	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, String applicationType,
-			boolean isSuccess) {
+			boolean isSuccess, String mode, String workFlowAction) {
 		if (isSuccess) {
-			thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-					.withApplicationNumber(applicationNo)
-					.withViewLink(format(WaterTaxConstants.VIEW_LINK, WebUtils.extractRequestDomainURL(request, false),
-							applicationNo))
-					.withTransactionStatus(TransactionStatus.SUCCESS)
-					.withApplicationStatus(ApplicationStatus.INPROGRESS).withRemark(applicationType.concat(" created"))
-					.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
-
+			if (WARDSECRETARY_EVENTPUBLISH_MODE_CREATE.equalsIgnoreCase(mode)) {
+				thirdPartyApplicationEventPublisher
+						.publishEvent(ApplicationDetails.builder().withApplicationNumber(applicationNo)
+								.withViewLink(format(WaterTaxConstants.VIEW_LINK,
+										WebUtils.extractRequestDomainURL(request, false), applicationNo))
+								.withTransactionStatus(TransactionStatus.SUCCESS)
+								.withApplicationStatus(ApplicationStatus.INPROGRESS)
+								.withRemark(applicationType.concat(" created"))
+								.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+			} else if (WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE.equalsIgnoreCase(mode)) {
+				ApplicationDetails applicationDetails = ApplicationDetails.builder()
+						.withApplicationNumber(applicationNo)
+						.withApplicationStatus(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+								? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED)
+						.withRemark(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+								? applicationType.concat(" approved") : applicationType.concat(" cancelled"))
+						.withDateOfCompletion(new Date()).build();
+				thirdPartyApplicationEventPublisher.publishEvent(applicationDetails);
+			}
 		} else {
 			thirdPartyApplicationEventPublisher
 					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)

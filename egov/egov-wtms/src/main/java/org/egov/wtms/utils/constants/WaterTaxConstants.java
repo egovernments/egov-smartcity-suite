@@ -491,4 +491,6 @@ public class WaterTaxConstants {
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG = "Paid Amount is greater than Total Amount to be paid";
     public static final String THIRD_PARTY_ERR_MSG_CONSUMER_NO_NOT_FOUND = "Consumer number not found";
 
+    public static final String WARDSECRETARY_EVENTPUBLISH_MODE_CREATE = "create";
+    public static final String WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE = "update";
 }

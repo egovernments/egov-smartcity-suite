@@ -51,6 +51,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
@@ -330,7 +331,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
 		if (isWardSecretaryUser)
 			waterConnectionDetailsService.persistAndPublishEventForWardSecretary(addConnection, request, workFlowAction,
-					approvalPosition, approvalComment);
+					approvalPosition, approvalComment, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
 			waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
 					addConnection.getApplicationType().getCode(), workFlowActionValue);

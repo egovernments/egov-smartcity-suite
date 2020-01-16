@@ -124,18 +124,18 @@ public class ReconnectionService {
     @Transactional
 	public WaterConnectionDetails persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
 			HttpServletRequest request, Long approvalPosition, String approvalComent, String additionalRule,
-            String workFlowAction, String sourceChannel) {
+            String workFlowAction, String sourceChannel, String mode) {
     	WaterConnectionDetails savedwaterConnectionDetails = null;
 		try {
 			savedwaterConnectionDetails = updateReConnection(waterConnectionDetails,
 					approvalPosition, approvalComent, additionalRule, workFlowAction, sourceChannel);
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), true);
+					waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 		} catch (Exception e) {
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), false);
+					waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
 		}
 		return savedwaterConnectionDetails;
 	}

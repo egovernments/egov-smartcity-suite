@@ -170,16 +170,16 @@ public class CloserConnectionService {
     
 	@Transactional
 	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
-			HttpServletRequest request, Long approvalPosition, String approvalComent, String workFlowAction) {
+			HttpServletRequest request, Long approvalPosition, String approvalComent, String workFlowAction, String mode) {
 		try {
 			updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent, workFlowAction);
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), true);
+					waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 		} catch (Exception e) {
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), false);
+					waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
 		}
 	}
 }

@@ -202,17 +202,17 @@ public class ChangeOfUseService {
     
 	@Transactional
 	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
-			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent) {
+			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent, String mode) {
 		try {
 			createChangeOfUseApplication(waterConnectionDetails, approvalPosition, approvalComent,
 					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), true);
+					waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 		} catch (Exception e) {
 			waterConnectionDetailsService.publishEventForWardSecretary(request,
 					waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), false);
+					waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
 		}
 	}
 

@@ -61,6 +61,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PRIMARYCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -396,7 +397,7 @@ public class NewConnectionController extends GenericConnectionController {
 
 		if (loggedUserIsWardSecretaryUser)
 			waterConnectionDtlsService.persistAndPublishEventForWardSecretary(waterConnectionDetails, request,
-					workFlowAction, approvalPosition, approvalComent);
+					workFlowAction, approvalPosition, approvalComent, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
 			waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
 					approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);

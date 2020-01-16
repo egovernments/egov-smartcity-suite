@@ -54,6 +54,7 @@ import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CANCELLED;
@@ -69,7 +70,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -327,7 +327,7 @@ public class ReconnectionController extends GenericConnectionController {
 
 		} else if (isWardSecretaryUser)
 			savedWaterConnectionDetails = reconnectionService.persistAndPublishEventForWardSecretary(waterConnectionDetails, request,
-					approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
+					approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
 			savedWaterConnectionDetails = reconnectionService.updateReConnection(waterConnectionDetails, 
 					approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);

@@ -51,6 +51,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
@@ -302,7 +303,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         
 		if (isWardSecretaryUser)
 			changeOfUseService.persistAndPublishEventForWardSecretary(changeOfUse, request, workFlowAction,
-					approvalPosition, approvalComent);
+					approvalPosition, approvalComent, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
 			changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
 					changeOfUse.getApplicationType().getCode(), workFlowAction);
