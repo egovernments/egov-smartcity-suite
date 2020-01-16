@@ -106,7 +106,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -208,6 +209,7 @@ import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepos
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
@@ -353,6 +355,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private DemandVoucherService demandVoucherService;
+    
+    @Autowired
+    private transient PropertyThirdPartyService propertyThirdPartyService;
 
     public RevisionPetitionAction() {
 
@@ -885,6 +890,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
         revisionPetitionService.updateRevisionPetition(objection);
+        
+        if(Source.WARDSECRETARY.toString().equalsIgnoreCase(objection.getSource()) && WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)){
+            publishUpdateEvent(WFLOW_ACTION_STEP_APPROVE,false);
+            
+        }
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction))
             addActionMessage(
                     getText("petition.forward.success", new String[] { revisionPetitionService.returWorkflowType(wfType) }));
@@ -1334,6 +1344,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         objection.getDocuments().clear();
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+        
+        if(Source.WARDSECRETARY.toString().equalsIgnoreCase(objection.getSource())){
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT,"Closed".equalsIgnoreCase(objection.getState().getValue()));
+            
+        }
         if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_GRP))
             addActionMessage(getText("objection.cancelled"));
         else
@@ -1565,6 +1580,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 approverComments, approverName);
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+        if(Source.WARDSECRETARY.toString().equalsIgnoreCase(objection.getSource())){
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT_TO_CANCEL,true);
+            
+        }
+        
         StringBuilder build = new StringBuilder(" ").append(securityUtils.getCurrentUser().getName())
                 .append(" with Assessment Number: ")
                 .append(objection.getBasicProperty().getUpicNo());
@@ -1573,6 +1593,28 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 getText(message,
                         new String[] { revisionPetitionService.returWorkflowType(wfType)}));
         return STRUTS_RESULT_MESSAGE;
+    }
+    
+    private void publishUpdateEvent(final String action, final boolean isCancelled) {
+        String remarks = null;
+        if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)) {
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                        ? "Property Revision Petition Rejected to Cancel" : "Property Revision Petition Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property Revision Petition Approved"
+                        : "Property Revision Petition Rejected";
+        } else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(wfType))
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                        ? "Property General Revision Petition Rejected to Cancel"
+                        : "Property General Revision Petition Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property General Revision Petition Approved"
+                        : "Property General Revision Petition Rejected";
+
+        propertyThirdPartyService.publishUpdateEvent(objection.getApplicationNo(), action, remarks);
+
     }
 
     public List<Floor> getFloorDetails() {
