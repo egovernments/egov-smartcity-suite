@@ -47,6 +47,7 @@
  */
 package org.egov.tl.service.es;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -54,6 +55,9 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.LicenseUtils;
@@ -93,6 +97,9 @@ public class LicenseApplicationIndexService {
 
     @Autowired
     private LicenseUtils licenseUtils;
+    
+    @Autowired
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     public void createOrUpdateLicenseApplicationIndex(final TradeLicense license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
@@ -149,7 +156,16 @@ public class LicenseApplicationIndexService {
             applicationIndex.setApproved(ApprovalStatus.REJECTED);
             applicationIndex.setClosed(ClosureStatus.YES);
         }
-
+		if (ClosureStatus.YES.compareTo(applicationIndex.getClosed()) == 0
+				&& Source.WARDSECRETARY.toString().equalsIgnoreCase(license.getApplicationSource())) {
+			thirdPartyApplicationEventPublisher
+					.publishEvent(ApplicationDetails.builder().withApplicationNumber(license.getApplicationNumber())
+							.withApplicationStatus(applicationIndex.getApproved().equals(ApprovalStatus.APPROVED)
+									? ApplicationStatus.APPROVED
+									: ApplicationStatus.REJECTED)
+							.withDateOfCompletion(new Date())
+							.withRemark(license.getRemarks()).build());
+		}
         applicationIndexService.updateApplicationIndex(applicationIndex);
 
     }
