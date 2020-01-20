@@ -99,7 +99,7 @@ public class LicenseApplicationIndexService {
     private LicenseUtils licenseUtils;
     
     @Autowired
-    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
+    private ThirdPartyApplicationEventPublisher eventPublisher;
 
     public void createOrUpdateLicenseApplicationIndex(final TradeLicense license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
@@ -158,7 +158,7 @@ public class LicenseApplicationIndexService {
         }
 		if (ClosureStatus.YES.compareTo(applicationIndex.getClosed()) == 0
 				&& Source.WARDSECRETARY.toString().equalsIgnoreCase(license.getApplicationSource())) {
-			thirdPartyApplicationEventPublisher
+			eventPublisher
 					.publishEvent(ApplicationDetails.builder().withApplicationNumber(license.getApplicationNumber())
 							.withApplicationStatus(applicationIndex.getApproved().equals(ApprovalStatus.APPROVED)
 									? ApplicationStatus.APPROVED
