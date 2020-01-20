@@ -235,7 +235,7 @@ public class ReIssueService {
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue1);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue1);
 		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(reissue.getSource())
-				&& (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction())))
+				&& WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
 			marriageRegistrationService.publishEventForWardSecretary(null, reissue.getApplicationNo(), true, true,
 					MODE_UPDATE, WFLOW_ACTION_STEP_APPROVE);
 
@@ -273,7 +273,7 @@ public class ReIssueService {
         reissue.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
 		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(reissue.getSource())
-				&& (WFLOW_ACTION_STEP_CANCEL_REISSUE.equalsIgnoreCase(workflowContainer.getWorkFlowAction())))
+				&& WFLOW_ACTION_STEP_CANCEL_REISSUE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
 			marriageRegistrationService.publishEventForWardSecretary(null, reissue.getApplicationNo(), true, true,
 					MODE_UPDATE, "cancel");
         return reissue;

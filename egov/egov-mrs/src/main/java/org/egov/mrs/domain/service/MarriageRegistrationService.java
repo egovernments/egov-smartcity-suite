@@ -538,7 +538,7 @@ public class MarriageRegistrationService {
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
 		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(marriageRegistration.getSource())
-				&& (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction())))
+				&& WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
 			publishEventForWardSecretary(null, marriageRegistration.getApplicationNo(), false, true, MODE_UPDATE,
 					WFLOW_ACTION_STEP_APPROVE);
         
@@ -640,7 +640,7 @@ public class MarriageRegistrationService {
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
 		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(marriageRegistration.getSource())
-				&& (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workflowContainer.getWorkFlowAction())))
+				&& WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
 			publishEventForWardSecretary(null, marriageRegistration.getApplicationNo(), false, true, MODE_UPDATE,
 					"cancel");
 		
@@ -1043,7 +1043,7 @@ public class MarriageRegistrationService {
 			boolean isSuccess, String mode, String workFlowAction) {
 		if (isSuccess) {
 			if (MODE_CREATE.equalsIgnoreCase(mode)) {
-				String viewLink = StringUtils.EMPTY;
+				String viewLink = EMPTY;
 				if (isReIssue)
 					viewLink = MarriageConstants.REISSUE_VIEW_LINK;
 				else
