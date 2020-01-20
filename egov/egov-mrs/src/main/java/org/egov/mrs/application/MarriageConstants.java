@@ -207,4 +207,6 @@ public class MarriageConstants {
     public static final String WARDSECRETARY_OPERATOR_ROLE = "WardSecretary Operator";
     public static final String MARRIAGEREGISTRATION_VIEW_LINK ="%s/mrs/registration/viewapplication/%s";
     public static final String REISSUE_VIEW_LINK ="%s/mrs/reissue/viewapplication/%s";
+    public static final String MODE_CREATE ="create";
+    public static final String MODE_UPDATE ="update";
 }
