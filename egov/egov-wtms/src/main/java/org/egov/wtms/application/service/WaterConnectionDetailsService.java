@@ -2007,7 +2007,7 @@ public class WaterConnectionDetailsService {
 	 * @return updated application number
 	 */
 	private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
-		String updatedApplicationNo = StringUtils.EMPTY;
+		String updatedApplicationNo = EMPTY;
 		String natureOfTask;
 		List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
 		if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
@@ -2023,7 +2023,7 @@ public class WaterConnectionDetailsService {
 					updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
 							.concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
 
-				if (StringUtils.isNotBlank(updatedApplicationNo))
+				if (isNotBlank(updatedApplicationNo))
 					break;
 			}
 		}
