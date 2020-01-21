@@ -254,9 +254,8 @@ public class FinancialUtils {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     workflowHistory.put("user", user.getUsername() + "::" + user.getName());
-                    workflowHistory.put("department",
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
+                    workflowHistory.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     workflowHistory
