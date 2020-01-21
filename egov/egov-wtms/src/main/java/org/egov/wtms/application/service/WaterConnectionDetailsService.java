@@ -57,6 +57,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.SURVEY;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
 import static org.egov.infra.utils.DateUtils.noOfMonthsBetween;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.CLOSED;
@@ -91,6 +92,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_WATER_TAP_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
@@ -119,6 +121,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PTIS_DETAILS_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONN_WATER_TAP_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
@@ -287,7 +290,9 @@ import com.google.gson.reflect.TypeToken;
 @Transactional(readOnly = true)
 public class WaterConnectionDetailsService {
 
-    private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
+	private static final String APPLICATION_TYPE_CLOSING_CONNECTION = "Closing connection";
+    private static final String APPLICATION_TYPE_RECONNECTION = "Reconnection";
+	private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
     private static final String APPLICATION_NO = "Application no ";
     private static final String REGARDING = " regarding ";
     private static final String APPROVED = "Approved";
@@ -740,14 +745,20 @@ public class WaterConnectionDetailsService {
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
 		
-		if (Source.WARDSECRETARY.equals(waterConnectionDetails.getSource())
-				&& (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-						|| ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-						|| CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+				&& !REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
 				&& (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-						|| WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)))
-			publishEventForWardSecretary(null, waterConnectionDetails.getApplicationNumber(), applicationType, true,
+						|| WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))) {
+			String applicationNo = EMPTY;
+			if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
+					|| APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
+				applicationNo = getUpdatedApplicationNumber(waterConnectionDetails, applicationType);
+			else
+				applicationNo = waterConnectionDetails.getApplicationNumber();
+
+			publishEventForWardSecretary(null, applicationNo, applicationType, true,
 					WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction);
+		}
         updateIndexes(waterConnectionDetails);
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -1957,14 +1968,17 @@ public class WaterConnectionDetailsService {
 			boolean isSuccess, String mode, String workFlowAction) {
 		if (isSuccess) {
 			if (WARDSECRETARY_EVENTPUBLISH_MODE_CREATE.equalsIgnoreCase(mode)) {
-				thirdPartyApplicationEventPublisher
-						.publishEvent(ApplicationDetails.builder().withApplicationNumber(applicationNo)
-								.withViewLink(format(WaterTaxConstants.VIEW_LINK,
-										WebUtils.extractRequestDomainURL(request, false), applicationNo))
-								.withTransactionStatus(TransactionStatus.SUCCESS)
-								.withApplicationStatus(ApplicationStatus.INPROGRESS)
-								.withRemark(applicationType.concat(" created"))
-								.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+				thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+						.withApplicationNumber((APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
+								|| APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
+										? applicationNo.concat("~").concat(getFormattedDate(new Date(), "dd-MM-yyyy"))
+										: applicationNo)
+						.withViewLink(format(WaterTaxConstants.VIEW_LINK,
+								WebUtils.extractRequestDomainURL(request, false), applicationNo))
+						.withTransactionStatus(TransactionStatus.SUCCESS)
+						.withApplicationStatus(ApplicationStatus.INPROGRESS)
+						.withRemark(applicationType.concat(" created"))
+						.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
 			} else if (WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE.equalsIgnoreCase(mode)) {
 				ApplicationDetails applicationDetails = ApplicationDetails.builder()
 						.withApplicationNumber(applicationNo)
@@ -1981,5 +1995,38 @@ public class WaterConnectionDetailsService {
 							.withRemark(applicationType.concat(" creation failed"))
 							.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
 		}
+	}
+
+	/**
+	 * API appends the latest initiation date to the application number for
+	 * updating the final status in case of Closure/Reconnection for Ward
+	 * Secretary portal requests
+	 * 
+	 * @param waterConnectionDetails
+	 * @param applicationType
+	 * @return updated application number
+	 */
+	private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
+		String updatedApplicationNo = StringUtils.EMPTY;
+		String natureOfTask;
+		List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
+		if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
+			natureOfTask = CLOSURE_WATER_TAP_CONNECTION;
+		else
+			natureOfTask = RECONN_WATER_TAP_CONNECTION;
+
+		if (!stateHistoryList.isEmpty()) {
+			Collections.sort(stateHistoryList, (history1, history2) -> history2.getId().compareTo(history1.getId()));
+			for (StateHistory stateHistory : stateHistoryList) {
+				if (natureOfTask.equalsIgnoreCase(stateHistory.getNatureOfTask())
+						&& APPLICATION_STATUS_NEW.equalsIgnoreCase(stateHistory.getValue()))
+					updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
+							.concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
+
+				if (StringUtils.isNotBlank(updatedApplicationNo))
+					break;
+			}
+		}
+		return updatedApplicationNo;
 	}
 }
