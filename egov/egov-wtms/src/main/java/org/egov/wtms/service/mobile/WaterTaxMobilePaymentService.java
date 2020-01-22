@@ -116,6 +116,7 @@ public class WaterTaxMobilePaymentService {
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
+    @Transactional
     public String mobileBillPayment(final String consumerCode, final BigDecimal amountToBePaid,
             WaterConnectionDetails waterConnectionDetails) throws ValidationException {
         String redirectUrl = "";
