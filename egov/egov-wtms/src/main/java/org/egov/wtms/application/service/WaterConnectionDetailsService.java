@@ -745,7 +745,8 @@ public class WaterConnectionDetailsService {
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
 		
-		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+		if (waterConnectionDetails.getSource() != null
+				&& Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
 				&& !REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
 				&& (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
 						|| WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))) {
