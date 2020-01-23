@@ -48,6 +48,11 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.mrs.application.MarriageConstants.MODE_CREATE;
+import static org.egov.mrs.application.MarriageConstants.MODE_UPDATE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -229,6 +234,11 @@ public class ReIssueService {
             updatePortalMessage(reissue);
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue1);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue1);
+		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(reissue.getSource())
+				&& WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
+			marriageRegistrationService.publishEventForWardSecretary(null, reissue.getApplicationNo(), true, true,
+					MODE_UPDATE, WFLOW_ACTION_STEP_APPROVE);
+
         return reissue1;
     }
 
@@ -262,7 +272,10 @@ public class ReIssueService {
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         reissue.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
-
+		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(reissue.getSource())
+				&& WFLOW_ACTION_STEP_CANCEL_REISSUE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
+			marriageRegistrationService.publishEventForWardSecretary(null, reissue.getApplicationNo(), true, true,
+					MODE_UPDATE, "cancel");
         return reissue;
     }
 
@@ -447,10 +460,12 @@ public class ReIssueService {
 		try {
 			createReIssueApplication(reIssue, workflowContainer);
 			applicationNo = reIssue.getApplicationNo();
-			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, true);
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, true, MODE_CREATE,
+					StringUtils.EMPTY);
 
 		} catch (Exception e) {
-			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, false);
+			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, false, MODE_CREATE,
+					StringUtils.EMPTY);
 		}
 
 		return applicationNo;

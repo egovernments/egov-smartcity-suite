@@ -74,10 +74,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -1013,6 +1016,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         basicPropertyService.update(basicProp);
         propService.updateIndexes(propertyModel, getApplicationType());
         setBasicProp(basicProp);
+
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+            propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_APPROVE,
+                    "Property Amalgamation Approved");
+        }
+
         setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { AMALGAMATION_OF_ASSESSMENT,
                 propertyModel.getBasicProperty().getUpicNo() }));
         addActionMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { AMALGAMATION_OF_ASSESSMENT,
@@ -1074,6 +1083,13 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
         propertyImplService.update(propertyModel);
         propService.updateIndexes(propertyModel, getApplicationType());
+        
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+            String remarks = "Closed".equalsIgnoreCase(propertyModel.getState().getValue()) ? "Property Amalgamation Cancelled"
+                    : "Property Amalgamation Rejected";
+            propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_REJECT, remarks);
+        }
+
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         final String username = getInitiator();
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
@@ -1140,6 +1156,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         propertyImplService.update(propertyModel);
         propService.updateIndexes(propertyModel, getApplicationType());
+        
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+            propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), WFLOW_ACTION_STEP_REJECT_TO_CANCEL,
+                    "Property Amalgamation Rejected to Cancel");
+        }
+
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS,
                 new String[] { AMALGAMATION_OF_ASSESSMENT, securityUtils.getCurrentUser().getName() }));

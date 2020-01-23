@@ -82,6 +82,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -99,6 +100,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -158,6 +160,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     
     @Autowired
     private DemandVoucherService demandVoucherService;
+    
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -398,6 +403,23 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         else
             successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
                     + " with application number " + property.getApplicationNo();
+
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(property.getSource())
+                && (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAct) ||
+                        WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAct) ||
+                        WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAct))) {
+
+            String remarks;
+            boolean isCancelled = "Closed".equalsIgnoreCase(((PropertyImpl) property).getState().getValue());
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAct)
+                        ? "Property TaxExemption Rejected to Cancel" : "Property TaxExemption Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAct) ? "Property TaxExemption Approved"
+                        : "Property TaxExemption Rejected";
+            propertyThirdPartyService.publishUpdateEvent(property.getApplicationNo(), workFlowAct, remarks);
+
+        }
 
         model.addAttribute(SUCCESSMESSAGE, successMessage);
         return TAX_EXEMPTION_SUCCESS;

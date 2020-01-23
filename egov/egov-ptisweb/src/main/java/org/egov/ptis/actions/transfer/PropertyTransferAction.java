@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -86,6 +87,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.event.MutationEventPublisher;
@@ -205,6 +207,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @PersistenceContext
     private transient EntityManager entityManager;
+    
+    @Autowired
+    private transient PropertyThirdPartyService propertyThirdPartyService;
 
     // Model and View data
     private Long mutationId;
@@ -600,7 +605,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         || SENIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation))) {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
-            buildSMS(propertyMutation);
+            
+            if(Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyMutation.getSource())){
+                
+                String remarks = "Closed".equalsIgnoreCase(propertyMutation.getState().getValue()) ? "Property Transfer Cancelled"
+                        : "Property Transfer Rejected";
+                propertyThirdPartyService.publishUpdateEvent(propertyMutation.getApplicationNo(), WFLOW_ACTION_STEP_REJECT, remarks);
+            }
             buildEmail(propertyMutation);
             approverName = "";
             List<Assignment> assignment;
@@ -650,6 +661,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         mutationEventPublisher.publishEvent(propertyMutation, false);
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyMutation.getSource())) {
+            propertyThirdPartyService.publishUpdateEvent(propertyMutation.getApplicationNo(), WFLOW_ACTION_STEP_REJECT,
+                    "Property Transfer Approved");
+        }
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
@@ -1117,6 +1132,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyMutation.getSource())) {
+            propertyThirdPartyService.publishUpdateEvent(propertyMutation.getApplicationNo(), WFLOW_ACTION_STEP_REJECT_TO_CANCEL,
+                    "Property Transfer Rejected to Cancel");
+        }
         setAckMessage(
                 "Transfer of ownership rejected successfuly and forwarded to : " + securityUtils.getCurrentUser().getName());
         setAssessmentNoMessage(" with Assessment Number: ");

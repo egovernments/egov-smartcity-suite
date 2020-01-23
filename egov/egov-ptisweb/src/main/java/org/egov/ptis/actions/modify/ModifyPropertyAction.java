@@ -104,6 +104,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
@@ -111,6 +112,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -913,6 +916,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setBasicProp(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
             propService.updatePortal(propertyModel, getApplicationType());
+
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+            publishUpdateEvent(WFLOW_ACTION_STEP_APPROVE, false);
+        }
+        
         setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS,
                 new String[] { getModifyReasonString(), propertyModel.getBasicProperty().getUpicNo() }));
         buildEmailandSms(propertyModel, getApplicationType());
@@ -1008,6 +1016,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
         }
         propService.updateIndexes(propertyModel, getApplicationType());
+        
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT, "Closed".equalsIgnoreCase(propertyModel.getState().getValue()));
+        }
+        
         final String username = getInitiator();
         getAckMsg(username, wfInitiator);
         buildEmailandSms(propertyModel, getApplicationType());
@@ -1778,12 +1792,35 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         propertyImplService.update(propertyModel);
         propService.updateIndexes(propertyModel, getApplicationType());
+
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(propertyModel.getSource())) {
+            publishUpdateEvent(WFLOW_ACTION_STEP_REJECT_TO_CANCEL, true);
+        }
         setAckMessage(
                 getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(),
                         securityUtils.getCurrentUser().getName() + " with Assessment Number: " }));
         return RESULT_ACK;
     }
 
+    private void publishUpdateEvent(final String action, final boolean isCancelled) {
+        String remarks = null;
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                        ? "Property Addition/Alteration Rejected to Cancel" : "Property Addition/Alteration Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property Addition/Alteration Approved"
+                        : "Property Addition/Alteration Rejected";
+        } else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action) ? "Property Bifurcation Rejected to Cancel"
+                        : "Property Bifurcation Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "Property Bifurcation Approved"
+                        : "Property Bifurcation Rejected";
+
+        propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), action, remarks);
+    }
 
     public BasicProperty getBasicProp() {
         return basicProp;

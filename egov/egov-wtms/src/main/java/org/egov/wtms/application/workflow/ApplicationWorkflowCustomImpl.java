@@ -275,14 +275,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         }
         if (workFlowAction != null && WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
-            EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
-            if (demand != null) {
-                WaterDemandConnection waterDemandConnection = waterDemandConnectionService
-                        .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand);
-                demand.setIsHistory("Y");
-                demand.setModifiedDate(new Date());
-                waterDemandConnection.setDemand(demand);
-                waterDemandConnectionService.updateWaterDemandConnection(waterDemandConnection);
+            if (!CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+                EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+                if (demand != null) {
+                    WaterDemandConnection waterDemandConnection = waterDemandConnectionService
+                            .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand);
+                    demand.setIsHistory("Y");
+                    demand.setModifiedDate(new Date());
+                    waterDemandConnection.setDemand(demand);
+                    waterDemandConnectionService.updateWaterDemandConnection(waterDemandConnection);
+                }
             }
 
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -337,7 +339,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, currState, null,
                         REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                                ? waterConnectionDetails.getApplicationDate() : null);
+                                ? waterConnectionDetails.getApplicationDate()
+                                : null);
 
                 Integer sla = applicationProcessTimeService.getApplicationProcessTime(
                         waterConnectionDetails.getApplicationType(),
@@ -364,9 +367,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END")
                             || "Cancelled".equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue()))) {
-				if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
-						|| waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user)
-						|| waterTaxUtils.isWardSecretaryUser(user)))
+                if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
+                        || waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user)
+                        || waterTaxUtils.isWardSecretaryUser(user)))
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, currState, null);
                 else

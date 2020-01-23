@@ -642,6 +642,7 @@ public final class CollectionConstants {
     public static final String QUERY_RECEIPT_BRANCH = "getAllReceiptBranch";
     public static final String QUERY_ACTIVE_BRANCHUSER = "QUERY_ACTIVE_BRANCHUSER";
     public static final String QUERY_ALL_BRANCHUSER = "QUERY_ALL_BRANCHUSER";
+    public static final String QUERY_BRANCHUSER = "QUERY_BRANCHUSER";
 
     // ATOM payment gateway variables name
     public static final String ATOM_LOGIN = "login";

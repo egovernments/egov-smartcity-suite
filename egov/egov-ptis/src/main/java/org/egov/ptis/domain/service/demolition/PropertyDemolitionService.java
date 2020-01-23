@@ -681,12 +681,12 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
                     newProperty.getApplicationNo(), APPLICATION_TYPE_DEMOLITION);
 
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                     newProperty.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Demolition Initiated");
 
         } catch (Exception ex) {
             LOGGER.error("exception while doing property demolition.", ex);
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                     newProperty.getApplicationNo(), null, null, "Property Demolition Failed");
         }
         return basicProperty;

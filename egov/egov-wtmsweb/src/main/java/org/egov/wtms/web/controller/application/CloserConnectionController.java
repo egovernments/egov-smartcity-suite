@@ -54,6 +54,7 @@ import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 
@@ -318,7 +319,7 @@ public class CloserConnectionController extends GenericConnectionController {
         }
 		if (isWardSecretaryUser)
 			closerConnectionService.persistAndPublishEventForWardSecretary(waterConnectionDetails, request,
-					approvalPosition, approvalComent, workFlowAction);
+					approvalPosition, approvalComent, workFlowAction, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
 			closerConnectionService.updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent,
 					workFlowAction);

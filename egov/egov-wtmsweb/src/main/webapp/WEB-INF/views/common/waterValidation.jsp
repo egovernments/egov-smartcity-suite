@@ -45,28 +45,41 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<%@ taglib prefix="s" uri="/struts-tags"%>
 
-<html>
-<head>
-<title></title>
-</head>
-<body>
-
-	<s:if test="%{hasErrors()}">
-		<div class="errorstyle">
-			<s:actionerror />
-			<s:fielderror />
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
+body {
+	font-family: regular !important;
+	font-size: 14px;
+}
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.validation.error" text="Validation Error" />
+				</div>
+			</div>
+			<div class="panel-body"
+				style="text-align: center; color: red; font-size: 20px">
+                <c:if test="${not empty errorMsgList}">
+                    <c:forEach items="${errorMsgList}" var="error">
+                        <div class="mandatory" style="text-align: center;">
+                            <strong>${error.getMessage()}</strong>
+                        </div>
+                    </c:forEach>
+                </c:if>
+                <c:if test="${not empty errorMsg}">
+                     <div class="mandatory" style="text-align: center;">
+                        <strong>${errorMsg}</strong>
+                     </div>
+                </c:if>
+			</div>
 		</div>
-	</s:if>
-	<s:if test="%{hasActionMessages()}">
-		<font style='color: green; font-weight: bold'> <s:actionmessage />
-		</font>
-	</s:if>
-	 
-	 <div class="buttonbottom">
-				<input name="close" type="button" class="button" id="button"
-					onclick="window.close()" value="Close" />
-	</div> 
-</body>
-</html>
+	</div>

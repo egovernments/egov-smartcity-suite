@@ -679,12 +679,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                     WebUtils.extractRequestDomainURL(request, false),
                     newProperty.getApplicationNo(), APPLICATION_TYPE_TAX_EXEMTION);
 
-            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.SUCCESS,
                     newProperty.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "Property Tax Exemption Initiated");
 
         } catch (Exception ex) {
             LOGGER.error("exception while updating basic proeprty in tax exemption.", ex);
-            eventPublisher.wsPublishEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), TransactionStatus.FAILED,
                     property.getApplicationNo(), null, null, "Property Tax Exemption Failed");
         }
     }

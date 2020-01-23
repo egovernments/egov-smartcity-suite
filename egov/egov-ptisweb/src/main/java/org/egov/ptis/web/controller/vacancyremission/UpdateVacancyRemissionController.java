@@ -47,6 +47,7 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -58,6 +59,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -77,6 +79,9 @@ import javax.validation.Valid;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 
 import java.util.Date;
@@ -106,6 +111,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService; 
 
     @Autowired
     public UpdateVacancyRemissionController(final VacancyRemissionService vacancyRemissionService,
@@ -208,6 +216,20 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                     successMsg = "Vacancy Remission forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition) + " with application number : "
                             + vacancyRemission.getApplicationNumber();
+            if (Source.WARDSECRETARY.toString().equalsIgnoreCase(vacancyRemission.getSource()) &&
+                    (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                            || WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction)
+                            || WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))) {
+                String remarks;
+                boolean isCancelled = "Closed".equalsIgnoreCase(vacancyRemission.getState().getValue());
+                if (isCancelled)
+                    remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction)
+                            ? "Property Vacancy Remission Rejected to Cancel" : "Property Vacancy Remission Cancelled";
+                else
+                    remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction) ? "Property Vacancy Remission Approved"
+                            : "Property Vacancy Remission Rejected";
+                propertyThirdPartyService.publishUpdateEvent(vacancyRemission.getApplicationNumber(), workFlowAction, remarks);
+            }
 
             model.addAttribute("successMessage", successMsg);
             return VACANCYREMISSION_SUCCESS;

@@ -49,6 +49,7 @@
 package org.egov.mrs.domain.service;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
@@ -57,7 +58,12 @@ import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
 import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
 import static org.egov.mrs.application.MarriageConstants.CPK_END_POINT_URL;
 import static org.egov.mrs.application.MarriageConstants.MIC;
+import static org.egov.mrs.application.MarriageConstants.MODE_CREATE;
+import static org.egov.mrs.application.MarriageConstants.MODE_UPDATE;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.MOM;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,7 +158,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationService {
-    private static final String RE_ISSUE_APPLICATION_DATE = "reIssue.applicationDate";
+	private static final String RE_ISSUE_APPLICATION_DATE = "reIssue.applicationDate";
     private static final String MRG_REGISTRATION_UNIT = "registrationUnit";
     private static final String MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE = "mrs_acknowledgement";
     private static final String REISSUE_MARRIAGE_CERTIFICATE = "Reissue Marriage Certificate (Duplicate)";
@@ -178,6 +184,10 @@ public class MarriageRegistrationService {
     private static final String STATUS = "status";
     private static final String ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES = "Error while copying Multipart file bytes";
     private static final String MRS_APPLICATION_VIEW = "/mrs/registration/view/%s";
+	private static final String REMARKS_CREATED = " created";
+    public static final String REMARKS_CANCELLED = " cancelled";
+	public static final String REMARKS_APPROVED = " approved";
+    private static final String REISSUE_CERTIFICATE = "Reissue Certificate";
 
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
@@ -549,6 +559,11 @@ public class MarriageRegistrationService {
 
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
+		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(marriageRegistration.getSource())
+				&& WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
+			publishEventForWardSecretary(null, marriageRegistration.getApplicationNo(), false, true, MODE_UPDATE,
+					WFLOW_ACTION_STEP_APPROVE);
+        
         return marriageRegistration;
     }
 
@@ -646,6 +661,11 @@ public class MarriageRegistrationService {
             updatePortalMessage(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
+		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(marriageRegistration.getSource())
+				&& WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
+			publishEventForWardSecretary(null, marriageRegistration.getApplicationNo(), false, true, MODE_UPDATE,
+					"cancel");
+		
         return marriageRegistration;
     }
 
@@ -1028,34 +1048,48 @@ public class MarriageRegistrationService {
 		try {
 			createRegistration(registration, workflowContainer, false, false, loggedUserIsWardSecretaryUser);
 			applicationNo = registration.getApplicationNo();
-			publishEventForWardSecretary(request, applicationNo, false, true);
+			publishEventForWardSecretary(request, applicationNo, false, true, MODE_CREATE, EMPTY);
 
 		} catch (Exception e) {
-			publishEventForWardSecretary(request, applicationNo, false, false);
+			publishEventForWardSecretary(request, applicationNo, false, false, MODE_CREATE, EMPTY);
 		}
 
 		return applicationNo;
 	}
 
 	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, boolean isReIssue,
-			boolean isSuccess) {
+			boolean isSuccess, String mode, String workFlowAction) {
 		if (isSuccess) {
-			String viewLink = StringUtils.EMPTY;
-			if (isReIssue)
-				viewLink = MarriageConstants.REISSUE_VIEW_LINK;
-			else
-				viewLink = MarriageConstants.MARRIAGEREGISTRATION_VIEW_LINK;
-
-			thirdPartyApplicationEventPublisher
-					.publishEvent(
-							ApplicationDetails.builder().withApplicationNumber(applicationNo)
-									.withViewLink(format(viewLink, WebUtils.extractRequestDomainURL(request, false),
-											applicationNo))
-									.withTransactionStatus(TransactionStatus.SUCCESS)
-									.withApplicationStatus(ApplicationStatus.INPROGRESS)
-									.withRemark(
-											isReIssue ? "Reissue certificate created" : "Marriage registration created")
-									.withTransactionId(request.getParameter("wsTransactionId")).build());
+			if (MODE_CREATE.equalsIgnoreCase(mode)) {
+				String viewLink = EMPTY;
+				if (isReIssue)
+					viewLink = MarriageConstants.REISSUE_VIEW_LINK;
+				else
+					viewLink = MarriageConstants.MARRIAGEREGISTRATION_VIEW_LINK;
+				thirdPartyApplicationEventPublisher
+						.publishEvent(ApplicationDetails.builder().withApplicationNumber(applicationNo)
+								.withViewLink(format(viewLink, WebUtils.extractRequestDomainURL(request, false),
+										applicationNo))
+								.withTransactionStatus(TransactionStatus.SUCCESS)
+								.withApplicationStatus(ApplicationStatus.INPROGRESS)
+								.withRemark(isReIssue ? REISSUE_CERTIFICATE.concat(REMARKS_CREATED)
+										: MODULE_NAME.concat(REMARKS_CREATED))
+								.withTransactionId(request.getParameter("wsTransactionId")).build());
+			} else if (MODE_UPDATE.equalsIgnoreCase(mode)) {
+				String remarks = EMPTY;
+				ApplicationStatus applicationStatus;
+				if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
+					remarks = (isReIssue ? REISSUE_CERTIFICATE : MODULE_NAME).concat(REMARKS_APPROVED);
+					applicationStatus = ApplicationStatus.APPROVED;
+				} else {
+					remarks = (isReIssue ? REISSUE_CERTIFICATE : MODULE_NAME).concat(REMARKS_CANCELLED);
+					applicationStatus = ApplicationStatus.REJECTED;
+				}
+				ApplicationDetails applicationDetails = ApplicationDetails.builder()
+						.withApplicationNumber(applicationNo).withApplicationStatus(applicationStatus)
+						.withRemark(remarks).withDateOfCompletion(new Date()).build();
+				thirdPartyApplicationEventPublisher.publishEvent(applicationDetails);
+			}
 		} else {
 			thirdPartyApplicationEventPublisher
 					.publishEvent(

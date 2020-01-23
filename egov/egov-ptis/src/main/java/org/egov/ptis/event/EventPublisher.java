@@ -54,13 +54,15 @@ import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPubl
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class EventPublisher {
 
     @Autowired
     private ThirdPartyApplicationEventPublisher wsApplicationEventPublisher;
 
-    public void wsPublishEvent(final String transactionId,
+    public void publishWSEvent(final String transactionId,
             final TransactionStatus transactionStatus, final String applicationNo,
             final ApplicationStatus applicationStatus, final String viewLink, final String remarks) {
         ApplicationDetails applicationDetails = ApplicationDetails.builder().withApplicationNumber(applicationNo)
@@ -71,4 +73,13 @@ public class EventPublisher {
 
     }
 
+    public void publishWSUpdateEvent(final String applicationNo, final ApplicationStatus applicationStatus,
+            final String remarks) {
+        ApplicationDetails applicationDetails = ApplicationDetails.builder().withApplicationNumber(applicationNo)
+                .withApplicationStatus(applicationStatus).withRemark(remarks)
+                .withDateOfCompletion(new Date())
+                .build();
+        wsApplicationEventPublisher.publishEvent(applicationDetails);
+
+    }
 }

@@ -47,33 +47,15 @@
  */
 package org.egov.wtms.web.controller.mobile;
 
-import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
-import org.egov.collection.integration.models.BillInfoImpl;
-import org.egov.collection.integration.pgi.PaymentRequest;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.interfaces.Billable;
-import org.egov.demand.model.EgBill;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.ptis.client.integration.utils.SpringBeanUtil;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.application.service.collection.WaterConnectionBillable;
-import org.egov.wtms.application.service.collection.WaterTaxExternalService;
-import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.service.mobile.WaterTaxMobilePaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,42 +64,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_NOT_FOUND;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_VALIDATION;
 
 @Controller
 @RequestMapping(value = { "/public/mobile", "/mobile" })
 public class WaterTaxMobilePaymentController {
 
     private static final String PAYTAX_FORM = "mobilePayment-form";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String ERROR_MSG_LIST="errorMsgList";
 
     @Autowired
-    @Qualifier("waterConnectionBillable")
-    private WaterConnectionBillable waterConnectionBillable;
-
-    @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
-
-    @Autowired
-    private WaterTaxExternalService waterTaxExternalService;
-
+    private WaterTaxMobilePaymentService waterTaxMobilePaymentService;
+    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private ConnectionDemandService connectionDemandService;
-
-    @Autowired
-    private EgBillDao egBillDAO;
-
-    @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
-
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
 
     /**
      * API to process payments from Mobile App
@@ -130,77 +95,43 @@ public class WaterTaxMobilePaymentController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping(value = "/payWatertax/{consumerNo},{ulbCode},{amountToBePaid},{mobileNumber},{emailId}", method = RequestMethod.GET)
-    public String collectTax(final Model model, @PathVariable final String consumerNo,
-            @PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
-            @PathVariable final String mobileNumber, @PathVariable final String emailId,
-            final HttpServletRequest request) throws ParseException {
-        String redirectUrl = "";
-        final BillInfoImpl billInfo = getBillInfo(consumerNo, amountToBePaid);
-        if (billInfo != null) {
-            final PaymentRequest paymentRequest = SpringBeanUtil.getCollectionIntegrationService()
-                    .processMobilePayments(billInfo);
-            if (paymentRequest != null) {
-                for (final Object obj : paymentRequest.getRequestParameters().values())
-                    redirectUrl = obj.toString();
-                model.addAttribute("redirectUrl", redirectUrl);
-            }
-        } else {
-            model.addAttribute("errorMsg", "Bill data is incorrect");
-            return PROPERTY_VALIDATION;
-        }
-        return PAYTAX_FORM;
-    }
+	@RequestMapping(value = "/payWatertax/{consumerNo},{ulbCode},{amountToBePaid},{mobileNumber},{emailId}", method = RequestMethod.GET)
+	public String collectTax(final Model model, @PathVariable final String consumerNo,
+			@PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
+			@PathVariable final String mobileNumber, @PathVariable final String emailId,
+			final HttpServletRequest request) throws ParseException {
+		String redirectUrl = "";
+		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findByConsumerCodeAndConnectionStatus(consumerNo, ConnectionStatus.ACTIVE);
+		BigDecimal totalTaxDue = BigDecimal.ZERO;
+		if (waterConnectionDetails == null || !ApplicationThreadLocals.getCityCode().equals(ulbCode)) {
+			model.addAttribute(ERROR_MSG, THIRD_PARTY_ERR_MSG_CONSUMER_NO_NOT_FOUND);
+			return WATER_VALIDATION;
+		}
+		if (waterConnectionDetails != null) {
+			totalTaxDue = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
+			if (totalTaxDue != null && amountToBePaid.compareTo(totalTaxDue) > 0) {
+				model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
+				return WATER_VALIDATION;
+			}
+		}
 
-    /**
-     * API to return BillInfoImpl, used in tax payment through Mobile App
-     *
-     * @param mobilePropertyTaxDetails
-     * @return
-     */
-    public BillInfoImpl getBillInfo(final String consumerNo, final BigDecimal amountToBePaid) {
-        BillInfoImpl billInfoImpl = null;
-        WaterConnectionDetails waterConnectionDetails = null;
-        String currentInstallmentYear = null;
-        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
-        final BillReferenceNumberGenerator billRefeNumber = beanResolver
-                .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
-        if (consumerNo != null)
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCodeAndStatus(consumerNo, ConnectionStatus.ACTIVE);
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
-        waterConnectionBillable.setAssessmentDetails(assessmentDetails);
-        waterConnectionBillable.setUserId(2L);
-        ApplicationThreadLocals.setUserId(2L);
-        currentInstallmentYear = formatYear.format(connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.PROPERTY_MODULE_NAME, null, new Date())
-                .getInstallmentYear());
-        waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
-        waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));
-        final EgBill egBill = generateBill(waterConnectionBillable, financialYearDAO);
-        billInfoImpl = prepareBillForCollection(amountToBePaid, egBill, null);
-        return billInfoImpl;
-    }
+		try {
+			redirectUrl = waterTaxMobilePaymentService.mobileBillPayment(consumerNo, amountToBePaid,
+					waterConnectionDetails);
+			if (StringUtils.isNotBlank(redirectUrl))
+				model.addAttribute("redirectUrl", redirectUrl);
+			else {
+				model.addAttribute(ERROR_MSG, MOBILE_PAYMENT_INCORRECT_BILL_DATA);
+				return WATER_VALIDATION;
+			}
+		} catch (final ValidationException e) {
+			model.addAttribute(ERROR_MSG_LIST, e.getErrors());
+			return WATER_VALIDATION;
+		} catch (final Exception e) {
 
-    public final EgBill generateBill(final Billable billObj, final FinancialYearDAO financialYearDAO) {
-        final EgBill bill = waterTaxExternalService.generateBillForConnection(billObj, financialYearDAO);
-        egBillDAO.create(bill);
-        return bill;
-    };
-
-    @Transactional
-    public BillInfoImpl prepareBillForCollection(final BigDecimal amountToBePaid, final EgBill bill,
-            final String source) {
-
-        if (!waterTaxExternalService.isCollectionPermitted(bill))
-            throw new ApplicationRuntimeException(
-                    "Collection is not allowed - current balance is zero and advance coll exists.");
-
-        final BillInfoImpl billInfo = waterTaxExternalService.prepareBillInfo(amountToBePaid, COLLECTIONTYPE.O, bill,
-                source);
-        return billInfo;
-    }
+			return WATER_VALIDATION;
+		}
+		return PAYTAX_FORM;
+	}
 }

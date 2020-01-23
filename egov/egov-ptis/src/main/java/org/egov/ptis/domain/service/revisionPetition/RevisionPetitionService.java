@@ -1352,13 +1352,13 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
         }
         try {
             createRevisionPetition(petition);
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.SUCCESS,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                     petition.getObjectionNumber(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
 
         } catch (Exception ex) {
 
             LOGGER.error("exception while saving basic proeprty", ex);
-            eventPublisher.wsPublishEvent(transactionId, TransactionStatus.FAILED,
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                     petition.getObjectionNumber(), null, null, failureMsg);
         }
     }

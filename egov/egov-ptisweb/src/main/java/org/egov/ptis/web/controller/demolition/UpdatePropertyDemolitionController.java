@@ -81,6 +81,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -97,6 +98,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -152,6 +154,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     @Autowired
     private DemandVoucherService demandVoucherService;
 
+    @Autowired
+    private PropertyThirdPartyService propertyThirdPartyService;
     @Autowired
     public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
         this.propertyDemolitionService = propertyDemolitionService;
@@ -344,6 +348,22 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPos)
                             + " with application number " + property.getApplicationNo());
         }
+
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(property.getSource()) &&
+                (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                        || WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction)
+                        || WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))) {
+            String remarks;
+            boolean isCancelled = "Closed".equalsIgnoreCase(((PropertyImpl) property).getState().getValue());
+            if (isCancelled)
+                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(workFlowAction)
+                        ? "Property Demolition Rejected to Cancel" : "Property Demolition Cancelled";
+            else
+                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction) ? "Property Demolition Approved"
+                        : "Property Demolition Rejected";
+            propertyThirdPartyService.publishUpdateEvent(property.getApplicationNo(), workFlowAction, remarks);
+        }
+
         return DEMOLITION_SUCCESS;
     }
 
