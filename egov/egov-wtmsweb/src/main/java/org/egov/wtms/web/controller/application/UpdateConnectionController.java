@@ -125,6 +125,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -156,6 +157,8 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.web.validator.UpdateWaterConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -236,6 +239,10 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 	@Autowired
 	private WaterEstimationChargesPaymentService waterEstimationChargesPaymentService;
+	
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource messageSource;
 
 	@ModelAttribute
 	public WaterConnectionDetails getWaterConnectionDetails(@PathVariable String applicationNumber) {
@@ -719,9 +726,14 @@ public class UpdateConnectionController extends GenericConnectionController {
 							InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
 							FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
 									FILESTORE_MODULECODE);
-							if (CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+							if (CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())) {
 								waterConnectionDetails.setClosureFileStore(fileStore);
-							else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+								EgDemand egDemand = waterDemandConnectionService
+										.getCurrentDemand(waterConnectionDetails).getDemand();
+								if (egDemand != null)
+									egDemand.setIsHistory("Y");
+								egDemand.setModifiedDate(new Date());
+							} else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
 								waterConnectionDetails.setReconnectionFileStore(fileStore);
 							else
 								waterConnectionDetails.setFileStore(fileStore);

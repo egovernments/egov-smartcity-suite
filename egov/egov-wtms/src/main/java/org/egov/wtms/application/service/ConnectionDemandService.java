@@ -78,6 +78,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_MATERIAL_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -747,8 +748,12 @@ public class ConnectionDemandService {
 
         Collections.sort(installmentList);
         EgDemandDetails demandDetails;
+        EgDemand currentDemand;
         WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            currentDemand = waterDemandConnectionService.getLatestHistoryDemand(waterConnectionDetails).getDemand();
+        else
+            currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         WaterDemandConnection demandConnection = waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(
                 waterConnectionDetails, currentDemand);
         for (Installment instlment : installmentList)

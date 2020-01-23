@@ -60,6 +60,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -118,6 +120,19 @@ public class WaterDemandConnectionService {
     @Transactional
     public void updateWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
         waterDemandConnectionRepository.save(waterDemandConnection);
+    }
+    
+    public WaterDemandConnection getLatestHistoryDemand(WaterConnectionDetails waterConnectionDetails) {
+        WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+        List<WaterDemandConnection> waterDemandConnectionList = findByWaterConnectionDetails(waterConnectionDetails);
+        Collections.sort(waterDemandConnectionList,
+                (demandConnection1, demandConnection2) -> demandConnection2.getId().compareTo(demandConnection1.getId()));
+        for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+            if ("Y".equalsIgnoreCase(waterDemandConnection.getDemand().getIsHistory())) {
+                waterdemandConnection = waterDemandConnection;
+                break;
+            }
+        return waterdemandConnection;
     }
 
 }
