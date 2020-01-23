@@ -906,7 +906,7 @@ public class TradeLicenseService {
         return dmdColl;
     }
 
-    public List<DemandNoticeForm> getLicenseDemandNotices(DemandNoticeForm demandNoticeForm) {
+    public List<DemandNoticeRequest> getLicenseDemandNotices(DemandNoticeRequest demandNoticeRequest) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("natureOfBusiness", "nob")
