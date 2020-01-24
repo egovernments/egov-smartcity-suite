@@ -791,7 +791,10 @@ public class ConnectionDemandService {
                     }
                     installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
                 }
-
+                if (RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())){
+                	currentDemand.setIsHistory(DEMAND_ISHISTORY_N);
+                	currentDemand.setModifiedDate(new Date());
+                }
             }
         return waterConnectionDetails;
     }
