@@ -64,16 +64,23 @@ jQuery(document).ready(function() {
 		$("#reportTitle").show();
 		if ($('#fromDate').val() == "" && $('#toDate').val() == "") {
 			bootbox.alert("Please enter From Date and To Date");
+			$("#reportTitle").hide();
 			return false;
 		}
 		if ($('#fromDate').val() == "" && $('#toDate').val() != "") {
 			bootbox.alert('Please enter the From Date');
+			$("#reportTitle").hide();
 			return false;
 		}
 		if ($('#fromDate').val() != "" && $('#toDate').val() == "") {
 			bootbox.alert('Please enter the To Date');
+			$("#reportTitle").hide();
 			return false;
 		}
+		var fromDates = $('#fromDate').val();
+		$('#fromDatesId').val(fromDates);
+		var toDates = $('#toDate').val();
+		$('#toDatesId').val(toDates);
 		callAjaxByBoundary();
 	});
 

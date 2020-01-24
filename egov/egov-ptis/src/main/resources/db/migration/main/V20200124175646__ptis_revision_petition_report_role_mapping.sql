@@ -1,0 +1,1 @@
+INSERT INTO eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'Revision Petition Register Report'),id from eg_role where name in ('ERP Report Viewer','SYSTEM');
