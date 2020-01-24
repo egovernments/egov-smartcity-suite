@@ -83,10 +83,8 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class WaterTaxMobilePaymentService {
 
     private static final Logger LOGGER = Logger.getLogger(WaterTaxMobilePaymentService.class);
@@ -116,7 +114,6 @@ public class WaterTaxMobilePaymentService {
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
-    @Transactional
     public String mobileBillPayment(final String consumerCode, final BigDecimal amountToBePaid,
             WaterConnectionDetails waterConnectionDetails) throws ValidationException {
         String redirectUrl = "";
@@ -148,7 +145,6 @@ public class WaterTaxMobilePaymentService {
      * @return
      */
 
-    @Transactional
     public BillInfoImpl getBillInfo(final String consumerNo, final BigDecimal amountToBePaid) {
         BillInfoImpl billInfoImpl = null;
         WaterConnectionDetails waterConnectionDetails = null;
@@ -176,7 +172,6 @@ public class WaterTaxMobilePaymentService {
         return billInfoImpl;
     }
 
-    @Transactional
     public final EgBill generateBill(final Billable billObj, final FinancialYearDAO financialYearDAO) {
         final EgBill bill = waterTaxExternalService.generateBillForConnection(billObj, financialYearDAO);
         egBillDAO.create(bill);
