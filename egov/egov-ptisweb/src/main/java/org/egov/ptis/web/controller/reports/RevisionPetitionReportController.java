@@ -49,6 +49,7 @@ package org.egov.ptis.web.controller.reports;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.actions.reports.RevisionPetitionReportAdaptor;
 import org.egov.ptis.domain.entity.property.RevisionPetitionReport;
-import org.egov.ptis.service.revisionPetitionReport.RevisionPetitionReportService;
+import org.egov.ptis.service.revisionpetitionreport.RevisionPetitionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
