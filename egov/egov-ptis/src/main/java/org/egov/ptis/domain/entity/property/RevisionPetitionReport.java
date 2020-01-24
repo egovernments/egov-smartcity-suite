@@ -48,7 +48,6 @@
 package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
-import java.util.List;
 
 public class RevisionPetitionReport {
 

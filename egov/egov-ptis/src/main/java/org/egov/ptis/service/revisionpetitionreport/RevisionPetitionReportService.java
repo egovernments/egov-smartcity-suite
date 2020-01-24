@@ -1,4 +1,4 @@
-package org.egov.ptis.service.revisionPetitionReport;
+package org.egov.ptis.service.revisionpetitionreport;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX;
@@ -35,15 +35,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class RevisionPetitionReportService {
 
+    @Autowired
+    PropertyService propertyService;
+    
     @PersistenceContext
     private EntityManager entityManager;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
-    @Autowired
-    PropertyService propertyService;
 
     public List<RevisionPetitionReport> getReportList(final String fromDate, final String toDate) {
         int recordCount = 0;
@@ -176,23 +176,18 @@ public class RevisionPetitionReportService {
             });
             revisionPetitionReportTax.setCurrentTotalTax((revisionPetitionReportTax.getCurrentGenTax() != null
                     ? revisionPetitionReportTax.getCurrentGenTax() : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentDrainageTax() != null
-                                    ? revisionPetitionReportTax.getCurrentDrainageTax() : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentEduTax() != null
-                                    ? revisionPetitionReportTax.getCurrentEduTax()
-                                    : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentLibTax() != null
-                                    ? revisionPetitionReportTax.getCurrentLibTax()
-                                    : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentLightTax() != null
-                                    ? revisionPetitionReportTax.getCurrentLightTax()
-                                    : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentSacvagTax() != null
-                                    ? revisionPetitionReportTax.getCurrentSacvagTax()
-                                    : BigDecimal.ZERO)
-                            .add(revisionPetitionReportTax.getCurrentWaterTax() != null
-                                    ? revisionPetitionReportTax.getCurrentWaterTax()
-                                    : BigDecimal.ZERO));
+                            .add(revisionPetitionReportTax.getCurrentDrainageTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentDrainageTax())
+                            .add(revisionPetitionReportTax.getCurrentEduTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentEduTax())
+                            .add(revisionPetitionReportTax.getCurrentLibTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentLibTax())
+                            .add(revisionPetitionReportTax.getCurrentLightTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentLightTax())
+                            .add(revisionPetitionReportTax.getCurrentSacvagTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentSacvagTax())
+                            .add(revisionPetitionReportTax.getCurrentWaterTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentWaterTax()));
         });
         PropertyImpl propertyImpl = getPreviousPropertyList(property);
         getPrevDeamdAmount(propertyService.getLatestDemandforHistoryProp(propertyImpl), property.getEffectiveDate(),
@@ -237,15 +232,15 @@ public class RevisionPetitionReportService {
                 (revisionPetitionReportTax.getPrevGenTax() != null ? revisionPetitionReportTax.getPrevGenTax() : BigDecimal.ZERO)
                         .add(revisionPetitionReportTax.getPrevDrainageTax() != null
                                 ? revisionPetitionReportTax.getPrevDrainageTax() : BigDecimal.ZERO)
-                        .add(revisionPetitionReportTax.getPrevEduTax() != null ? revisionPetitionReportTax.getPrevEduTax()
-                                : BigDecimal.ZERO)
-                        .add(revisionPetitionReportTax.getPrevLibTax() != null ? revisionPetitionReportTax.getPrevLibTax()
-                                : BigDecimal.ZERO)
-                        .add(revisionPetitionReportTax.getPrevLightTax() != null ? revisionPetitionReportTax.getPrevLightTax()
-                                : BigDecimal.ZERO)
-                        .add(revisionPetitionReportTax.getPrevSacvagTax() != null ? revisionPetitionReportTax.getPrevSacvagTax()
-                                : BigDecimal.ZERO)
-                        .add(revisionPetitionReportTax.getPrevWaterTax() != null ? revisionPetitionReportTax.getPrevWaterTax()
-                                : BigDecimal.ZERO));
+                        .add(revisionPetitionReportTax.getPrevEduTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevEduTax())
+                        .add(revisionPetitionReportTax.getPrevLibTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevLibTax())
+                        .add(revisionPetitionReportTax.getPrevLightTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevLightTax())
+                        .add(revisionPetitionReportTax.getPrevSacvagTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevSacvagTax())
+                        .add(revisionPetitionReportTax.getPrevWaterTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevWaterTax()));
     }
 }

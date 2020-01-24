@@ -49,7 +49,6 @@ package org.egov.ptis.web.controller.reports;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
