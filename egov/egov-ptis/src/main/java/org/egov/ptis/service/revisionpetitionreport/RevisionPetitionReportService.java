@@ -119,6 +119,8 @@ public class RevisionPetitionReportService {
 
     public List<Map<String, BigDecimal>> getAmount(Ptdemand ptdemand, Date effectiveDate) {
         Query qry = null;
+        Map<String, BigDecimal> mapValue = new HashMap<String, BigDecimal>();
+        List<Map<String, BigDecimal>> list = new ArrayList<Map<String, BigDecimal>>();
         final String selectQuery = " select drm.code,sum(dd.amount) from eg_demand_details dd, eg_demand_reason dr,"
                 + " eg_demand_reason_master drm, eg_installment_master inst "
                 + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
@@ -128,8 +130,6 @@ public class RevisionPetitionReportService {
         qry.setLong("demandId", ptdemand.getId());
         qry.setDate("effectiveDate", effectiveDate);
         List<Object> result = qry.list();
-        Map<String, BigDecimal> mapValue = new HashMap<String, BigDecimal>();
-        List<Map<String, BigDecimal>> list = new ArrayList<Map<String, BigDecimal>>();
         for (final Object record : result) {
             final Object[] data = (Object[]) record;
             final Double dmd = (Double) data[1];
@@ -190,11 +190,11 @@ public class RevisionPetitionReportService {
                                     : revisionPetitionReportTax.getCurrentWaterTax()));
         });
         PropertyImpl propertyImpl = getPreviousPropertyList(property);
-        getPrevDeamdAmount(propertyService.getLatestDemandforHistoryProp(propertyImpl), property.getEffectiveDate(),
+        getPrevDemandAmount(propertyService.getLatestDemandforHistoryProp(propertyImpl), property.getEffectiveDate(),
                 revisionPetitionReportTax);
     }
 
-    public void getPrevDeamdAmount(Ptdemand ptdemand, Date effectiveDate, RevisionPetitionReportTax revisionPetitionReportTax) {
+    public void getPrevDemandAmount(Ptdemand ptdemand, Date effectiveDate, RevisionPetitionReportTax revisionPetitionReportTax) {
         List<Map<String, BigDecimal>> demand = getAmount(ptdemand, effectiveDate);
         demand.stream().forEach(mapsData -> {
             mapsData.entrySet().forEach(mapData -> {

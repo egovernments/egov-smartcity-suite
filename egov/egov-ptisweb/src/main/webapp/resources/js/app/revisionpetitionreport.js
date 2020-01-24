@@ -62,20 +62,16 @@ jQuery(document).ready(function() {
 	drillDowntableContainer = jQuery("#tblrevisionpetitiondrilldown");
 	jQuery('#btnsearch').click(function(e) {
 		$("#reportTitle").show();
-		$("#defaultersError").hide();
-		if (jQuery('#fromDate').val() == "" && jQuery('#toDate').val() == "") {
-			$("#defaultersError").html('Either From and To Date ');
-			$("#defaultersError").show();
+		if ($('#fromDate').val() == "" && $('#toDate').val() == "") {
+			bootbox.alert("Please enter From Date and To Date");
 			return false;
 		}
-		if (jQuery('#fromDate').val() == "" && jQuery('#toDate').val() != "") {
-			$("#defaultersError").html('Please enter the From Date');
-			$("#defaultersError").show();
+		if ($('#fromDate').val() == "" && $('#toDate').val() != "") {
+			bootbox.alert('Please enter the From Date');
 			return false;
 		}
-		if (jQuery('#fromDate').val() != "" && jQuery('#toDate').val() == "") {
-			$("#defaultersError").html('Please enter the To Date');
-			$("#defaultersError").show();
+		if ($('#fromDate').val() != "" && $('#toDate').val() == "") {
+			bootbox.alert('Please enter the To Date');
 			return false;
 		}
 		callAjaxByBoundary();
