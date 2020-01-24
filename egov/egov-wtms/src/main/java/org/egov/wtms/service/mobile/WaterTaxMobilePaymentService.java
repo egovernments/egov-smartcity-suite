@@ -82,9 +82,12 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Service
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterTaxMobilePaymentService {
 
     private static final Logger LOGGER = Logger.getLogger(WaterTaxMobilePaymentService.class);
@@ -125,7 +128,7 @@ public class WaterTaxMobilePaymentService {
         if (billInfo != null) {
         	LOGGER.info("WaterTaxMobilePaymentService params after preparing bill : consumerCode = " + consumerCode + ", egBill = " + egBill.getConsumerId()
     				+ ", waterConnectionDetails = " + waterConnectionDetails.getId() + ", City code = "+ApplicationThreadLocals.getCityCode());
-            if (waterConnectionDetails == null || !egBill.getConsumerId().equals(consumerCode)) {
+            if (waterConnectionDetails == null || !egBill.getConsumerId().trim().equalsIgnoreCase(consumerCode)) {
                 LOGGER.error("ULB code or consumer number does not match!");
                 throw new ValidationException(
                         Arrays.asList(new ValidationError("ULB code or consumer number does not match",
@@ -171,6 +174,7 @@ public class WaterTaxMobilePaymentService {
                 .getInstallmentYear());
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));
+        LOGGER.info("WaterTaxMobilePaymentService getBillInfo consumerCode = " + waterConnectionBillable.getConsumerId());
         final EgBill egBill = generateBill(waterConnectionBillable, financialYearDAO);
         billInfoImpl = prepareBillForCollection(amountToBePaid, egBill, null);
         return billInfoImpl;
