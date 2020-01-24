@@ -117,10 +117,14 @@ public class WaterTaxMobilePaymentService {
     public String mobileBillPayment(final String consumerCode, final BigDecimal amountToBePaid,
             WaterConnectionDetails waterConnectionDetails) throws ValidationException {
         String redirectUrl = "";
+        LOGGER.info("WaterTaxMobilePaymentService params : consumerCode = " + consumerCode + ", amountToBePaid = " + amountToBePaid
+				+ ", waterConnectionDetails = " + waterConnectionDetails.getId());
         final BillInfoImpl billInfo = getBillInfo(consumerCode, amountToBePaid);
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billInfo.getPayees().get(0).getBillDetails().get(0).getRefNo()),
                 false);
         if (billInfo != null) {
+        	LOGGER.info("WaterTaxMobilePaymentService params after preparing bill : consumerCode = " + consumerCode + ", egBill = " + egBill.getConsumerId()
+    				+ ", waterConnectionDetails = " + waterConnectionDetails.getId() + ", City code = "+ApplicationThreadLocals.getCityCode());
             if (waterConnectionDetails == null || !egBill.getConsumerId().equals(consumerCode)) {
                 LOGGER.error("ULB code or consumer number does not match!");
                 throw new ValidationException(
