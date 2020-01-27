@@ -89,9 +89,12 @@ jQuery(document).ready(function() {
 function callAjaxByBoundary() {
 	var fromDate = jQuery('#fromDate').val();
 	var toDate = jQuery('#toDate').val();
+	var currDate = jQuery('#currentDate').val();
 	jQuery('.report-section').removeClass('display-hide');
 	jQuery('#report-footer').show();
-	var response = null;
+	jQuery('#reportDates').html(
+			"From RP Filed " + fromDate + " to RP Filed " + toDate
+					+ " Generated on " + currDate);
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
@@ -134,10 +137,13 @@ function callAjaxByBoundary() {
 					"data" : "assessmentNo",
 					"sTitle" : "Assessment No"
 				}, {
-					"data" : "noticeDate",
-					"sTitle" : "Date of Receipt of Revision Petition"
+					"data" : "PropertyType",
+					"sTitle" : "Property Type"
 				}, {
 					"data" : "receiptDate",
+					"sTitle" : "Date of Receipt of Revision Petition"
+				}, {
+					"data" : "noticeDate",
 					"sTitle" : "Date of Service of Notice"
 				}, {
 					"data" : "prevGenTax",

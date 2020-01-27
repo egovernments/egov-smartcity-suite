@@ -9,6 +9,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +27,9 @@ import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.RevisionPetitionReport;
 import org.egov.ptis.domain.entity.property.RevisionPetitionReportTax;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +40,11 @@ public class RevisionPetitionReportService {
 
     @Autowired
     PropertyService propertyService;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    NoticeService noticeService;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -58,12 +63,13 @@ public class RevisionPetitionReportService {
             ++recordCount;
             revisionPetition.setProperty(result);
             revisionPetitionReport.setAssessmentNo(result.getBasicProperty().getUpicNo());
-            revisionPetitionReport.setApproverRemarks(getRemarks(result.getId()));
+            revisionPetitionReport.setApproverRemarks(getRemarks(result));
             revisionPetitionReport.setCount(Long.valueOf(recordCount));
             revisionPetitionReport.setOwnerName(result.getBasicProperty().getPrimaryOwner().getName());
             revisionPetitionReport.setCreatedDate(DateUtils.getFormattedDate(result.getCreatedDate(), DATE_FORMAT_DDMMYYY));
-            revisionPetitionReport.setNoticeDate(DateUtils.getFormattedDate(result.getLastModifiedDate(), DATE_FORMAT_DDMMYYY));
+            revisionPetitionReport.setNoticeDate(DateUtils.getFormattedDate(getNoticeDate(result), DATE_FORMAT_DDMMYYY));
             revisionPetitionReport.setRevisionPetitionReportTax(getTaxDetails(result));
+            revisionPetitionReport.setPropertyType(result.getPropertyDetail().getPropertyTypeMaster().getType());
             reportList.add(revisionPetitionReport);
         }
         return reportList;
@@ -73,7 +79,7 @@ public class RevisionPetitionReportService {
         Query getreportQuery = null;
         getreportQuery = getCurrentSession()
                 .createQuery(
-                        "from PropertyImpl  where propertyModifyReason='RP' and status in ('H','A') and createdDate >= :fromDate and createdDate <= :toDate order by id desc");
+                        "from PropertyImpl  where propertyModifyReason='RP' and status in ('H','A') and DATE(createdDate) >= :fromDate and DATE(createdDate) <= :toDate order by id desc");
         getreportQuery.setParameter("fromDate", fromDate);
         getreportQuery.setParameter("toDate", toDate);
         return getreportQuery.list();
@@ -95,19 +101,13 @@ public class RevisionPetitionReportService {
         return propertyImpl;
     }
 
-    public String getRemarks(Long propertyId) {
-        Petition petition = null;
+    public Petition getPetition(Long basiPropertyId) {
         Query qry = null;
-        String remarks = "";
         qry = getCurrentSession()
                 .createQuery(
-                        "from Petition  where property.id=:propertyId");
-        qry.setLong("propertyId", propertyId);
-        petition = (Petition) qry.list().get(0);
-        remarks = petition.getState().getComments() == null
-                ? petition.getStateHistory().get(petition.getStateHistory().size() - 1).getComments()
-                : petition.getState().getComments();
-        return remarks;
+                        "from Petition  where basicProperty.id=:basiPropertyId");
+        qry.setLong("basiPropertyId", basiPropertyId);
+        return (Petition) qry.list().get(0);
     }
 
     public RevisionPetitionReportTax getTaxDetails(final PropertyImpl property) {
@@ -242,5 +242,22 @@ public class RevisionPetitionReportService {
                                 : revisionPetitionReportTax.getPrevSacvagTax())
                         .add(revisionPetitionReportTax.getPrevWaterTax() == null ? BigDecimal.ZERO
                                 : revisionPetitionReportTax.getPrevWaterTax()));
+    }
+
+    public String getRemarks(PropertyImpl property) {
+        String remarks = "";
+        Petition petition = getPetition(property.getBasicProperty().getId());
+        remarks = petition.getState().getComments() == null
+                ? petition.getStateHistory().get(petition.getStateHistory().size() - 1).getComments()
+                : petition.getState().getComments();
+        return remarks;
+    }
+
+    public Date getNoticeDate(PropertyImpl property) {
+        PtNotice notice = null;
+        Petition petition = getPetition(property.getBasicProperty().getId());
+        notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_RPPROCEEDINGS,
+                petition.getObjectionNumber());
+        return notice.getNoticeDate();
     }
 }

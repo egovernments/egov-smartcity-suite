@@ -49,7 +49,6 @@ package org.egov.ptis.web.controller.reports;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -83,10 +82,8 @@ public class RevisionPetitionReportController {
 
     @RequestMapping(value = "/results", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String petitionReportSearchResult(final Model model,@RequestParam("fromDate") final String fromDate,
+    public String petitionReportSearchResult(final Model model, @RequestParam("fromDate") final String fromDate,
             @RequestParam("toDate") final String toDate, final HttpServletRequest request) {
-        model.addAttribute("fromDate", fromDate);
-        model.addAttribute("toDate",toDate);
         List<RevisionPetitionReport> revPetitionList = revisionPetitionReportService.getReportList(fromDate, toDate);
         return new StringBuilder("{ \"data\":").append(toJSON(revPetitionList, RevisionPetitionReport.class,
                 RevisionPetitionReportAdaptor.class)).append("}").toString();

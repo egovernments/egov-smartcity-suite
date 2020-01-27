@@ -81,6 +81,10 @@
 								<form:input path="" name="fromDate" id="fromDate"
 									cssClass="form-control datepicker" value="${fromDate}"
 									cssErrorClass="form-control error" />
+									<form:input type="hidden" path="" name="fromDate" id="currentDate"
+									cssClass="form-control datepicker" value="${fromDate}"
+									cssErrorClass="form-control error" />
+									
 							</div>
 							<label for="field-1" class="col-sm-2 control-label"><spring:message
 									code="lbl.toDate" /><span class="mandatory"></span></label>
@@ -104,12 +108,10 @@
 				</div>
 			</div>
 			<br />
-			<div class="col-md-12 table-header text-center" id="reportTitle">
-				<span>Register of Revision Petitions</span><br /> 
-				From RP Filed <input type="text" id="fromDatesId" value="<c:out value="${fromDate}"/>">to RP Filed <input type=text " id="toDatesId"
-					value="<c:out value="${toDate}"/>">Generated on <fmt:formatDate value="${currDate}" var="currDates"
-									pattern="dd/MM/yyyy" /><c:out value="${currDates}"/>
-				
+			<div class="col-sm-12 table-header text-center" id="reportTitle">
+				Register of Revision Petitions<br />
+				<div class="col-sm-12 table-header text-center" id="reportDates">	
+				</div>
 			</div></form:form>
 <jsp:include page="revisionpetition-searchresult.jsp" />
 <script type="text/javascript"

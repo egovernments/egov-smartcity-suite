@@ -51,8 +51,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<c:out value="${RevisionPetitionReport.fromDate}" />
-<c:out value="${fromDate}" />
 <div class="row display-hide report-section">
 	<br /> <input type="hidden"
 		value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District"
@@ -65,6 +63,7 @@
 					<th rowspan="2"><spring:message code="lbl.slNo" /></th>
 					<th rowspan="2"><spring:message code="lbl.owner.name" /></th>
 					<th rowspan="2"><spring:message code="assessment.no" /></th>
+					<th rowspan="2"><spring:message code="lbl.propertytype" /></th>
 					<th rowspan="2"><spring:message code="lbl.service.notice.date" /></th>
 					<th rowspan="2"><spring:message code="lbl.rp.receipt.date" /></th>
 					<th colspan="8"><spring:message code="lbl.demand.before.rp" /></th>
@@ -93,6 +92,7 @@
 			</thead>
 			<tbody>
 				<tr>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

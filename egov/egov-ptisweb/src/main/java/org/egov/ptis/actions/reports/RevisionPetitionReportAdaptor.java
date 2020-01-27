@@ -19,6 +19,7 @@ public class RevisionPetitionReportAdaptor implements JsonSerializer<RevisionPet
             jsonObject.addProperty("assessmentNo", rpReport.getAssessmentNo());
             jsonObject.addProperty("receiptDate", rpReport.getCreatedDate());
             jsonObject.addProperty("noticeDate", rpReport.getNoticeDate());
+            jsonObject.addProperty("PropertyType", rpReport.getPropertyType());
 
             jsonObject.addProperty("prevGenTax", rpReport.getRevisionPetitionReportTax().getPrevGenTax());
             jsonObject.addProperty("prevEduTax", rpReport.getRevisionPetitionReportTax().getPrevEduTax());

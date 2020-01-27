@@ -60,6 +60,7 @@ public class RevisionPetitionReport {
     private String createdDate;
     private Long count;
     private RevisionPetitionReportTax revisionPetitionReportTax;
+    private String propertyType;
     
     public String getOwnerName() {
         return ownerName;
@@ -114,6 +115,12 @@ public class RevisionPetitionReport {
     }
     public void setCount(Long count) {
         this.count = count;
+    }
+    public String getPropertyType() {
+        return propertyType;
+    }
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
     }
 }
 
