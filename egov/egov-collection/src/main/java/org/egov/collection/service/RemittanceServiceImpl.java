@@ -452,7 +452,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             whereClause.append(" AND date(ch.receiptdate) between '").append(startDate).append("' and '").append(endDate)
                     .append("' ");
 
-        String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code,us.id,us.name ";
         final String orderBy = " order by RECEIPTDATE";
 
         /**
@@ -461,7 +461,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         final StringBuilder queryStringForCash = new StringBuilder(
                 "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
                         .append("sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
-                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE, max(us.name) AS APPROVERNAME, max(us.id) AS APPROVERID from EGCL_COLLECTIONHEADER ch,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE, us.name AS APPROVERNAME, us.id AS APPROVERID from EGCL_COLLECTIONHEADER ch,")
                         .append("EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
                         .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, eg_user us")
                         .append(whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('")
@@ -474,7 +474,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             queryStringForCash
                     .append(whereClause + " AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
         } else {
-            groupByClause += ",ch.lastmodifiedby,us.name,us.id";
+            groupByClause += ",ch.lastmodifiedby ";
             // no Mapping
             if (approverIdList.isEmpty()) {
                 queryStringForCash.append(whereClause)
