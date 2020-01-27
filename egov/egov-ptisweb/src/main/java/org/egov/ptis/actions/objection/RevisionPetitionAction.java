@@ -788,16 +788,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return "view";
         }
         if (REVENUE_INSPECTOR_DESGN.equals(designation)) {
+            propService.processAndStoreDocument(objection.getDocuments());
             if ((getDocumentTypeDetails() != null && isEditOwnerDetails())) {
                 propService.processAndStoreDocument(objection.getProperty().getAssessmentDocuments());
                 propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
-            } else if (objection.getType().equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION))
-                propService.processAndStoreDocument(objection.getDocuments());
-            else {
+            } else {
                 if (!objection.getProperty().getAssessmentDocuments().isEmpty())
                     objection.getProperty().getAssessmentDocuments().clear();
             }
-
         }
         if (assignmentService.getAssignmentsForPosition(
                 objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
