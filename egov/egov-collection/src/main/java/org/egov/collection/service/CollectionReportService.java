@@ -187,7 +187,7 @@ public class CollectionReportService {
                     .append(toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
         }
 
-        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
             whereQuery.append(" AND EGCL_COLLECTIONHEADER.SOURCE=:source");
         } else {
             userwiseQuery.setLength(0);
@@ -225,7 +225,7 @@ public class CollectionReportService {
         final SQLQuery userwiseSqluery = createSQLQuery(finalUserwiseQuery.toString());
         final SQLQuery aggregateSqlQuery = createSQLQuery(finalAggregateQuery.toString());
 
-        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
             userwiseSqluery.setString("source", source);
             aggregateSqlQuery.setString("source", source);
         }
