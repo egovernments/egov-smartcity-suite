@@ -142,4 +142,6 @@
     
     <query name="RP_BY_APPLICATIONNO">
         <![CDATA[from Petition where objectionNumber= :applicatiNo]]></query>
+        <query name="RP_BY_BASICPROPERTY">
+        <![CDATA[from Petition where basicProperty= :basicProperty order by id desc]]></query> 
 </hibernate-mapping>

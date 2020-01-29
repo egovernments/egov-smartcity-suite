@@ -525,7 +525,10 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     }
 
     public Petition getExistingObjections(final BasicProperty basicProperty) {
-        return find("from Petition rp where rp.basicProperty = ?", basicProperty);
+        @SuppressWarnings("unchecked")
+        List<Petition> petition = (List<Petition>) entityManager.createNamedQuery("RP_BY_BASICPROPERTY")
+                .setParameter("basicProperty", basicProperty).getResultList();
+        return !petition.isEmpty() ? petition.get(0) : null;
     }
 
     public Petition getExistingGRP(final BasicProperty basicProperty) {

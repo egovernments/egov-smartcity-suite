@@ -484,13 +484,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return COMMON_FORM;
         }
         odlObjection = revisionPetitionService.getExistingObjections(basicProperty);
-        if ((APPLICATION_TYPE_GRP.equalsIgnoreCase(wfType))
-                && odlObjection != null) {
-            isGenerateAck = false;
-            addActionError(getText("property.rp.exist"));
-            return COMMON_FORM;
-        }
-        
+
         if((NATURE_APPEALPETITION.equalsIgnoreCase(wfType))){
         if ((odlObjection == null)) {
             isGenerateAck = false;
