@@ -7,6 +7,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERA
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
@@ -77,9 +78,14 @@ public class RevisionPetitionReportService {
 
     public List<PropertyImpl> prepareQueryforRPList(final Date fromDate, final Date toDate) {
         Query getreportQuery = null;
+        StringBuilder query = new StringBuilder("select  distinct prop from PropertyImpl prop,Petition petition,State states")
+                .append(" ")
+                .append("where prop.id = petition.property.id ").append("and states.id=petition.state.id").append(" ")
+                .append("and prop.propertyModifyReason='RP' and prop.status in ('H','A')").append(" ")
+                .append("and DATE(prop.createdDate) >= :fromDate and DATE(prop.createdDate) <= :toDate").append(" ")
+                .append("and states.value='Closed' order by prop.id desc");
         getreportQuery = getCurrentSession()
-                .createQuery(
-                        "from PropertyImpl  where propertyModifyReason='RP' and status in ('H','A') and DATE(createdDate) >= :fromDate and DATE(createdDate) <= :toDate order by id desc");
+                .createQuery(query.toString());
         getreportQuery.setParameter("fromDate", fromDate);
         getreportQuery.setParameter("toDate", toDate);
         return getreportQuery.list();
@@ -101,12 +107,12 @@ public class RevisionPetitionReportService {
         return propertyImpl;
     }
 
-    public Petition getPetition(Long basiPropertyId) {
+    public Petition getPetition(Long propertyId) {
         Query qry = null;
         qry = getCurrentSession()
                 .createQuery(
-                        "from Petition  where basicProperty.id=:basiPropertyId");
-        qry.setLong("basiPropertyId", basiPropertyId);
+                        "from Petition  where property.id=:propertyId");
+        qry.setLong("propertyId", propertyId);
         return (Petition) qry.list().get(0);
     }
 
@@ -173,6 +179,11 @@ public class RevisionPetitionReportService {
                     revisionPetitionReportTax
                             .setCurrentDrainageTax(mapData.getValue() == null ? BigDecimal.ZERO : mapData.getValue().setScale(0,
                                     BigDecimal.ROUND_HALF_UP));
+                if (mapData.getKey().equals(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+                    revisionPetitionReportTax
+                            .setCurrentUnAuthPenaltyTax(
+                                    mapData.getValue() == null ? BigDecimal.ZERO : mapData.getValue().setScale(0,
+                                            BigDecimal.ROUND_HALF_UP));
             });
             revisionPetitionReportTax.setCurrentTotalTax((revisionPetitionReportTax.getCurrentGenTax() != null
                     ? revisionPetitionReportTax.getCurrentGenTax() : BigDecimal.ZERO)
@@ -187,7 +198,9 @@ public class RevisionPetitionReportService {
                             .add(revisionPetitionReportTax.getCurrentSacvagTax() == null ? BigDecimal.ZERO
                                     : revisionPetitionReportTax.getCurrentSacvagTax())
                             .add(revisionPetitionReportTax.getCurrentWaterTax() == null ? BigDecimal.ZERO
-                                    : revisionPetitionReportTax.getCurrentWaterTax()));
+                                    : revisionPetitionReportTax.getCurrentWaterTax())
+                            .add(revisionPetitionReportTax.getCurrentUnAuthPenaltyTax() == null ? BigDecimal.ZERO
+                                    : revisionPetitionReportTax.getCurrentUnAuthPenaltyTax()));
         });
         PropertyImpl propertyImpl = getPreviousPropertyList(property);
         getPrevDemandAmount(propertyService.getLatestDemandforHistoryProp(propertyImpl), property.getEffectiveDate(),
@@ -226,6 +239,10 @@ public class RevisionPetitionReportService {
                     revisionPetitionReportTax
                             .setPrevDrainageTax(mapData.getValue() == null ? BigDecimal.ZERO : mapData.getValue().setScale(0,
                                     BigDecimal.ROUND_HALF_UP));
+                if (mapData.getKey().equals(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
+                    revisionPetitionReportTax
+                            .setPrevUnAuthPenaltyTax(mapData.getValue() == null ? BigDecimal.ZERO : mapData.getValue().setScale(0,
+                                    BigDecimal.ROUND_HALF_UP));
             });
         });
         revisionPetitionReportTax.setPrevTotalTax(
@@ -241,12 +258,14 @@ public class RevisionPetitionReportService {
                         .add(revisionPetitionReportTax.getPrevSacvagTax() == null ? BigDecimal.ZERO
                                 : revisionPetitionReportTax.getPrevSacvagTax())
                         .add(revisionPetitionReportTax.getPrevWaterTax() == null ? BigDecimal.ZERO
-                                : revisionPetitionReportTax.getPrevWaterTax()));
+                                : revisionPetitionReportTax.getPrevWaterTax())
+                        .add(revisionPetitionReportTax.getPrevUnAuthPenaltyTax() == null ? BigDecimal.ZERO
+                                : revisionPetitionReportTax.getPrevUnAuthPenaltyTax()));
     }
 
     public String getRemarks(PropertyImpl property) {
         String remarks = "";
-        Petition petition = getPetition(property.getBasicProperty().getId());
+        Petition petition = getPetition(property.getId());
         remarks = petition.getState().getComments() == null
                 ? petition.getStateHistory().get(petition.getStateHistory().size() - 1).getComments()
                 : petition.getState().getComments();
@@ -255,7 +274,7 @@ public class RevisionPetitionReportService {
 
     public Date getNoticeDate(PropertyImpl property) {
         PtNotice notice = null;
-        Petition petition = getPetition(property.getBasicProperty().getId());
+        Petition petition = getPetition(property.getId());
         notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_RPPROCEEDINGS,
                 petition.getObjectionNumber());
         return notice.getNoticeDate();

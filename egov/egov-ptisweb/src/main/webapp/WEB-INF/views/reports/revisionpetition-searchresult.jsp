@@ -66,8 +66,8 @@
 					<th rowspan="2"><spring:message code="lbl.propertytype" /></th>
 					<th rowspan="2"><spring:message code="lbl.service.notice.date" /></th>
 					<th rowspan="2"><spring:message code="lbl.rp.receipt.date" /></th>
-					<th colspan="8"><spring:message code="lbl.demand.before.rp" /></th>
-					<th colspan="8"><spring:message code="lbl.demand.after.rp" /></th>
+					<th colspan="9"><spring:message code="lbl.demand.before.rp" /></th>
+					<th colspan="9"><spring:message code="lbl.demand.after.rp" /></th>
 					<th rowspan="2"><spring:message
 							code="lbl.remarks.approved.authority" /></th>
 				</tr>
@@ -79,6 +79,7 @@
 					<th><spring:message code="lbl.scavenge.tax" /></th>
 					<th><spring:message code="lbl.edutax" /></th>
 					<th><spring:message code="lbl.librarycess" /></th>
+					<th><spring:message code="lbl.unauthorized.penalty" /></th>
 					<th><spring:message code="lbl.total" /></th>
 					<th><spring:message code="lbl.addArrears.generalTax" /></th>
 					<th><spring:message code="lbl.water.tax" /></th>
@@ -87,11 +88,14 @@
 					<th><spring:message code="lbl.scavenge.tax" /></th>
 					<th><spring:message code="lbl.edutax" /></th>
 					<th><spring:message code="lbl.librarycess" /></th>
+					<th><spring:message code="lbl.unauthorized.penalty" /></th>
 					<th><spring:message code="lbl.total" /></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
+					<td></td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

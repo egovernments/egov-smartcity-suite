@@ -20,6 +20,8 @@ public class RevisionPetitionReportTax {
     private BigDecimal prevEduTax;
     private BigDecimal prevLibTax;
     private BigDecimal prevTotalTax;
+    private BigDecimal currentUnAuthPenaltyTax;
+    private BigDecimal prevUnAuthPenaltyTax;
     
     public BigDecimal getCurrentGenTax() {
         return currentGenTax;
@@ -116,5 +118,17 @@ public class RevisionPetitionReportTax {
     }
     public void setPrevTotalTax(BigDecimal prevTotalTax) {
         this.prevTotalTax = prevTotalTax;
+    }
+    public BigDecimal getCurrentUnAuthPenaltyTax() {
+        return currentUnAuthPenaltyTax;
+    }
+    public void setCurrentUnAuthPenaltyTax(BigDecimal currentUnAuthPenaltyTax) {
+        this.currentUnAuthPenaltyTax = currentUnAuthPenaltyTax;
+    }
+    public BigDecimal getPrevUnAuthPenaltyTax() {
+        return prevUnAuthPenaltyTax;
+    }
+    public void setPrevUnAuthPenaltyTax(BigDecimal prevUnAuthPenaltyTax) {
+        this.prevUnAuthPenaltyTax = prevUnAuthPenaltyTax;
     }
 }

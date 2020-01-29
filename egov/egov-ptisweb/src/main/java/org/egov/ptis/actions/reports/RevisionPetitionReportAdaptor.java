@@ -29,6 +29,7 @@ public class RevisionPetitionReportAdaptor implements JsonSerializer<RevisionPet
             jsonObject.addProperty("prevWaterTax", rpReport.getRevisionPetitionReportTax().getPrevWaterTax());
             jsonObject.addProperty("prevLibTax", rpReport.getRevisionPetitionReportTax().getPrevLibTax());
             jsonObject.addProperty("prevTotalTax", rpReport.getRevisionPetitionReportTax().getPrevTotalTax());
+            jsonObject.addProperty("prevUnauthPenaltyTax", rpReport.getRevisionPetitionReportTax().getPrevUnAuthPenaltyTax());
 
             jsonObject.addProperty("currentGenTax", rpReport.getRevisionPetitionReportTax().getCurrentGenTax());
             jsonObject.addProperty("currentEduTax", rpReport.getRevisionPetitionReportTax().getCurrentEduTax());
@@ -38,6 +39,8 @@ public class RevisionPetitionReportAdaptor implements JsonSerializer<RevisionPet
             jsonObject.addProperty("currentWaterTax", rpReport.getRevisionPetitionReportTax().getCurrentWaterTax());
             jsonObject.addProperty("currentLibTax", rpReport.getRevisionPetitionReportTax().getCurrentLibTax());
             jsonObject.addProperty("currentTotalTax", rpReport.getRevisionPetitionReportTax().getCurrentTotalTax());
+            jsonObject.addProperty("currentUnauthPenaltyTax",
+                    rpReport.getRevisionPetitionReportTax().getCurrentUnAuthPenaltyTax());
             jsonObject.addProperty("remarks", rpReport.getApproverRemarks());
 
         }

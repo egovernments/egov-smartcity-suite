@@ -59,6 +59,8 @@ var revenueWardName;
 
 jQuery(document).ready(function() {
 	$("#reportTitle").hide();
+	var fromDate = '';
+	var toDate = '';
 	drillDowntableContainer = jQuery("#tblrevisionpetitiondrilldown");
 	jQuery('#btnsearch').click(function(e) {
 		$("#reportTitle").show();
@@ -77,10 +79,18 @@ jQuery(document).ready(function() {
 			$("#reportTitle").hide();
 			return false;
 		}
-		var fromDates = $('#fromDate').val();
-		$('#fromDatesId').val(fromDates);
-		var toDates = $('#toDate').val();
-		$('#toDatesId').val(toDates);
+		if ($('#fromDate').val() != "") {
+			fromDate = $('#fromDate').data('datepicker').date;
+		}
+		if ($('#toDate').val() != "") {
+			toDate = $('#toDate').data('datepicker').date;
+		}
+		if (toDate != '' && fromDate != '') {
+			if (fromDate > toDate) {
+				bootbox.alert(' To Date should be greater than  From Date');
+				return false;
+			}
+		}
 		callAjaxByBoundary();
 	});
 
@@ -167,6 +177,9 @@ function callAjaxByBoundary() {
 					"data" : "prevLibTax",
 					"sTitle" : "Library Cess"
 				}, {
+					"data" : "prevUnauthPenaltyTax",
+					"sTitle" : "Unauthorized Penalty"
+				}, {
 					"data" : "prevTotalTax",
 					"sTitle" : "Total"
 				}, {
@@ -190,6 +203,9 @@ function callAjaxByBoundary() {
 				}, {
 					"data" : "currentLibTax",
 					"sTitle" : "Library Cess"
+				}, {
+					"data" : "currentUnauthPenaltyTax",
+					"sTitle" : "Unauthorized Penalty"
 				}, {
 					"data" : "currentTotalTax",
 					"sTitle" : "Total"
