@@ -88,6 +88,7 @@
         <input type="hidden" id="workFlowAction" name="workFlowAction" value="${workFlowAction}"/>
         <input type="hidden" id="ownerPosition" name="ownerPosition" value="${ownerPosition}" />
         <input type="hidden" id="date" name="date" value="${waterConnectionDetails.applicationDate}" />
+        <input type="hidden" id="hasEstimationDueForMetered" name="hasEstimationDueForMetered" value="${hasEstimationDueForMetered}" />
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">

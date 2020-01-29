@@ -87,18 +87,20 @@ $(document).ready(
         var approvalPositionExist = $('#approvalPositionExist').val();
 
         if (currentstate != 'Rejected' && status == 'ESTIMATIONNOTICEGENERATED') {
-            if (!$('#proceedWithoutDonation').val() && $("#mode").val()!="error") {
-                bootbox.alert("Collect fees to continue application");
-                $('#approvalDepartment').removeAttr('required');
-                $('#approvalDesignation').removeAttr('required');
-                $(".show-row").hide();
-                $("#Forward").hide();
-                return false;
-            }
-            else {
-                $("#Forward").hide();
-                $("#Reject").hide();
-            }
+        	if($('#hasEstimationDueForMetered').val() != "no"){
+        		if (!$('#proceedWithoutDonation').val() && $("#mode").val()!="error") {
+	                bootbox.alert("Collect fees to continue application");
+	                $('#approvalDepartment').removeAttr('required');
+	                $('#approvalDesignation').removeAttr('required');
+	                $(".show-row").hide();
+	                $("#Forward").hide();
+	                return false;
+	            }
+	            else {
+	                $("#Forward").hide();
+	                $("#Reject").hide();
+	            }
+        	}
         }
 
         if (status == 'DIGITALSIGNATUREPENDING' || status == 'CLOSUREDIGSIGNPENDING' || status == 'RECONNDIGSIGNPENDING') {

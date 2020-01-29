@@ -436,6 +436,16 @@ public class UpdateConnectionController extends GenericConnectionController {
 							: PROCEED_WITHOUT_METER_EST_AMT);
 			if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
 				model.addAttribute("proceedWithoutDonation", "true");
+			
+			if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType())
+					&& CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+					&& APPLICATION_STATUS_ESTIMATENOTICEGEN
+							.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+					&& waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
+							.compareTo(BigDecimal.ZERO) > 0 ? false : true) {
+				model.addAttribute("hasEstimationDueForMetered", "no");
+			}
+
 		}
 		model.addAttribute("hasJuniorOrSeniorAssistantRole",
 				waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(ApplicationThreadLocals.getUserId()));
