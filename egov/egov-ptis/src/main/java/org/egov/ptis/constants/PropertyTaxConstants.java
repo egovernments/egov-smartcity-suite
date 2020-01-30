@@ -1164,6 +1164,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED = "Invalid Request, No transaction ID is associated";
     public static final String THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE = "PTIS-REST-26";
     public static final String THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE = "Invalid Request, Used transaction ID is associated";
+    public static final String THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE_1 = "Payment is rejected as the Transaction No. %s was already used on %s for Assessment %s.";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
     public static final String CHECK_PROPERTY_CATEGORY = "Please enter correct property type";
     public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "PTIS-REST-12";
@@ -1257,6 +1258,9 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_CODE = "PTIS-REST-48";
     public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG = "Document(s) uploaded successfully.";
+    
+    public static final String THIRD_PARTY_ERR_CODE_ADVANCE_LIMIT_EXCEEDED = "PTIS-REST-49";
+    public static final String THIRD_PARTY_ERR_MSG_ADVANCE_LIMIT_EXCEEDED = "Payment is rejected because Advance amount is beyond 10 installments.";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
