@@ -441,8 +441,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 					&& CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
 					&& APPLICATION_STATUS_ESTIMATENOTICEGEN
 							.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-					&& waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
-							.compareTo(BigDecimal.ZERO) > 0 ? false : true) {
+					&& (waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
+							.compareTo(BigDecimal.ZERO) > 0 ? false : true)) {
 				model.addAttribute("hasEstimationDueForMetered", "no");
 			}
 
