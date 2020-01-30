@@ -95,7 +95,8 @@ public class RevisionPetitionReportService {
         Query getreportQuery = null;
         PropertyImpl propertyImpl = null;
         StringBuilder query = new StringBuilder(
-                "from PropertyImpl where status='H' and lastModifiedDate < :modifiedDate and basicProperty.id = :basicPropertyId order by id desc");
+                "from PropertyImpl where status='H' and lastModifiedDate <= :modifiedDate").append(" ")
+                        .append("and basicProperty.id = :basicPropertyId and propertyModifyReason<>'RP'  order by id desc");
         getreportQuery = getCurrentSession()
                 .createQuery(query.toString());
         getreportQuery.setParameter("modifiedDate", property.getLastModifiedDate());
