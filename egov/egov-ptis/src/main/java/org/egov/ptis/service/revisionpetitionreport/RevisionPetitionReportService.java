@@ -10,7 +10,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SCAVEN
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -274,9 +274,21 @@ public class RevisionPetitionReportService {
 
     public Date getNoticeDate(PropertyImpl property) {
         PtNotice notice = null;
+        Date noticeDate = null;
         Petition petition = getPetition(property.getId());
-        notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_RPPROCEEDINGS,
-                petition.getObjectionNumber());
-        return notice.getNoticeDate();
+        notice = getNoticeDateByApplicationNum(petition.getObjectionNumber());
+        if (!notice.getNoticeType().equalsIgnoreCase(NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE)) {
+            noticeDate = notice.getNoticeDate();
+        }
+        return noticeDate;
+    }
+
+    public PtNotice getNoticeDateByApplicationNum(String applicationNo) {
+        Query qry = null;
+        qry = getCurrentSession()
+                .createQuery(
+                        "from PtNotice  where applicationNumber=:applicationNo order by id desc");
+        qry.setParameter("applicationNo", applicationNo);
+        return (PtNotice) qry.list().get(0);
     }
 }
