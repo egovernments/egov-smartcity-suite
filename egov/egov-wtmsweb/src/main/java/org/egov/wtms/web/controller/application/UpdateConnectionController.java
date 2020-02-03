@@ -115,6 +115,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -123,6 +124,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.egov.demand.model.EgDemand;
@@ -569,6 +571,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 		String mode = EMPTY;
 		Double donationCharges = 0d;
+		String ratesValidation = EMPTY;
 
 		String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
 				? request.getParameter(WORKFLOW_ACTION)
@@ -582,7 +585,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 		if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
 			if (!(waterConnectionDetails.getApplicationType().getCode().equals("CLOSINGCONNECTION")))
-				waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+				ratesValidation = waterConnectionDetailsService
+						.validateWaterRateAndDonationHeader(waterConnectionDetails);
 		}
 
 		if (request.getParameter(DONATION_AMOUNT) != null)
@@ -595,6 +599,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 				request.getParameter("ownerPosition"), workFlowAction)) {
 			model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
 			model.addAttribute(MODE, ERROR);
+			if (StringUtils.isNotBlank(ratesValidation))
+				model.addAttribute("failureMessage",
+						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
 			return NEWCONNECTION_EDIT;
 		}
 
@@ -740,9 +747,10 @@ public class UpdateConnectionController extends GenericConnectionController {
 								waterConnectionDetails.setClosureFileStore(fileStore);
 								EgDemand egDemand = waterDemandConnectionService
 										.getCurrentDemand(waterConnectionDetails).getDemand();
-								if (egDemand != null)
+								if (egDemand != null) {
 									egDemand.setIsHistory("Y");
-								egDemand.setModifiedDate(new Date());
+									egDemand.setModifiedDate(new Date());
+								}
 							} else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
 								waterConnectionDetails.setReconnectionFileStore(fileStore);
 							else

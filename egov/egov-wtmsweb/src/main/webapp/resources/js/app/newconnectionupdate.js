@@ -398,8 +398,14 @@ $(document).ready(
         if ($('#meterFocus').val() == 'true') {
             $('#meterSerialNumber').focus();
         }
-
-
+        
+        if($('#failureMessage').val() != ''){
+    		bootbox.alert($('#failureMessage').val());
+    			 loadPropertyCategories();
+    			 loadPropertyUsageTypes();
+    			 loadPropertyPipeTypes();
+    	 }
+        
     });
 
 function removedMandatoryCheckForApprovalDetails() {
