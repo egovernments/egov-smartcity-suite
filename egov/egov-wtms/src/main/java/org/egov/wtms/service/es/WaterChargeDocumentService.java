@@ -49,6 +49,7 @@
 package org.egov.wtms.service.es;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
@@ -170,7 +171,7 @@ public class WaterChargeDocumentService {
             waterChargeDocument.setPropertyType(waterConnectionDetails.getPropertyType().getName());
             waterChargeDocument.setCategory(waterConnectionDetails.getCategory().getName());
             waterChargeDocument.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
-            waterChargeDocument.setCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())));
+            waterChargeDocument.setCityCode(defaultString((String) cityInfo.get(CITY_CODE_KEY)));
 
             waterChargeDocument.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
             waterChargeDocument.setPipeSize(waterConnectionDetails.getPipeSize().getCode());
@@ -279,7 +280,7 @@ public class WaterChargeDocumentService {
                         .withPropertytype(waterConnectionDetails.getPropertyType().getName())
                         .withCategory(waterConnectionDetails.getCategory().getName())
                         .withCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
-                        .withCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())))
+                        .withCityCode(defaultString((String) cityInfo.get(CITY_CODE_KEY)))
                         .withSumpcapacity(waterConnectionDetails.getSumpCapacity())
                         .withPipesize(waterConnectionDetails.getPipeSize().getCode())
                         .withNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null

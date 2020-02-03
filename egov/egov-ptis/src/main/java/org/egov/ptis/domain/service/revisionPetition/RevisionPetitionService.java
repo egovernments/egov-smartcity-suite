@@ -885,8 +885,6 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
             if (loggedUserIsEmployee && user != null)
                 actionMessages.put(OBJECTION_FORWARD,
                         new String[] { user.getName().concat("~").concat(position.getName()) });
-            updateIndexAndPushToPortalInbox(petition);
-
         } else if (workFlowAction != null && !"".equals(workFlowAction)
                 && !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
 
@@ -914,8 +912,6 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
             if (wfmatrix != null)
                 actionMessages.putAll(workFlowTransition(petition, workFlowAction, approverComments, wfmatrix,
                         position, approverPositionId, approverName));
-            // Update elastic search index on each workflow.
-            updateIndexAndPushToPortalInbox(petition);
 
         } else if (!StringUtils.isBlank(workFlowAction) && WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction))
             actionMessages.put("file.save", new String[] {});

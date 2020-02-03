@@ -135,7 +135,7 @@ public class CollectionReportHeadWiseService {
                     + fromDateFormatter.format(fromDate) + "', 'YYYY-MM-DD HH24:MI:SS') and " + " to_timestamp('"
                     + toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
         }
-        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
             whereQueryStr.append(" AND EGCL_COLLECTIONHEADER.SOURCE=:source");
         }
         if (glCode != null) {
@@ -206,7 +206,7 @@ public class CollectionReportHeadWiseService {
                 .addScalar("cardAmount", DoubleType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
-        if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
             aggrQuery.setString("source", source);
             rebateQuery.setString("source", source);
         }

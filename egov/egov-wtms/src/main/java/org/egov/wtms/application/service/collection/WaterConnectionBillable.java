@@ -72,7 +72,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -94,7 +93,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVEICECODEGENBILL;
 
 @Service
-@Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 

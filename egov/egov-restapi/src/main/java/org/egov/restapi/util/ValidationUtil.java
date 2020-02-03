@@ -967,8 +967,9 @@ public class ValidationUtil {
             if (billReceiptList != null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE);
-
+                errorDetails.setErrorMessage(String.format(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE_1,
+                        payPropTaxDetails.getTransactionId(), billReceiptList.getReceiptDate(),
+                        payPropTaxDetails.getAssessmentNo()));
             }
         }
         if (payPropTaxDetails.getPaymentMode() == null || payPropTaxDetails.getPaymentMode().trim().length() == 0) {

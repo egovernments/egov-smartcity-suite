@@ -87,12 +87,12 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-        @Result(name = BankRemittanceAction.NEW, location = "chequeRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printChequeBankChallan.action", params = {
+        @Result(name = ChequeRemittanceAction.NEW, location = "chequeRemittance-new.jsp"),
+        @Result(name = ChequeRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printChequeBankChallan.action", params = {
                 "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
                 "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
                 "${remittanceDate}" }),
-        @Result(name = BankRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
+        @Result(name = ChequeRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
 @ParentPackage("egov")
 public class ChequeRemittanceAction extends BaseFormAction {
     private static final String APPROVER_LIST = "approverList";
@@ -198,7 +198,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @SkipValidation
     public String listData() {
         isListData = true;
-        remitAccountNumber = "";
+        remitAccountNumber = CollectionConstants.BLANK;
         if (accountNumberId != null) {
             final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
             bankAccountQry.setLong("accountNumberId", accountNumberId);

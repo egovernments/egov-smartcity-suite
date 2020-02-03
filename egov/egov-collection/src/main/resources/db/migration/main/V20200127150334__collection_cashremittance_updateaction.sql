@@ -1,0 +1,4 @@
+update eg_action set name='CashRemittanceCreate',displayname='CashRemittanceCreate',url='/receipts/cashBankRemittance-create.action' where name='BankRemittanceCreate';
+update eg_action set name='CashRemittanceListData',displayname='CashRemittanceListData',url='/receipts/cashBankRemittance-listData.action' where name='BankRemittanceListData';
+update eg_action set name='CashRemittancePrintBankChallan', displayname='CashRemittancePrintBankChallan',url='/receipts/cashBankRemittance-printBankChallan.action' where name='RemittancePrintBankChallan';
+update eg_action set name='CashBankRemittance',url='/receipts/cashBankRemittance-newform.action' where name='BankRemittance';

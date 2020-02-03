@@ -49,6 +49,7 @@ package org.egov.wtms.web.controller.application;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
@@ -308,6 +309,8 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (isAnonymousUser)
             waterConnectionDetails.setSource(ONLINE);
+        if(isCSCOperator)
+        	waterConnectionDetails.setSource(CSC);
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));

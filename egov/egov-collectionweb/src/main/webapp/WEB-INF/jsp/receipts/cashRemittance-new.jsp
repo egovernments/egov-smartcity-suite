@@ -316,7 +316,7 @@
 		} else {
 		       	doLoadingMask('#loadingMask');
 				jQuery('#finYearId').prop("disabled", false);
-				document.bankRemittanceForm.action = "bankRemittance-create.action";
+				document.bankRemittanceForm.action = "cashBankRemittance-create.action";
 				return true;
 		}
 
@@ -362,7 +362,7 @@
 		}
 		jQuery('#finYearId').prop("disabled", false);
 		jQuery('#remittanceAmount').val("");
-		document.bankRemittanceForm.action = "bankRemittance-listData.action";
+		document.bankRemittanceForm.action = "cashBankRemittance-listData.action";
 		return true;
 	}
 
@@ -635,7 +635,7 @@
 							title="Department" style="width:10%;text-align: center"
 							value="${currentRow.DEPARTMENTNAME}" />
 
-                            <display:column headerClass="bluebgheadtd" class="blueborderfortd"
+                         <display:column headerClass="bluebgheadtd" class="blueborderfortd"
                                 title="Approver" style="width:10%;text-align: center"
                                 value="${currentRow.APPROVERNAME}" />
 							

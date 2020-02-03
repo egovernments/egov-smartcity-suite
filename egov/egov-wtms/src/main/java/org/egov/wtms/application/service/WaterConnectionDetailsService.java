@@ -290,9 +290,9 @@ import com.google.gson.reflect.TypeToken;
 @Transactional(readOnly = true)
 public class WaterConnectionDetailsService {
 
-	private static final String APPLICATION_TYPE_CLOSING_CONNECTION = "Closing connection";
+        private static final String APPLICATION_TYPE_CLOSING_CONNECTION = "Closing connection";
     private static final String APPLICATION_TYPE_RECONNECTION = "Reconnection";
-	private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
+        private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
     private static final String APPLICATION_NO = "Application no ";
     private static final String REGARDING = " regarding ";
     private static final String APPROVED = "Approved";
@@ -640,8 +640,8 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails updateWaterConnection(WaterConnectionDetails waterConnectionDetails,
             Long approvalPosition, String approvalComent, String additionalRule, String workFlowAction, String mode,
             ReportOutput reportOutput, String sourceChannel) {
-    	
-    	String applicationType = waterConnectionDetails.getApplicationType().getName();
+        
+        String applicationType = waterConnectionDetails.getApplicationType().getName();
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
@@ -654,6 +654,7 @@ public class WaterConnectionDetailsService {
                 && TEMPERARYCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType())
                 && waterConnectionDetails.getReConnectionReason() != null
                 && APPROVEWORKFLOWACTION.equals(workFlowAction)) {
+            waterDemandConnectionService.getLatestHistoryDemand(waterConnectionDetails);
             waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(RECONNECTION));
             waterConnectionDetails.setConnectionStatus(ACTIVE);
             waterConnectionDetails.setReconnectionApprovalDate(new Date());
@@ -744,21 +745,22 @@ public class WaterConnectionDetailsService {
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
-		
-		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
-				&& !REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-				&& (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-						|| WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))) {
-			String applicationNo = EMPTY;
-			if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
-					|| APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
-				applicationNo = getUpdatedApplicationNumber(waterConnectionDetails, applicationType);
-			else
-				applicationNo = waterConnectionDetails.getApplicationNumber();
+                
+        if (waterConnectionDetails.getSource() != null
+                && Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                                && !REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                                && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                                                || WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))) {
+                        String applicationNo = EMPTY;
+                        if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
+                                        || APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
+                                applicationNo = getUpdatedApplicationNumber(waterConnectionDetails, applicationType);
+                        else
+                                applicationNo = waterConnectionDetails.getApplicationNumber();
 
-			publishEventForWardSecretary(null, applicationNo, applicationType, true,
-					WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction);
-		}
+                        publishEventForWardSecretary(null, applicationNo, applicationType, true,
+                                        WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction);
+                }
         updateIndexes(waterConnectionDetails);
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -906,8 +908,7 @@ public class WaterConnectionDetailsService {
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), pendingAction,
                     REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                            ? waterConnectionDetails.getApplicationDate()
-                            : null);
+                                                        ? waterConnectionDetails.getApplicationDate() : null);
         if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(connectionStatusCode))
             approverPosition = waterTaxUtils.getApproverPosition(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK,
                     waterConnectionDetails);
@@ -1273,14 +1274,17 @@ public class WaterConnectionDetailsService {
         return tempDocList;
     }
 
-    public void validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
+    public String validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
+        String errorKey = "";
         DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
-            throw new ApplicationRuntimeException("donation.combination.required");
-        WaterRatesDetails waterRatesDetails = connectionDemandService
-                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+            errorKey = "donation.combination.required";
+
+        WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         if (waterRatesDetails == null)
-            throw new ApplicationRuntimeException("err.water.rate.not.configured.within.period");
+            errorKey = "err.water.rate.not.configured.within.period";
+
+        return errorKey;
     }
 
     public String getApprovalPositionOnValidate(Long approvalPositionId) {
@@ -1949,85 +1953,85 @@ public class WaterConnectionDetailsService {
         return value;
     }
 
-	@Transactional
-	public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
-			HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent,
-			String mode) {
-		try {
-			createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
-					waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
-			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
+        @Transactional
+        public void persistAndPublishEventForWardSecretary(WaterConnectionDetails waterConnectionDetails,
+                        HttpServletRequest request, String workFlowAction, Long approvalPosition, String approvalComent,
+                        String mode) {
+                try {
+                        createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent,
+                                        waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
+                        publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
+                                        waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 
-		} catch (Exception e) {
-			publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
-					waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
-		}
-	}
+                } catch (Exception e) {
+                        publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
+                                        waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
+                }
+        }
 
-	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, String applicationType,
-			boolean isSuccess, String mode, String workFlowAction) {
-		if (isSuccess) {
-			if (WARDSECRETARY_EVENTPUBLISH_MODE_CREATE.equalsIgnoreCase(mode)) {
-				thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
-						.withApplicationNumber((APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
-								|| APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
-										? applicationNo.concat("~").concat(getFormattedDate(new Date(), "dd-MM-yyyy"))
-										: applicationNo)
-						.withViewLink(format(WaterTaxConstants.VIEW_LINK,
-								WebUtils.extractRequestDomainURL(request, false), applicationNo))
-						.withTransactionStatus(TransactionStatus.SUCCESS)
-						.withApplicationStatus(ApplicationStatus.INPROGRESS)
-						.withRemark(applicationType.concat(" created"))
-						.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
-			} else if (WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE.equalsIgnoreCase(mode)) {
-				ApplicationDetails applicationDetails = ApplicationDetails.builder()
-						.withApplicationNumber(applicationNo)
-						.withApplicationStatus(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-								? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED)
-						.withRemark(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-								? applicationType.concat(" approved") : applicationType.concat(" cancelled"))
-						.withDateOfCompletion(new Date()).build();
-				thirdPartyApplicationEventPublisher.publishEvent(applicationDetails);
-			}
-		} else {
-			thirdPartyApplicationEventPublisher
-					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
-							.withRemark(applicationType.concat(" creation failed"))
-							.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
-		}
-	}
+        public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, String applicationType,
+                        boolean isSuccess, String mode, String workFlowAction) {
+                if (isSuccess) {
+                        if (WARDSECRETARY_EVENTPUBLISH_MODE_CREATE.equalsIgnoreCase(mode)) {
+                                thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+                                                .withApplicationNumber((APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType)
+                                                                || APPLICATION_TYPE_RECONNECTION.equalsIgnoreCase(applicationType))
+                                                                                ? applicationNo.concat("~").concat(getFormattedDate(new Date(), "dd-MM-yyyy"))
+                                                                                : applicationNo)
+                                                .withViewLink(format(WaterTaxConstants.VIEW_LINK,
+                                                                WebUtils.extractRequestDomainURL(request, false), applicationNo))
+                                                .withTransactionStatus(TransactionStatus.SUCCESS)
+                                                .withApplicationStatus(ApplicationStatus.INPROGRESS)
+                                                .withRemark(applicationType.concat(" created"))
+                                                .withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+                        } else if (WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE.equalsIgnoreCase(mode)) {
+                                ApplicationDetails applicationDetails = ApplicationDetails.builder()
+                                                .withApplicationNumber(applicationNo)
+                                                .withApplicationStatus(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                                                                ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED)
+                                                .withRemark(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                                                                ? applicationType.concat(" approved") : applicationType.concat(" cancelled"))
+                                                .withDateOfCompletion(new Date()).build();
+                                thirdPartyApplicationEventPublisher.publishEvent(applicationDetails);
+                        }
+                } else {
+                        thirdPartyApplicationEventPublisher
+                                        .publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
+                                                        .withRemark(applicationType.concat(" creation failed"))
+                                                        .withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+                }
+        }
 
-	/**
-	 * API appends the latest initiation date to the application number for
-	 * updating the final status in case of Closure/Reconnection for Ward
-	 * Secretary portal requests
-	 * 
-	 * @param waterConnectionDetails
-	 * @param applicationType
-	 * @return updated application number
-	 */
-	private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
-		String updatedApplicationNo = EMPTY;
-		String natureOfTask;
-		List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
-		if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
-			natureOfTask = CLOSURE_WATER_TAP_CONNECTION;
-		else
-			natureOfTask = RECONN_WATER_TAP_CONNECTION;
+        /**
+         * API appends the latest initiation date to the application number for
+         * updating the final status in case of Closure/Reconnection for Ward
+         * Secretary portal requests
+         * 
+         * @param waterConnectionDetails
+         * @param applicationType
+         * @return updated application number
+         */
+        private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
+                String updatedApplicationNo = EMPTY;
+                String natureOfTask;
+                List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
+                if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
+                        natureOfTask = CLOSURE_WATER_TAP_CONNECTION;
+                else
+                        natureOfTask = RECONN_WATER_TAP_CONNECTION;
 
-		if (!stateHistoryList.isEmpty()) {
-			Collections.sort(stateHistoryList, (history1, history2) -> history2.getId().compareTo(history1.getId()));
-			for (StateHistory stateHistory : stateHistoryList) {
-				if (natureOfTask.equalsIgnoreCase(stateHistory.getNatureOfTask())
-						&& APPLICATION_STATUS_NEW.equalsIgnoreCase(stateHistory.getValue()))
-					updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
-							.concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
+                if (!stateHistoryList.isEmpty()) {
+                        Collections.sort(stateHistoryList, (history1, history2) -> history2.getId().compareTo(history1.getId()));
+                        for (StateHistory stateHistory : stateHistoryList) {
+                                if (natureOfTask.equalsIgnoreCase(stateHistory.getNatureOfTask())
+                                                && APPLICATION_STATUS_NEW.equalsIgnoreCase(stateHistory.getValue()))
+                                        updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
+                                                        .concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
 
-				if (isNotBlank(updatedApplicationNo))
-					break;
-			}
-		}
-		return updatedApplicationNo;
-	}
+                                if (isNotBlank(updatedApplicationNo))
+                                        break;
+                        }
+                }
+                return updatedApplicationNo;
+        }
 }

@@ -892,4 +892,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/redNotice/rednotice-view.jsp" />
 	</definition>
+	<definition name="revisionpetitionreport-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.rp.report.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/revisionpetitionreport-form.jsp" />
+	</definition>
 </tiles-definitions> 

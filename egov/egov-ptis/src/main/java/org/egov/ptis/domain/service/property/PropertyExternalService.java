@@ -56,6 +56,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,6 +108,8 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -787,9 +790,15 @@ public class PropertyExternalService {
             paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
         }
         final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
-        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment,
-                payPropertyTaxDetails.getSource());
-
+        BillReceiptInfo billReceiptInfo = null;
+        try {
+            billReceiptInfo = collectionHelper.executeCollection(payment,
+                    payPropertyTaxDetails.getSource());
+        } catch (ValidationException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    THIRD_PARTY_ERR_CODE_ADVANCE_LIMIT_EXCEEDED,
+                    THIRD_PARTY_ERR_MSG_ADVANCE_LIMIT_EXCEEDED)));
+        }
         if (null != billReceiptInfo) {
             receiptDetails = new ReceiptDetails();
             receiptDetails.setReceiptNo(billReceiptInfo.getReceiptNum());

@@ -60,6 +60,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -73,6 +74,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_VALIDATION;
 @Controller
 @RequestMapping(value = { "/public/mobile", "/mobile" })
 public class WaterTaxMobilePaymentController {
+	private static final Logger LOGGER = Logger.getLogger(WaterTaxMobilePaymentController.class);
 
     private static final String PAYTAX_FORM = "mobilePayment-form";
     private static final String ERROR_MSG = "errorMsg";
@@ -100,6 +102,10 @@ public class WaterTaxMobilePaymentController {
 			@PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
 			@PathVariable final String mobileNumber, @PathVariable final String emailId,
 			final HttpServletRequest request) throws ParseException {
+		LOGGER.info("WaterCharges Mobile payment request URL: consumerNo = " + consumerNo + ", ulbCode = " + ulbCode
+				+ ", amountToBePaid = " + amountToBePaid + ", mobileNumber = " + mobileNumber + ", emailId = "
+				+ emailId);
+
 		String redirectUrl = "";
 		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
 				.findByConsumerCodeAndConnectionStatus(consumerNo, ConnectionStatus.ACTIVE);

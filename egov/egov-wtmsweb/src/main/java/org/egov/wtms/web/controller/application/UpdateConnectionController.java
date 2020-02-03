@@ -115,6 +115,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -123,8 +124,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -156,6 +159,8 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.web.validator.UpdateWaterConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -236,6 +241,10 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private WaterEstimationChargesPaymentService waterEstimationChargesPaymentService;
+
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource messageSource;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable String applicationNumber) {
@@ -429,6 +438,15 @@ public class UpdateConnectionController extends GenericConnectionController {
                             : PROCEED_WITHOUT_METER_EST_AMT);
             if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
                 model.addAttribute("proceedWithoutDonation", "true");
+			
+			if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType())
+					&& CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+					&& APPLICATION_STATUS_ESTIMATENOTICEGEN
+							.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+					&& (waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
+							.compareTo(BigDecimal.ZERO) > 0 ? false : true)) {
+				model.addAttribute("hasEstimationDueForMetered", "no");
+			}
         }
         model.addAttribute("hasJuniorOrSeniorAssistantRole",
                 waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(ApplicationThreadLocals.getUserId()));
@@ -552,6 +570,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         String mode = EMPTY;
         Double donationCharges = 0d;
+		String ratesValidation = EMPTY;
 
         String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
                 ? request.getParameter(WORKFLOW_ACTION)
@@ -565,7 +584,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
             if (!(waterConnectionDetails.getApplicationType().getCode().equals("CLOSINGCONNECTION")))
-                waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+				ratesValidation = waterConnectionDetailsService
+						.validateWaterRateAndDonationHeader(waterConnectionDetails);
         }
 
         if (request.getParameter(DONATION_AMOUNT) != null)
@@ -578,6 +598,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                 request.getParameter("ownerPosition"), workFlowAction)) {
             model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
             model.addAttribute(MODE, ERROR);
+			if (StringUtils.isNotBlank(ratesValidation))
+				model.addAttribute("failureMessage",
+						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
             return NEWCONNECTION_EDIT;
         }
 
@@ -625,6 +648,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 }
 
                 waterConnectionDetailsService.save(waterConnectionDetails);
+				waterConnectionDetailsService.getCurrentSession().flush();
 
             } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
@@ -718,9 +742,15 @@ public class UpdateConnectionController extends GenericConnectionController {
                             InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                             FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
                                     FILESTORE_MODULECODE);
-                            if (CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+							if (CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())) {
                                 waterConnectionDetails.setClosureFileStore(fileStore);
-                            else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+								EgDemand egDemand = waterDemandConnectionService
+										.getCurrentDemand(waterConnectionDetails).getDemand();
+								if (egDemand != null) {
+									egDemand.setIsHistory("Y");
+									egDemand.setModifiedDate(new Date());
+								}
+							} else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
                                 waterConnectionDetails.setReconnectionFileStore(fileStore);
                             else
                                 waterConnectionDetails.setFileStore(fileStore);

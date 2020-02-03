@@ -143,7 +143,9 @@
                             <select class="form-control" id="serviceGroup">
                                 <option value="">ALL</option>
                                 <c:forEach items="${distinctModuleNames}" var="module" varStatus="item">
+							<c:if test="${module.displayName != 'My Services'}">
                                     <option value="${module.contextRoot }">${module.displayName}</option>
+							</c:if>
                                 </c:forEach>
                             </select>
                         </div>

@@ -86,18 +86,18 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printCashBankChallan.action", params = {
+@Results({ @Result(name = CashRemittanceAction.NEW, location = "cashRemittance-new.jsp"),
+        @Result(name = CashRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printCashBankChallan.action", params = {
                 "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
                 "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
                 "${remittanceDate}" }),
-        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = CashRemittanceAction.INDEX, location = "cashRemittance-index.jsp") })
 @ParentPackage("egov")
-public class BankRemittanceAction extends BaseFormAction {
+public class CashRemittanceAction extends BaseFormAction {
     private static final String APPROVER_LIST = "approverList";
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
+    private static final Logger LOGGER = Logger.getLogger(CashRemittanceAction.class);
     private static final String BANK_ACCOUNT_NUMBER_QUERY = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id =:accountNumberId";
     private static final String SERVICE_FUND_QUERY = new StringBuilder()
             .append("select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,")
@@ -161,7 +161,7 @@ public class BankRemittanceAction extends BaseFormAction {
         this.collectionsUtil = collectionsUtil;
     }
 
-    @Action(value = "/receipts/bankRemittance-newform")
+    @Action(value = "/receipts/cashBankRemittance-newform")
     @SkipValidation
     public String newform() {
         populateRemittanceList();
@@ -193,11 +193,12 @@ public class BankRemittanceAction extends BaseFormAction {
                 approverRemitterMapService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
-    @Action(value = "/receipts/bankRemittance-listData")
+    @Action(value = "/receipts/cashBankRemittance-listData")
     @SkipValidation
     public String listData() {
         isListData = true;
-        remitAccountNumber = "";
+        remitAccountNumber = CollectionConstants.BLANK;
+        String approverIdList = CollectionConstants.BLANK;
         if (accountNumberId != null) {
 
             final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
@@ -210,14 +211,13 @@ public class BankRemittanceAction extends BaseFormAction {
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
 
-        String approverIdList = CollectionConstants.BLANK;
         if (!isBankCollectionRemitter) {
             if (getDropdownData().get(APPROVER_LIST).isEmpty())
                 addActionError(getText("remittance.noapprovermapped"));
             if (approverId == null || Integer.parseInt(approverId) < 0) {
                 approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get(APPROVER_LIST))
                         .stream()
-                        .map(m -> m.getApprover().getId().toString())
+                        .map(approverRemitterMap -> approverRemitterMap.getApprover().getId().toString())
                         .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
             } else
                 approverIdList = approverId;
@@ -250,7 +250,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return NEW;
     }
 
-    @Action(value = "/receipts/bankRemittance-printBankChallan")
+    @Action(value = "/receipts/cashBankRemittance-printBankChallan")
     @SkipValidation
     public String printBankChallan() {
         return PRINT_BANK_CHALLAN;
@@ -283,7 +283,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @ValidationErrorPage(value = "error")
-    @Action(value = "/receipts/bankRemittance-create")
+    @Action(value = "/receipts/cashBankRemittance-create")
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
