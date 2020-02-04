@@ -332,4 +332,10 @@ $(document).ready(function(){
 	}
 	}
 	
+	if($('#failureMessage').val() != ''){
+		bootbox.alert($('#failureMessage').val());
+			 loadPropertyCategories();
+			 loadPropertyUsageTypes();
+			 loadPropertyPipeTypes();
+	 }
 });

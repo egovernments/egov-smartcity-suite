@@ -50,7 +50,9 @@ $(document).ready(function(){
 
 	//sewerage validation
 	$('.sewerageDetails').hide();
+	if ($('#failureMessage').val() == ''){
 	$('#propertyIdentifier').val($('#ptAssessmentNo').val());
+	}
 
 	$('#addSewerageAppln').change(function(){
 			if ($('#addSewerageAppln').is(":checked")) {
@@ -335,6 +337,13 @@ $(document).ready(function(){
 	{
 		console.log("ERROR :"+e);
 	}
+	
+	if($('#failureMessage').val() != ''){
+		bootbox.alert($('#failureMessage').val());
+			 loadPropertyCategories();
+			 loadPropertyUsageTypes();
+			 loadPropertyPipeTypes();
+	 }
 });
 $('#consumerCodeData').blur(function(){
 	console.log('Got blur event');

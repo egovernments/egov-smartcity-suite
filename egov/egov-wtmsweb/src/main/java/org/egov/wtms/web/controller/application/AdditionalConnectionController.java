@@ -59,6 +59,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -86,6 +87,8 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -121,6 +124,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
     @Autowired
     private ConnectionDetailService connectionDetailService;
+    
+    @Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource messageSource;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
@@ -191,6 +198,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             @RequestParam final String workFlowAction, final HttpServletRequest request, final BindingResult errors) {
+    	String ratesValidation = StringUtils.EMPTY;
 		User currentUser = securityUtils.getCurrentUser();
 		final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
 		final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
@@ -243,14 +251,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 i++;
             }
         if (ConnectionType.NON_METERED.equals(addConnection.getConnectionType()))
-            waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection);
+			ratesValidation = waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection);
         if (addConnection.getState() == null)
             addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
-
-        if (resultBinder.hasErrors()) {
-            final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
-                    .getActiveConnectionDetailsByConnection(addConnection.getConnection());
+		if (StringUtils.isNotBlank(ratesValidation) || resultBinder.hasErrors()) {
+			final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+					.getParentConnectionDetails(addConnection.getConnection().getPropertyIdentifier(),
+							ConnectionStatus.ACTIVE);
             loadBasicDetails(addConnection, model, parentConnectionDetails, addConnection.getMeesevaApplicationNumber());
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
@@ -263,6 +271,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
+			if (StringUtils.isNotBlank(ratesValidation))
+				model.addAttribute("failureMessage",
+						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
             return ADDCONNECTION_FORM;
         }
         addConnection.setApplicationDate(new Date());

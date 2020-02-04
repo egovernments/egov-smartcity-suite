@@ -59,6 +59,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -83,6 +84,8 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -97,34 +100,38 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/application")
 public class ChangeOfUseController extends GenericConnectionController {
 
-    private static final String APPROVAL_POSITION = "approvalPosition";
-    private static final String CHANGEOFUSE_FORM = "changeOfUse-form";
+	private static final String APPROVAL_POSITION = "approvalPosition";
+	private static final String CHANGEOFUSE_FORM = "changeOfUse-form";
 
-    @Autowired
-    private ApplicationTypeService applicationTypeService;
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-    @Autowired
-    private SecurityUtils securityUtils;
+	@Autowired
+	private WaterTaxUtils waterTaxUtils;
+	@Autowired
+	private SecurityUtils securityUtils;
 
-    @Autowired
-    private ChangeOfUseService changeOfUseService;
+	@Autowired
+	private ChangeOfUseService changeOfUseService;
 
-    @Autowired
-    private ConnectionDetailService connectionDetailService;
+	@Autowired
+	private ConnectionDetailService connectionDetailService;
+	
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource messageSource;
 
-    public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
-            @ModelAttribute final WaterConnectionDetails changeOfUse) {
-        changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
-        return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
-    }
+	public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
+			@ModelAttribute final WaterConnectionDetails changeOfUse) {
+		changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
+		return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
+	}
 
-    @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
-    public String showForm(final WaterConnectionDetails parentConnectionDetails,
-            @ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
-            @PathVariable final String consumerCode, final HttpServletRequest request) {
-        final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
+	@RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
+	public String showForm(final WaterConnectionDetails parentConnectionDetails,
+			@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
+			@PathVariable final String consumerCode, final HttpServletRequest request) {
+		final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
 		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser) {
 			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
@@ -136,224 +143,228 @@ public class ChangeOfUseController extends GenericConnectionController {
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
 		}
-        WaterConnectionDetails connectionDetails = null;
-        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
+		WaterConnectionDetails connectionDetails = null;
+		final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
-        if (null != connectionUnderChange.getConnection().getParentConnection())
-            connectionDetails = waterConnectionDetailsService
-                    .getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
+		if (null != connectionUnderChange.getConnection().getParentConnection())
+			connectionDetails = waterConnectionDetailsService
+					.getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
 
-        else
+		else
             connectionDetails = waterConnectionDetailsService.getParentConnectionDetails(connectionUnderChange
                     .getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
-        if (connectionDetails == null)
-            throw new ValidationException("err.connection.not.exist");
-        else
-            loadBasicData(model, connectionDetails, changeOfUse, connectionUnderChange, meesevaApplicationNumber);
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
-        prepareWorkflow(model, changeOfUse, workflowContainer);
-        return CHANGEOFUSE_FORM;
-    }
+		if (connectionDetails == null)
+			throw new ValidationException("err.connection.not.exist");
+		else
+			loadBasicData(model, connectionDetails, changeOfUse, connectionUnderChange, meesevaApplicationNumber);
+		final WorkflowContainer workflowContainer = new WorkflowContainer();
+		workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+		prepareWorkflow(model, changeOfUse, workflowContainer);
+		return CHANGEOFUSE_FORM;
+	}
 
-    @RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
-            final BindingResult errors) {
+	@RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
+	public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
+			final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+			final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
+			final BindingResult errors) {
+		String ratesValidation = StringUtils.EMPTY;
 		User currentUser = securityUtils.getCurrentUser();
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         final Boolean loggedInMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
         final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
-        model.addAttribute("isAnonymousUser", isAnonymousUser);
-        if (loggedInMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
-            changeOfUse.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
-        model.addAttribute("citizenPortalUser", citizenPortalUser);
-        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+		model.addAttribute("isAnonymousUser", isAnonymousUser);
+		if (loggedInMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
+			changeOfUse.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+		model.addAttribute("citizenPortalUser", citizenPortalUser);
+		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
 		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
 		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
 
 		if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser && !isAnonymousUser && !isWardSecretaryUser) {
-            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
+			final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId());
-            if (!isJuniorAsstOrSeniorAsst)
-                throw new ValidationException("err.creator.application");
-        }
-        final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
-        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
+			if (!isJuniorAsstOrSeniorAsst)
+				throw new ValidationException("err.creator.application");
+		}
+		final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
+		final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(changeOfUse.getConnection().getConsumerCode(),
                         ConnectionStatus.ACTIVE);
-        final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
-                connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
-        String message = "";
-        if (parent != null)
-            message = changeOfUseService.validateChangeOfUseConnection(parent);
-        String consumerCode = "";
-        if (!message.isEmpty() && !"".equals(message)) {
-            if (changeOfUse.getConnection().getParentConnection() != null)
-                consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
-            else
-                consumerCode = changeOfUse.getConnection().getConsumerCode();
+		final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
+				connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
+		String message = "";
+		if (parent != null)
+			message = changeOfUseService.validateChangeOfUseConnection(parent);
+		String consumerCode = "";
+		if (!message.isEmpty() && !"".equals(message)) {
+			if (changeOfUse.getConnection().getParentConnection() != null)
+				consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
+			else
+				consumerCode = changeOfUse.getConnection().getConsumerCode();
 			if (isWardSecretaryUser)
 				return "redirect:/application/changeOfUse/".concat(consumerCode).concat("?wsTransactionId=")
 						.concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
 			else
-				return "redirect:/application/changeOfUse/" + consumerCode;
-        }
-        int i = 0;
-        if (!changeOfUse.getApplicationDocs().isEmpty())
-            for (final ApplicationDocuments applicationDocument : changeOfUse.getApplicationDocs()) {
-                if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentNumber";
-                    resultBinder.rejectValue(fieldError, "documentNumber.required");
-                }
-                if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentDate";
-                    resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (connectionDetailService.validApplicationDocument(applicationDocument))
-                    applicationDocs.add(applicationDocument);
-                i++;
-            }
-        if (ConnectionType.NON_METERED.equals(changeOfUse.getConnectionType()))
-            waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
-        if (resultBinder.hasErrors()) {
-            final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
-                    .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
+			return "redirect:/application/changeOfUse/" + consumerCode;
+		}
+		int i = 0;
+		if (!changeOfUse.getApplicationDocs().isEmpty())
+			for (final ApplicationDocuments applicationDocument : changeOfUse.getApplicationDocs()) {
+				if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
+					final String fieldError = "applicationDocs[" + i + "].documentNumber";
+					resultBinder.rejectValue(fieldError, "documentNumber.required");
+				}
+				if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
+					final String fieldError = "applicationDocs[" + i + "].documentDate";
+					resultBinder.rejectValue(fieldError, "documentDate.required");
+				} else if (connectionDetailService.validApplicationDocument(applicationDocument))
+					applicationDocs.add(applicationDocument);
+				i++;
+			}
+		if (ConnectionType.NON_METERED.equals(changeOfUse.getConnectionType()))
+			ratesValidation = waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
+
+		if (StringUtils.isNotBlank(ratesValidation) || resultBinder.hasErrors()) {
+			final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+					.getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
             loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse, changeOfUse.getMeesevaApplicationNumber());
-            final WorkflowContainer workflowContainer = new WorkflowContainer();
-            workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
-            prepareWorkflow(model, changeOfUse, workflowContainer);
-            model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
-            model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
+			final WorkflowContainer workflowContainer = new WorkflowContainer();
+			workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+			prepareWorkflow(model, changeOfUse, workflowContainer);
+			model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
+			model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
             model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
                     + resultBinder.getFieldErrors().get(0).getDefaultMessage());
-            model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
-            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(currentUser));
-            if (isWardSecretaryUser) {
+			model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+			model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+			if (StringUtils.isNotBlank(ratesValidation))
+				model.addAttribute("failureMessage",
+						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
+
+			if (isWardSecretaryUser) {
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
+			return CHANGEOFUSE_FORM;
 
-            return CHANGEOFUSE_FORM;
+		}
+		if (changeOfUse.getState() == null)
+			changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+					WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
 
-        }
-        if (changeOfUse.getState() == null)
-            changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
+		changeOfUse.getApplicationDocs().clear();
+		changeOfUse.setApplicationDocs(applicationDocs);
 
-        changeOfUse.getApplicationDocs().clear();
-        changeOfUse.setApplicationDocs(applicationDocs);
+		processAndStoreApplicationDocuments(changeOfUse);
 
-        processAndStoreApplicationDocuments(changeOfUse);
+		Long approvalPosition = 0l;
+		String approvalComent = "";
 
-        Long approvalPosition = 0l;
-        String approvalComent = "";
+		if (request.getParameter("approvalComent") != null)
+			approvalComent = request.getParameter("approvalComent");
 
-        if (request.getParameter("approvalComent") != null)
-            approvalComent = request.getParameter("approvalComent");
-
-        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+		if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+			approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
+		if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition != null)
-                approvalPosition = userPosition.getId();
-            else {
-                final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
-                        .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
-                loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse, null);
-                final WorkflowContainer workflowContainer = new WorkflowContainer();
-                workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
-                prepareWorkflow(model, changeOfUse, workflowContainer);
-                model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
-                model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
+			if (userPosition != null)
+				approvalPosition = userPosition.getId();
+			else {
+				final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+						.getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
+				loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse, null);
+				final WorkflowContainer workflowContainer = new WorkflowContainer();
+				workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+				prepareWorkflow(model, changeOfUse, workflowContainer);
+				model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
+				model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(currentUser));
-                errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
-                        "err.validate.connection.user.mapping");
-                model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
+				errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
+						"err.validate.connection.user.mapping");
+				model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
                 if (isWardSecretaryUser) {
     				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
     				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
     			}
-                return CHANGEOFUSE_FORM;
-            }
-        }
-        changeOfUse.setApplicationDate(new Date());
-        if (isAnonymousUser)
-            changeOfUse.setSource(ONLINE);
-        else if (isCSCOperator)
-            changeOfUse.setSource(CSC);
+				return CHANGEOFUSE_FORM;
+			}
+		}
+		changeOfUse.setApplicationDate(new Date());
+		if (isAnonymousUser)
+			changeOfUse.setSource(ONLINE);
+		else if (isCSCOperator)
+			changeOfUse.setSource(CSC);
         else if (isWardSecretaryUser)
         	changeOfUse.setSource(WARDSECRETARY);
-        else if (citizenPortalUser
-                && (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
+		else if (citizenPortalUser
+				&& (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
             changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
-        else if (loggedInMeesevaUser) {
-            changeOfUse.setSource(MEESEVA);
-            if (changeOfUse.getMeesevaApplicationNumber() != null)
-                changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
-        } else
-            changeOfUse.setSource(Source.SYSTEM);
+		else if (loggedInMeesevaUser) {
+			changeOfUse.setSource(MEESEVA);
+			if (changeOfUse.getMeesevaApplicationNumber() != null)
+				changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
+		} else
+			changeOfUse.setSource(Source.SYSTEM);
         
 		if (isWardSecretaryUser)
 			changeOfUseService.persistAndPublishEventForWardSecretary(changeOfUse, request, workFlowAction,
 					approvalPosition, approvalComent, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
 		else
-			changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
-					changeOfUse.getApplicationType().getCode(), workFlowAction);
-
-        if (loggedInMeesevaUser)
+		changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent,
+				changeOfUse.getApplicationType().getCode(), workFlowAction);
+		if (loggedInMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + changeOfUse.getApplicationNumber();
-        else
-            return "redirect:/application/citizeenAcknowledgement?pathVars=" + changeOfUse.getApplicationNumber();
-    }
+		else
+			return "redirect:/application/citizeenAcknowledgement?pathVars=" + changeOfUse.getApplicationNumber();
+	}
 
-    private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,
-            final WaterConnectionDetails changeOfUse, final WaterConnectionDetails connectionUnderChange,
-            final String meesevaApplicationNumber) {
-        Boolean loggedUserIsMeesevaUser;
-        changeOfUse.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        changeOfUse.setConnectionType(connectionUnderChange.getConnectionType());
-        changeOfUse.setUsageType(connectionUnderChange.getUsageType());
-        changeOfUse.setCategory(connectionUnderChange.getCategory());
-        changeOfUse.setPropertyType(connectionUnderChange.getPropertyType());
-        changeOfUse.setPipeSize(connectionUnderChange.getPipeSize());
-        changeOfUse.setSumpCapacity(connectionUnderChange.getSumpCapacity());
-        changeOfUse.setConnection(connectionUnderChange.getConnection());
-        changeOfUse.setWaterSource(connectionUnderChange.getWaterSource());
-        changeOfUse.setNumberOfPerson(connectionUnderChange.getNumberOfPerson());
-        changeOfUse.setNumberOfRooms(connectionUnderChange.getNumberOfRooms());
+	private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,
+			final WaterConnectionDetails changeOfUse, final WaterConnectionDetails connectionUnderChange,
+			final String meesevaApplicationNumber) {
+		Boolean loggedUserIsMeesevaUser;
+		changeOfUse.setConnectionStatus(ConnectionStatus.INPROGRESS);
+		changeOfUse.setConnectionType(connectionUnderChange.getConnectionType());
+		changeOfUse.setUsageType(connectionUnderChange.getUsageType());
+		changeOfUse.setCategory(connectionUnderChange.getCategory());
+		changeOfUse.setPropertyType(connectionUnderChange.getPropertyType());
+		changeOfUse.setPipeSize(connectionUnderChange.getPipeSize());
+		changeOfUse.setSumpCapacity(connectionUnderChange.getSumpCapacity());
+		changeOfUse.setConnection(connectionUnderChange.getConnection());
+		changeOfUse.setWaterSource(connectionUnderChange.getWaterSource());
+		changeOfUse.setNumberOfPerson(connectionUnderChange.getNumberOfPerson());
+		changeOfUse.setNumberOfRooms(connectionUnderChange.getNumberOfRooms());
 
-        loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser)
-            if (meesevaApplicationNumber == null)
-                throw new ApplicationRuntimeException("MEESEVA.005");
-            else
-                changeOfUse.setMeesevaApplicationNumber(meesevaApplicationNumber);
-        model.addAttribute("waterConnectionDetails", parentConnectionDetails);
+		loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
+		if (loggedUserIsMeesevaUser)
+			if (meesevaApplicationNumber == null)
+				throw new ApplicationRuntimeException("MEESEVA.005");
+			else
+				changeOfUse.setMeesevaApplicationNumber(meesevaApplicationNumber);
+		model.addAttribute("waterConnectionDetails", parentConnectionDetails);
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         connectionUnderChange.getConnectionType().name()));
-        model.addAttribute("changeOfUse", changeOfUse);
-        model.addAttribute("stateType", connectionUnderChange.getClass().getSimpleName());
-        model.addAttribute("mode", "changeOfUse");
-        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+		model.addAttribute("changeOfUse", changeOfUse);
+		model.addAttribute("stateType", connectionUnderChange.getClass().getSimpleName());
+		model.addAttribute("mode", "changeOfUse");
+		model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage", changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(connectionUnderChange);
-        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
-        model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
-        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
-        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
-        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
-        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
-    }
+		model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+		model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
+		model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+		model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
+		model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+		model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
+		model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
+	}
 
 }
