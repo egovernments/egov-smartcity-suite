@@ -229,6 +229,13 @@ $(document).ready(function(){
 	{
 		console.log("ERROR :"+e);
 	}
+	
+	if($('#failureMessage').val() != ''){
+		bootbox.alert($('#failureMessage').val());
+			 loadPropertyCategories();
+			 loadPropertyUsageTypes();
+			 loadPropertyPipeTypes();
+	 }
 });
 $('#consumerCodeData').blur(function(){
 	console.log('Got blur event');
