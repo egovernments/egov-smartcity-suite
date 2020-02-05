@@ -82,9 +82,11 @@ import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPTCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTSERVICECODEGENBILL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNCTIONARYCODEGENBILL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDCODEGENBILL;
@@ -229,9 +231,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        return getWaterConnectionDetails().getConnectionStatus() != null
-                && (ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())
-                || INPROGRESS.equals(getWaterConnectionDetails().getConnectionStatus()));
+		if (METERED.toString().equalsIgnoreCase(getWaterConnectionDetails().getConnectionType().toString())
+				&& ESTIMATIONCHARGES_SERVICE_CODE.equalsIgnoreCase(serviceCode))
+			return false;
+		else
+			return getWaterConnectionDetails().getConnectionStatus() != null
+					&& (ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())
+							|| INPROGRESS.equals(getWaterConnectionDetails().getConnectionStatus()));
     }
 
     @Override
