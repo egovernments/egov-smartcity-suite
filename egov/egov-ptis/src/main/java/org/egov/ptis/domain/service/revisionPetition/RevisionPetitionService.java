@@ -165,8 +165,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
-import org.egov.infra.integration.event.model.enums.ApplicationStatus;
-import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -200,7 +198,6 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
-import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -282,9 +279,6 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     @Autowired
     private ModuleService moduleDao;
     
-    @Autowired
-    private EventPublisher eventPublisher;
-
     public RevisionPetitionService() {
         super(Petition.class);
     }
@@ -1316,12 +1310,11 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
         }
     };
     
-    public void createObjectionAndPublishEvent(final Petition petition, final String wfType, final String transactionId) {
-
+    public Map<String, String> getViewURLAndMsgForWS(final Petition petition, final String wfType) {
+        Map<String, String> details = new HashMap<>();
         String viewURL = null;
         String succeessMsg = null;
         String failureMsg = null;
-
         if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)) {
             viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
@@ -1333,18 +1326,11 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
                     petition.getObjectionNumber(), APPLICATION_TYPE_GRP);
             succeessMsg = "Property General Revision Petition Initiated";
-            failureMsg = "Property General Revision Petition";
+            failureMsg = "Property General Revision Petition Failed";
         }
-        try {
-            createRevisionPetition(petition);
-            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
-                    petition.getObjectionNumber(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
-
-        } catch (Exception ex) {
-
-            LOGGER.error("exception while saving basic proeprty", ex);
-            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
-                    petition.getObjectionNumber(), null, null, failureMsg);
-        }
+        details.put("viewURL", viewURL);
+        details.put("succeessMsg", succeessMsg);
+        details.put("failureMsg", failureMsg);
+        return details;
     }
 }

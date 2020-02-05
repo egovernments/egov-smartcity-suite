@@ -152,6 +152,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
@@ -214,6 +216,7 @@ import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
@@ -355,7 +358,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private DemandVoucherService demandVoucherService;
-    
+    @Autowired
+    private EventPublisher eventPublisher;
     @Autowired
     private transient PropertyThirdPartyService propertyThirdPartyService;
 
@@ -542,6 +546,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/revPetition")
     public String create() {
+        Map<String, String> wsDetails = new HashMap<>();
         validateInitiator();
         if (hasActionErrors()) {
             getPropertyView(objection.getBasicProperty().getUpicNo());
@@ -565,57 +570,70 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     SOURCE_ONLINE.equalsIgnoreCase(applicationSource)));
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        
+
         if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return NEW;
         }
 
-        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if (objection.getObjectionNumber() == null)
-            if (isMeesevaUser && getMeesevaApplicationNumber() != null)
-                objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
-            else
-                objection.setObjectionNumber(applicationNumberGenerator.generate());
-        objection.getBasicProperty()
-                .setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
-        objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
-        objection.setType(getWfType());
-        propertyId = objection.getBasicProperty().getUpicNo();
-        addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
-        checkToDisplayAckButton();
-        if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
-            addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-        else if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(wfType))
-        {
-            addActionMessage(getText("appeal.petition.success") + objection.getObjectionNumber()); 
-        }
-        else
-            addActionMessage(getText("objection.grp.success") + objection.getObjectionNumber());
-        revisionPetitionService.applyAuditing(objection.getState());
-        if (isWardSecretaryUser) {
-            revisionPetitionService.createObjectionAndPublishEvent(objection,wfType,transactionId);
-        } else if (isMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("ADMISSIONFEE", "0");
-            meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
-            objection.setApplicationNo(objection.getMeesevaApplicationNumber());
-            revisionPetitionService.createRevisionPetition(objection, meesevaParams);
-        } else {
-            revisionPetitionService.createRevisionPetition(objection);
-        }
-        revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
-        if (citizenPortalUser)
+        try {
+            isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+            if (objection.getObjectionNumber() == null)
+                if (isMeesevaUser && getMeesevaApplicationNumber() != null)
+                    objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
+                else
+                    objection.setObjectionNumber(applicationNumberGenerator.generate());
+            objection.getBasicProperty()
+                    .setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
+            objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
+            objection.setType(getWfType());
+            propertyId = objection.getBasicProperty().getUpicNo();
+            addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
+                    approverComments, approverName));
+            checkToDisplayAckButton();
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
-                propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_REVISION_PETITION);
-            else if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(wfType))
-                propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_APPEAL_PETITION);
-            else
-                propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_GRP);
-        currentStatus = REVISION_PETITION_CREATED;
-        sendEmailandSms(objection, REVISION_PETITION_CREATED);
-        applicationNumber = objection.getObjectionNumber();
+                addActionMessage(getText("objection.success") + objection.getObjectionNumber());
+            else if (WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(wfType)) {
+                addActionMessage(getText("appeal.petition.success") + objection.getObjectionNumber());
+            } else
+                addActionMessage(getText("objection.grp.success") + objection.getObjectionNumber());
+            revisionPetitionService.applyAuditing(objection.getState());
+            if (isWardSecretaryUser) {
+                revisionPetitionService.createRevisionPetition(objection);
+                wsDetails = revisionPetitionService.getViewURLAndMsgForWS(objection, wfType);
+            } else if (isMeesevaUser) {
+                final HashMap<String, String> meesevaParams = new HashMap<>();
+                meesevaParams.put("ADMISSIONFEE", "0");
+                meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
+                objection.setApplicationNo(objection.getMeesevaApplicationNumber());
+                revisionPetitionService.createRevisionPetition(objection, meesevaParams);
+            } else {
+                revisionPetitionService.createRevisionPetition(objection);
+            }
+            revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+            if (citizenPortalUser)
+                if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
+                    propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_REVISION_PETITION);
+                else if (WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(wfType))
+                    propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_APPEAL_PETITION);
+                else
+                    propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_GRP);
+            currentStatus = REVISION_PETITION_CREATED;
+            sendEmailandSms(objection, REVISION_PETITION_CREATED);
+            applicationNumber = objection.getObjectionNumber();
+            if (isWardSecretaryUser)
+                eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
+                        objection.getObjectionNumber(), ApplicationStatus.INPROGRESS, wsDetails.get("viewURL"),
+                        wsDetails.get("succeessMsg"));
+        } catch (Exception ex) {
+            logger.error("Error in creating petition application", ex);
+            if (isWardSecretaryUser)
+                eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
+                        objection.getObjectionNumber(), null, null, wsDetails.get("failureMsg"));
+            clearMessages();
+            showAckBtn = Boolean.FALSE;
+            addActionMessage(getText("petition.app.error"));
+        }
         return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
     }
 
