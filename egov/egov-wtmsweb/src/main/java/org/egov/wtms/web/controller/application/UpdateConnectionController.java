@@ -599,9 +599,11 @@ public class UpdateConnectionController extends GenericConnectionController {
 				request.getParameter("ownerPosition"), workFlowAction)) {
 			model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
 			model.addAttribute(MODE, ERROR);
-			if (StringUtils.isNotBlank(ratesValidation))
-				model.addAttribute("failureMessage",
-						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
+			return NEWCONNECTION_EDIT;
+		}
+		
+		if (StringUtils.isNotBlank(ratesValidation)) {
+			model.addAttribute("failureMessage", messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
 			return NEWCONNECTION_EDIT;
 		}
 
