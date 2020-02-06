@@ -300,6 +300,7 @@
 	if ($("#connectionType").val() == 'METERED') {
 		$('#donationChargesDiv').show();
 		$('#donationChargesInput').attr('required', 'required');
+		$('#donationChargesInput').attr('min', 1);
 	} else if ($('#connectionType').val() == 'NON_METERED'
 			&& $("#applicationType").val() == 'REGLZNCONNECTION') {
 		$('#donationChargesDiv').show();
