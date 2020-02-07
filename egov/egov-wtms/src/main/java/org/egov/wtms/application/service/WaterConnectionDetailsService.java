@@ -1274,17 +1274,14 @@ public class WaterConnectionDetailsService {
                 return tempDocList;
         }
 
-    public String validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
-        String errorKey = "";
+    public void validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
         DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
-            errorKey = "donation.combination.required";
-
-        WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+            throw new ApplicationRuntimeException("donation.combination.required");
+        WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         if (waterRatesDetails == null)
-            errorKey = "err.water.rate.not.configured.within.period";
-
-        return errorKey;
+            throw new ApplicationRuntimeException("err.water.rate.not.configured.within.period");
     }
 
         public String getApprovalPositionOnValidate(Long approvalPositionId) {

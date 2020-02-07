@@ -105,8 +105,6 @@
 				id="approvalPosOnValidate" value="${approvalPosOnValidate}">
 			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage"
 				value="${noJAORSAMessage}">
-			<input type="hidden" name="failureMessage" id="failureMessage"
-				value="${failureMessage}">
 			<form:hidden id="documentName" path="" value="${documentName}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

@@ -66,7 +66,7 @@ $(document).ready(function () {
                     }
                     $("#applicantname").html(applicantName);
                     $("#nooffloors").html(response.propertyDetails.noOfFloors);
-                    if (response.ownerNames[0].mobileNumber != '') {
+                    if (response.ownerNames[0].mobileNumber) {
                         $("#mobileNumber").html(response.ownerNames[0].mobileNumber);
                         var mobileNumber = response.ownerNames[0].mobileNumber;
                         var mobNumberwithmask = mobileNumber.slice(-4),

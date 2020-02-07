@@ -67,14 +67,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -106,8 +104,6 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -177,10 +173,6 @@ public class NewConnectionController extends GenericConnectionController {
 
     @Autowired
     private MeterCostService meterCostService;
-    
-    @Autowired
-	@Qualifier("parentMessageSource")
-	private MessageSource messageSource;
 
     @ModelAttribute("documentNamesList")
     public List<DocumentNames> documentNamesList(@ModelAttribute WaterConnectionDetails waterConnectionDetails) {
@@ -262,7 +254,6 @@ public class NewConnectionController extends GenericConnectionController {
             Model model, @RequestParam String workFlowAction,
             @RequestParam("files") MultipartFile... files) {
 
-    	String ratesValidation = StringUtils.EMPTY;
         User currentUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
         boolean loggedUserIsWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
@@ -290,7 +281,7 @@ public class NewConnectionController extends GenericConnectionController {
             meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
 
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
-			ratesValidation = waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+            waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
@@ -303,8 +294,8 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getState() == null)
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
-
-        if (StringUtils.isNotBlank(ratesValidation) || resultBinder.hasErrors()) {
+        
+        if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
             boolean sewerageTaxenabled = moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
             model.addAttribute("sewerageTaxenabled", sewerageTaxenabled);
@@ -329,10 +320,6 @@ public class NewConnectionController extends GenericConnectionController {
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 			}
-
-			if (StringUtils.isNotBlank(ratesValidation))
-				model.addAttribute("failureMessage",
-						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
             return NEWCONNECTION_FORM;
         }
         waterConnectionDetails.getApplicationDocs().clear();
