@@ -740,9 +740,10 @@ public class UpdateConnectionController extends GenericConnectionController {
 								waterConnectionDetails.setClosureFileStore(fileStore);
 								EgDemand egDemand = waterDemandConnectionService
 										.getCurrentDemand(waterConnectionDetails).getDemand();
-								if (egDemand != null)
+								if (egDemand != null) {
 									egDemand.setIsHistory("Y");
-								egDemand.setModifiedDate(new Date());
+									egDemand.setModifiedDate(new Date());
+								}
 							} else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
 								waterConnectionDetails.setReconnectionFileStore(fileStore);
 							else
