@@ -51,6 +51,9 @@ jQuery(document).ready(function() {
 	$("#searchResultDiv").hide();
 	var fromDate = '';
 	var toDate = '';
+	$(".datepicker").datepicker({
+		dateFormat : 'dd/mm/yyyy'
+	});
 	changeFromToDates();
 	drillDowntableContainer = jQuery("#bcCollReport-table");
 	jQuery('#btnsearch').click(function(e) {
@@ -114,11 +117,13 @@ function callAjaxByBoundary() {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ {
 						"sExtends" : "pdf",
+						"sButtonText" : "Pdf",
 						"sTitle" : jQuery('#pdfTitle').val(),
 						"sPdfMessage" : "Bill Collectors Collection Report",
 						"sPdfOrientation" : "landscape"
 					}, {
 						"sExtends" : "xls",
+						"sButtonText" : "Excel",
 						"sPdfMessage" : "Bill Collectors Collection Report",
 						"sTitle" : jQuery('#pdfTitle').val(),
 					}, {
@@ -190,9 +195,8 @@ function callAjaxByBoundary() {
 
 function changeFromToDates() {
 	var staringDate = jQuery('#year').val();
-	console.log(staringDate);
 	var toValue = new Date(staringDate);
-	$('#fromDate').datepicker().datepicker('setDate', toValue);
+	$("#fromDate").datepicker("update", toValue).trigger('changeDate');
 	toValue.setDate(toValue.getDate() + 364);
-	$('#toDate').datepicker("setDate", toValue);
+	$('#toDate').datepicker("update", toValue).trigger('changeDate');
 }
