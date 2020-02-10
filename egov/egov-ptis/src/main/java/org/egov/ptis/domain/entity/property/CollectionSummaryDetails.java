@@ -50,17 +50,50 @@ package org.egov.ptis.domain.entity.property;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class CollectionSummaryDetails implements Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-    private static final long serialVersionUID = 1L;
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Immutable
+@Table(name = "EGPT_MV_COLLECTIONREPORTDETAILS")
+public class CollectionSummaryDetails  implements Serializable{
+
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -944345921300208974L;
+
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiptHeaderId")
     private CollectionSummary receiptHeader;
+    
+    @Column(name = "PENALTY_COLL")
     private BigDecimal penaltyColl;
+    
+    @Column(name = "librarycess_coll")
     private BigDecimal libCessColl;
+    
+    @Column(name = "arreartax_coll")
     private BigDecimal arrearTaxColl;
+    
+    @Column(name = "currenttax_coll")
     private BigDecimal currentTaxColl;
+    
+    @Column(name = "arrearpenalty_coll")
     private BigDecimal arrearPenaltyColl;
+    
+    @Column(name = "arrearlibrarycess_coll")
     private BigDecimal arrearLibCessColl;
-
+    
     public BigDecimal getPenaltyColl() {
         return penaltyColl;
     }
