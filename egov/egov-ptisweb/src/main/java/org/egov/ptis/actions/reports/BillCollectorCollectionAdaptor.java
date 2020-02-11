@@ -24,13 +24,6 @@ import com.google.gson.JsonSerializationContext;
 
 public class BillCollectorCollectionAdaptor implements DataTableJsonAdapter<CollectionSummary> {
 
-    public BillCollectorCollectionAdaptor() {
-    }
-
-    @Autowired
-    public BillCollectorCollectionAdaptor(final PropertyTaxUtil propertyTaxUtil) {
-    }
-
     @Override
     public JsonElement serialize(DataTable<CollectionSummary> billCollectorCollectionResponse, Type typeOfSrc,
             JsonSerializationContext context) {
@@ -60,26 +53,25 @@ public class BillCollectorCollectionAdaptor implements DataTableJsonAdapter<Coll
         for (final CollectionSummaryDetails collectionData : collectionList) {
 
             jsonObject.addProperty("arrearPenaltyTax",
-                    collectionData.getArrearPenaltyColl() != null ? collectionData.getArrearPenaltyColl() : BigDecimal.ZERO);
+                    collectionData.getArrearPenaltyColl() == null ?BigDecimal.ZERO: collectionData.getArrearPenaltyColl());
             jsonObject.addProperty("arrearPropertyTax",
-                    collectionData.getArrearTaxColl() != null ? collectionData.getArrearTaxColl() : BigDecimal.ZERO);
+                    collectionData.getArrearTaxColl() == null ? BigDecimal.ZERO:collectionData.getArrearTaxColl());
             jsonObject.addProperty("arrearLibTax",
-                    collectionData.getArrearLibCessColl() != null ? collectionData.getArrearLibCessColl() : BigDecimal.ZERO);
-            totalArrear = (collectionData.getArrearTaxColl() != null ? collectionData.getArrearTaxColl() : BigDecimal.ZERO)
-                    .add(collectionData.getArrearLibCessColl() != null ? collectionData.getArrearLibCessColl() : BigDecimal.ZERO);
+                    collectionData.getArrearLibCessColl() == null ?BigDecimal.ZERO: collectionData.getArrearLibCessColl());
+            totalArrear = (collectionData.getArrearTaxColl() == null ? BigDecimal.ZERO:collectionData.getArrearTaxColl())
+                    .add(collectionData.getArrearLibCessColl() == null ?BigDecimal.ZERO: collectionData.getArrearLibCessColl());
             jsonObject.addProperty("totalArrearTax", totalArrear);
             jsonObject.addProperty("currentPropertyTax",
-                    collectionData.getCurrentTaxColl() != null ? collectionData.getCurrentTaxColl() : BigDecimal.ZERO);
+                    collectionData.getCurrentTaxColl() == null ? BigDecimal.ZERO:collectionData.getCurrentTaxColl());
             jsonObject.addProperty("currentLibTax",
-                    collectionData.getLibCessColl() != null ? collectionData.getLibCessColl() : BigDecimal.ZERO);
-            totalCurrent = (collectionData.getCurrentTaxColl() != null ? collectionData.getCurrentTaxColl() : BigDecimal.ZERO)
-                    .add(collectionData.getLibCessColl() != null ? collectionData.getLibCessColl() : BigDecimal.ZERO);
+                    collectionData.getLibCessColl() == null ?BigDecimal.ZERO: collectionData.getLibCessColl());
+            totalCurrent = (collectionData.getCurrentTaxColl() == null ?BigDecimal.ZERO: collectionData.getCurrentTaxColl())
+                    .add(collectionData.getLibCessColl() == null ?BigDecimal.ZERO: collectionData.getLibCessColl());
             jsonObject.addProperty("currentTotal", totalCurrent);
             jsonObject.addProperty("currentPenaltyTax",
-                    collectionData.getPenaltyColl() != null ? collectionData.getPenaltyColl() : BigDecimal.ZERO);
-            totalPenalty = (collectionData.getArrearPenaltyColl() != null ? collectionData.getArrearPenaltyColl()
-                    : BigDecimal.ZERO)
-                            .add(collectionData.getPenaltyColl() != null ? collectionData.getPenaltyColl() : BigDecimal.ZERO);
+                    collectionData.getPenaltyColl() == null ?BigDecimal.ZERO: collectionData.getPenaltyColl());
+            totalPenalty = (collectionData.getArrearPenaltyColl() == null ? BigDecimal.ZERO:collectionData.getArrearPenaltyColl())
+                            .add(collectionData.getPenaltyColl() == null ?BigDecimal.ZERO: collectionData.getPenaltyColl());
             jsonObject.addProperty("totalPenaltyTax", totalPenalty);
             total = totalArrear.add(totalCurrent).add(totalPenalty);
             jsonObject.addProperty("total", total);

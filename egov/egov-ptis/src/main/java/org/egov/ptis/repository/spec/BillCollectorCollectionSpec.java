@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BillCollectorCollectionSpec {
 
-    private BillCollectorCollectionSpec() {
+    public BillCollectorCollectionSpec() {
 
     }
 
