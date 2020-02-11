@@ -8,10 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BillCollectorCollectionSpec {
 
-    public BillCollectorCollectionSpec() {
-
-    }
-
     public static Specification<CollectionSummary> bcCollectionSpecification(
             final BillCollectorCollectionRequest billCollectorCollectionRequest) {
         return (root, query, builder) -> {
