@@ -194,12 +194,23 @@ function callAjaxByBoundary() {
 }
 
 function changeFromToDates() {
+	var endDateValue;
 	var staringDate = jQuery('#year').val();
 	var toValue = new Date(staringDate);
 	$("#fromDate").datepicker("update", toValue).trigger('changeDate');
 	$('.datepicker').datepicker('setStartDate', new Date(toValue));
-	var endDateValue = toValue.setDate(toValue.getDate() + 365);
+	toValue.setDate(toValue.getDate() + 364);
+	var toDate = new Date(staringDate);
+	var getLeapYear = isNotLeap(toValue.getFullYear());
+	if (getLeapYear)
+		endDateValue = toDate.setDate(toDate.getDate() + 365);
+	else
+		endDateValue = toDate.setDate(toDate.getDate() + 364);
 	$('.datepicker').datepicker('setEndDate', new Date(endDateValue));
 	$('#toDate').datepicker("update", new Date(endDateValue)).trigger(
 			'changeDate');
+}
+
+function isNotLeap(year) {
+	return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
 }
