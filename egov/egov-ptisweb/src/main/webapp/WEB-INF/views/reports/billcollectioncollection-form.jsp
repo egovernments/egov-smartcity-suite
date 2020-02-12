@@ -64,7 +64,7 @@
 				<div class="panel-heading">
 					<div class="panel-title" style="text-align: left;">
 					<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
-						<spring:message code="lbl.rp.report.title" />
+						<spring:message code="lbl.bc.collection.report.title" />
 					</div>
 				</div>
 				<div class="panel-body">
@@ -84,14 +84,14 @@
 									code="lbl.fromDate" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" name="fromDate" id="fromDate" 
-									cssClass="form-control datepicker hasDatepicker" value="${fromDate}"
+									cssClass="form-control datepicker"  value="${fromDate}"
 									cssErrorClass="form-control error" />
 							</div>
 							<label for="field-1" class="col-sm-2 control-label"><spring:message
 									code="lbl.toDate" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" name="toDate" id="toDate"
-									cssClass="form-control datepicker hasDatepicker" value="${toDate}"
+									cssClass="form-control datepicker" value="${toDate}"
 									cssErrorClass="form-control error"  />
 							</div>
 						</div>

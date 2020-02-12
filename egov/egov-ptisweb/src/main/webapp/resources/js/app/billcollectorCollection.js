@@ -197,6 +197,9 @@ function changeFromToDates() {
 	var staringDate = jQuery('#year').val();
 	var toValue = new Date(staringDate);
 	$("#fromDate").datepicker("update", toValue).trigger('changeDate');
-	toValue.setDate(toValue.getDate() + 364);
-	$('#toDate').datepicker("update", toValue).trigger('changeDate');
+	$('.datepicker').datepicker('setStartDate', new Date(toValue));
+	var endDateValue = toValue.setDate(toValue.getDate() + 365);
+	$('.datepicker').datepicker('setEndDate', new Date(endDateValue));
+	$('#toDate').datepicker("update", new Date(endDateValue)).trigger(
+			'changeDate');
 }
