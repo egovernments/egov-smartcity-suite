@@ -214,7 +214,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+        } else if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
 			if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
 				throw new ApplicationRuntimeException("WS.001");
 			}
@@ -312,7 +312,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
+        } else if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
         	if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
 				throw new ApplicationRuntimeException("WS.001");
 			}

@@ -91,6 +91,7 @@ import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.repository.SearchTradeRepository;
 import org.egov.tl.repository.specs.SearchTradeSpec;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -660,10 +661,6 @@ public class TradeLicenseService {
         return securityUtils.getCurrentUser().hasRole(MEESEVAOPERATOR);
     }
 
-    public Boolean currentUserIsWardSecretary() {
-        return securityUtils.getCurrentUser().hasRole(WARDSECRETARY);
-    }
-
     @Transactional
     public void digitalSignTransition(String applicationNumber) {
         User user = securityUtils.getCurrentUser();
@@ -1080,10 +1077,7 @@ public class TradeLicenseService {
     }
     
     public Boolean isWardSecretaryUser(final User user) {
-        for (final Role role : user.getRoles())
-            if (role != null && WARDSCRETARY_OPERATOR_ROLE.equalsIgnoreCase( role.getName()))
-                return true;
-        return false;
+		return Constants.WARDSECRETARY_USER_NAME.equalsIgnoreCase(user.getUsername());
     }
     
 }
