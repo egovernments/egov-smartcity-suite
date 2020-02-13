@@ -1077,7 +1077,7 @@ public class TradeLicenseService {
     }
     
     public Boolean isWardSecretaryUser(final User user) {
-		return Constants.WARDSECRETARY_USER_NAME.equalsIgnoreCase(user.getUsername());
+	return Constants.WARDSECRETARY_USER_NAME.equalsIgnoreCase(user.getUsername());
     }
     
 }
