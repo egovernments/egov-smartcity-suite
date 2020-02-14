@@ -597,22 +597,6 @@ public class PropertyMVInfo implements Serializable {
         this.waivedoffAmount = waivedoffAmount;
     }
 
-    public BigDecimal getWritedoffAmount() {
-        return arrearWriteOffAmount;
-    }
-
-    public void setWritedoffAmount(BigDecimal writedoffAmount) {
-        this.arrearWriteOffAmount = writedoffAmount;
-    }
-
-    public BigDecimal getCourtcaseAmount() {
-        return arrearCourtVerdictAmount;
-    }
-
-    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
-        this.arrearCourtVerdictAmount = courtcaseAmount;
-    }
-
     public Boolean getIsUnderCourtCase() {
         return isUnderCourtCase;
     }

@@ -112,8 +112,16 @@
 		<property name="longitude" column="longitude"/>
 		<property name="waivedoffAmount" column="waivedoff_amount"/>
 		<property name="exemptedAmount" column="exempted_amount"/>
-		<property name="writeoffAmount" column="writeoff_amount"/>
-		<property name="courtcaseAmount" column="courtcase_amount"/>
+		<property name="arrearWriteOffAmount" column="arr_writeoff"/>
+		<property name="arrearCourtVerdictAmount" column="arr_courtverdict"/>
+		<property name="currentFirstHalfWriteOffAmount" column="curfirsthalf_writeoff"/>
+		<property name="currentFirstHalfCourtVerdictAmount" column="curfirsthalf_courtverdict"/>
+		<property name="currentSecondHalfWriteOffAmount" column="cursecondhalf_writeoff"/>
+		<property name="currentSecondHalfCourtVerdictAmount" column="cursecondhalf_courtverdict"/>
+		<property name="arrearPenaltyWriteOffAmount" column="arrpen_writeoff"/>
+		<property name="arrearPenaltyCourtVerdictAmount" column="arrpen_courtverdict"/>
+		<property name="currentPenaltyWriteOffAmount" column="curpen_writeoff"/>
+		<property name="currentPenaltyCourtVerdictAmount" column="curpen_courtverdict"/>
 
 
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
