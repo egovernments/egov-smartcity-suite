@@ -563,8 +563,8 @@ public class WaterConnectionDetailsService {
                 return waterConnectionDetailsRepository.getAllPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
         }
         
-    public WaterConnectionDetails findByInactiveApplicationNumberOrConsumerCode(String number) {
-        return waterConnectionDetailsRepository.findConnectionDetailsByInactiveApplicationNumberOrConsumerCode(number, number);
+    public WaterConnectionDetails findByInactiveApplicationNumberOrConsumerCode(String referenceNumber) {
+        return waterConnectionDetailsRepository.findConnectionDetailsByInactiveApplicationNumberOrConsumerCode(referenceNumber, referenceNumber);
     }
         public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumbers(
                         List<String> propertyIdentifier) {
