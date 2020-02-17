@@ -195,20 +195,26 @@ function callAjaxByBoundary() {
 
 function changeFromToDates() {
 	var endDateValue;
+	var todayDate = new Date();
 	var staringDate = jQuery('#year').val();
 	var toValue = new Date(staringDate);
 	$("#fromDate").datepicker("update", toValue).trigger('changeDate');
 	$('.datepicker').datepicker('setStartDate', new Date(toValue));
 	toValue.setDate(toValue.getDate() + 364);
 	var toDate = new Date(staringDate);
-	var getLeapYear = isNotLeap(toValue.getFullYear());
-	if (getLeapYear)
-		endDateValue = toDate.setDate(toDate.getDate() + 365);
-	else
-		endDateValue = toDate.setDate(toDate.getDate() + 364);
-	$('.datepicker').datepicker('setEndDate', new Date(endDateValue));
-	$('#toDate').datepicker("update", new Date(endDateValue)).trigger(
-			'changeDate');
+	if (todayDate.getFullYear() == new Date(toValue).getFullYear()) {
+		$('#toDate').datepicker("update", new Date()).trigger('changeDate');
+		$('.datepicker').datepicker('setEndDate', new Date());
+	} else {
+		var getLeapYear = isNotLeap(toValue.getFullYear());
+		if (getLeapYear)
+			endDateValue = toDate.setDate(toDate.getDate() + 365);
+		else
+			endDateValue = toDate.setDate(toDate.getDate() + 364);
+		$('.datepicker').datepicker('setEndDate', new Date(endDateValue));
+		$('#toDate').datepicker("update", new Date(endDateValue)).trigger(
+				'changeDate');
+	}
 }
 
 function isNotLeap(year) {
