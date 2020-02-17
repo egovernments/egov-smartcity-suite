@@ -801,34 +801,35 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
                 + "and ptd.egInstallmentMaster = :installment";
 
-        Ptdemand ptDemand;
-
         Query queryRes = entityManager.unwrap(Session.class).createQuery(query).setEntity(PROPERTY, property)
                 .setEntity(INSTALLMENT, currentInstallment);
-        ptDemand = queryRes.list().isEmpty() ? null : (Ptdemand) queryRes.list().get(0);
 
-        for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
+        if (!queryRes.list().isEmpty()) {
+            Ptdemand ptDemand = (Ptdemand) queryRes.list().get(0);
 
-            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
-            if (!demandReasonExcludeList.isEmpty() && !demandReasonExcludeList.contains(demandReason)) {
-                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
 
-                if (installmentWiseDemand.get(installment) == null)
-                    installmentWiseDemand.put(installment, dmdDet.getAmount());
-                else
-                    installmentWiseDemand.put(installment,
-                            installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+                if (!demandReasonExcludeList.isEmpty() && !demandReasonExcludeList.contains(demandReason)) {
+                    installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
 
-                if (installmentWiseCollection.get(installment) == null)
-                    installmentWiseCollection.put(installment, dmdDet.getAmtCollected());
-                else
-                    installmentWiseCollection.put(installment,
-                            installmentWiseCollection.get(installment).add(dmdDet.getAmtCollected()));
+                    if (installmentWiseDemand.get(installment) == null)
+                        installmentWiseDemand.put(installment, dmdDet.getAmount());
+                    else
+                        installmentWiseDemand.put(installment,
+                                installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+
+                    if (installmentWiseCollection.get(installment) == null)
+                        installmentWiseCollection.put(installment, dmdDet.getAmtCollected());
+                    else
+                        installmentWiseCollection.put(installment,
+                                installmentWiseCollection.get(installment).add(dmdDet.getAmtCollected()));
+                }
             }
+            demandAndCollection.put("DEMAND", installmentWiseDemand);
+            demandAndCollection.put("COLLECTION", installmentWiseCollection);
         }
-        demandAndCollection.put("DEMAND", installmentWiseDemand);
-        demandAndCollection.put("COLLECTION", installmentWiseCollection);
         return demandAndCollection;
     }
 
