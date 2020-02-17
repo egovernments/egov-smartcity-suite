@@ -125,7 +125,9 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
         }
         String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
         String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
-        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource);
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource,
+                wsPortalRequest != null && Boolean.valueOf(wsPortalRequest));
         redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");
         return REDIRECT_TO_VIEW + tradeLicense.getId();
     }

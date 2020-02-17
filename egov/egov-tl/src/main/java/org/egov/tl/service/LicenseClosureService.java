@@ -179,9 +179,8 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-	public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource) {
-		boolean isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
-		if (isWardSecretaryUser) {
+	public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource, final boolean wsPortalRequest) {
+		if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)) {
 				throw new ApplicationRuntimeException("WS.001");
 			}
@@ -195,7 +194,7 @@ public class LicenseClosureService extends LicenseService {
 		license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
 		license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE));
 		update(license);
-		if (isWardSecretaryUser) {
+		if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
 			WorkflowBean wfBean = new WorkflowBean();
 			wfBean.setActionName(CLOSURE_APPTYPE_CODE);
 			licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
