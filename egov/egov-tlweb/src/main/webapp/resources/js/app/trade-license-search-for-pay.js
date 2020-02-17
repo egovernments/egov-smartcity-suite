@@ -222,6 +222,7 @@ function goToView(id) {
 }
 var wsSource = $("#wsSource").val();
 var wsTransactionId = $("#wsTransactionId").val();
+var wsPortalRequest = $("#wsPortalRequest").val();
 function goToAction(obj,uid, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
         window.open("/tl/pay/online/" + id);
@@ -230,14 +231,14 @@ function goToAction(obj,uid, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License') {
     	var renewalUrl = "/tl/newtradelicense/newTradeLicense-beforeRenew.action?";
     	if(wsSource == 'WARDSECRETARY'){
-    		window.open(renewalUrl+"model.id=" + id+"&transactionId="+wsTransactionId+"&source="+wsSource);
+    		window.open(renewalUrl+"model.id=" + id+"&transactionId="+wsTransactionId+"&source="+wsSource+"&wsPortalRequest="+wsPortalRequest);
     	} else {
     		window.open(renewalUrl+"model.id=" + id);
     	}	
     } else if (obj.options[obj.selectedIndex].innerHTML == 'Closure'){
     	var clouserUrl = "/tl/license/closure/"+id;
     	if(wsSource == 'WARDSECRETARY'){
-    		window.open(clouserUrl+"?transactionId="+wsTransactionId+"&source="+wsSource);
+    		window.open(clouserUrl+"?transactionId="+wsTransactionId+"&source="+wsSource+"&wsPortalRequest="+wsPortalRequest);
     	} else {
     		window.open(clouserUrl, id);
     	}

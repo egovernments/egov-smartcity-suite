@@ -64,6 +64,7 @@
                    id="licenseClosure" method="POST" enctype="multipart/form-data">
             <input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${transactionId}" />
 			<input type="hidden" id="wsSource" name="wsSource" value="${source}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title" style="text-align: center">

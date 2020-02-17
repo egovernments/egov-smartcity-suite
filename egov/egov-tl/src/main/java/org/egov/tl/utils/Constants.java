@@ -190,6 +190,7 @@ public final class Constants {
 
     public static final String WARDSCRETARY_OPERATOR_ROLE = "WardSecretary Operator";
     public static final String WARDSECRETARY_TRANSACTIONID_CODE = "transactionId";
+    public static final String WARDSECRETARY_WSPORTAL_REQUEST = "wsPortalRequest";
     public static final String WARDSECRETARY_SOURCE_CODE = "source";
     public static final String WARDSECRETARY_USER_NAME = "wardsecretary";
 

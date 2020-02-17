@@ -120,7 +120,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private transient LicenseService licenseService;
 
 	private static final String RESULT_ERROR = "error";
-	private boolean isWardSecretaryUser;
 
 	public NewTradeLicenseAction() {
 		tradeLicense.setLicensee(new Licensee());
@@ -219,53 +218,51 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 				.getDocumentTypesByApplicationType(license().getLicenseAppType());
 	}
 
-	@Override
-	@SkipValidation
-	@Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
-	@ValidationErrorPage(ERROR)
-	public String beforeRenew() {
-		prepareNewForm();
-		documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
-		isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
-		if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
-			throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
-					format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
-		}
-		if (isWardSecretaryUser) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (ThirdPartyService.validateWardSecretaryRequest(
-					request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
-					request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
-				addActionMessage(getText("WS.001"));
-				return RESULT_ERROR;
-			} else {
-				license().setApplicationSource(Source.WARDSECRETARY.toString());
-			}
-		}
-		if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
-			currentState = "";
-		tradeLicense.setNewWorkflow(true);
-		renewAppType = RENEW_APPTYPE_CODE;
-		return super.beforeRenew();
-	}
+    @Override
+    @SkipValidation
+    @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
+    @ValidationErrorPage(ERROR)
+    public String beforeRenew() {
+        prepareNewForm();
+        documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
+        if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
+            throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
+                    format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
+        }
+        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            HttpServletRequest request = ServletActionContext.getRequest();
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
+                    request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            } else {
+                license().setApplicationSource(Source.WARDSECRETARY.toString());
+            }
+        }
+        if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
+            currentState = "";
+        tradeLicense.setNewWorkflow(true);
+        renewAppType = RENEW_APPTYPE_CODE;
+        return super.beforeRenew();
+    }
 
-	@Override
-	@ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
-	@Action(value = "/newtradelicense/newTradeLicense-renewal")
-	public String renew() {
-		isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
-		supportDocumentsValidation();
-		if (isWardSecretaryUser) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (ThirdPartyService.validateWardSecretaryRequest(
-					request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
-					request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
-				addActionMessage(getText("WS.001"));
-				return RESULT_ERROR;
-			}
-		}
-		return super.renew();
-	}
+    @Override
+    @ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
+    @Action(value = "/newtradelicense/newTradeLicense-renewal")
+    public String renew() {
+        supportDocumentsValidation();
+        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            HttpServletRequest request = ServletActionContext.getRequest();
+            if (ThirdPartyService.validateWardSecretaryRequest(
+                    request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
+                    request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                addActionMessage(getText("WS.001"));
+                return RESULT_ERROR;
+            }
+        }
+        return super.renew();
+    }
 
 	public void prepareRenew() {
 		prepareNewForm();

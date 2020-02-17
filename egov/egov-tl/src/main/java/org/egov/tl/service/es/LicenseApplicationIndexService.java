@@ -156,16 +156,16 @@ public class LicenseApplicationIndexService {
             applicationIndex.setApproved(ApprovalStatus.REJECTED);
             applicationIndex.setClosed(ClosureStatus.YES);
         }
-		if (ClosureStatus.YES.compareTo(applicationIndex.getClosed()) == 0
-				&& Source.WARDSECRETARY.toString().equalsIgnoreCase(license.getApplicationSource())) {
-			eventPublisher
-					.publishEvent(ApplicationDetails.builder().withApplicationNumber(license.getApplicationNumber())
-							.withApplicationStatus(applicationIndex.getApproved().equals(ApprovalStatus.APPROVED)
-									? ApplicationStatus.APPROVED
-									: ApplicationStatus.REJECTED)
-							.withDateOfCompletion(new Date())
-							.withRemark(license.getRemarks()).build());
-		}
+        if (ClosureStatus.YES.compareTo(applicationIndex.getClosed()) == 0
+                && Source.WARDSECRETARY.toString().equalsIgnoreCase(license.getApplicationSource())) {
+            eventPublisher
+                    .publishEvent(ApplicationDetails.builder().withApplicationNumber(license.getApplicationNumber())
+                            .withApplicationStatus(applicationIndex.getApproved().equals(ApprovalStatus.APPROVED)
+                                    ? ApplicationStatus.APPROVED
+                                    : ApplicationStatus.REJECTED)
+                            .withDateOfCompletion(new Date())
+                            .withRemark(license.getRemarks()).build());
+        }
         applicationIndexService.updateApplicationIndex(applicationIndex);
 
     }

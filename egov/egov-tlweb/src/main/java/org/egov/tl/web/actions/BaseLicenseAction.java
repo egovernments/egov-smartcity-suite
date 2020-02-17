@@ -161,8 +161,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient WorkflowBean workflowBean = new WorkflowBean();
 
-    protected String source;
-    protected String transactionId;
+    protected transient String source;
+    protected transient String transactionId;
+    protected transient boolean wsPortalRequest;
 
     @Autowired
     protected transient LicenseUtils licenseUtils;
@@ -214,10 +215,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
-			if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
-				throw new ApplicationRuntimeException("WS.001");
-			}
+        } else if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+                throw new ApplicationRuntimeException("WS.001");
+            }
             license.setApplicationSource(source);
             workflowBean.setActionName(NEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license, workflowBean,
@@ -312,10 +313,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
-        } else if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
-        	if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
-				throw new ApplicationRuntimeException("WS.001");
-			}
+        } else if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+                throw new ApplicationRuntimeException("WS.001");
+            }
             license().setApplicationSource(source);
             workflowBean.setActionName(RENEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license(), workflowBean,
@@ -671,6 +672,14 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 
 }

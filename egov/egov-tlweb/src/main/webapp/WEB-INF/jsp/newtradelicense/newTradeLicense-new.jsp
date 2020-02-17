@@ -395,8 +395,9 @@
                 <s:hidden name="model.id" id="tlid"/>
                 <s:hidden name="id" id="id"/>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
-                 <s:hidden name="source" id="id"/>
-                  <s:hidden name="transactionId" id="transactionId"/>
+                <s:hidden name="source" id="id"/>
+                <s:hidden name="transactionId" id="transactionId"/>
+                <s:hidden name="wsPortalRequest" id="wsPortalRequest"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
                 <s:hidden name="newWorkflow" id="newWorkflow"/>
                 <s:if test="%{!isNewWorkflow()}">

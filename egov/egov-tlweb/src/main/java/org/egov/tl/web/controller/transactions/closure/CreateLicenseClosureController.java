@@ -90,29 +90,32 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     protected transient SecurityUtils securityUtils;
     
     @GetMapping
-	public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
-			final Model model, final HttpServletRequest request) {
+    public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
+            final Model model, final HttpServletRequest request) {
         if (license.transitionInprogress()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return REDIRECT_TO_VIEW + license.getId();
         }
-        if (tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
-			String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
-			String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
-			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
-				model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
-			}
-		}
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+
+        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest),
+                securityUtils.getCurrentUser())) {
+            String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+            String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+                throw new ApplicationRuntimeException("WS.001");
+            else {
+                model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+                model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+            }
+        }
         license.setApplicationNumber(AUTO);
         return LICENSECLOSURE;
     }
 
     @PostMapping
-	public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
-			RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
+    public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
         createLicenseClosureValidator.validate(tradeLicense, bindingResult);
         if (bindingResult.hasErrors())
             return LICENSECLOSURE;
@@ -121,8 +124,8 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         }
         String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
-		String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
-        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource );
+        String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+        licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource);
         redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");
         return REDIRECT_TO_VIEW + tradeLicense.getId();
     }
