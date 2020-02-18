@@ -793,7 +793,8 @@ public class TradeLicenseService {
                 toYearFormat(demandDetails.getInstallmentEndDate());
         reportParams.put("installMentYear", installmentYear);
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
-        reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
+        Date receiptDate = licenseRepository.getReceiptDateByLicenseNumber(license.getLicenseNumber());
+        reportParams.put("demandUpdateDate", getDefaultFormattedDate(receiptDate));
         reportParams.put("demandTotalamt", demandDetails.getAmtCollected());
         User approver = isProvisional || license.getApprovedBy() == null
                 ? licenseUtils.getCommissionerAssignment().getEmployee() : license.getApprovedBy();
