@@ -48,7 +48,8 @@
 package org.egov.infra.integration.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,6 +57,9 @@ public class ThirdPartyService {
 
     private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
     private static final String WARDSECRETARY_USER_NAME = "wardsecretary";
+
+    @Autowired
+    protected transient SecurityUtils securityUtils;
 
     public static boolean validateWardSecretaryRequest(String transactionId, String source) {
         boolean isInvalidRequest = false;
@@ -66,7 +70,7 @@ public class ThirdPartyService {
         return isInvalidRequest;
     }
 
-    public static boolean isWardSecretaryRequest(final boolean wsPortalRequest, final User user) {
-        return wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(user.getUsername());
+    public boolean isWardSecretaryRequest(final boolean wsPortalRequest) {
+        return wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername());
     }
 }

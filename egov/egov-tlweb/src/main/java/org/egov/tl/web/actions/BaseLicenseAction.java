@@ -191,6 +191,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @Autowired
     protected transient LicenseDocumentTypeService licenseDocumentTypeService;
 
+    @Autowired
+    protected transient ThirdPartyService thirdPartyService;
+
     protected String message;
 
     public BaseLicenseAction() {
@@ -215,7 +218,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
                 throw new ApplicationRuntimeException("WS.001");
             }
@@ -313,7 +316,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
-        } else if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
                 throw new ApplicationRuntimeException("WS.001");
             }

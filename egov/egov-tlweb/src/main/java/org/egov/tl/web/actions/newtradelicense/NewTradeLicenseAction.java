@@ -229,7 +229,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
             throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
                     format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
         }
-        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             HttpServletRequest request = ServletActionContext.getRequest();
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
@@ -252,7 +252,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
         supportDocumentsValidation();
-        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             HttpServletRequest request = ServletActionContext.getRequest();
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),

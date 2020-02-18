@@ -89,7 +89,10 @@ public class LicenseBillOnlinePaymentController {
 
     @Autowired
     protected transient SecurityUtils securityUtils;
-    
+
+    @Autowired
+    private transient ThirdPartyService thirdPartyService;
+
     @ModelAttribute("onlineSearchForm")
     public OnlineSearchForm onlineSearchForm() {
         return new OnlineSearchForm();
@@ -111,9 +114,8 @@ public class LicenseBillOnlinePaymentController {
     public String searchForPayment(final Model model, final HttpServletRequest request) {
 
         String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
-
-        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest),
-                securityUtils.getCurrentUser())) {
+        
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
             String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
             String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
             if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))

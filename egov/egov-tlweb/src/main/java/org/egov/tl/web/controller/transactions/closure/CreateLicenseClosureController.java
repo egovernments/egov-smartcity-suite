@@ -81,14 +81,17 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
 
     @Autowired
     private CreateLicenseClosureValidator createLicenseClosureValidator;
-    
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
     protected transient SecurityUtils securityUtils;
-    
+
+    @Autowired
+    private transient ThirdPartyService thirdPartyService;
+
     @GetMapping
     public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request) {
@@ -98,8 +101,7 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
         }
         String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
 
-        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest),
-                securityUtils.getCurrentUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
             String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
             String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
             if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
