@@ -128,22 +128,22 @@ public class LicenseClosureService extends LicenseService {
 
     @Autowired
     private DemandGenerationService demandGenerationService;
-    
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
-    
+
     @Autowired
     private PositionMasterService positionMasterService;
-       
+
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<?> workflowService;
-    
+
     @Autowired
     @Qualifier("licenseApplicationService")
     protected transient LicenseApplicationService licenseApplicationService;
-    
+
     public ReportOutput generateClosureEndorsementNotice(TradeLicense license) {
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("License", license);
@@ -179,33 +179,34 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-	public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource, final boolean wsPortalRequest) {
-		if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
-			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)) {
-				throw new ApplicationRuntimeException("WS.001");
-			}
-		}
-		processSupportDocuments(license);
-		licenseClosureProcessflowService.startClosureProcessflow(license);
-		if (AUTO.equals(license.getApplicationNumber()))
-			license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-		license.setNewWorkflow(true);
-		license.setApplicationDate(new Date());
-		license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-		license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE));
-		update(license);
-		if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
-			WorkflowBean wfBean = new WorkflowBean();
-			wfBean.setActionName(CLOSURE_APPTYPE_CODE);
-			licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
-		}
-		licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-		tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license,
-				license.getWorkflowContainer().getWorkFlowAction());
-		if (securityUtils.currentUserIsCitizen())
-			licenseCitizenPortalService.onCreate(license);
-		return license;
-	}
+    public TradeLicense createClosure(TradeLicense license, final String wsTransactionId, final String wsSource,
+            final boolean wsPortalRequest) {
+        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)) {
+                throw new ApplicationRuntimeException("WS.001");
+            }
+        }
+        processSupportDocuments(license);
+        licenseClosureProcessflowService.startClosureProcessflow(license);
+        if (AUTO.equals(license.getApplicationNumber()))
+            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        license.setNewWorkflow(true);
+        license.setApplicationDate(new Date());
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE));
+        update(license);
+        if (ThirdPartyService.isWardSecretaryRequest(wsPortalRequest, securityUtils.getCurrentUser())) {
+            WorkflowBean wfBean = new WorkflowBean();
+            wfBean.setActionName(CLOSURE_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
+        }
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license,
+                license.getWorkflowContainer().getWorkFlowAction());
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
+        return license;
+    }
 
     @Transactional
     public void cancelClosure(TradeLicense license) {
@@ -238,7 +239,7 @@ public class LicenseClosureService extends LicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
     }
-    
+
     public Boolean isValidApprover(final StateAware<?> state) {
         String currentState = null;
         Long approverPositionId = ((TradeLicense) state).getWorkflowContainer().getApproverPositionId();
@@ -251,13 +252,13 @@ public class LicenseClosureService extends LicenseService {
         }
         return Boolean.FALSE;
     }
-    
-	public Boolean isValidAppover(WorkFlowMatrix workFlowMatrix, Position position) {
-		if (workFlowMatrix.getNextDesignation() != null) {
-			return Arrays.asList(workFlowMatrix.getNextDesignation().split(",")).stream()
-					.anyMatch(position.getDeptDesig().getDesignation().getName()::equalsIgnoreCase);
-		}
-		return Boolean.FALSE;
-	}
+
+    public Boolean isValidAppover(WorkFlowMatrix workFlowMatrix, Position position) {
+        if (workFlowMatrix.getNextDesignation() != null) {
+            return Arrays.asList(workFlowMatrix.getNextDesignation().split(",")).stream()
+                    .anyMatch(position.getDeptDesig().getDesignation().getName()::equalsIgnoreCase);
+        }
+        return Boolean.FALSE;
+    }
 
 }

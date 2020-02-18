@@ -54,18 +54,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThirdPartyService {
 
-	private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
-	private static final String WARDSECRETARY_USER_NAME = "wardsecretary";
+    private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
+    private static final String WARDSECRETARY_USER_NAME = "wardsecretary";
 
-	public static boolean validateWardSecretaryRequest(String transactionId, String source) {
-		boolean isInvalidRequest = false;
-		if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
-				|| (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
-			isInvalidRequest = true;
+    public static boolean validateWardSecretaryRequest(String transactionId, String source) {
+        boolean isInvalidRequest = false;
+        if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
+                || (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
+            isInvalidRequest = true;
 
-		return isInvalidRequest;
-	}
-	
+        return isInvalidRequest;
+    }
+
     public static boolean isWardSecretaryRequest(final boolean wsPortalRequest, final User user) {
         return wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(user.getUsername());
     }
