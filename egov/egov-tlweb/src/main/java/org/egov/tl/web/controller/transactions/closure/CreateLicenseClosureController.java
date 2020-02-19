@@ -73,7 +73,7 @@ import static org.egov.tl.utils.Constants.MESSAGE;
 
 
 @Controller
-@RequestMapping(value = "/license/closure/{licenseId}")
+@RequestMapping(value = "/license/closure")
 public class CreateLicenseClosureController extends LicenseClosureProcessflowController {
 
     private static final String REDIRECT_TO_VIEW = "redirect:/license/success/";
@@ -92,13 +92,13 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     @Autowired
     private transient ThirdPartyService thirdPartyService;
 
-    @GetMapping
+    @GetMapping("{licenseId}")
     public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request) {
         return closureForm(license, redirectAttributes, model, request);
     }
     
-    @PostMapping("/form")
+    @PostMapping("/form/{licenseId}")
     public String showClosure(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request) {
         return closureForm(license, redirectAttributes, model, request);
@@ -134,7 +134,7 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
         return LICENSECLOSURE;
     }
 
-    @PostMapping
+    @PostMapping("{licenseId}")
     public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
         createLicenseClosureValidator.validate(tradeLicense, bindingResult);

@@ -237,11 +237,11 @@ function goToAction(obj,uid, id) {
     		window.open(renewalUrl);
     	}	
     } else if (obj.options[obj.selectedIndex].innerHTML == 'Closure'){
-    	var clouserUrl = "/tl/license/closure/"+id;
+    	var clouserUrl = "/tl/license/closure/";
     	if(wsSource == 'WARDSECRETARY'){
-    		closureForm(clouserUrl);
+    		closureForm(clouserUrl, id);
     	} else {
-    		window.open(clouserUrl, id);
+    		window.open(clouserUrl+id, id);
     	}
     } else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
         window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
@@ -256,7 +256,7 @@ function renewalForm(renewalUrl) {
 	jQuery('<form>.').attr({
 		method : 'POST',
 		action : renewalUrl,
-		target : '_blank'
+		target : '_self'
 	}).append(jQuery('<input>').attr({
 		type : 'hidden',
 		id : 'transactionId',
@@ -275,11 +275,11 @@ function renewalForm(renewalUrl) {
 	})).appendTo(document.body).submit();
 }
 
-function closureForm(closureUrl) {
+function closureForm(closureUrl, id) {
 	jQuery('<form>.').attr({
 		method : 'POST',
-		action : closureUrl+"/form",
-		target : '_blank'
+		action : closureUrl+"form/"+id,
+		target : '_self'
 	}).append(jQuery('<input>').attr({
 		type : 'hidden',
 		id : 'transactionId',
