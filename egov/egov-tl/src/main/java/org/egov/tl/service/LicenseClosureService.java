@@ -48,6 +48,7 @@
 
 package org.egov.tl.service;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -201,6 +202,7 @@ public class LicenseClosureService extends LicenseService {
         if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             WorkflowBean wfBean = new WorkflowBean();
             wfBean.setActionName(CLOSURE_APPTYPE_CODE);
+            license.setApplicationSource(Source.WARDSECRETARY.toString());;
             licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
         }
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);

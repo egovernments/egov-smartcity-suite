@@ -112,7 +112,20 @@ public class LicenseBillOnlinePaymentController {
 
     @GetMapping
     public String searchForPayment(final Model model, final HttpServletRequest request) {
+        return searchPaymentForm(model, request);
+    }
+    
+    @RequestMapping("/form")
+    public String searchForPaymentForm(final Model model, final HttpServletRequest request) {
+        return searchPaymentForm(model, request);
+    }
 
+    /**
+     * @param model
+     * @param request
+     * @return
+     */
+    public String searchPaymentForm(final Model model, final HttpServletRequest request) {
         String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
         
         if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
@@ -123,6 +136,7 @@ public class LicenseBillOnlinePaymentController {
             else {
                 model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
                 model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+                model.addAttribute(Constants.WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
             }
         }
         return "searchtrade-licenseforpay";

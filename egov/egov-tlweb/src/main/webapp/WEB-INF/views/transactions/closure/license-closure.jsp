@@ -60,10 +60,10 @@
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
-        <form:form role="form" class="form-horizontal form-groups-bordered" modelAttribute="tradeLicense"
+        <form:form role="form" class="form-horizontal form-groups-bordered" action="/tl/license/closure/${tradeLicense.id}" modelAttribute="tradeLicense"
                    id="licenseClosure" method="POST" enctype="multipart/form-data">
-            <input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${transactionId}" />
-			<input type="hidden" id="wsSource" name="wsSource" value="${source}" />
+            <input type="hidden" id="wsTransactionId" name="transactionId" value="${transactionId}" />
+			<input type="hidden" id="wsSource" name="source" value="${source}" />
 			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">

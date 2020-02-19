@@ -95,6 +95,24 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     @GetMapping
     public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request) {
+        return closureForm(license, redirectAttributes, model, request);
+    }
+    
+    @PostMapping("/form")
+    public String showClosure(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
+            final Model model, final HttpServletRequest request) {
+        return closureForm(license, redirectAttributes, model, request);
+    }
+    
+    /**
+     * @param license
+     * @param redirectAttributes
+     * @param model
+     * @param request
+     * @return
+     */
+    public String closureForm(TradeLicense license, RedirectAttributes redirectAttributes, final Model model,
+            final HttpServletRequest request) {
         if (license.transitionInprogress()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return REDIRECT_TO_VIEW + license.getId();
@@ -109,6 +127,7 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
             else {
                 model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
                 model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+                model.addAttribute(Constants.WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
             }
         }
         license.setApplicationNumber(AUTO);

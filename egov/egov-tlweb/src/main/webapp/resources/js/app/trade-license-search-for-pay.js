@@ -152,6 +152,7 @@ $(document).ready(function () {
                         },
                         ajax: {
                             type: "POST",
+                            url: "/tl/pay/online",
                             data: {
                                 applicationNumber: applicationNumber,
                                 licenseNumber: licenseNumber,
@@ -229,16 +230,16 @@ function goToAction(obj,uid, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
         window.open("/tl/dcb/view/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License') {
-    	var renewalUrl = "/tl/newtradelicense/newTradeLicense-beforeRenew.action?";
+    	var renewalUrl = "/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id;
     	if(wsSource == 'WARDSECRETARY'){
-    		window.open(renewalUrl+"model.id=" + id+"&transactionId="+wsTransactionId+"&source="+wsSource+"&wsPortalRequest="+wsPortalRequest);
+    		renewalForm(renewalUrl);
     	} else {
-    		window.open(renewalUrl+"model.id=" + id);
+    		window.open(renewalUrl);
     	}	
     } else if (obj.options[obj.selectedIndex].innerHTML == 'Closure'){
     	var clouserUrl = "/tl/license/closure/"+id;
     	if(wsSource == 'WARDSECRETARY'){
-    		window.open(clouserUrl+"?transactionId="+wsTransactionId+"&source="+wsSource+"&wsPortalRequest="+wsPortalRequest);
+    		closureForm(clouserUrl);
     	} else {
     		window.open(clouserUrl, id);
     	}
@@ -249,4 +250,50 @@ function goToAction(obj,uid, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
     $(obj).val('');
+}
+
+function renewalForm(renewalUrl) {
+	jQuery('<form>.').attr({
+		method : 'POST',
+		action : renewalUrl,
+		target : '_blank'
+	}).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'transactionId',
+		name : 'transactionId',
+		value : wsTransactionId
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'source',
+		name : 'source',
+		value : wsSource
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'wsPortalRequest',
+		name : 'wsPortalRequest',
+		value : wsPortalRequest
+	})).appendTo(document.body).submit();
+}
+
+function closureForm(closureUrl) {
+	jQuery('<form>.').attr({
+		method : 'POST',
+		action : closureUrl+"/form",
+		target : '_blank'
+	}).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'transactionId',
+		name : 'transactionId',
+		value : wsTransactionId
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'source',
+		name : 'source',
+		value : wsSource
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'wsPortalRequest',
+		name : 'wsPortalRequest',
+		value : wsPortalRequest
+	})).appendTo(document.body).submit();
 }
