@@ -413,7 +413,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final HttpServletRequest request = ServletActionContext.getRequest();
         if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
             wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
-        if (propertyTaxCommonUtils.isWardSecretaryUser(securityUtils.getCurrentUser()) && !wsPortalRequest) {
+        if (thirdPartyService.isWardSecretaryAndNotFromWsPorta(wsPortalRequest)) {
             addActionMessage(getText("WS.002"));
             return RESULT_ERROR;
         }
