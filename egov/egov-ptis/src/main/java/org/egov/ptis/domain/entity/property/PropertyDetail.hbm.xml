@@ -63,7 +63,7 @@
 			access="property" unsaved-value="null" />
 
 		<property name="propertyType" column="PROPERTY_TYPE"
-			not-null="true" insert="false" update="false" />
+			not-null="true" insert="false" update="false" type="java.lang.String"/>
 
 		<many-to-one name="property" fetch="join"
 			class="org.egov.ptis.domain.entity.property.PropertyImpl" column="id_property"
@@ -74,12 +74,12 @@
 			column="ID_PROPERTYTYPEMASTER" unique="true" />
 
 		<component name="sitalArea" class="org.egov.commons.Area">
-			<property name="area" column="SITAL_AREA" />
-			<property name="length" column="PROPERTY_LENGTH" />
-			<property name="breadth" column="PROPERTY_BREADTH" />
+			<property name="area" column="SITAL_AREA" type="java.lang.Float"/>
+			<property name="length" column="PROPERTY_LENGTH" type="java.lang.Float"/>
+			<property name="breadth" column="PROPERTY_BREADTH" type="java.lang.Float"/>
 		</component>
 
-		<property name="fieldIrregular" column="IS_IRREGULAR" />
+		<property name="fieldIrregular" column="IS_IRREGULAR" type="char"/>
 
 		<property name="noofFloors" column="NUM_FLOORS" type="integer" />
 
@@ -94,20 +94,20 @@
 			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster"
 			column="ID_MUTATION" unique="true" />
 
-		<property name="waterMeterNum" column="WATER_METER_NUM" />
+		<property name="waterMeterNum" column="WATER_METER_NUM" type="java.lang.String"/>
 
-		<property name="elecMeterNum" column="ELEC_METER_NUM" />
+		<property name="elecMeterNum" column="ELEC_METER_NUM" type="java.lang.String"/>
 
-		<property name="surveyNumber" column="SURVEY_NUM" />
+		<property name="surveyNumber" column="SURVEY_NUM" type="java.lang.String"/>
 
 		<property name="fieldVerified" column="IS_FIELD_VERIFIED"
 			insert="false" />
 
 		<property name="fieldVerificationDate" column="FIELD_VERIF_DATE"
-			update="false" />
+			update="false" type="java.lang.Character"/>
 
-		<property name="cornerPlot" column="IS_CORNERPLOT" />
-		<property name="comZone" column="IS_COMZONE" />
+		<property name="cornerPlot" column="IS_CORNERPLOT" type="java.lang.Character"/>
+		<property name="comZone" column="IS_COMZONE" type="java.lang.Character"/>
 
 		<property name="lift" column="lift" type="boolean" />
 		<property name="toilets" column="toilets" type="boolean" />
@@ -158,30 +158,30 @@
 			column="ID_OCCPN_MSTR" unique="true" />
 
 		<component name="commBuiltUpArea" class="org.egov.commons.Area">
-			<property name="area" column="COMMN_BUILTUP_AREA" />
+			<property name="area" column="COMMN_BUILTUP_AREA" type="java.lang.Float" />
 		</component>
 
 		<component name="plinthArea" class="org.egov.commons.Area">
-			<property name="area" column="PLINTH_AREA" />
+			<property name="area" column="PLINTH_AREA" type="java.lang.Float"/>
 		</component>
 		<component name="commVacantLand" class="org.egov.commons.Area">
-			<property name="area" column="COMMN_VCNT_LAND" />
+			<property name="area" column="COMMN_VCNT_LAND" type="java.lang.Float"/>
 		</component>
 		<component name="nonResPlotArea" class="org.egov.commons.Area">
-			<property name="area" column="NONRES_PLOTAREA" />
+			<property name="area" column="NONRES_PLOTAREA" type="java.lang.Float"/>
 		</component>
 
 		<subclass name="org.egov.ptis.domain.entity.property.VacantProperty"
 			discriminator-value="VacantProperty">
 			<component name="totalBuiltupArea" class="org.egov.commons.Area">
-				<property name="area" column="TOTAL_BUILTUP_AREA" />
+				<property name="area" column="TOTAL_BUILTUP_AREA" type="java.lang.Float"/>
 			</component>
 		</subclass>
 
 		<subclass name="org.egov.ptis.domain.entity.property.BuiltUpProperty"
 			discriminator-value="BuiltUpProperty">
 			<component name="totalBuiltupArea" class="org.egov.commons.Area">
-				<property name="area" column="TOTAL_BUILTUP_AREA" />
+				<property name="area" column="TOTAL_BUILTUP_AREA" type="java.lang.Float"/>
 			</component>
 		</subclass>
 	</class>
