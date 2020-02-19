@@ -78,12 +78,13 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
                 append("SELECT DISTINCT view_ram.module_id as id,view_ram.module_name as name,null as url,view_ram.typeflag as typeflag,view_ram.context_root as ctx_root,view_ram.order_number as ordernumber ").
                 append("FROM VIEW_EG_MENULINK view_ram WHERE  view_ram.parent_id =:parentId and view_ram.typeflag='M' and view_ram.is_enabled=true ").
                 append("AND EXISTS (SELECT action.id FROM eg_action action, eg_roleaction roleaction where action.parentmodule = view_ram.module_id ").
-                append("AND action.enabled = true AND action.id = roleaction.actionid  AND roleaction.roleid IN (SELECT roleid FROM eg_userrole userrole ").
-                append("WHERE userrole.userid = :userId) UNION (SELECT module.id FROM eg_module module WHERE module.parentmodule = view_ram.module_id AND module.enabled=true) ) ").
+                append("AND action.enabled = true AND action.id = roleaction.actionid AND exists (SELECT userrole.* FROM eg_userrole ").
+                append("userrole WHERE userrole.roleid=roleaction.roleid and userrole.userid = :userId) UNION (SELECT module.id FROM eg_module module WHERE ").
+                append("module.parentmodule = view_ram.module_id AND module.enabled=true)) ").
                 append("UNION SELECT distinct view_ram.action_id as id,view_ram.action_name as name,view_ram.action_url as url,view_ram.typeflag as typeflag, ").
-                append("view_ram.context_root as ctx_root,view_ram.order_number as ordernumber FROM VIEW_EG_MENULINK view_ram where   parent_id = :parentId and typeflag='A' ").
-                append("AND view_ram.is_enabled=true and (view_ram.action_id in (select actionid from eg_roleaction ra  where ra.roleid in ").
-                append("(select roleid from eg_userrole ur where ur.userid = :userId))) order by typeflag desc,ordernumber asc");
+                append("view_ram.context_root as ctx_root,view_ram.order_number as ordernumber FROM VIEW_EG_MENULINK view_ram where parent_id = :parentId and typeflag='A' ").
+                append("AND view_ram.is_enabled=true and exists (select ra.* from eg_roleaction ra where view_ram.action_id=ra.actionid and exists ").
+                append("(select ur.* from eg_userrole ur where ra.roleid=ur.roleid and ur.userid = :userId)) order by typeflag desc,ordernumber asc");
 
         return entityManager.createNativeQuery(sql.toString()).
                 setParameter("parentId", parentId).
