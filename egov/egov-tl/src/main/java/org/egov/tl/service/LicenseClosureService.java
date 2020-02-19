@@ -202,7 +202,7 @@ public class LicenseClosureService extends LicenseService {
         if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             WorkflowBean wfBean = new WorkflowBean();
             wfBean.setActionName(CLOSURE_APPTYPE_CODE);
-            license.setApplicationSource(Source.WARDSECRETARY.toString());;
+            license.setApplicationSource(Source.WARDSECRETARY.toString());
             licenseApplicationService.processWithWardSecretary(license, wfBean, wsTransactionId);
         }
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
