@@ -48,13 +48,19 @@
 
 package org.egov.collection.repository;
 
+import java.util.List;
+
 import org.egov.collection.entity.CollectionIndex;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CollectionIndexRepository extends JpaRepository<CollectionIndex, Long> {
 
     CollectionIndex findByReceiptNumberAndCityName(String receiptNumber, String cityName);
+
+    @Query("select distinct c.billingService from CollectionIndex c where c.status <> 'Cancelled' ")
+    List<String> findAllBillingService();
 
 }

@@ -48,6 +48,8 @@
 
 package org.egov.collection.utils.es;
 
+import java.util.List;
+
 import org.egov.collection.entity.CollectionIndex;
 import org.egov.collection.repository.CollectionIndexRepository;
 import org.egov.infra.admin.master.entity.City;
@@ -70,6 +72,10 @@ public class CollectionIndexUtils {
     @Autowired
     public CollectionIndexUtils(final CollectionIndexRepository collectionIndexRepository) {
         this.collectionIndexRepository = collectionIndexRepository;
+    }
+
+    public List<String> findAllBillingService() {
+        return collectionIndexRepository.findAllBillingService();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

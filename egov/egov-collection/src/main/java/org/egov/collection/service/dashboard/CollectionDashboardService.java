@@ -48,6 +48,15 @@
 
 package org.egov.collection.service.dashboard;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.CollectionDashBoardStats;
 import org.egov.collection.bean.dashboard.CollectionDashBoardTrend;
@@ -58,23 +67,13 @@ import org.egov.collection.bean.dashboard.TotalCollectionDashBoardStats;
 import org.egov.collection.bean.dashboard.TotalCollectionStatistics;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.service.elasticsearch.CollectionDocumentElasticSearchService;
+import org.egov.collection.utils.es.CollectionIndexUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.infstr.models.ServiceDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Service to provide APIs for CM Dashboard
@@ -92,12 +91,14 @@ public class CollectionDashboardService {
     private CFinancialYearService cFinancialYearService;
 
     @Autowired
+    private CollectionIndexUtils collectionIndexUtils;
+
+    @Autowired
     private CollectionDocumentElasticSearchService collectionDocumentElasticSearchService;
     private static final String MILLISECS = " (millisecs) ";
 
     /**
-     * Provides State-wise Collection Statistics for Property Tax, Water Charges
-     * and Others
+     * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
      *
      * @return CollectionStats
      */
@@ -264,13 +265,9 @@ public class CollectionDashboardService {
 
     @SuppressWarnings("unchecked")
     private List<String> getServiceList(final List<String> excludeServices, final List<String> toBeExcluded) {
-        final List<String> serviceList = new ArrayList<>();
+        List<String> serviceList = new ArrayList<>();
         if (!excludeServices.contains(CollectionConstants.DASHBOARD_OTHERS)) {
-            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
-                    ServiceDetails.class);
-            final List<ServiceDetails> serviceDetails = qry.getResultList();
-            for (final ServiceDetails sd : serviceDetails)
-                serviceList.add(sd.getName());
+            serviceList = collectionIndexUtils.findAllBillingService();
             serviceList.removeAll(toBeExcluded);
             serviceList.removeAll(excludeServices);
         }
