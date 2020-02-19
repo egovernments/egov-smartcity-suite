@@ -94,6 +94,8 @@
 				value="${wsTransactionId}" />
 			<input type="hidden" id="wsSource" name="wsSource"
 				value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest"
+				value="${wsPortalRequest}" />
 				
 			<form:hidden id="mode" path="" value="${mode}" />
 			<form:hidden path="legacy" id="legacy" value="false" />
