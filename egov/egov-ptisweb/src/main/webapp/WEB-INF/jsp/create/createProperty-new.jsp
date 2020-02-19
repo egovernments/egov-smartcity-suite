@@ -83,7 +83,8 @@
 			<s:hidden name="meesevaServiceCode" id="meesevaServiceCode" value="%{meesevaServiceCode}" /> 
 			<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 			<s:hidden name="applicationSource" value="%{applicationSource}" />
-			<s:hidden name="wsTransactionId" value="%{wsTransactionId}" /> 
+			<s:hidden name="wsTransactionId" value="%{wsTransactionId}" />
+			<s:hidden name="wsPortalRequest" id="wsPortalRequest"/>
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="CreatePropertyHeader" />
