@@ -74,7 +74,8 @@ public class ThirdPartyService {
         return wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername());
     }
 
-    public boolean isWardSecretaryAndNotFromWsPorta(final boolean wsPortalRequest) {
-        return !wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername());
+    public boolean isValidWardSecretaryRequest(final boolean wsPortalRequest) {
+        return WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()) ? wsPortalRequest
+                : !wsPortalRequest;
     }
 }

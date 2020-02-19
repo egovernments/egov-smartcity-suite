@@ -189,8 +189,8 @@ public class NewConnectionController extends GenericConnectionController {
             Model model, HttpServletRequest request) {
     	User currentUser = securityUtils.getCurrentUser();
         boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
-        if (thirdPartyService.isWardSecretaryAndNotFromWsPorta(wsPortalRequest))
-			throw new ApplicationRuntimeException("WS.001");
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest))
+            throw new ApplicationRuntimeException("WS.001");
         
         boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		waterConnectionDetails.setApplicationDate(new Date());
