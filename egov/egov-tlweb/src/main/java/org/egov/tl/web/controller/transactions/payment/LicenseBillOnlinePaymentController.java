@@ -117,6 +117,10 @@ public class LicenseBillOnlinePaymentController {
     
     @RequestMapping("/form")
     public String searchForPaymentForm(final Model model, final HttpServletRequest request) {
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
+            throw new ApplicationRuntimeException("WS.002");
+        }
         return searchPaymentForm(model, request);
     }
 

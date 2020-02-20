@@ -101,6 +101,10 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     @PostMapping("/form/{licenseId}")
     public String showClosure(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request) {
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
+            throw new ApplicationRuntimeException("WS.002");
+        }
         return closureForm(license, redirectAttributes, model, request);
     }
     
@@ -137,6 +141,10 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     @PostMapping("{licenseId}")
     public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
+            throw new ApplicationRuntimeException("WS.002");
+        }
         createLicenseClosureValidator.validate(tradeLicense, bindingResult);
         if (bindingResult.hasErrors())
             return LICENSECLOSURE;
@@ -146,7 +154,6 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
         }
         String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
         String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
-        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
         licenseClosureService.createClosure(tradeLicense, wsTransactionId, wsSource,
                 wsPortalRequest != null && Boolean.valueOf(wsPortalRequest));
         redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");

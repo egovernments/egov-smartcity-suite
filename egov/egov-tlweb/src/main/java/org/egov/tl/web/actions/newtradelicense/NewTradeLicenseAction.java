@@ -229,6 +229,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     @ValidationErrorPage(ERROR)
     public String beforeRenew() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         prepareNewForm();
         documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
@@ -257,6 +261,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         supportDocumentsValidation();
         if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             HttpServletRequest request = ServletActionContext.getRequest();
