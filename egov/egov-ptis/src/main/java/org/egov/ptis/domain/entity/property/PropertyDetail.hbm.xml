@@ -101,7 +101,7 @@
 		<property name="surveyNumber" column="SURVEY_NUM" type="java.lang.String"/>
 
 		<property name="fieldVerified" column="IS_FIELD_VERIFIED"
-			insert="false" />
+			insert="false" type="java.lang.Character"/>
 
 		<property name="fieldVerificationDate" column="FIELD_VERIF_DATE"
 			update="false" type="java.util.Date"/>
