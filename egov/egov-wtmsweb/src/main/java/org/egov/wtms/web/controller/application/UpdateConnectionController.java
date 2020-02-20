@@ -598,6 +598,27 @@ public class UpdateConnectionController extends GenericConnectionController {
 			return NEWCONNECTION_EDIT;
 		}
 
+		if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+			if (waterConnectionDetails.getState().getInitiatorPosition() != null) {
+				Long initiatorPosition = waterConnectionDetails.getState().getInitiatorPosition().getId();
+				Assignment wfInitiator = null;
+				boolean initiatorNotPresent = false;
+				List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(initiatorPosition,
+						new Date());
+				if (assignmentList.isEmpty())
+					initiatorNotPresent = true;
+				else {
+					wfInitiator = getActiveAssignment(assignmentList);
+					if (wfInitiator == null) 
+						initiatorNotPresent = true;
+				}
+				if (initiatorNotPresent) {
+					model.addAttribute("noActiveJAOrAE", "Junior Assistant/Senior Assistant assignment is not active, please check");
+					return NEWCONNECTION_EDIT;
+				}
+			}
+		}
+		
 		if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)
 				&& APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
 			waterConnectionDetails
@@ -864,4 +885,15 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 		return reportOutput;
 	}
+	
+	private Assignment getActiveAssignment(final List<Assignment> assignment) {
+		Assignment wfInitiator = null;
+		for (final Assignment assign : assignment)
+			if (assign.getEmployee().isActive()) {
+				wfInitiator = assign;
+				break;
+			}
+		return wfInitiator;
+	}
+
 }

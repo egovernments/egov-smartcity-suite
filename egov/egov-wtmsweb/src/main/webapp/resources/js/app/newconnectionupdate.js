@@ -398,6 +398,11 @@ $(document).ready(
         if ($('#meterFocus').val() == 'true') {
             $('#meterSerialNumber').focus();
         }
+        
+        if($('#noActiveJAOrAE').val() != ''){
+    		bootbox.alert($('#noActiveJAOrAE').val());
+    		return false;
+    	}
 
 
     });
