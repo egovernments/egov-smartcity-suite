@@ -119,28 +119,34 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private transient LicenseService licenseService;
 
-	private static final String RESULT_ERROR = "error";
-
 	public NewTradeLicenseAction() {
 		tradeLicense.setLicensee(new Licensee());
 	}
 
-	@Override
-	@SkipValidation
-	@Action(value = "/newtradelicense/newTradeLicense-newForm")
-	public String newForm() {
-		tradeLicense.setNewWorkflow(true);
-		tradeLicense.setApplicationDate(new Date());
-		return super.newForm();
-	}
+    @Override
+    @SkipValidation
+    @Action(value = "/newtradelicense/newTradeLicense-newForm")
+    public String newForm() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
+        tradeLicense.setNewWorkflow(true);
+        tradeLicense.setApplicationDate(new Date());
+        return super.newForm();
+    }
 
-	@ValidationErrorPage(NEW)
-	@Action(value = "/newtradelicense/newTradeLicense-create")
-	public String create() {
-		supportDocumentsValidation();
+    @ValidationErrorPage(NEW)
+    @Action(value = "/newtradelicense/newTradeLicense-create")
+    public String create() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
+        supportDocumentsValidation();
         renewAppType = NEW_APPTYPE_CODE;
-		return super.create(tradeLicense);
-	}
+        return super.create(tradeLicense);
+    }
 
 	@SkipValidation
 	@Action(value = "/newtradelicense/newtradelicense-printAck")
@@ -235,7 +241,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
                     request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
-                return RESULT_ERROR;
+                return ERROR;
             } else {
                 license().setApplicationSource(Source.WARDSECRETARY.toString());
             }
@@ -258,7 +264,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
                     request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
-                return RESULT_ERROR;
+                return ERROR;
             }
         }
         return super.renew();

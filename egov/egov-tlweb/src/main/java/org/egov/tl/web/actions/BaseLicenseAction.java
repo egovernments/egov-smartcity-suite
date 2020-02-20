@@ -220,7 +220,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
-                throw new ApplicationRuntimeException("WS.001");
+                addActionMessage(getText("WS.001"));
+                return ERROR;
             }
             license.setApplicationSource(source);
             workflowBean.setActionName(NEW_APPTYPE_CODE);
