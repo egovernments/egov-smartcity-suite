@@ -104,7 +104,7 @@
 			insert="false" />
 
 		<property name="fieldVerificationDate" column="FIELD_VERIF_DATE"
-			update="false" type="java.lang.Character"/>
+			update="false" type="java.util.Date"/>
 
 		<property name="cornerPlot" column="IS_CORNERPLOT" type="java.lang.Character"/>
 		<property name="comZone" column="IS_COMZONE" type="java.lang.Character"/>
