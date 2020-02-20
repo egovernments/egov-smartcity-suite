@@ -65,6 +65,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -235,9 +236,15 @@ public class PropertyTransferService {
   
     @Autowired
     private EventPublisher eventPublisher;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation,final HttpServletRequest request,final String transactionId) {
+        Boolean wsPortalRequest = Boolean.FALSE;
+        if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
+            wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
         propertyMutation.setBasicProperty(basicProperty);
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
@@ -249,7 +256,7 @@ public class PropertyTransferService {
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation, null);
-        if (propertyService.isWardSecretaryUser(getLoggedInUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             saveMutationAndPublishEvent(propertyMutation,request, transactionId);
         } else
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());

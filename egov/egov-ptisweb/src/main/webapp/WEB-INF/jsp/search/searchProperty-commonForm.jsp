@@ -80,7 +80,7 @@
 						<s:hidden name="applicationSource" value="%{applicationSource}"/>
 						<s:hidden name="mutationType" value="%{mutationType}"/>
 						<s:hidden id="transactionId" name="transactionId" value="%{transactionId}"></s:hidden>
-						
+						<s:hidden name="wsPortalRequest" value="%{wsPortalRequest}"/>
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					
