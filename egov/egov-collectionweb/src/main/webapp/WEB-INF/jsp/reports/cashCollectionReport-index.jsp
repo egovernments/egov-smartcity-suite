@@ -157,8 +157,8 @@ function validate()
 				name="collectionReport.criteria.user" /></td>
 			<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.user.all')}" name="userId"
-				id="user" cssClass="selectwk" list="dropdownData.receiptCreatorList"
-				listKey="id" listValue="name" value="%{userId}" /></td>
+				id="user" cssClass="selectwk" list="userMap"
+				listKey="key" listValue="value" value="%{userId}" /></td>
 		</tr>
 		<tr>
 	      <td class="bluebox">&nbsp;</td>

@@ -98,8 +98,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = ServiceDetailsAction.BEFORECREATE, location = "serviceDetails-beforeCreate.jsp"),
         @Result(name = "codeUniqueCheck", location = "serviceDetails-codeUniqueCheck.jsp"),
         @Result(name = ServiceDetailsAction.MESSAGE, location = "serviceDetails-message.jsp"),
-        @Result(name = "view", location = "serviceDetails-view.jsp"),
-        @Result(name = "SUCCESS", location = "serviceDetails-view.jsp"),
+        @Result(name = ServiceDetailsAction.VIEW, location = "serviceDetails-view.jsp"),
+        @Result(name = ServiceDetailsAction.SUCCESS, location = "serviceDetails-view.jsp"),
         @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"), })
 public class ServiceDetailsAction extends BaseFormAction {
 
