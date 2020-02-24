@@ -46,62 +46,46 @@
   ~
   --%>
 
-<%@ page contentType="text/html" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<strong><spring:message code='title.watertaxSearch' />
-					</strong>
-				</div>
-			</div>
-			<div class="panel-body">
-				<form:form  class="form-horizontal form-groups-bordered"
-					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" method="post" action="/wtms/search/waterSearch/commonSearch-form/">
-					
-					<input type="hidden"  id="validMessage" name="validMessage" name="validMessage"  value="${validMessage}" />
-					<input type="hidden"  id="mode" name="mode" name="mode"  value="${mode}" />
-					<input type="hidden"  id="applicationType" name="applicationType" value="${applicationType}" />
-					<input type="hidden"  id="meesevaApplicationNumber" name="meesevaApplicationNumber" value="${meesevaApplicationNumber}" />
-					<input type="hidden"  id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
-					<input type="hidden"  id="wsSource" name="wsSource" value="${wsSource}" />
-					<input type="hidden"  id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
-					
-					<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
-						<div class="col-md-4 add-margin">
-							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="consumerCode" required="required"/>
-						</div>
-						<form:errors path="consumerCode" cssClass="add-margin error-msg" />
-					</div>
-					<br/>
-					<div class="form-group">
-						<div class="text-center">
-							<button type="submit" class="btn btn-primary" id="submitButtonId">
-								<spring:message code="lbl.submit" />
-							</button>
-							<input type="button" class="btn btn-default" onclick="customReset();" value="Reset"/>
-							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
-									<spring:message code="lbl.close" /></a>
-						</div>
-				</div>
-				</form:form>
-			</div>
-		</div>
-	</div>
-</div>
-<script>
-	function customReset() {
-		$("#consumerCode").val('');
-	}
+<%@ page language="java" pageEncoding="UTF-8"%>
+<html>
+<head>
+<title><spring:message code="title.ws.redirect" /></title>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		var redirectionURL = '${redirectionURL}';
+		var wsTransactionId = '${wsTransactionId}';
+		var wsSource = '${wsSource}';
+		var wsPortalRequest = '${wsPortalRequest}';
+
+		jQuery('<form>.').attr({
+			method : 'post',
+			action : redirectionURL,
+			target : '_self'
+		}).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsTransactionId',
+			name : 'wsTransactionId',
+			value : wsTransactionId
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsSource',
+			name : 'wsSource',
+			value : wsSource
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsPortalRequest',
+			name : 'wsPortalRequest',
+			value : wsPortalRequest
+		})).appendTo(document.body).submit();
+	});
 </script>
-<script src="<cdn:url value='/resources/js/app/connectionCommonsearch.js?rnd=${app_release_no}'/>"
-	type="text/javascript"></script>
-	
-
+</head>
+<body>
+</body>
+</html>

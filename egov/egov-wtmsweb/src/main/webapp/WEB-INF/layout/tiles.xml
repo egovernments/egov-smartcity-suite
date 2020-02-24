@@ -515,4 +515,9 @@
         <put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/common/waterValidation.jsp"/>
     </definition>
+    
+    <definition name="wardsecretary-redirect" extends="base_layout">
+        <put-attribute name="page-title" value="title.ws.redirect" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/wardsecretary-redirect.jsp"/>
+    </definition>
 </tiles-definitions>
