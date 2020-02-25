@@ -334,10 +334,6 @@ public class WaterTaxUtils {
         return compareUserRoleWithParameter(user, MEESEVA_OPERATOR_ROLE);
     }
     
-    public boolean isWardSecretaryUser(User user) {
-        return compareUserRoleWithParameter(user, WARDSECRETARY_OPERATOR_ROLE);
-    }
-
     public boolean isEmailEnabled() {
         return APPCONFIGVALUEOFENABLED.equalsIgnoreCase(getConfigurationValueByKey(SENDEMAILFORWATERTAX));
     }

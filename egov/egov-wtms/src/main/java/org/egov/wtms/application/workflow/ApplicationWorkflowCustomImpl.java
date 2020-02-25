@@ -103,6 +103,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -368,8 +369,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             || waterConnectionDetails.getCurrentState().getValue().equals("END")
                             || "Cancelled".equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue()))) {
                 if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
-                        || waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user)
-                        || waterTaxUtils.isWardSecretaryUser(user)))
+                        || waterTaxUtils.isMeesevaUser(user) || waterTaxUtils.isAnonymousUser(user) 
+                        || (waterConnectionDetails.getSource() != null
+                                && Source.WARDSECRETARY.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString()))))
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, currState, null);
                 else

@@ -52,8 +52,10 @@ import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_REDIRECTION_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -113,6 +115,9 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @Autowired
     private ConnectionDetailService connectionDetailService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -120,21 +125,24 @@ public class ChangeOfUseController extends GenericConnectionController {
         return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
     }
 
-    @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/changeOfUse/{consumerCode}")
     public String showForm(final WaterConnectionDetails parentConnectionDetails,
             @ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode, final HttpServletRequest request) {
         final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
-		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+            throw new ApplicationRuntimeException("WS.001");
+        
 		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
-			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
-				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
-			}
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 		}
         WaterConnectionDetails connectionDetails = null;
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
@@ -170,10 +178,14 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (loggedInMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
             changeOfUse.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+        
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
-		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+        
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
 			throw new ApplicationRuntimeException("WS.001");
 
 		if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser && !isAnonymousUser && !isWardSecretaryUser) {
@@ -197,9 +209,13 @@ public class ChangeOfUseController extends GenericConnectionController {
                 consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
             else
                 consumerCode = changeOfUse.getConnection().getConsumerCode();
-			if (isWardSecretaryUser)
-				return "redirect:/application/changeOfUse/".concat(consumerCode).concat("?wsTransactionId=")
-						.concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+            if (isWardSecretaryUser) {
+				model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/changeOfUse/".concat(consumerCode));
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+				return "wardsecretary-redirect";
+			}
 			else
 				return "redirect:/application/changeOfUse/" + consumerCode;
         }
@@ -235,6 +251,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             if (isWardSecretaryUser) {
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 			}
 
             return CHANGEOFUSE_FORM;
@@ -280,6 +297,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 if (isWardSecretaryUser) {
     				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
     				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
     			}
                 return CHANGEOFUSE_FORM;
             }

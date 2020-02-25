@@ -270,6 +270,10 @@ public class NewConnectionController extends GenericConnectionController {
         boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
         boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
         
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+        
         boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
         boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         model.addAttribute("citizenPortalUser", citizenPortalUser);
@@ -280,10 +284,6 @@ public class NewConnectionController extends GenericConnectionController {
 				&& !isWardSecretaryUser
 				&& !waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId()))
             throw new ValidationException("err.creator.application");
-		
-		if (isWardSecretaryUser
-				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-			throw new ApplicationRuntimeException("WS.001");
 		
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
 
