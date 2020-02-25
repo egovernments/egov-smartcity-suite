@@ -84,7 +84,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
@@ -173,15 +172,11 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/chequeRemittance-listData")
     @SkipValidation
     public String listData() {
-        if (accountNumberId != null)
-        {
+        if (accountNumberId != null) {
             final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
             remitAccountNumber = bankAcc.getAccountnumber();
         }
-       // populateRemittanceList();
-
-
-
+        populateRemittanceList();
         String approverIdList = CollectionConstants.BLANK;
         if (!isBankCollectionRemitter) {
             if (getDropdownData().get(APPROVER_LIST).isEmpty())
@@ -260,12 +255,11 @@ public class ChequeRemittanceAction extends BaseFormAction {
         return INDEX;
     }
 
-
     @Override
     public void validate() {
         super.validate();
         populateRemittanceList();
-        
+
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -282,8 +276,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
             }
         }
     }
-
-
 
     @Override
     public Object getModel() {
