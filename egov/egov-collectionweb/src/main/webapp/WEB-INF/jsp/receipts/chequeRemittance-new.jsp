@@ -166,14 +166,8 @@
 				.getElementsByName('fundCodeTempArray')[i].value;
 				document.getElementsByName('departmentCodeArray')[i].value = document
 						.getElementsByName('departmentCodeTempArray')[i].value;
-				document.getElementsByName('totalCashAmountArray')[i].value = document
-						.getElementsByName('totalCashAmountTempArray')[i].value;
 				document.getElementsByName('totalChequeAmountArray')[i].value = document
 						.getElementsByName('totalChequeAmountTempArray')[i].value;
-				document.getElementsByName('totalCardAmountArray')[i].value = document
-						.getElementsByName('totalCardAmountTempArray')[i].value;
-				document.getElementsByName('totalOnlineAmountArray')[i].value = document
-						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
 				document.getElementsByName('instrumentIdArray')[i].value = document
@@ -182,10 +176,7 @@
 				document.chequeRemittanceForm.serviceNameArray[i].value = "";
 				document.chequeRemittanceForm.fundCodeArray[i].value = "";
 				document.chequeRemittanceForm.departmentCodeArray[i].value = "";
-				document.chequeRemittanceForm.totalCashAmountArray[i].value = "";
 				document.chequeRemittanceForm.totalChequeAmountArray[i].value = "";
-				document.chequeRemittanceForm.totalCardAmountArray[i].value = "";
-				document.chequeRemittanceForm.totalOnlineAmountArray[i].value = "";
 				document.chequeRemittanceForm.receiptDateArray[i].value = "";
 				document.chequeRemittanceForm.instrumentIdArray[i].value = "";
 			}
@@ -363,29 +354,6 @@
 		return true;
 	}
 
-	function onChangeDeparment(approverDeptId) {
-		var receiptheaderId = '<s:property value="model.id"/>';
-		if (document.getElementById('designationId')) {
-			populatedesignationId({
-				approverDeptId : approverDeptId,
-				receiptheaderId : receiptheaderId
-			});
-		}
-	}
-
-	function onChangeDesignation(designationId) {
-		var approverDeptId;
-		if (document.getElementById('approverDeptId')) {
-			approverDeptId = document.getElementById('approverDeptId').value;
-		}
-		if (document.getElementById('positionUser')) {
-			populatepositionUser({
-				designationId : designationId,
-				approverDeptId : approverDeptId
-			});
-		}
-	}
-
 	// Check if at least one receipt is selected
 	function isChecked(chk) {
 		if (chk.length == undefined) {
@@ -517,20 +485,20 @@
 									headerValue="--Select--" list="dropdownData.financialYearList"
 									listKey="id" id="finYearId" listValue="finYearRange"
 									label="finYearRange" name="finYearId" value="%{finYearId}" /></td>
-                            <s:if test="%{!isBankCollectionRemitter}">
-                                <td class="bluebox"><s:text name="bankremittance.approver" />:</td>
-                                <td class="bluebox"><select name="approverId" id="approver"
-                                    class="form-control">
-                                        <option value="-1">--Select--</option>
-                                        <s:iterator status="istat" value="dropdownData.approverList"
-                                            var="mapping">
-                                            <option value='<s:property value="#mapping.approver.id" />'>
-                                                <s:property value="#mapping.approver.username" />::
-                                                <s:property value="#mapping.approver.name" />
-                                            </option>
-                                        </s:iterator>
-                                </select></td>
-                            </s:if>
+							<s:if test="%{!isBankCollectionRemitter}">
+								<td class="bluebox"><s:text name="bankremittance.approver" />:</td>
+								<td class="bluebox"><select name="approverId" id="approver"
+									class="form-control">
+										<option value="-1">--Select--</option>
+										<s:iterator status="istat" value="dropdownData.approverList"
+											var="mapping">
+											<option value='<s:property value="#mapping.approver.id" />'>
+												<s:property value="#mapping.approver.username" />::
+												<s:property value="#mapping.approver.name" />
+											</option>
+										</s:iterator>
+								</select></td>
+							</s:if>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>
@@ -557,7 +525,7 @@
 					<display:table name="paramList" uid="currentRow"
 						pagesize="${pageSize}" style="border:1px;width:100%"
 						cellpadding="0" cellspacing="0" export="false" requestURI=""
-						excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray  instrumentIdTempArray">
+						excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalChequeAmountArray departmentCodeTempArray receiptDateTempArray serviceNameTempArray totalChequeAmountTempArray  instrumentIdTempArray">
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 							style="width:5%; text-align: center">
@@ -574,18 +542,9 @@
 							<input type="hidden" name="departmentCodeTempArray"
 								id="departmentCodeTempArray" disabled="disabled"
 								value="${currentRow.DEPARTMENTCODE}" />
-							<input type="hidden" name="totalCashAmountTempArray"
-								disabled="disabled" id="totalCashAmountTempArray"
-								value="${currentRow.SERVICETOTALCASHAMOUNT}" />
 							<input type="hidden" name="totalChequeAmountTempArray"
 								disabled="disabled" id="totalChequeAmountTempArray"
 								value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-							<input type="hidden" name="totalCardAmountTempArray"
-								disabled="disabled" id="totalCardAmountTempArray"
-								value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-							<input type="hidden" name="totalOnlineAmountTempArray"
-								disabled="disabled" id="totalOnlineAmountTempArray"
-								value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
 							<input type="hidden" name="receiptDateTempArray"
 								disabled="disabled" id="receiptDateTempArray"
 								value="${currentRow.RECEIPTDATE}" />
@@ -597,16 +556,9 @@
 							<input type="hidden" name="departmentCodeArray"
 								id="departmentCodeArray"
 								value="${departmentCodeArray[currentRow_rowNum-1]}" />
-							<input type="hidden" name="totalCashAmountArray"
-								id="totalCashAmountArray"
-								value="${totalCashAmountArray[currentRow_rowNum-1]}" />
 							<input type="hidden" name="totalChequeAmountArray"
 								id="totalChequeAmountArray"
 								value="${totalChequeAmountArray[currentRow_rowNum-1]}" />
-							<input type="hidden" name="totalCardAmountArray"
-								disabled="disabled" id="totalCardAmountArray" />
-							<input type="hidden" name="totalOnlineAmountArray"
-								disabled="disabled" id="totalOnlineAmountArray" />
 							<input type="hidden" name="receiptDateArray"
 								id="receiptDateArray"
 								value="${receiptDateArray[currentRow_rowNum-1]}" />
@@ -621,7 +573,6 @@
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Receipt number" style="width:10%;text-align: center"
 							value="${currentRow.RECEIPTNUMBER}" />
-
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Cheque/DD number and date"
 							style="width:20%;text-align: center"
@@ -638,9 +589,9 @@
 							title="Department" style="width:15%;text-align: center"
 							value="${currentRow.DEPARTMENTNAME}" />
 
-                            <display:column headerClass="bluebgheadtd" class="blueborderfortd"
-                                title="Approver" style="width:10%;text-align: center"
-                                value="${currentRow.APPROVERNAME}" />
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							title="Approver" style="width:10%;text-align: center"
+							value="${currentRow.APPROVERNAME}" />
 
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Cheque /DD Amount (Rs)"
@@ -695,25 +646,23 @@
 							id="button" value="Close" onclick="window.close()" />
 					</div>
 				</s:if>
-				<s:if test="%{isListData}">
-					<s:if test="%{paramList.isEmpty()}">
-						<div class="formmainbox">
-							<table width="90%" border="0" align="center" cellpadding="0"
-								cellspacing="0">
-								<tr>
-									<div>&nbsp;</div>
-									<div class="billhead2">
-										<b><s:text name="bankRemittance.norecordfound" /></b>
-									</div>
-								</tr>
-							</table>
-							<br />
-						</div>
-						<div class="buttonbottom">
-							<input name="buttonClose" type="button" class="button"
-								id="buttonClose" value="Close" onclick="window.close()" />
-						</div>
-					</s:if>
+				<s:if test="%{paramList.isEmpty()}">
+					<div class="formmainbox">
+						<table width="90%" border="0" align="center" cellpadding="0"
+							cellspacing="0">
+							<tr>
+								<div>&nbsp;</div>
+								<div class="billhead2">
+									<b><s:text name="bankRemittance.norecordfound" /></b>
+								</div>
+							</tr>
+						</table>
+						<br />
+					</div>
+					<div class="buttonbottom">
+						<input name="buttonClose" type="button" class="button"
+							id="buttonClose" value="Close" onclick="window.close()" />
+					</div>
 				</s:if>
 			</div>
 		</s:push>

@@ -80,8 +80,6 @@
 			
 		</s:iterator>
 		<s:hidden name="totalCashAmount" value="%{totalCashAmount}"/>
-		<s:hidden name="totalChequeAmount" value="%{totalChequeAmount}"/>
-		<s:hidden name="totalOnlineAmount" value="%{totalOnlineAmount}"/>
 		<s:hidden name="bank" value="%{bank}"/>
 		<s:hidden name="bankAccount" value="%{bankAccount}"/>
 		
@@ -92,7 +90,7 @@
 <input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 <input type="button" class="buttonsubmit" id="buttonCashReport"
 			value="<s:text name='bankremittance.print.bankchallan'/>"
-			onclick="window.open('${pageContext.request.contextPath}/receipts/cashBankRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&totalChequeAmount=<s:property value="%{totalChequeAmount}"/>&totalOnlineAmount=<s:property value="%{totalOnlineAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>&remittanceDate=<s:property value="%{remittanceDate}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+			onclick="window.open('${pageContext.request.contextPath}/receipts/cashBankRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>&remittanceDate=<s:property value="%{remittanceDate}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 	
 </div>
 </s:form>
