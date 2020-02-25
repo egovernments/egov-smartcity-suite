@@ -48,19 +48,34 @@
 package org.egov.infra.integration.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ThirdPartyService {
 
-	private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
+    private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
+    private static final String WARDSECRETARY_USER_NAME = "wardsecretary";
 
-	public static boolean validateWardSecretaryRequest(String transactionId, String source) {
-		boolean isInvalidRequest = false;
-		if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
-				|| (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
-			isInvalidRequest = true;
+    @Autowired
+    protected transient SecurityUtils securityUtils;
 
-		return isInvalidRequest;
-	}
+    public static boolean validateWardSecretaryRequest(String transactionId, String source) {
+        boolean isInvalidRequest = false;
+        if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
+                || (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
+            isInvalidRequest = true;
+
+        return isInvalidRequest;
+    }
+
+    public boolean isWardSecretaryRequest(final boolean wsPortalRequest) {
+        return wsPortalRequest && WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername());
+    }
+
+    public boolean isValidWardSecretaryRequest(final boolean wsPortalRequest) {
+        return WARDSECRETARY_USER_NAME.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()) ? wsPortalRequest
+                : !wsPortalRequest;
+    }
 }

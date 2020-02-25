@@ -88,7 +88,7 @@
 		
 <div class="row text-center">
 	<div class="add-margin">
-	<c:if test="${!waterConnectionDetails.legacy}">
+	<c:if test="${!waterConnectionDetails.legacy && waterConnectionDetails.connectionStatus != 'INACTIVE'}">
           <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED'  && checkOperator 
           && ((waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && 
 				waterConnectionDetails.connectionStatus=='INPROGRESS') || (waterConnectionDetails.connectionStatus=='ACTIVE'))}">

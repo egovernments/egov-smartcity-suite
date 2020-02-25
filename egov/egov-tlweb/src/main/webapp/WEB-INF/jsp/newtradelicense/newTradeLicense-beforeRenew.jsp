@@ -77,6 +77,7 @@
                 <s:hidden name="newWorkflow" id="newWorkflow"/>
                 <s:hidden name="source" id="id"/>
                 <s:hidden name="transactionId" id="transactionId"/>
+                <s:hidden name="wsPortalRequest" id="wsPortalRequest"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}"
                        id="applicationNo"/>
                 <s:if test="%{status=='Active'}">

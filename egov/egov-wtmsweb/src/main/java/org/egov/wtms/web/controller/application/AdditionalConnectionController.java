@@ -54,6 +54,7 @@ import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -118,9 +119,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     private ConnectionDetailService connectionDetailService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
@@ -128,15 +130,19 @@ public class AdditionalConnectionController extends GenericConnectionController 
         return waterConnectionDetailsService.getAllActiveDocumentNames(addConnection.getApplicationType());
     }
 
-    @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/addconnection/{consumerCode}")
     public String showAdditionalApplicationForm(WaterConnectionDetails parentConnectionDetails,
             @ModelAttribute final WaterConnectionDetails addConnection, final Model model,
             @PathVariable final String consumerCode, final HttpServletRequest request) {
-
+    	
+    	boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest))
+            throw new ApplicationRuntimeException("WS.001");
+        
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
         final String meesevaApplicationNumber = request.getParameter(MEESEVAAPPLICATIONNUMBER);
         final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser) {
 			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
 			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
@@ -145,6 +151,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
 			else {
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 			}
 		}
         workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
@@ -196,11 +203,13 @@ public class AdditionalConnectionController extends GenericConnectionController 
 		final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
 		final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
 		final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
-		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 
-		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
 			throw new ApplicationRuntimeException("WS.001");
 
         model.addAttribute("isAnonymousUser", isAnonymousUser);
@@ -219,9 +228,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
         if (!message.isEmpty() && !"".equals(message)){
-			if (isWardSecretaryUser)
-				return "redirect:/application/addconnection/".concat(addConnection.getConnection().getParentConnection().getConsumerCode())
-						.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
+			if (isWardSecretaryUser) {
+				model.addAttribute("redirectionURL", "/wtms/application/addconnection/"
+						.concat(addConnection.getConnection().getParentConnection().getConsumerCode()));
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+				return "wardsecretary-redirect";
+			}
 			else
 				return "redirect:/application/addconnection/"
 						+ addConnection.getConnection().getParentConnection().getConsumerCode();
@@ -262,6 +276,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
 			if (isWardSecretaryUser) {
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 			}
             return ADDCONNECTION_FORM;
         }
@@ -307,6 +322,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 if (isWardSecretaryUser) {
     				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
     				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
     			}
                 return ADDCONNECTION_FORM;
 

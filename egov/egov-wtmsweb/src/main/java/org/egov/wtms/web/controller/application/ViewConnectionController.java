@@ -102,6 +102,9 @@ public class ViewConnectionController {
                     ConnectionStatus.CLOSED);
         if (connectionDetails == null)
             connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
+		if (connectionDetails == null)
+			connectionDetails = waterConnectionDetailsService
+					.findByInactiveApplicationNumberOrConsumerCode(applicationNumber);
 		
 		EstimationNotice estimationNotice = null;
 		if (connectionDetails != null)

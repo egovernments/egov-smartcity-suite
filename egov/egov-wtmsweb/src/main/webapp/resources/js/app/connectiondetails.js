@@ -124,12 +124,14 @@ $(document).ready(function(){
 						$('#donationChargesDiv').show();
 						$('#donationChargesInput').removeAttr('disabled');
 						$('#donationChargesInput').attr('required','required');
+						$('#donationChargesInput').attr('min',1);						
 					
 					
 				}
 				else{
 					$('#donationChargesDiv').hide();
 					$('#donationChargesInput').removeAttr('required');
+					$('#donationChargesInput').removeAttr('min');
 					$('#donationChargesInput').attr('disabled',true	);
 					$('#donationChargesInput').val(0.0);
 				}

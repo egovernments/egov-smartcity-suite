@@ -65,6 +65,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -120,9 +121,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -135,25 +133,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_MUTATION_RSN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyTransferService {
     private static final Logger LOGGER = Logger.getLogger(PropertyTransferService.class);
@@ -179,6 +165,10 @@ public class PropertyTransferService {
     @Autowired
     @Qualifier("propertyTaxNumberGenerator")
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
 
     @Autowired
     private UserService userService;
@@ -244,9 +234,15 @@ public class PropertyTransferService {
   
     @Autowired
     private EventPublisher eventPublisher;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation,final HttpServletRequest request,final String transactionId) {
+        Boolean wsPortalRequest = Boolean.FALSE;
+        if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
+            wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
         propertyMutation.setBasicProperty(basicProperty);
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
@@ -258,7 +254,7 @@ public class PropertyTransferService {
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation, null);
-        if (propertyService.isWardSecretaryUser(getLoggedInUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             saveMutationAndPublishEvent(propertyMutation,request, transactionId);
         } else
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());

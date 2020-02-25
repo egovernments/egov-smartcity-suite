@@ -115,7 +115,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -124,7 +123,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.egov.demand.model.EgDemand;
@@ -570,7 +568,6 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         String mode = EMPTY;
         Double donationCharges = 0d;
-		String ratesValidation = EMPTY;
 
         String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
                 ? request.getParameter(WORKFLOW_ACTION)
@@ -584,8 +581,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
             if (!(waterConnectionDetails.getApplicationType().getCode().equals("CLOSINGCONNECTION")))
-				ratesValidation = waterConnectionDetailsService
-						.validateWaterRateAndDonationHeader(waterConnectionDetails);
+				waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         }
 
         if (request.getParameter(DONATION_AMOUNT) != null)
@@ -598,12 +594,30 @@ public class UpdateConnectionController extends GenericConnectionController {
                 request.getParameter("ownerPosition"), workFlowAction)) {
             model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
             model.addAttribute(MODE, ERROR);
-			if (StringUtils.isNotBlank(ratesValidation))
-				model.addAttribute("failureMessage",
-						messageSource.getMessage(ratesValidation, null, Locale.getDefault()));
             return NEWCONNECTION_EDIT;
         }
 
+		if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+			if (waterConnectionDetails.getState().getInitiatorPosition() != null) {
+				Long initiatorPosition = waterConnectionDetails.getState().getInitiatorPosition().getId();
+				Assignment wfInitiator = null;
+				boolean initiatorNotPresent = false;
+				List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(initiatorPosition,
+						new Date());
+				if (assignmentList.isEmpty())
+					initiatorNotPresent = true;
+				else {
+					wfInitiator = getActiveAssignment(assignmentList);
+					if (wfInitiator == null) 
+						initiatorNotPresent = true;
+				}
+				if (initiatorNotPresent) {
+					model.addAttribute("noActiveJAOrAE", "Junior Assistant/Senior Assistant assignment is not active, please check");
+					return NEWCONNECTION_EDIT;
+				}
+			}
+		}
+		
         if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
             waterConnectionDetails
@@ -870,4 +884,15 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         return reportOutput;
     }
+	
+	private Assignment getActiveAssignment(final List<Assignment> assignment) {
+		Assignment wfInitiator = null;
+		for (final Assignment assign : assignment)
+			if (assign.getEmployee().isActive()) {
+				wfInitiator = assign;
+				break;
+			}
+		return wfInitiator;
+	}
+
 }

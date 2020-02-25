@@ -560,19 +560,23 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyIdentifier(String propertyIdentifier) {
-        return waterConnectionDetailsRepository.getAllPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
+    	return waterConnectionDetailsRepository.getAllPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
     }
-
+        
+    public WaterConnectionDetails findByInactiveApplicationNumberOrConsumerCode(String referenceNumber) {
+        return waterConnectionDetailsRepository.findConnectionDetailsByInactiveApplicationNumberOrConsumerCode(referenceNumber, referenceNumber);
+    }
+    
     public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumbers(
-            List<String> propertyIdentifier) {
-        WaterConnectionDetails waterConnectionDetails = null;
-        for (String assessmentNumber : propertyIdentifier) {
-            waterConnectionDetails = waterConnectionDetailsRepository
-                    .getActivePrimaryConnectionDetailsByPropertyID(assessmentNumber);
-            if (waterConnectionDetails != null)
-                break;
-        }
-        return waterConnectionDetails;
+                    List<String> propertyIdentifier) {
+            WaterConnectionDetails waterConnectionDetails = null;
+            for (String assessmentNumber : propertyIdentifier) {
+                    waterConnectionDetails = waterConnectionDetailsRepository
+                                    .getActivePrimaryConnectionDetailsByPropertyID(assessmentNumber);
+                    if (waterConnectionDetails != null)
+                            break;
+            }
+            return waterConnectionDetails;
     }
 
     public List<WaterConnectionDetails> getChildConnectionDetailsByPropertyID(String propertyIdentifier) {
@@ -1274,17 +1278,14 @@ public class WaterConnectionDetailsService {
         return tempDocList;
     }
 
-    public String validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
-        String errorKey = "";
+    public void validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
         DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
-            errorKey = "donation.combination.required";
-
-        WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+            throw new ApplicationRuntimeException("donation.combination.required");
+        WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         if (waterRatesDetails == null)
-            errorKey = "err.water.rate.not.configured.within.period";
-
-        return errorKey;
+            throw new ApplicationRuntimeException("err.water.rate.not.configured.within.period");
     }
 
     public String getApprovalPositionOnValidate(Long approvalPositionId) {

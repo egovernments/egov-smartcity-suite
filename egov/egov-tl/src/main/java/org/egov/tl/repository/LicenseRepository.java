@@ -92,6 +92,9 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     @Query("select l.id from TradeLicense l where l.natureOfBusiness.name='Permanent' " +
             "and l.isActive=true and l.demand.egInstallmentMaster.fromDate < :installmentFromDate and l.state.status = 2 ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
+    
+    @Query("select max(rh.receiptdate) from ReceiptHeader rh where rh.consumerCode =:licenseNumber")
+    Date getReceiptDateByLicenseNumber(@Param("licenseNumber") String licenseNumber);
 
     List<TradeLicense> findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(Long licenseAppTypeId,
                                                                                        String nextAction, List<Position> ownerPosition);

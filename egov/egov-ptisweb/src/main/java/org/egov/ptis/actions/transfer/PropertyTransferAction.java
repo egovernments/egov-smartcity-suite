@@ -63,6 +63,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -210,6 +211,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     @Autowired
     private transient PropertyThirdPartyService propertyThirdPartyService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     // Model and View data
     private Long mutationId;
@@ -241,7 +245,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Boolean propertyByEmployee = Boolean.TRUE;
     private String userDesignationList;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-    private boolean isWardSecretaryUser;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
     private String applicationType;
@@ -273,6 +276,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private List<Document> otherDocuments = new ArrayList<>();
     private String taxDueOrStruc;
     private String transactionId;
+    protected transient boolean wsPortalRequest;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -288,7 +292,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/new")
     public String showNewTransferForm() {
     	final HttpServletRequest request = ServletActionContext.getRequest();
-
+    	if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
+            wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+    	if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         if (basicproperty.getProperty().getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
@@ -302,14 +311,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (isInAddAltDemolitionFlow() && propertyService.isLatestPropertyMutationClosed(basicproperty.getUpicNo())) {
                 if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
-                    isWardSecretaryUser = propertyService.isWardSecretaryUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser) {
                         if (getMeesevaApplicationNumber() == null) {
                             addActionMessage(getText("MEESEVA.005"));
                             return ERROR;
                         } else
                             propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-                    } else if (isWardSecretaryUser && (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
+                    } else if (!thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && (request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE) == null
                             || request.getParameter("applicationSource") == null)) {
                         addActionMessage(getText("WS.001"));
                         return ERROR;
@@ -411,8 +419,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         }
-
-        if (isWardSecretaryUser && (transactionId == null || applicationSource == null)) {
+        if (!thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && (transactionId == null || applicationSource == null)) {
             addActionError("TransactionId and source is required.");
             return NEW;
         }
@@ -745,7 +752,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(userId);
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         citizenPortalUser = propertyService.isCitizenPortalUser(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propertyService.isWardSecretaryUser(transferOwnerService.getLoggedInUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals(SEARCH) || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
@@ -1611,6 +1617,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 
 }

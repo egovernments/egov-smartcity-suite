@@ -82,6 +82,7 @@
 				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
 				<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
 				<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+				<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<c:if test="${validationMessage==''}">	
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	

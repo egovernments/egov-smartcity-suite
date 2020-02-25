@@ -72,6 +72,7 @@ import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ApproverRemitterMapService;
 import org.egov.collection.service.RemittanceServiceImpl;
+import org.egov.collection.service.spec.RemittanceSpec;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -89,58 +90,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({
         @Result(name = ChequeRemittanceAction.NEW, location = "chequeRemittance-new.jsp"),
         @Result(name = ChequeRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printChequeBankChallan.action", params = {
-                "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-                "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
+                "namespace", "/reports", "totalChequeAmount", "${totalChequeAmount}", "bank", "${bank}", "bankAccount",
+                "${bankAccount}", "remittanceDate",
                 "${remittanceDate}" }),
         @Result(name = ChequeRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
 @ParentPackage("egov")
 public class ChequeRemittanceAction extends BaseFormAction {
-    private static final String APPROVER_LIST = "approverList";
-    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ChequeRemittanceAction.class);
-    private static final String BANK_ACCOUNT_NUMBER_QUERY = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id =:accountNumberId";
-    private static final String SERVICE_QUERY = new StringBuilder()
-            .append("select distinct sd.code as servicecode from ")
-            .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd where ")
-            .append("asm.servicedetails=sd.ID and asm.bankaccount= :accountNumberId").toString();
-    private static final String FUND_QUERY = new StringBuilder()
-            .append("select fd.code as fundcode from BANKACCOUNT ba,FUND fd")
-            .append(" where fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
     private transient List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> remittedReceiptHeaderList = new ArrayList<>(0);
     private String[] serviceNameArray;
-    private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
-    private String[] totalCardAmountArray;
     private String[] receiptDateArray;
     private String[] receiptNumberArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
     private String[] instrumentIdArray;
     private Integer accountNumberId;
-    private transient CollectionsUtil collectionsUtil;
     private Integer branchId;
-    private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
-    private Boolean isListData = false;
-    // Added for Manual Work Flow
-    private Integer positionUser;
-    private Integer designationId;
     private Date remittanceDate;
-    @Autowired
-    private transient FinancialYearDAO financialYearDAO;
-    @Autowired
-    private transient BankaccountHibernateDAO bankaccountHibernateDAO;
-    @Autowired
-    ApproverRemitterMapService approverRemitterMapService;
-
-    private Double totalCashAmount;
     private Double totalChequeAmount;
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
-    private Boolean showCardAndOnlineColumn = false;
     private Boolean showRemittanceDate = false;
     private Long finYearId;
     private RemittanceServiceImpl remittanceService;
@@ -149,19 +123,21 @@ public class ChequeRemittanceAction extends BaseFormAction {
     private Date toDate;
     private Integer pageSize;
     private String remittanceAmount;
-    private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
     private Boolean isBankCollectionRemitter;
-    private String remitAccountNumber;
-
-    // Approver Dropdown
+    private String remitAccountNumber = CollectionConstants.BLANK;
+    private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
+    private static final String APPROVER_LIST = "approverList";
+    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
+    private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private String approverId = "-1";
-
-    /**
-     * @param collectionsUtil the collectionsUtil to set
-     */
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
-    }
+    @Autowired
+    private transient CollectionsUtil collectionsUtil;
+    @Autowired
+    private transient FinancialYearDAO financialYearDAO;
+    @Autowired
+    private transient BankaccountHibernateDAO bankaccountHibernateDAO;
+    @Autowired
+    ApproverRemitterMapService approverRemitterMapService;
 
     @Action(value = "/receipts/chequeRemittance-newform")
     @SkipValidation
@@ -197,19 +173,14 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/chequeRemittance-listData")
     @SkipValidation
     public String listData() {
-        isListData = true;
-        remitAccountNumber = CollectionConstants.BLANK;
-        if (accountNumberId != null) {
-            final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
-            bankAccountQry.setLong("accountNumberId", accountNumberId);
-            final Object bankAccountResult = bankAccountQry.uniqueResult();
-            remitAccountNumber = (String) bankAccountResult;
+        if (accountNumberId != null)
+        {
+            final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
+            remitAccountNumber = bankAcc.getAccountnumber();
         }
+       // populateRemittanceList();
 
-        populateRemittanceList();
 
-        if (fromDate != null && toDate != null && toDate.before(fromDate))
-            addActionError(getText("bankremittance.before.fromdate"));
 
         String approverIdList = CollectionConstants.BLANK;
         if (!isBankCollectionRemitter) {
@@ -225,25 +196,14 @@ public class ChequeRemittanceAction extends BaseFormAction {
         }
 
         if (!hasErrors() && accountNumberId != null) {
-
-            final Query serviceQuery = persistenceService.getSession().createNativeQuery(SERVICE_QUERY);
-            serviceQuery.setLong("accountNumberId", accountNumberId);
-            final List<String> serviceCodeList = serviceQuery.list();
-
-            final Query fundQuery = persistenceService.getSession().createNativeQuery(FUND_QUERY);
-            fundQuery.setLong("accountNumberId", accountNumberId);
-            final String fundCode = fundQuery.list().get(0).toString();
-
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
             paramList = remittanceService.findChequeRemittanceDetailsForServiceAndFund(approverIdList,
                     collectionsUtil.getJurisdictionBoundary(),
-                    "'" + StringUtils.join(serviceCodeList, "','") + "'", "'" + fundCode + "'",
+                    "'" + StringUtils.join(remittanceService.getServiceCodeList(accountNumberId), "','") + "'",
+                    "'" + remittanceService.getFundCodeList(accountNumberId) + "'",
                     fromDate == null ? financialYear.getStartingDate() : fromDate,
                     toDate == null ? financialYear.getEndingDate() : toDate);
-            if (fromDate != null && toDate != null)
-                pageSize = paramList.size();
-            else
-                pageSize = CollectionConstants.DEFAULT_PAGE_SIZE;
+            pageSize = (fromDate != null && toDate != null) ? paramList.size() : CollectionConstants.DEFAULT_PAGE_SIZE;
         }
         return NEW;
     }
@@ -265,16 +225,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final String showColumn = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE);
-        if (!showColumn.isEmpty() && showColumn.equals(CollectionConstants.YES))
-            showCardAndOnlineColumn = true;
-        final String showRemitDate = collectionsUtil.getAppConfigValue(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE);
-        if (!showRemitDate.isEmpty() && showRemitDate.equals(CollectionConstants.YES))
-            showRemittanceDate = true;
-
+        showRemittanceDate = remittanceService.showRemittanceDate();
         isBankCollectionRemitter = collectionsUtil.isBankCollectionOperator(collectionsUtil.getLoggedInUser());
         addDropdownData("bankBranchList", Collections.emptyList());
         addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
@@ -287,10 +238,13 @@ public class ChequeRemittanceAction extends BaseFormAction {
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        remittedReceiptHeaderList = remittanceService.createChequeBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
-                getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
-                getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate,
-                getInstrumentIdArray());
+        remittedReceiptHeaderList = remittanceService.createChequeBankRemittance(RemittanceSpec.build()
+                .withServiceNameArray(getServiceNameArray()).withTotalAmount(getTotalChequeAmountArray())
+                .withReceiptDateArray(getReceiptDateArray()).withFundCodeArray(getFundCodeArray())
+                .withDepartmentCodeArray(getDepartmentCodeArray()).withAccountNumberId(accountNumberId)
+                .withRemittanceDate(remittanceDate)
+                .withInstrumentIdArray(getInstrumentIdArray())
+                .build());
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
@@ -302,27 +256,21 @@ public class ChequeRemittanceAction extends BaseFormAction {
         final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
-        totalCashAmount = 0.0;
-        totalChequeAmount = getSum(getTotalChequeAmountArray());
+        totalChequeAmount = remittanceService.getSum(getTotalChequeAmountArray());
         return INDEX;
     }
 
-    private Double getSum(final String[] array) {
-        Double sum = 0.0;
-        for (final String num : array)
-            if (!num.isEmpty())
-                sum = sum + Double.valueOf(num);
-        return sum;
-    }
 
     @Override
     public void validate() {
         super.validate();
         populateRemittanceList();
-        listData();
+        
+        if (fromDate != null && toDate != null && toDate.before(fromDate))
+            addActionError(getText("bankremittance.before.fromdate"));
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         if (receiptDateArray != null) {
-            final String[] filterReceiptDateArray = removeNullValue(receiptDateArray);
+            final String[] filterReceiptDateArray = remittanceService.removeNullValue(receiptDateArray);
             final String receiptEndDate = filterReceiptDateArray[filterReceiptDateArray.length - 1];
             try {
                 if (!receiptEndDate.isEmpty() && remittanceDate != null
@@ -335,13 +283,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         }
     }
 
-    private String[] removeNullValue(String[] receiptDateArray) {
-        final List<String> list = new ArrayList<>();
-        for (final String s : receiptDateArray)
-            if (s != null && s.length() > 0)
-                list.add(s);
-        return list.toArray(new String[list.size()]);
-    }
+
 
     @Override
     public Object getModel() {
@@ -374,20 +316,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
      */
     public void setServiceNameArray(final String[] serviceNameArray) {
         this.serviceNameArray = serviceNameArray;
-    }
-
-    /**
-     * @return the totalCashAmount
-     */
-    public String[] getTotalCashAmountArray() {
-        return totalCashAmountArray;
-    }
-
-    /**
-     * @param totalCashAmount the totalCashAmount to set
-     */
-    public void setTotalCashAmountArray(final String[] totalCashAmountArray) {
-        this.totalCashAmountArray = totalCashAmountArray;
     }
 
     /**
@@ -449,44 +377,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
     /**
      * @return the totalCardAmountArray
      */
-    public String[] getTotalCardAmountArray() {
-        return totalCardAmountArray;
-    }
-
-    /**
-     * @param totalCardAmountArray the totalCardAmountArray to set
-     */
-    public void setTotalCardAmountArray(final String[] totalCardAmountArray) {
-        this.totalCardAmountArray = totalCardAmountArray;
-    }
-
-    /**
-     * @return the positionUser
-     */
-    public Integer getPositionUser() {
-        return positionUser;
-    }
-
-    /**
-     * @param positionUser the positionUser to set
-     */
-    public void setPositionUser(final Integer positionUser) {
-        this.positionUser = positionUser;
-    }
-
-    /**
-     * @return the designationId
-     */
-    public Integer getDesignationId() {
-        return designationId;
-    }
-
-    /**
-     * @param designationId the designationId to set
-     */
-    public void setDesignationId(final Integer designationId) {
-        this.designationId = designationId;
-    }
 
     public String[] getReceiptNumberArray() {
         return receiptNumberArray;
@@ -510,22 +400,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
 
     public void setAccountNumberId(final Integer accountNumberId) {
         this.accountNumberId = accountNumberId;
-    }
-
-    public Boolean getIsListData() {
-        return isListData;
-    }
-
-    public void setIsListData(final Boolean isListData) {
-        this.isListData = isListData;
-    }
-
-    public Double getTotalCashAmount() {
-        return totalCashAmount;
-    }
-
-    public void setTotalCashAmount(final Double totalCashAmount) {
-        this.totalCashAmount = totalCashAmount;
     }
 
     public Double getTotalChequeAmount() {
@@ -558,14 +432,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
 
     public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount;
-    }
-
-    public Boolean getShowCardAndOnlineColumn() {
-        return showCardAndOnlineColumn;
-    }
-
-    public void setShowCardAndOnlineColumn(final Boolean showCardAndOnlineColumn) {
-        this.showCardAndOnlineColumn = showCardAndOnlineColumn;
     }
 
     public Boolean getShowRemittanceDate() {
@@ -675,5 +541,4 @@ public class ChequeRemittanceAction extends BaseFormAction {
     public String getApproverId() {
         return approverId;
     }
-
 }

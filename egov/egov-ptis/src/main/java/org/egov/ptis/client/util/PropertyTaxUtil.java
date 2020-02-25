@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISSEASHORE_ULB;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
@@ -95,7 +96,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLIST
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETETION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_PETITION;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -112,8 +112,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -121,8 +119,6 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -130,7 +126,13 @@ import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.model.*;
+import org.egov.demand.model.DepreciationMaster;
+import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillType;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -230,8 +232,6 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleService;
     @Autowired
-    private ReceiptHeaderService receiptHeaderService;
-    @Autowired
     private InstallmentHibDao installmentDao;
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -269,7 +269,6 @@ public class PropertyTaxUtil {
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
-
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
@@ -295,7 +294,7 @@ public class PropertyTaxUtil {
     }
 
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReasonCode,
-                                                              final Installment installment) {
+            final Installment installment) {
         return (EgDemandReason) persistenceService.findByNamedQuery(QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID,
                 demandReasonCode, installment.getId());
     }
@@ -413,7 +412,7 @@ public class PropertyTaxUtil {
     }
 
     public HashMap<String, Integer> generateOrderForDemandDetails(final Set<EgDemandDetails> demandDetails,
-                                                                  final PropertyTaxBillable billable, final List<Installment> advanceInstallments) {
+            final PropertyTaxBillable billable, final List<Installment> advanceInstallments) {
 
         final Map<Date, String> instReasonMap = new TreeMap<>();
         final HashMap<String, Integer> orderMap = new HashMap<>();
@@ -740,7 +739,7 @@ public class PropertyTaxUtil {
     public Date getPropertyOccupancyDate(final Property property) {
         return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate()
                 : property
-                .getPropertyDetail().getDateOfCompletion();
+                        .getPropertyDetail().getDateOfCompletion();
     }
 
     public Installment getPTInstallmentForDate(final Date date) {
@@ -797,7 +796,7 @@ public class PropertyTaxUtil {
     }
 
     public Map<String, Map<Installment, BigDecimal>> prepareReasonWiseDenandAndCollection(final Property property,
-                                                                                          final Installment currentInstallment) {
+            final Installment currentInstallment) {
         final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<>();
         final Map<Installment, BigDecimal> installmentWiseCollection = new TreeMap<>();
         final Map<String, Map<Installment, BigDecimal>> demandAndCollection = new HashMap<>();
@@ -814,31 +813,35 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
                 + "and ptd.egInstallmentMaster = :installment";
 
-        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
-                .setParameter(PROPERTY, property).setParameter(INSTALLMENT, currentInstallment).list().get(0);
+        Query queryRes = entityManager.unwrap(Session.class).createQuery(query).setEntity(PROPERTY, property)
+                .setEntity(INSTALLMENT, currentInstallment);
 
-        for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
+        if (!queryRes.list().isEmpty()) {
+            Ptdemand ptDemand = (Ptdemand) queryRes.list().get(0);
 
-            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
-            if (!demandReasonExcludeList.isEmpty() && !demandReasonExcludeList.contains(demandReason)) {
-                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
 
-                if (installmentWiseDemand.get(installment) == null)
-                    installmentWiseDemand.put(installment, dmdDet.getAmount());
-                else
-                    installmentWiseDemand.put(installment,
-                            installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+                if (!demandReasonExcludeList.isEmpty() && !demandReasonExcludeList.contains(demandReason)) {
+                    installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
 
-                if (installmentWiseCollection.get(installment) == null)
-                    installmentWiseCollection.put(installment, dmdDet.getAmtCollected());
-                else
-                    installmentWiseCollection.put(installment,
-                            installmentWiseCollection.get(installment).add(dmdDet.getAmtCollected()));
+                    if (installmentWiseDemand.get(installment) == null)
+                        installmentWiseDemand.put(installment, dmdDet.getAmount());
+                    else
+                        installmentWiseDemand.put(installment,
+                                installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+
+                    if (installmentWiseCollection.get(installment) == null)
+                        installmentWiseCollection.put(installment, dmdDet.getAmtCollected());
+                    else
+                        installmentWiseCollection.put(installment,
+                                installmentWiseCollection.get(installment).add(dmdDet.getAmtCollected()));
+                }
             }
+            demandAndCollection.put("DEMAND", installmentWiseDemand);
+            demandAndCollection.put("COLLECTION", installmentWiseCollection);
         }
-        demandAndCollection.put("DEMAND", installmentWiseDemand);
-        demandAndCollection.put("COLLECTION", installmentWiseCollection);
         return demandAndCollection;
     }
 
@@ -847,7 +850,7 @@ public class PropertyTaxUtil {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map<String, BigDecimal>> prepareDemandDetForView(final Property property,
-                                                                        final Installment currentInstallment) {
+            final Installment currentInstallment) {
         final Map<String, Map<String, BigDecimal>> dCBDetails = new TreeMap<>();
         final Map<String, BigDecimal> firstHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> secondHalfReasonDemandDetails = new HashMap<>();
@@ -958,7 +961,7 @@ public class PropertyTaxUtil {
     }
 
     private boolean isFirstDataEntry(final String prevPropMutationCode, final String mutationCode,
-                                     final Property prevProperty) {
+            final Property prevProperty) {
 
         final List<String> mutationCodes = Arrays.asList(PropertyTaxConstants.MUTATION_CODE_NEW,
                 PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ);
@@ -1061,8 +1064,8 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforCollectionSummaryReport(final String fromDate, final String toDate,
-                                                        final String collMode, final String transMode, final String mode, final String boundaryId,
-                                                        final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
+            final String collMode, final String transMode, final String mode, final String boundaryId,
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
         String srchQryStr = "";
         String baseQry = "";
         String orderbyQry = "";
@@ -1132,7 +1135,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforTitleTransferReport(final Long zoneId, final Long wardId, final Long areaId,
-                                                    final String fromDate, final String toDate) {
+            final String fromDate, final String toDate) {
         final SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
         final StringBuilder query = new StringBuilder();
         new PropertyMutation();
@@ -1191,7 +1194,7 @@ public class PropertyTaxUtil {
     }
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,
-                                                                       final Installment dmdInstallment, final Installment dmdDetInstallment) {
+            final Installment dmdInstallment, final Installment dmdDetInstallment) {
         final Map<String, BigDecimal> dCBDetails = new HashMap<>();
         String demandReason = "";
         Installment installment = null;
@@ -1351,7 +1354,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand, final String toDemand,
-                                                 final Integer limit, final String ownerShipType, final String proptype) {
+            final Integer limit, final String ownerShipType, final String proptype) {
         final StringBuilder query = new StringBuilder(300);
         final Map<String, Object> params = new HashMap<>();
         query.append(
@@ -1399,7 +1402,7 @@ public class PropertyTaxUtil {
     }
 
     private void appendFromToDmd(final String fromDemand, final String toDemand, final StringBuilder query,
-                                 final Map<String, Object> params, final String arrearBalanceCond, final String and) {
+            final Map<String, Object> params, final String arrearBalanceCond, final String and) {
         if (isFromDemand(fromDemand, toDemand)) {
             query.append(and + arrearBalanceCond + " >= :fromDemand");
             params.put("fromDemand", BigDecimal.valueOf(Long.valueOf(isNotBlank(fromDemand) ? fromDemand : "0")));
@@ -1488,7 +1491,7 @@ public class PropertyTaxUtil {
      * @return Map<String , BigDecimal>
      */
     public Map<String, BigDecimal> getTaxDetailsForInstallment(final Property property, final Installment effectiveInstallment,
-                                                               final Installment demandInstallment) {
+            final Installment demandInstallment) {
         final Map<String, BigDecimal> taxDetailsMap = new HashMap<>();
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
@@ -1502,9 +1505,9 @@ public class PropertyTaxUtil {
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().equals(effectiveInstallment.getFromDate())
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
+                            .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
+                            .equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
                 taxDetailsMap.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
                         dmdDet.getAmount());
         return taxDetailsMap;
@@ -1567,7 +1570,7 @@ public class PropertyTaxUtil {
     }
 
     public ReportOutput generateCitizenCharterAcknowledgement(final String propertyId, final String applicationType,
-                                                              final String serviceType, final String applicationNo) {
+            final String serviceType, final String applicationNo) {
         final SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
         ReportRequest reportInput;
         Long resolutionTime;
@@ -1584,7 +1587,8 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        if (!Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE,APPEAL_PETITION).contains(applicationType))
+        if (!Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE, APPEAL_PETITION)
+                .contains(applicationType))
             reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
         else
             reportParams.put(ACK_NO, applicationNo);
@@ -1687,7 +1691,6 @@ public class PropertyTaxUtil {
         return taxRatesService.getTaxRateByDemandReasonCode(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
     }
 
-
     public boolean isEligibleforWaiver(Boolean paymentTypeFullPayment, String consumerCode) {
         Date cutOffDate = new Date();
         boolean hasReceiptAfterCutoffDate = false;
@@ -1695,17 +1698,16 @@ public class PropertyTaxUtil {
         if (!configPenaltyWaiverEnabled)
             return configPenaltyWaiverEnabled;
 
-        Ptdemand pd = ptDemandDAO.getNonHistoryCurrDmdForProperty( basicPropertyDAO.getBasicPropertyByPropertyID(consumerCode).getProperty());
-        for(EgDemandDetails dd: pd.getEgDemandDetails()) {
-            for(EgdmCollectedReceipt cr: dd.getEgdmCollectedReceipts()) {
-                if(!cr.isCancelled() && cr.getReceiptDate().compareTo(cutOffDate) >= 0) {
+        Ptdemand pd = ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(basicPropertyDAO.getBasicPropertyByPropertyID(consumerCode).getProperty());
+        for (EgDemandDetails dd : pd.getEgDemandDetails()) {
+            for (EgdmCollectedReceipt cr : dd.getEgdmCollectedReceipts())
+                if (!cr.isCancelled() && cr.getReceiptDate().compareTo(cutOffDate) >= 0) {
                     hasReceiptAfterCutoffDate = true;
                     break;
                 }
-            }
-            if(hasReceiptAfterCutoffDate) {
+            if (hasReceiptAfterCutoffDate)
                 break;
-            }
         }
 
         return paymentTypeFullPayment.booleanValue() && !hasReceiptAfterCutoffDate;
@@ -1731,14 +1733,15 @@ public class PropertyTaxUtil {
         } catch (ParseException e) {
             LOGGER.error(String.format("Invalid app config, %s=%s, %s=%s",
                     PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_ENABLED, penaltyWaiverEnabledConfig,
-                    PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE, penaltyWaiverCutoffConfig ));
+                    PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE, penaltyWaiverCutoffConfig));
             throw new ApplicationRuntimeException(String.format("Invalid app_config %s, value: %s, it must be of the form %s",
                     PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE, penaltyWaiverCutoffConfig, DD_MM_YYYY));
         }
         if (outCutOffDate != null)
             outCutOffDate.setTime(cutOffDate.getTime());
 
-        boolean isEligible = penaltyWaiverEnabledConfig.equalsIgnoreCase(PropertyTaxConstants.STR_YES) && today.compareTo(cutOffDate) >= 0;
+        boolean isEligible = penaltyWaiverEnabledConfig.equalsIgnoreCase(PropertyTaxConstants.STR_YES)
+                && today.compareTo(cutOffDate) >= 0;
         return isEligible;
     }
 

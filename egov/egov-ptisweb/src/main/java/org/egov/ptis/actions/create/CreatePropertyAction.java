@@ -90,6 +90,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -336,7 +337,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private boolean citizenPortalUser;
     private Boolean isDataEntryOperator = Boolean.FALSE;
-    private boolean isWardSecretaryUser;
     private String indexNumber;
     private String modifyRsn;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
@@ -354,6 +354,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
     private String wsTransactionId;
+    protected transient boolean wsPortalRequest;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -407,6 +408,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public CreatePropertyAction() {
         super();
@@ -438,6 +442,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @Action(value = "/createProperty-newForm")
     public String newForm() {
         final HttpServletRequest request = ServletActionContext.getRequest();
+        if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
+            wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return RESULT_ERROR;
+        }
         if (loggedUserIsMeesevaUser) {
 
             if (request.getParameter("applicationNo") == null || request.getParameter(MEESEVA_SERVICE_CODE) == null) {
@@ -452,7 +462,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
-        } else if (isWardSecretaryUser) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
@@ -490,7 +500,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return RESULT_NEW;
@@ -527,12 +537,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        else if (isWardSecretaryUser)
+        else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
 
         propService.processAndStoreDocument(property.getAssessmentDocuments());
 
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property,request, wsTransactionId);
         } else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
@@ -567,7 +577,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             final BasicProperty vacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
             updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
             vacantProperty = createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
-            if (isWardSecretaryUser) {
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 propertyThirdPartyService.publishEventForAppurTenant(wsTransactionId, nonVacantProperty.getApplicationNo(),
                         vacantProperty.getApplicationNo(), true);
             }
@@ -578,7 +588,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             return RESULT_NEW;
         } catch (final Exception e) {
             logger.error("Exception while creating appurtenant property. ", e);
-            if (isWardSecretaryUser) {
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 propertyThirdPartyService.publishEventForAppurTenant(wsTransactionId,
                         nonVacantProperty == null ? "" : nonVacantProperty.getApplicationNo(),
                         vacantProperty == null ? "" : vacantProperty.getApplicationNo(), false);
@@ -1178,8 +1188,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
         isDataEntryOperator = propService.isDataEntryOperator(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
-
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
             if (StringUtils.isNotBlank(modifyRsn))
@@ -1765,7 +1773,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyThirdPartyService.publishPropertyUpdateEvent(basicProp, property.getApplicationNo(), action, isCancelled);
 
     }
-
+    
     @Override
     public PropertyImpl getProperty() {
         return property;
@@ -2434,5 +2442,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setWsTransactionId(String wsTransactionId) {
         this.wsTransactionId = wsTransactionId;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 }

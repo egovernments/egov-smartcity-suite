@@ -47,12 +47,12 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.admin.master.entity.Boundary;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Boundary;
 
 public class PropertyMaterlizeView implements Serializable {
 
@@ -84,16 +84,24 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal aggrArrearPenaly;
     private BigDecimal aggrArrearPenalyColl;
     private BigDecimal aggrCurrFirstHalfPenaly;
-    private BigDecimal aggrCurrFirstHalfPenalyColl; 
+    private BigDecimal aggrCurrFirstHalfPenalyColl;
     private BigDecimal aggrCurrSecondHalfPenaly;
-    private BigDecimal aggrCurrSecondHalfPenalyColl; 
+    private BigDecimal aggrCurrSecondHalfPenalyColl;
     private BigDecimal arrearDemand;
     private BigDecimal arrearCollection;
 
     private BigDecimal waivedoffAmount;
     private BigDecimal exemptedAmount;
-    private BigDecimal writeoffAmount;
-    private BigDecimal courtcaseAmount;
+    private BigDecimal arrearWriteOffAmount;
+    private BigDecimal arrearCourtVerdictAmount;
+    private BigDecimal currentFirstHalfWriteOffAmount;
+    private BigDecimal currentFirstHalfCourtVerdictAmount;
+    private BigDecimal currentSecondHalfWriteOffAmount;
+    private BigDecimal currentSecondHalfCourtVerdictAmount;
+    private BigDecimal arrearPenaltyWriteOffAmount;
+    private BigDecimal arrearPenaltyCourtVerdictAmount;
+    private BigDecimal currentPenaltyWriteOffAmount;
+    private BigDecimal currentPenaltyCourtVerdictAmount;
 
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
@@ -107,7 +115,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Boolean isUnderCourtCase;
     private String categoryType;
     private String regdDocNo;
-    private Date regdDocDate; 
+    private Date regdDocDate;
     private String pattaNo;
     private BigDecimal marketValue;
     private BigDecimal capitalValue;
@@ -121,7 +129,6 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    
     public Integer getBasicPropertyID() {
         return basicPropertyID;
     }
@@ -287,11 +294,12 @@ public class PropertyMaterlizeView implements Serializable {
         final StringBuilder objStr = new StringBuilder();
 
         objStr.append("BasicPropertyId: " + getBasicPropertyID()).append("|PropertyId: ").append(getPropertyId())
-        .append("|SitalArea: ").append(getSitalArea()).append("|AggCurr1stHalfDemand: ").append(getAggrCurrFirstHalfDmd())
-        .append("|AggCurr2ndHalfDemand: ").append(getAggrCurrSecondHalfDmd())
-        .append("|AggArrDemand: ").append(getAggrArrDmd()).append("|AggCurr1stHalfColl: ").append(getAggrCurrFirstHalfColl())
-        .append("|AggCurr2ndHalfColl: ").append(getAggrCurrSecondHalfColl())
-        .append("|AggArrColl: ").append(getAggrArrColl()).append("|TotalDemand: ").append(getTotalDemand());
+                .append("|SitalArea: ").append(getSitalArea()).append("|AggCurr1stHalfDemand: ").append(getAggrCurrFirstHalfDmd())
+                .append("|AggCurr2ndHalfDemand: ").append(getAggrCurrSecondHalfDmd())
+                .append("|AggArrDemand: ").append(getAggrArrDmd()).append("|AggCurr1stHalfColl: ")
+                .append(getAggrCurrFirstHalfColl())
+                .append("|AggCurr2ndHalfColl: ").append(getAggrCurrSecondHalfColl())
+                .append("|AggArrColl: ").append(getAggrArrColl()).append("|TotalDemand: ").append(getTotalDemand());
 
         return objStr.toString();
     }
@@ -321,14 +329,14 @@ public class PropertyMaterlizeView implements Serializable {
     }
 
     public String getUsage() {
-		return usage;
-	}
+        return usage;
+    }
 
-	public void setUsage(String usage) {
-		this.usage = usage;
-	}
+    public void setUsage(String usage) {
+        this.usage = usage;
+    }
 
-	public Character getSource() {
+    public Character getSource() {
         return source;
     }
 
@@ -472,22 +480,6 @@ public class PropertyMaterlizeView implements Serializable {
         this.exemptedAmount = exemptedAmount;
     }
 
-    public BigDecimal getWriteoffAmount() {
-        return writeoffAmount;
-    }
-
-    public void setWriteoffAmount(BigDecimal writeoffAmount) {
-        this.writeoffAmount = writeoffAmount;
-    }
-
-    public BigDecimal getCourtcaseAmount() {
-        return courtcaseAmount;
-    }
-
-    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
-        this.courtcaseAmount = courtcaseAmount;
-    }
-
     public Boolean getIsUnderCourtCase() {
         return isUnderCourtCase;
     }
@@ -560,13 +552,13 @@ public class PropertyMaterlizeView implements Serializable {
         this.lastUpdated = lastUpdated;
     }
 
-        public String getSurveyNo() {
-                return surveyNo;
-        }
+    public String getSurveyNo() {
+        return surveyNo;
+    }
 
-        public void setSurveyNo(String surveyNo) {
-                this.surveyNo = surveyNo;
-        }
+    public void setSurveyNo(String surveyNo) {
+        this.surveyNo = surveyNo;
+    }
 
     public String getDuePeriod() {
         return duePeriod;
@@ -583,6 +575,7 @@ public class PropertyMaterlizeView implements Serializable {
     public void setAdvance(BigDecimal advance) {
         this.advance = advance;
     }
+
     public String getOldMuncipalNum() {
         return oldMuncipalNum;
     }
@@ -622,5 +615,85 @@ public class PropertyMaterlizeView implements Serializable {
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
     }
-      
+
+    public BigDecimal getArrearWriteOffAmount() {
+        return arrearWriteOffAmount;
+    }
+
+    public void setArrearWriteOffAmount(BigDecimal arrearWriteOffAmount) {
+        this.arrearWriteOffAmount = arrearWriteOffAmount;
+    }
+
+    public BigDecimal getArrearCourtVerdictAmount() {
+        return arrearCourtVerdictAmount;
+    }
+
+    public void setArrearCourtVerdictAmount(BigDecimal arrearCourtVerdictAmount) {
+        this.arrearCourtVerdictAmount = arrearCourtVerdictAmount;
+    }
+
+    public BigDecimal getCurrentFirstHalfWriteOffAmount() {
+        return currentFirstHalfWriteOffAmount;
+    }
+
+    public void setCurrentFirstHalfWriteOffAmount(BigDecimal currentFirstHalfWriteOffAmount) {
+        this.currentFirstHalfWriteOffAmount = currentFirstHalfWriteOffAmount;
+    }
+
+    public BigDecimal getCurrentFirstHalfCourtVerdictAmount() {
+        return currentFirstHalfCourtVerdictAmount;
+    }
+
+    public void setCurrentFirstHalfCourtVerdictAmount(BigDecimal currentFirstHalfCourtVerdictAmount) {
+        this.currentFirstHalfCourtVerdictAmount = currentFirstHalfCourtVerdictAmount;
+    }
+
+    public BigDecimal getCurrentSecondHalfWriteOffAmount() {
+        return currentSecondHalfWriteOffAmount;
+    }
+
+    public void setCurrentSecondHalfWriteOffAmount(BigDecimal currentSecondHalfWriteOffAmount) {
+        this.currentSecondHalfWriteOffAmount = currentSecondHalfWriteOffAmount;
+    }
+
+    public BigDecimal getCurrentSecondHalfCourtVerdictAmount() {
+        return currentSecondHalfCourtVerdictAmount;
+    }
+
+    public void setCurrentSecondHalfCourtVerdictAmount(BigDecimal currentSecondHalfCourtVerdictAmount) {
+        this.currentSecondHalfCourtVerdictAmount = currentSecondHalfCourtVerdictAmount;
+    }
+
+    public BigDecimal getArrearPenaltyWriteOffAmount() {
+        return arrearPenaltyWriteOffAmount;
+    }
+
+    public void setArrearPenaltyWriteOffAmount(BigDecimal arrearPenaltyWriteOffAmount) {
+        this.arrearPenaltyWriteOffAmount = arrearPenaltyWriteOffAmount;
+    }
+
+    public BigDecimal getArrearPenaltyCourtVerdictAmount() {
+        return arrearPenaltyCourtVerdictAmount;
+    }
+
+    public void setArrearPenaltyCourtVerdictAmount(BigDecimal arrearPenaltyCourtVerdictAmount) {
+        this.arrearPenaltyCourtVerdictAmount = arrearPenaltyCourtVerdictAmount;
+    }
+
+    public BigDecimal getCurrentPenaltyWriteOffAmount() {
+        return currentPenaltyWriteOffAmount;
+    }
+
+    public void setCurrentPenaltyWriteOffAmount(BigDecimal currentPenaltyWriteOffAmount) {
+        this.currentPenaltyWriteOffAmount = currentPenaltyWriteOffAmount;
+    }
+
+    public BigDecimal getCurrentPenaltyCourtVerdictAmount() {
+        return currentPenaltyCourtVerdictAmount;
+    }
+
+    public void setCurrentPenaltyCourtVerdictAmount(BigDecimal currentPenaltyCourtVerdictAmount) {
+        this.currentPenaltyCourtVerdictAmount = currentPenaltyCourtVerdictAmount;
+    }
+
 }

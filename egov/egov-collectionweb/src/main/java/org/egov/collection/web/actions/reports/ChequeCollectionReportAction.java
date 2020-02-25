@@ -69,6 +69,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChequeCollectionReportAction.INDEX, location = "chequeCollectionReport-index.jsp"),
@@ -90,6 +91,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     private static final String EGOV_BOUNDARY_ID = "EGOV_BOUNDARY_ID";
     private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     private static final String CHEQUE_COLLETION_TEMPLATE = "chequeCollectionReport";
+    private TreeMap<Long, String> userMap = new TreeMap<>();
     private String receiptDate;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
@@ -162,7 +164,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
         super.prepare();
         setupDropdownDataExcluding();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getAllCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
+        userMap = collectionsUtil.getUserList();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPTZONE_LIST, collectionsUtil.getReceiptZoneList());
         initializeCriteriaMap();
     }
@@ -251,6 +253,14 @@ public class ChequeCollectionReportAction extends BaseFormAction {
 
     public void setReceiptDate(String receiptDate) {
         this.receiptDate = receiptDate;
+    }
+
+    public TreeMap<Long, String> getUserMap() {
+        return userMap;
+    }
+
+    public void setUserMap(TreeMap<Long, String> userMap) {
+        this.userMap = userMap;
     }
 
 }

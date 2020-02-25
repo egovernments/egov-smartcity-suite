@@ -161,8 +161,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient WorkflowBean workflowBean = new WorkflowBean();
 
-    protected String source;
-    protected String transactionId;
+    protected transient String source;
+    protected transient String transactionId;
+    protected transient boolean wsPortalRequest;
 
     @Autowired
     protected transient LicenseUtils licenseUtils;
@@ -190,6 +191,9 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @Autowired
     protected transient LicenseDocumentTypeService licenseDocumentTypeService;
 
+    @Autowired
+    protected transient ThirdPartyService thirdPartyService;
+
     protected String message;
 
     public BaseLicenseAction() {
@@ -214,10 +218,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
-			if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
-				throw new ApplicationRuntimeException("WS.001");
-			}
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+                addActionMessage(getText("WS.001"));
+                return ERROR;
+            }
             license.setApplicationSource(source);
             workflowBean.setActionName(NEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license, workflowBean,
@@ -325,10 +330,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license().setApplicationNumber(getApplicationNo());
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
-        } else if (tradeLicenseService.currentUserIsWardSecretary()) {
-        	if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
-				throw new ApplicationRuntimeException("WS.001");
-			}
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
+                throw new ApplicationRuntimeException("WS.001");
+            }
             license().setApplicationSource(source);
             workflowBean.setActionName(RENEW_APPTYPE_CODE);
             licenseApplicationService.processWithWardSecretary(license(), workflowBean,
@@ -684,6 +689,14 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 
 }

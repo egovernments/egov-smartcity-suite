@@ -109,6 +109,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 @Results({
         @Result(name = NEW, location = "searchProperty-new.jsp"),
+        @Result(name = SearchPropertyAction.REDIRECT, location = "search-property-redirect.jsp"),
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
@@ -198,7 +199,7 @@ public class SearchPropertyAction extends SearchFormAction {
     private static final String EXCEPTION_IN_SEARCH_PROPERTY_BY_BNDRY = "Exception in Search Property By Bndry ";
     private static final String EXCEPTION = "Exception : ";
     private static final String ASSESSMENT_NUMBER = "Assessment Number : ";
-
+    protected static final String REDIRECT = "redirect";
     private static final long serialVersionUID = 6978874588028662454L;
     protected static final String COMMON_FORM = "commonForm";
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -248,8 +249,8 @@ public class SearchPropertyAction extends SearchFormAction {
     private Map<String, Object> queryMap;
     private String mutationType;
     private Long mutationId;
-    private boolean isWardSecretaryUser;
     private String transactionId;
+    protected transient boolean wsPortalRequest;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -283,6 +284,9 @@ public class SearchPropertyAction extends SearchFormAction {
     
     @Autowired 
     private transient PropertyCourtCaseService propertyCourtCaseService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @Override
     public Object getModel() {
@@ -309,8 +313,13 @@ public class SearchPropertyAction extends SearchFormAction {
      */
     public String commonForm() {
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
         final HttpServletRequest request = ServletActionContext.getRequest();
+        if (request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null)
+            wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return RESULT_ERROR;
+        }
         if (loggedUserIsMeesevaUser) {
             
             if (request.getParameter("applicationNo") == null || request.getParameter("meesevaServicecode") == null) {
@@ -321,7 +330,7 @@ public class SearchPropertyAction extends SearchFormAction {
                 setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
             }
-        } else if (isWardSecretaryUser) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
 
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
@@ -519,10 +528,9 @@ public class SearchPropertyAction extends SearchFormAction {
             } else
                 mode = "commonSearch";
         
-        isWardSecretaryUser = propertyService.isWardSecretaryUser(securityUtils.getCurrentUser());
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
-                return MUTATION_TYPE_REGISTERED_TRANSFER;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                 return APPLICATION_TYPE_ALTER_ASSESSENT;
             } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
@@ -1497,6 +1505,14 @@ public class SearchPropertyAction extends SearchFormAction {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 
 }

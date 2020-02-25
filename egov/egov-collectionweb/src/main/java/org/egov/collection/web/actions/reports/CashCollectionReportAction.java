@@ -47,13 +47,13 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -97,6 +97,7 @@ public class CashCollectionReportAction extends BaseFormAction {
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private String receiptDate;
     private final Map<String, String> sources = createSourceList();
+    private TreeMap<Long, String> userMap = new TreeMap<>();
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
@@ -226,7 +227,7 @@ public class CashCollectionReportAction extends BaseFormAction {
         setupDropdownDataExcluding();
 
         addDropdownData(CollectionConstants.DROPDOWN_DATA_COUNTER_LIST, collectionsUtil.getAllCounters());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPT_CREATOR_LIST, collectionsUtil.getReceiptCreators());
+        userMap = collectionsUtil.getUserList();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_RECEIPTZONE_LIST, collectionsUtil.getReceiptZoneList());
     }
 
@@ -337,6 +338,14 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     public String getSource() {
         return (String) critParams.get(EGOV_SOURCE);
+    }
+
+    public TreeMap<Long, String> getUserMap() {
+        return userMap;
+    }
+
+    public void setUserMap(TreeMap<Long, String> userMap) {
+        this.userMap = userMap;
     }
 
 }

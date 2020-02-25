@@ -67,7 +67,6 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.WorkflowBean;
-import org.egov.tl.entity.enums.OwnershipType;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -120,9 +119,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Autowired
     private transient LicenseService licenseService;
 
-    private static final String RESULT_ERROR = "error";
-    private boolean isWardSecretaryUser;
-
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
     }
@@ -131,6 +127,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         tradeLicense.setNewWorkflow(true);
         tradeLicense.setApplicationDate(new Date());
         return super.newForm();
@@ -142,6 +142,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (validateButtons()) {
             addActionMessage(this.getText(INVALID_WORKFLOWACTION));
             return MESSAGE;
+        }
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
         }
         supportDocumentsValidation();
         renewAppType = NEW_APPTYPE_CODE;
@@ -230,20 +234,23 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     @ValidationErrorPage(ERROR)
     public String beforeRenew() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         prepareNewForm();
         documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
-        isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
                     format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
         }
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             HttpServletRequest request = ServletActionContext.getRequest();
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
                     request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
-                return RESULT_ERROR;
+                return ERROR;
             } else {
                 license().setApplicationSource(Source.WARDSECRETARY.toString());
             }
@@ -259,19 +266,22 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return ERROR;
+        }
         if (validateButtons()) {
             addActionMessage(this.getText(INVALID_WORKFLOWACTION));
             return MESSAGE;
         }
-        isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
         supportDocumentsValidation();
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             HttpServletRequest request = ServletActionContext.getRequest();
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE),
                     request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
-                return RESULT_ERROR;
+                return ERROR;
             }
         }
         return super.renew();
@@ -289,7 +299,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         documentTypes = licenseDocumentTypeService.getDocumentTypesForNewApplication();
-        setOwnerShipTypeMap(OwnershipType.allValues());
+        setOwnerShipTypeMap(OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);

@@ -336,15 +336,12 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
      *  * returns FY from the given date
      * example: 01-04-2016 is given then it will return 2016-17,2017-18 and so on till previous financial year
      */
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.YEAR, -1);
+    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate,Date toDate) {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate order by finYearRange desc ");
-        query.setDate("sDate", date);
-        query.setDate("cDate", cal.getTime());
+        query.setDate("sDate", fromDate);
+        query.setDate("cDate", toDate);
         return query.list();
     }
 

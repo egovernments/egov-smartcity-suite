@@ -47,38 +47,99 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Immutable
+@Table(name = "EGPT_MV_COLLECTIONREPORT")
 public class CollectionSummary implements Serializable {
     /**
-     *
+     * 
      */
-    private static final long serialVersionUID = -5582334620824717063L;
-    private Integer receiptHeaderId;
+    private static final long serialVersionUID = 7208969488863061455L;
+   
+    @Id
+    @Column(name = "receiptHeaderId")
+    private Long id;
+    
+    
+    @Column(name = "RECEIPT_NUMBER")
     private String receiptNumber;
+    
+    @Column(name = "RECEIPT_DATE")
     private Date receiptDate;
-    private Property property;
+    
+    @ManyToOne
+    @JoinColumn(name = "IDPROPERTY")
+    private PropertyImpl property;
+    
+    @Column(name = "PROPERTYID")
     private String propertyId;
+    
+    @ManyToOne
+    @JoinColumn(name = "ZONEID")
     private Boundary zoneId;
+    
+    @ManyToOne
+    @JoinColumn(name = "WARDID")
     private Boundary wardId;
+    
+    @ManyToOne
+    @JoinColumn(name = "AREAID")
     private Boundary areaId;
+    
+    @ManyToOne
+    @JoinColumn(name = "LOCALITYID")
     private Boundary localityId;
+    
+    @ManyToOne
+    @JoinColumn(name = "STREETID")
     private Boundary streetId;
+    
+    @Column(name = "PAYEENAME")
     private String payeeName;
+    
+    @Column(name = "COLLECTIONTYPE")
     private Character collectionType;
+    
+    @Column(name = "PAYMENT_MODE")
     private String paymentMode;
+    
+    @ManyToOne
+    @JoinColumn(name = "userid")
     private User user;
+    
+    @Column(name = "HOUSENUMBER")
     private String houseNumber;
+    
+    @Column(name = "paidAt")
     private String paidAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "status")
     private EgwStatus status;
+    
+    @Column(name = "TAX_COLL")
     private BigDecimal taxColl;
+    
+    @OneToMany(targetEntity = CollectionSummaryDetails.class, cascade = CascadeType.ALL, mappedBy="receiptHeader")
     private Set<CollectionSummaryDetails> collectionDetails;
 
     public String getReceiptNumber() {
@@ -177,11 +238,11 @@ public class CollectionSummary implements Serializable {
         this.streetId = streetId;
     }
 
-    public Property getProperty() {
+    public PropertyImpl getProperty() {
         return property;
     }
 
-    public void setProperty(final Property property) {
+    public void setProperty(final PropertyImpl property) {
         this.property = property;
     }
 
@@ -218,12 +279,12 @@ public class CollectionSummary implements Serializable {
         this.collectionDetails = collectionDetails;
     }
 
-    public Integer getReceiptHeaderId() {
-        return receiptHeaderId;
+    public Long getId() {
+        return id;
     }
 
-    public void setReceiptHeaderId(Integer receiptHeaderId) {
-        this.receiptHeaderId = receiptHeaderId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public BigDecimal getTaxColl() {

@@ -55,7 +55,7 @@
     {"glcodeIdDetail":"<s:property value="%{glCodeId.id}" />",
     "glcodeDetail":"<s:property value="%{glCodeId.glcode}" />",
     "accounthead":"<s:property value="%{glCodeId.name}" />",
-    "creditAmountDetail":"<s:property value='getText(\'format.amount\',{amount})' />"
+    "creditAmountDetail":"<s:property value="%{amount}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

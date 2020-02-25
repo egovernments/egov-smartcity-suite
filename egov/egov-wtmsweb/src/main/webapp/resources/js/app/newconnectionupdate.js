@@ -399,13 +399,12 @@ $(document).ready(
             $('#meterSerialNumber').focus();
         }
         
-        if($('#failureMessage').val() != ''){
-    		bootbox.alert($('#failureMessage').val());
-    			 loadPropertyCategories();
-    			 loadPropertyUsageTypes();
-    			 loadPropertyPipeTypes();
-    	 }
-        
+        if($('#noActiveJAOrAE').val() != ''){
+    		bootbox.alert($('#noActiveJAOrAE').val());
+    		return false;
+    	}
+
+
     });
 
 function removedMandatoryCheckForApprovalDetails() {

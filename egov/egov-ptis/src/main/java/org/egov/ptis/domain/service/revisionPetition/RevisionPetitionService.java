@@ -1327,12 +1327,11 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
         }
     };
     
-    public void createObjectionAndPublishEvent(final Petition petition, final String wfType, final String transactionId) {
-
+    public Map<String, String> getViewURLAndMsgForWS(final Petition petition, final String wfType) {
+        Map<String, String> details = new HashMap<>();
         String viewURL = null;
         String succeessMsg = null;
         String failureMsg = null;
-
         if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)) {
             viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
@@ -1344,18 +1343,11 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
                     petition.getObjectionNumber(), APPLICATION_TYPE_GRP);
             succeessMsg = "Property General Revision Petition Initiated";
-            failureMsg = "Property General Revision Petition";
+            failureMsg = "Property General Revision Petition Failed";
         }
-        try {
-            createRevisionPetition(petition);
-            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
-                    petition.getObjectionNumber(), ApplicationStatus.INPROGRESS, viewURL, succeessMsg);
-
-        } catch (Exception ex) {
-
-            LOGGER.error("exception while saving basic proeprty", ex);
-            eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
-                    petition.getObjectionNumber(), null, null, failureMsg);
-        }
+        details.put("viewURL", viewURL);
+        details.put("succeessMsg", succeessMsg);
+        details.put("failureMsg", failureMsg);
+        return details;
     }
 }

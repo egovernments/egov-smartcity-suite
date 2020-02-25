@@ -1395,9 +1395,12 @@ public interface PropertyTaxConstants {
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
     public static final String CITIZEN_ROLE = "CITIZEN";
+    
+    // Ward Secretary
     public static final String WARDSCRETARY_OPERATOR_ROLE = "WardSecretary Operator";
     public static final String WARDSECRETARY_SOURCE_CODE = "source";
     public static final String WARDSECRETARY_TRANSACTIONID_CODE = "transactionId";
+    public static final String WARDSECRETARY_WSPORTAL_REQUEST = "wsPortalRequest";
 
     // Status for Meseva
     public static final String STATUS_REJECTED = "Rejected";

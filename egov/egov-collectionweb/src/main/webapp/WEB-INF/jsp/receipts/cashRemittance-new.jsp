@@ -166,12 +166,6 @@
 						.getElementsByName('departmentCodeTempArray')[i].value;
 				document.getElementsByName('totalCashAmountArray')[i].value = document
 						.getElementsByName('totalCashAmountTempArray')[i].value;
-				document.getElementsByName('totalChequeAmountArray')[i].value = document
-						.getElementsByName('totalChequeAmountTempArray')[i].value;
-				document.getElementsByName('totalCardAmountArray')[i].value = document
-						.getElementsByName('totalCardAmountTempArray')[i].value;
-				document.getElementsByName('totalOnlineAmountArray')[i].value = document
-						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
 				document.getElementsByName('approverIdArray')[i].value = document
@@ -181,9 +175,6 @@
 				document.bankRemittanceForm.fundCodeArray[i].value = "";
 				document.bankRemittanceForm.departmentCodeArray[i].value = "";
 				document.bankRemittanceForm.totalCashAmountArray[i].value = "";
-				document.bankRemittanceForm.totalChequeAmountArray[i].value = "";
-				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
-				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
 				document.bankRemittanceForm.receiptDateArray[i].value = "";			
 				document.bankRemittanceForm.approverIdArray[i].value = "";
 			}
@@ -195,37 +186,9 @@
 			totalAmtDisplay = totalAmtDisplay
 					+ +document.getElementsByName('totalCashAmountArray')[i].value;
 		}
-		var totalChequeAmt = document
-				.getElementsByName('totalChequeAmountArray');
-		for (i = 0; i < totalChequeAmt.length; i++) {
-			totalAmtDisplay = totalAmtDisplay
-					+ +document.getElementsByName('totalChequeAmountArray')[i].value;
-		}
 		document.getElementById("remittanceAmount").value = totalAmtDisplay
 				.toFixed(2);
-		//TODO: uncomment the validation after go live
-		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
-		for(j=0; j<receiptDateArray.length; j++)
-		{
-			if(document.getElementsByName('receiptDateArray')[j].value!="")
-			{
-				for (k = 0; k < isSelected.length; k++)
-				{
-					if (isSelected[k].checked == true)
-					{
-						if((document.getElementsByName('receiptDateArray')[j].value==document.getElementsByName('receiptDateArray')[k].value)){}
-						else
-						{
-							dom.get("multipleserviceselectionerror").style.display="block";
-							dom.get("button32").disabled=true;
-							dom.get("button32").className="button";
-							window.scroll(0,0);
-							return false;
-						}
-					}
-				}
-			}
-		} */
+	
 	}
 
 	// Check if at least one receipt is selected
@@ -366,29 +329,6 @@
 		return true;
 	}
 
-	function onChangeDeparment(approverDeptId) {
-		var receiptheaderId = '<s:property value="model.id"/>';
-		if (document.getElementById('designationId')) {
-			populatedesignationId({
-				approverDeptId : approverDeptId,
-				receiptheaderId : receiptheaderId
-			});
-		}
-	}
-
-	function onChangeDesignation(designationId) {
-		var approverDeptId;
-		if (document.getElementById('approverDeptId')) {
-			approverDeptId = document.getElementById('approverDeptId').value;
-		}
-		if (document.getElementById('positionUser')) {
-			populatepositionUser({
-				designationId : designationId,
-				approverDeptId : approverDeptId
-			});
-		}
-	}
-
 	// Check if at least one receipt is selected
 	function isChecked(chk) {
 		if (chk.length == undefined) {
@@ -512,7 +452,7 @@
 									label="accountNumberMaster" name="accountNumberId"
 									value="%{accountNumberId}" /></td>
 						</tr>
-						<tr>
+					    <tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text
 									name="bankremittance.financialyear" />:</td>
@@ -556,11 +496,11 @@
 					<input name="search" type="submit" class="buttonsubmit" id="search"
 						value="Search" onclick="return searchDataToRemit()" />
 				</div>
-				<s:if test="%{!paramList.isEmpty()}">
+		    	<s:if test="%{!paramList.isEmpty()}">
 					<display:table name="paramList" uid="currentRow"
 						pagesize="${pageSize}" style="border:1px;width:100%"
 						cellpadding="0" cellspacing="0" export="false" requestURI=""
-						excludedParams="approverIdArray serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray approverIdTempArray">
+						excludedParams="approverIdArray serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray departmentCodeTempArray receiptDateTempArray serviceNameTempArray totalCashAmountTempArray approverIdTempArray">
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 							style="width:5%; text-align: center">
@@ -693,8 +633,7 @@
 							id="button" value="Close" onclick="window.close()" />
 					</div>
 				</s:if>
-				<s:if test="%{isListData}">
-					<s:if test="%{paramList.isEmpty()}">
+				<s:if test="%{paramList.isEmpty()}">
 						<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
 								cellspacing="0">
@@ -712,7 +651,6 @@
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
 					</s:if>
-				</s:if>
 			</div>
 		</s:push>
 	</s:form>

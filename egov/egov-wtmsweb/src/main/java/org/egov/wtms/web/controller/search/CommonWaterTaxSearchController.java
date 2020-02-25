@@ -96,6 +96,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_AP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 import java.math.BigDecimal;
@@ -104,7 +105,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.service.ThirdPartyService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -115,7 +115,6 @@ import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -129,7 +128,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/search/waterSearch/")
 public class CommonWaterTaxSearchController {
 
-    private static final String COMMON_FORM_SEARCH = "waterTaxSearch-commonForm";
+    private static final String WS_REDIRECTION_URL = "redirectionURL";
+	private static final String WARDSECRETARY_REDIRECT = "wardsecretary-redirect";
+	private static final String COMMON_FORM_SEARCH = "waterTaxSearch-commonForm";
     private static final String INVALID_CONSUMERNUMBER = "invalid.consumernumber";
     private static final String APPLICATION_NUMBER = "applicationNo";
     private static final String MEESEVA_APPLICATION_NUMBER = "meesevaApplicationNumber";
@@ -150,16 +151,13 @@ public class CommonWaterTaxSearchController {
     private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
     private WaterConnectionDetailsService waterConnectionDtlsService;
     
     @Autowired
     private WaterDemandConnectionService waterDemandConnectionService;
     
     @Autowired
-    private SecurityUtils securityUtils;
+    private ThirdPartyService thirdPartyService;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -183,7 +181,7 @@ public class CommonWaterTaxSearchController {
         return commonSearchForm(model, CHANGEOFUSE, request.getParameter(APPLICATION_NUMBER));
     }
 
-    @GetMapping(value = "commonSearch/additionalconnection")
+    @RequestMapping(value = "commonSearch/additionalconnection")
     public String getAdditionalWaterConnection(Model model, HttpServletRequest request) {
 		validateWardSecretaryRequest(model, request);
         return commonSearchForm(model, ADDNLCONNECTION, request.getParameter(APPLICATION_NUMBER));
@@ -231,9 +229,13 @@ public class CommonWaterTaxSearchController {
                                          BindingResult resultBinder, Model model, HttpServletRequest request) {
         WaterConnectionDetails waterConnectionDetails = null;
         String applicationType = request.getParameter(APPLICATIONTYPE);
-		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest))
+            throw new ApplicationRuntimeException("WS.001");
+        
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+        String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
 		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
-		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
 		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 			throw new ApplicationRuntimeException("WS.001");
 
@@ -258,7 +260,7 @@ public class CommonWaterTaxSearchController {
             resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
             model.addAttribute(APPLICATIONTYPE, applicationType);
             if(isWardSecretaryUser)
-            	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+            	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
             return COMMON_FORM_SEARCH;
         }
 
@@ -271,7 +273,7 @@ public class CommonWaterTaxSearchController {
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
                         waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
                 if(isWardSecretaryUser)
-                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                 return COMMON_FORM_SEARCH;
             	}
             	else
@@ -281,7 +283,7 @@ public class CommonWaterTaxSearchController {
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                     if(isWardSecretaryUser)
-                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                     return COMMON_FORM_SEARCH;
                 }	
             		
@@ -294,7 +296,7 @@ public class CommonWaterTaxSearchController {
 	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_RECONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_RECONNECTION);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
             	}
             	else
@@ -304,7 +306,7 @@ public class CommonWaterTaxSearchController {
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                     if(isWardSecretaryUser)
-                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                     return COMMON_FORM_SEARCH;
                 }	
             }
@@ -314,11 +316,13 @@ public class CommonWaterTaxSearchController {
                     || RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
                     && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                     && waterConnectionDetails.getConnection().getParentConnection() == null){
-				if (isWardSecretaryUser)
-					return "redirect:/application/addconnection/"
-							.concat(waterConnectionDetails.getConnection().getConsumerCode())
-							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
-				else
+				if (isWardSecretaryUser) {
+					model.addAttribute(WS_REDIRECTION_URL, "/wtms/application/addconnection/".concat(waterConnectionDetails.getConnection().getConsumerCode()));
+					model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+					model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+					model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+					return WARDSECRETARY_REDIRECT;
+				} else
 					return "redirect:/application/addconnection/"
 							.concat(waterConnectionDetails.getConnection().getConsumerCode());
             }
@@ -327,7 +331,7 @@ public class CommonWaterTaxSearchController {
                 model.addAttribute(APPLICATIONTYPE, applicationType);
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
                 if(isWardSecretaryUser)
-                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                 return COMMON_FORM_SEARCH;
             }
         if (isNotBlank(applicationType) && applicationType.equals(CHANGEOFUSE))
@@ -339,7 +343,7 @@ public class CommonWaterTaxSearchController {
 	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
             	}
             	else
@@ -349,7 +353,7 @@ public class CommonWaterTaxSearchController {
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                     if(isWardSecretaryUser)
-                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                     return COMMON_FORM_SEARCH;
                 }	
             }
@@ -362,7 +366,7 @@ public class CommonWaterTaxSearchController {
 	                    resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_RECONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                            waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_RECONNECTION);
 	                    if(isWardSecretaryUser)
-	                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                    return COMMON_FORM_SEARCH;
                   	}
                   	else
@@ -372,7 +376,7 @@ public class CommonWaterTaxSearchController {
                         resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                         waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                         if(isWardSecretaryUser)
-                        	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                        	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                         return COMMON_FORM_SEARCH;
                     }	
                 }
@@ -392,7 +396,7 @@ public class CommonWaterTaxSearchController {
                 model.addAttribute(MODE, ERROR_MODE);
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
                 if(isWardSecretaryUser)
-                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                 return COMMON_FORM_SEARCH;
             }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE))
@@ -408,7 +412,7 @@ public class CommonWaterTaxSearchController {
 	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION, new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
             	}
             	else
@@ -418,7 +422,7 @@ public class CommonWaterTaxSearchController {
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                     if(isWardSecretaryUser)
-                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                     return COMMON_FORM_SEARCH;
                 }	
             } else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
@@ -444,7 +448,7 @@ public class CommonWaterTaxSearchController {
                     new String[] { waterConnectionDetails.getApplicationType().getName(),
                      waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_RECONNECTION);
                     if(isWardSecretaryUser)
-                    	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+                    	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                 return COMMON_FORM_SEARCH;
             	}
             	else {	
@@ -455,7 +459,7 @@ public class CommonWaterTaxSearchController {
 	                                waterConnectionDetails.getApplicationNumber() },
 	                        ERR_CLOSURE_NOT_ALLOWED);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
             	}
               }
@@ -468,7 +472,7 @@ public class CommonWaterTaxSearchController {
 	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                        waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_NEWCONNECTION);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
             	}
             	else
@@ -478,7 +482,7 @@ public class CommonWaterTaxSearchController {
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
                     waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
                     if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
                     return COMMON_FORM_SEARCH;
                 }	
             		
@@ -500,7 +504,7 @@ public class CommonWaterTaxSearchController {
 	                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
 	                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
 	                if(isWardSecretaryUser)
-	                	setTransactionIdAndSource(model, wsTransactionId, wsSource);
+	                	setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 	                return COMMON_FORM_SEARCH;
                  }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_METERED))
@@ -620,21 +624,26 @@ public class CommonWaterTaxSearchController {
     }
 
 	private void validateWardSecretaryRequest(Model model, HttpServletRequest request) {
-		boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest))
+            throw new ApplicationRuntimeException("WS.001");
+        
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		if (isWardSecretaryUser) {
 			String wsTransactionId = request.getParameter("transactionId");
 			String wsSource = request.getParameter("source");
 			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
 				throw new ApplicationRuntimeException("WS.001");
 			else {
-				setTransactionIdAndSource(model, wsTransactionId, wsSource);
+				setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 			}
 		}
 	}
 
-	private void setTransactionIdAndSource(Model model, String wsTransactionId, String wsSource) {
+	private void setWardSecretaryParameters(Model model, String wsTransactionId, String wsSource, boolean wsPortalRequest) {
 		model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 		model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+		model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 	}
 
 }

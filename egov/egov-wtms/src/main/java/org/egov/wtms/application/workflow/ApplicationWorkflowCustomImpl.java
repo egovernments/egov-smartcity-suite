@@ -347,8 +347,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         waterConnectionDetails.getCategory());
                 if (sla == null)
                     throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
-                waterConnectionDetails.transition().start().withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
-                        .withSLA(new LocalDateTime().plusDays(sla).toDate())
+                waterConnectionDetails.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withSLA(new LocalDateTime().plusDays(sla).toDate()).withInitiator(ownerPosition)
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (SIGNWORKFLOWACTION.equalsIgnoreCase(workFlowAction))

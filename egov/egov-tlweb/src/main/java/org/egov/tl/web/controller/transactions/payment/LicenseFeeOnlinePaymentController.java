@@ -47,8 +47,6 @@
  */
 package org.egov.tl.web.controller.transactions.payment;
 
-import org.apache.struts2.ServletActionContext;
-import org.egov.commons.entity.Source;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -75,8 +73,6 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.tl.utils.Constants.WARDSECRETARY_SOURCE_CODE;
-import static org.egov.tl.utils.Constants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -94,7 +90,8 @@ public class LicenseFeeOnlinePaymentController {
     @Autowired
     protected transient SecurityUtils securityUtils;
     
-    private boolean isWardSecretaryUser;
+    @Autowired
+    private transient ThirdPartyService thirdPartyService;
 
     @ModelAttribute("onlineSearchRequest")
     public OnlineSearchRequest onlineSearchRequest() {
@@ -114,21 +111,40 @@ public class LicenseFeeOnlinePaymentController {
     }
 
     @GetMapping
-	public String searchForPayment(final Model model, final HttpServletRequest request) {
-		isWardSecretaryUser = tradeLicenseService.isWardSecretaryUser(securityUtils.getCurrentUser());
+    public String searchForPayment(final Model model, final HttpServletRequest request) {
+        return searchPaymentForm(model, request);
+    }
+    
+    @RequestMapping("/form")
+    public String searchForPaymentForm(final Model model, final HttpServletRequest request) {
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
+            throw new ApplicationRuntimeException("WS.002");
+        }
+        return searchPaymentForm(model, request);
+    }
 
-		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
-			String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
-			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
-				model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
-			}
-		}
-		return "searchtrade-licenseforpay";
-	}
+    /**
+     * @param model
+     * @param request
+     * @return
+     */
+    public String searchPaymentForm(final Model model, final HttpServletRequest request) {
+        String wsPortalRequest = request.getParameter(Constants.WARDSECRETARY_WSPORTAL_REQUEST);
+        
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest != null && Boolean.valueOf(wsPortalRequest))) {
+            String wsTransactionId = request.getParameter(Constants.WARDSECRETARY_TRANSACTIONID_CODE);
+            String wsSource = request.getParameter(Constants.WARDSECRETARY_SOURCE_CODE);
+            if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+                throw new ApplicationRuntimeException("WS.001");
+            else {
+                model.addAttribute(Constants.WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+                model.addAttribute(Constants.WARDSECRETARY_SOURCE_CODE, wsSource);
+                model.addAttribute(Constants.WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+            }
+        }
+        return "searchtrade-licenseforpay";
+    }
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody

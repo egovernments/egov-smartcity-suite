@@ -1,9 +1,8 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2020  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,37 +44,63 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
+  --%>
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<html>
+<head>
+<title></title>
+<script type="text/javascript">
+	jQuery(document).ready(
+			function() {
+				var applicationType = '${applicationType}';
+				if (applicationType == 'Transfer_of_Ownership') {
 
-<hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.CollectionSummaryDetails"
-		table="EGPT_MV_COLLECTIONREPORTDETAILS" mutable="false">
-		<composite-id>
-			<key-many-to-one name="receiptHeader"
-				class="org.egov.ptis.domain.entity.property.CollectionSummary"
-				column="receiptHeaderId" />
-		</composite-id>
-
-		<property name="penaltyColl" type="big_decimal">
-			<column name="PENALTY_COLL" precision="22" scale="0" />
-		</property>
-		<property name="libCessColl" type="big_decimal">
-			<column name="librarycess_coll" precision="22" scale="0" />
-		</property>
-		<property name="arrearTaxColl" type="big_decimal">
-			<column name="arreartax_coll" precision="22" scale="0" />
-		</property>
-		<property name="currentTaxColl" type="big_decimal">
-			<column name="currenttax_coll" precision="22" scale="0" />
-		</property>
-		<property name="arrearPenaltyColl" type="big_decimal">
-			<column name="arrearpenalty_coll" precision="22" scale="0" />
-		</property>
-		<property name="arrearLibCessColl" type="big_decimal">
-			<column name="arrearlibrarycess_coll" precision="22" scale="0" />
-		</property>
-	</class>
-</hibernate-mapping>
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/new.action');
+					var assessmentNo = '${assessmentNum}';
+					var applicationSource = '${applicationSource}';
+					var transactionId = '${transactionId}';
+					var type = 'REGISTERED TRANSFER';
+					var wsPortalRequest = '${wsPortalRequest}';
+					alert(namespace);
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'assessmentNo',
+						name : 'assessmentNo',
+						value : assessmentNo
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'type',
+						name : 'type',
+						value : type
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				} else {
+					false;
+				}
+			});
+</script>
+</head>
+<body>
+</body>
+</html>

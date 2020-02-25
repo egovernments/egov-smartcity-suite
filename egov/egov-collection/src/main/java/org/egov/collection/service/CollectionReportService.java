@@ -187,7 +187,7 @@ public class CollectionReportService {
                     .append(toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
         }
 
-        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !CollectionConstants.ALL.equals(source)) {
             whereQuery.append(" AND EGCL_COLLECTIONHEADER.SOURCE=:source");
         } else {
             userwiseQuery.setLength(0);
@@ -197,11 +197,11 @@ public class CollectionReportService {
             whereQuery.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
         if (status != -1)
             whereQuery.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
-        if (!serviceType.equals(CollectionConstants.ALL))
+        if (!CollectionConstants.ALL.equals(serviceType))
             whereQuery.append(" AND SER.SERVICETYPE =:serviceType");
-        if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(paymentMode) && !CollectionConstants.ALL.equals(paymentMode)) {
             whereQuery.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
-            if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+            if (CollectionConstants.INSTRUMENTTYPE_ONLINE.equals(paymentMode)) {
                 userwiseQuery.setLength(0);
                 userwiseQuery.append(aggregateQuery);
             }
@@ -225,7 +225,7 @@ public class CollectionReportService {
         final NativeQuery userwiseSqluery = createNativeQuery(finalUserwiseQuery.toString());
         final NativeQuery aggregateSqlQuery = createNativeQuery(finalAggregateQuery.toString());
 
-        if (StringUtils.isNotBlank(source) && !source.equals(CollectionConstants.ALL)) {
+        if (StringUtils.isNotBlank(source) && !CollectionConstants.ALL.equals(source)) {
             userwiseSqluery.setString("source", source);
             aggregateSqlQuery.setString("source", source);
         }
@@ -238,13 +238,13 @@ public class CollectionReportService {
             aggregateSqlQuery.setLong("searchStatus", status);
         }
 
-        if (!serviceType.equals(CollectionConstants.ALL)) {
+        if (!CollectionConstants.ALL.equals(serviceType)) {
             userwiseSqluery.setString("serviceType", serviceType);
             aggregateSqlQuery.setString("serviceType", serviceType);
         }
 
-        if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
-            if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+        if (StringUtils.isNotBlank(paymentMode) && !CollectionConstants.ALL.equals(paymentMode))
+            if (CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD.equals(paymentMode)) {
                 userwiseSqluery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
                 aggregateSqlQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
             } else {
@@ -313,31 +313,31 @@ public class CollectionReportService {
         StringBuilder countSelectQuery = new StringBuilder(" COUNT(DISTINCT(EGCL_COLLECTIONHEADER.ID)) AS ");
         StringBuilder selectQueryString = new StringBuilder();
 
-        if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+        if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentType)) {
             StringBuilder cashCountAmountSelectQuery = new StringBuilder("SELECT ").append(countSelectQuery.toString())
                     .append(" cashCount,")
                     .append(amountSelectQuery).append(" cashAmount,");
             selectQueryString.append(cashCountAmountSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)
                     .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
-        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+        } else if (CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD.equals(instrumentType)) {
             String chequeDDCountAmountSelectQuery = countSelectQuery.append(" chequeddCount,")
                     .append(amountSelectQuery)
                     .append(" chequeddAmount,").toString();
             selectQueryString.append(cashZeroSelectQuery).append(chequeDDCountAmountSelectQuery).append(onlineZeroSelectQuery)
                     .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
-        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+        } else if (CollectionConstants.INSTRUMENTTYPE_ONLINE.equals(instrumentType)) {
             String onlineCountAmountSelectQuery = countSelectQuery.append(" onlineCount,")
                     .append(amountSelectQuery)
                     .append(" onlineAmount,").toString();
             selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineCountAmountSelectQuery)
                     .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
-        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK)) {
+        } else if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrumentType)) {
             String bankCountAmountSelectQuery = countSelectQuery.append(" bankCount,")
                     .append(amountSelectQuery)
                     .append(" bankAmount,").toString();
             selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)
                     .append(bankCountAmountSelectQuery).append(cardZeroSelectQuery);
-        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
+        } else if (CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrumentType)) {
             String cardCountAmountSelectQuery = countSelectQuery.append(" cardCount,")
                     .append(amountSelectQuery).append(" cardAmount").toString();
             selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)

@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -218,13 +219,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * @param inboxItemDetails the id to set
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
-        final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length <= 7) {
-            setWfAction(params[0]);
-            setServiceCode(params[1]);
-            setUserName(params[2]);
-            setCounterId(Long.valueOf(params[4]));
-            setReceiptDate(params[3]);
+        if (StringUtils.isNotBlank(inboxItemDetails)) {
+            final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
+            if (params.length <= 7) {
+                setWfAction(params[0]);
+                setServiceCode(params[1]);
+                setUserName(params[2]);
+                setCounterId(Long.valueOf(params[4]));
+                setReceiptDate(params[3]);
+            }
         }
         this.inboxItemDetails = inboxItemDetails;
     }

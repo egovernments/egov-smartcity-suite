@@ -97,5 +97,5 @@ public interface FinancialYearDAO {
     
     public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears();
     
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate);
+    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate,Date toDate);
 }

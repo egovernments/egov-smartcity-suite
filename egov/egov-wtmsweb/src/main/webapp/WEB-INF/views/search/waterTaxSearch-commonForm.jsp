@@ -71,6 +71,8 @@
 					<input type="hidden"  id="meesevaApplicationNumber" name="meesevaApplicationNumber" value="${meesevaApplicationNumber}" />
 					<input type="hidden"  id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
 					<input type="hidden"  id="wsSource" name="wsSource" value="${wsSource}" />
+					<input type="hidden"  id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
+					
 					<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 						<div class="col-md-4 add-margin">

@@ -54,6 +54,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -131,9 +133,12 @@ public class YearWiseDCBIndexService {
     }
 
     public List<CFinancialYear> getFinancialYears() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.YEAR, -1);
         return financialYearDAO
                 .getFinancialYearsAfterFromDate(
-                        DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(getDCBStartDateFromAppConfig()).toDate());
+                        DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(getDCBStartDateFromAppConfig()).toDate(),cal.getTime());
     }
 
     public String getDCBStartDateFromAppConfig() {
