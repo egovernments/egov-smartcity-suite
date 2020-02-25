@@ -58,6 +58,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -131,6 +132,9 @@ public class CloserConnectionController extends GenericConnectionController {
     
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -155,16 +159,30 @@ public class CloserConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationCode,
             final HttpServletRequest request) {
-    	boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(securityUtils.getCurrentUser());
+    	return prepareClosureForm(model, applicationCode, request);
+    }
+    
+	@RequestMapping(value = "/close/form/{applicationCode}", method = RequestMethod.POST)
+	public String closureFormForWardSecretary(final Model model, @PathVariable final String applicationCode,
+			final HttpServletRequest request) {
+		return prepareClosureForm(model, applicationCode, request);
+	}
+
+	private String prepareClosureForm(final Model model, final String applicationCode,
+			final HttpServletRequest request) {
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
 		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-			String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
-			if (ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
-				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
-			}
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 		}
         final String meesevaApplicationNumber = request.getParameter(MEESEVA_APPLICATION_NUMBER);
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
@@ -173,7 +191,7 @@ public class CloserConnectionController extends GenericConnectionController {
             throw new ApplicationRuntimeException("connection.closed");
 
         return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
-    }
+	}
 
     @Transactional(readOnly = true)
     public String loadViewData(final Model model, final HttpServletRequest request,
@@ -247,10 +265,13 @@ public class CloserConnectionController extends GenericConnectionController {
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         model.addAttribute("citizenPortalUser", citizenPortalUser);
         
-        boolean isWardSecretaryUser = waterTaxUtils.isWardSecretaryUser(currentUser);
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
-		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
-		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
 			throw new ApplicationRuntimeException("WS.001");
 		
         if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser && !isWardSecretaryUser) {
@@ -280,6 +301,7 @@ public class CloserConnectionController extends GenericConnectionController {
                 if (isWardSecretaryUser) {
     				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
     				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+    				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
     			}
                 return "connection-closeForm";
             } else

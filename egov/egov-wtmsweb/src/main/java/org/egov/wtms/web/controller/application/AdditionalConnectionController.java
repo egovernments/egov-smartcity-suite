@@ -52,6 +52,7 @@ import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_REDIRECTION_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
@@ -229,7 +230,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
         if (!message.isEmpty() && !"".equals(message)){
 			if (isWardSecretaryUser) {
-				model.addAttribute("redirectionURL", "/wtms/application/addconnection/"
+				model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/addconnection/"
 						.concat(addConnection.getConnection().getParentConnection().getConsumerCode()));
 				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);

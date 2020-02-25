@@ -54,7 +54,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 
-<form:form method="post"
+<form:form method="post" action="/wtms/application/close/${waterConnectionDetails.connection.consumerCode}"
 				modelAttribute="waterConnectionDetails"
 				id="waterConnectionForm"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">			
@@ -77,7 +77,8 @@
 			<input type="hidden" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  
 			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
-			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />						
+			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />	
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				

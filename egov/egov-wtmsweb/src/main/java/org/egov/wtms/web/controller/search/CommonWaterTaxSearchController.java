@@ -69,6 +69,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_AP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_REDIRECTION_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_SOURCE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
@@ -103,7 +104,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/search/waterSearch/")
 public class CommonWaterTaxSearchController {
 
-    private static final String WS_REDIRECTION_URL = "redirectionURL";
 	private static final String WARDSECRETARY_REDIRECT = "wardsecretary-redirect";
 	private static final String COMMON_FORM_SEARCH = "waterTaxSearch-commonForm";
     private static final String INVALID_CONSUMERNUMBER = "invalid.consumernumber";
@@ -144,13 +144,13 @@ public class CommonWaterTaxSearchController {
         return commonSearchForm(model, SEARCH_MENUTREE_APPLICATIONTYPE_METERED, request.getParameter(APPLICATION_NUMBER));
     }
 
-    @GetMapping(value = "commonSearch/closureconnection")
+    @RequestMapping(value = "commonSearch/closureconnection")
     public String closeWaterConnection(Model model, HttpServletRequest request) {
     	validateWardSecretaryRequest(model, request);
         return commonSearchForm(model, SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE, request.getParameter(APPLICATION_NUMBER));
     }
 
-    @GetMapping(value = "commonSearch/changeofuse")
+    @RequestMapping(value = "commonSearch/changeofuse")
     public String waterConnectionChangeOfUsage(Model model, HttpServletRequest request) {
     	validateWardSecretaryRequest(model, request);
         return commonSearchForm(model, CHANGEOFUSE, request.getParameter(APPLICATION_NUMBER));
@@ -167,7 +167,7 @@ public class CommonWaterTaxSearchController {
         return commonSearchForm(model, SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX, request.getParameter(APPLICATION_NUMBER));
     }
 
-    @GetMapping(value = "commonSearch/reconnection")
+    @RequestMapping(value = "commonSearch/reconnection")
     public String getReconnectionForm(Model model, HttpServletRequest request) {
     	validateWardSecretaryRequest(model, request);
         return commonSearchForm(model, RECONNECTION, request.getParameter(APPLICATION_NUMBER));
@@ -292,10 +292,9 @@ public class CommonWaterTaxSearchController {
                     && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                     && waterConnectionDetails.getConnection().getParentConnection() == null){
 				if (isWardSecretaryUser) {
-					model.addAttribute(WS_REDIRECTION_URL, "/wtms/application/addconnection/".concat(waterConnectionDetails.getConnection().getConsumerCode()));
-					model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
-					model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
-					model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+					model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/addconnection/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode()));
+					setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
 					return WARDSECRETARY_REDIRECT;
 				} else
 					return "redirect:/application/addconnection/"
@@ -360,11 +359,12 @@ public class CommonWaterTaxSearchController {
                     || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
                     || RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)){
-            	 if (isWardSecretaryUser)
- 					return "redirect:/application/changeOfUse/"
- 							.concat(waterConnectionDetails.getConnection().getConsumerCode())
- 							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
- 				else
+            	 if (isWardSecretaryUser) {
+					model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/changeOfUse/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode()));
+					setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
+					return WARDSECRETARY_REDIRECT;
+ 				} else
  					return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
              } else {
                 model.addAttribute(APPLICATIONTYPE, applicationType);
@@ -406,11 +406,12 @@ public class CommonWaterTaxSearchController {
                     || waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(REGULARIZE_CONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)){
-				if (isWardSecretaryUser)
-					return "redirect:/application/close/"
-							.concat(waterConnectionDetails.getConnection().getConsumerCode())
-							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
-				else
+            	if (isWardSecretaryUser) {
+					model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/close/form/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode()));
+					setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
+					return WARDSECRETARY_REDIRECT;
+ 				} else
 					return "redirect:/application/close/" + waterConnectionDetails.getConnection().getConsumerCode();
             }
             else 
@@ -466,11 +467,12 @@ public class CommonWaterTaxSearchController {
                     && waterConnectionDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CLOSERSANCTIONED)
                     && waterConnectionDetails.getCloseConnectionType().equals("T")){
-				if (isWardSecretaryUser)
-					return "redirect:/application/reconnection/"
-							.concat(waterConnectionDetails.getConnection().getConsumerCode())
-							.concat("?wsTransactionId=").concat(wsTransactionId).concat("&wsSource=").concat(wsSource);
-				else
+				if (isWardSecretaryUser) {
+					model.addAttribute(WARDSECRETARY_REDIRECTION_URL, "/wtms/application/reconnection/form/"
+							.concat(waterConnectionDetails.getConnection().getConsumerCode()));
+					setWardSecretaryParameters(model, wsTransactionId, wsSource, wsPortalRequest);
+					return WARDSECRETARY_REDIRECT;
+				} else
 					return "redirect:/application/reconnection/"
 							+ waterConnectionDetails.getConnection().getConsumerCode();
             } else {

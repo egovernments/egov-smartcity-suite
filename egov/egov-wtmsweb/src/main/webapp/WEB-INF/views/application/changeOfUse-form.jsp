@@ -85,6 +85,7 @@
 				<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 				<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
 				<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+				<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 			</div>	
 			<c:if test="${validationMessage==''}">

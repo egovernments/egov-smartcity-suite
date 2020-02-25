@@ -53,7 +53,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form method="post"
+<form:form method="post" action="/wtms/application/reconnection/${waterConnectionDetails.connection.consumerCode}"
 				modelAttribute="waterConnectionDetails"
 				id="waterConnectionForm"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">			
@@ -76,6 +76,7 @@
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
 			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				
