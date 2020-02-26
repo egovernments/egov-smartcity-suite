@@ -112,6 +112,8 @@
 				value="${wsTransactionId}" />
 			<input type="hidden" id="wsSource" name="wsSource"
 				value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest"
+				value="${wsPortalRequest}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>

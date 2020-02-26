@@ -50,6 +50,9 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -58,7 +61,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -120,18 +122,40 @@ public class NewRegistrationController extends MarriageRegistrationController {
     protected FileStoreUtils fileStoreUtils;
     @Autowired
     private SecurityUtils securityUtils;
-
+    @Autowired
+    private ThirdPartyService thirdPartyService;
     @Autowired
     private RegistrationWorkflowService registrationWorkFlowService;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model, HttpServletRequest request) {
+        return prepareRegistrationForm(model, request);
+    }
+    
+	@RequestMapping(value = "/register/form", method = RequestMethod.POST)
+	public String showRegistrationForWardSecretary(final Model model, HttpServletRequest request) {
+		return prepareRegistrationForm(model, request);
+	}
 
-        final MarriageRegistration marriageRegistration = new MarriageRegistration();
-
+	private String prepareRegistrationForm(final Model model, HttpServletRequest request) {
+		final MarriageRegistration marriageRegistration = new MarriageRegistration();
         User logedinUser = securityUtils.getCurrentUser();
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter("transactionId");
+		String wsSource = request.getParameter("source");
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (isWardSecretaryUser) {
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		}
+		
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
-        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
         String meesevaApplicationNumber = null;
         if (request.getParameter("applicationNo") != null)
             meesevaApplicationNumber = request.getParameter("applicationNo");
@@ -143,17 +167,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
                 marriageRegistration.setApplicationNo(meesevaApplicationNumber);
             }
         }
-		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter("transactionId");
-			String wsSource = request.getParameter("source");
-			if (isWardSecretaryUser
-					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
-			}
-		}
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(logedinUser));
         model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser));
@@ -162,7 +175,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
-    }
+	}
 
     private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
@@ -181,25 +194,27 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
     	final String appNo;
         User logedinUser = securityUtils.getCurrentUser();
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+		
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration",null);
-        boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
-        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
+		boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
                 isEmployee);
-        String wsTransactionId = request.getParameter("wsTransactionId");
-        String wsSource = request.getParameter("wsSource");
-        
-        if (isWardSecretaryUser
-				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-			throw new ApplicationRuntimeException("WS.001");
         
 		if (!isAssignmentPresent || errors.hasErrors())
 			return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent,
-					isWardSecretaryUser, wsTransactionId, wsSource);
+					isWardSecretaryUser, wsTransactionId, wsSource, wsPortalRequest);
       
         String message;
         String approverName = null;
@@ -223,7 +238,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 			appNo = marriageRegistrationService.createMeesevaRegistration(marriageRegistration, workflowContainer,
 					loggedUserIsMeesevaUser, citizenPortalUser, isWardSecretaryUser).getApplicationNo();
 		} else if (isWardSecretaryUser) {
-			if (WARDSECRETARY.toString().equals(request.getParameter("wsSource")))
+			if (WARDSECRETARY.toString().equals(request.getParameter(WARDSECRETARY_SOURCE_CODE)))
 				marriageRegistration.setSource(Source.WARDSECRETARY.toString());
 			appNo = marriageRegistrationService.createRegistrationAndPublishEventForWardSecretary(marriageRegistration,
 					request, workflowContainer, isWardSecretaryUser);
@@ -248,7 +263,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
 			final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent, boolean isWardSecretaryUser,
-			String transactionId, String source) {
+			String transactionId, String source, boolean wsPortalRequest) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
             model.addAttribute(MESSAGE, messageSource.getMessage("notexists.position",
@@ -258,8 +273,9 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
 		if (isWardSecretaryUser) {
-			model.addAttribute("wsTransactionId", transactionId);
-			model.addAttribute("wsSource", source);
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, transactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, source);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 		}
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";

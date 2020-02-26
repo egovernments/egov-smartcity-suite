@@ -50,7 +50,9 @@
 $(document).ready( function () {
 	
 	var updateurl;
-	var isWardSecretary = $('#isWardSecretaryOperator').val();
+	var wsSource = $('#wsSource').val();
+	var wsTransactionId = $('#wsTransactionId').val();
+	var wsPortalRequest = $('#wsPortalRequest').val();
 	 updateurl='/mrs/reissue/create/';
 	
 
@@ -136,7 +138,13 @@ $(document).ready( function () {
 								"data" : null,
 							    sortable: false,
 							    "render": function ( data, type, row, meta ) {
-								        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
+							    	var reissueUrl;
+							    	if(wsSource == 'WARDSECRETARY')
+							    		reissueUrl = updateurl+'form/'+row.id;
+							    	else
+							    		reissueUrl = updateurl+row.id;
+							    		
+								        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+reissueUrl +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
 								        
 							    }
 							
@@ -147,13 +155,11 @@ $(document).ready( function () {
 
 	$(document).on('click','.reissue',function(){
 	    var url = $(this).val();
-	    if(isWardSecretary){
-	    	url = url+'?wsTransactionId='+$('#wsTransactionId').val()+'&wsSource='+$('#wsSource').val();
-	    }
-	    if(url){
+	    if(wsSource == 'WARDSECRETARY')
+	    	reissueForm(url);
+	    else if(url){
 	    	openPopup(url);
 	    }
-	    
 	});
 
 	function openPopup(url)
@@ -161,7 +167,28 @@ $(document).ready( function () {
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 	}
 
-
+	function reissueForm(reissueUrl) {
+		jQuery('<form>.').attr({
+			method : 'POST',
+			action : reissueUrl,
+			target : '_self'
+		}).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsTransactionId',
+			name : 'wsTransactionId',
+			value : wsTransactionId
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsSource',
+			name : 'wsSource',
+			value : wsSource
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsPortalRequest',
+			name : 'wsPortalRequest',
+			value : wsPortalRequest
+		})).appendTo(document.body).submit();
+	}
 	
 });
 

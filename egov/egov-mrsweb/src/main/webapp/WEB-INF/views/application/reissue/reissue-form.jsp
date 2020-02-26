@@ -89,6 +89,8 @@
 				value="${wsTransactionId}" />
 			<input type="hidden" id="wsSource" name="wsSource"
 				value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest"
+				value="${wsPortalRequest}" />
 			<form:hidden path="" name="registration.id"
 				id="reIssueRegistrationId" value="${reIssue.registration.id}" />
 			<ul class="nav nav-tabs" id="settingstab">

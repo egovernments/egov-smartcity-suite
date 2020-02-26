@@ -322,7 +322,7 @@ public class MarriageRegistrationService {
     @Transactional
 	public MarriageRegistration createRegistration(final MarriageRegistration registration,
 			final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser,
-			final boolean citizenPortalUser, boolean loggedUserIsWardSecretaryUser) {
+			final boolean citizenPortalUser, boolean isWardSecretaryUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
@@ -333,7 +333,7 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
         if (loggedUserIsMeesevaUser)
             createMeesevaMarriageReg(registration);
-        else if (loggedUserIsWardSecretaryUser)
+        else if (isWardSecretaryUser)
         	create(registration);
         else if (citizenPortalUser) {
             registration.setSource(Source.CITIZENPORTAL.name());
@@ -342,7 +342,7 @@ public class MarriageRegistrationService {
             registration.setSource(Source.SYSTEM.name());
             create(registration);
         }
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent(), isWardSecretaryUser);
         if (citizenPortalUser)
             pushPortalMessage(savedMarriageRegistration);
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
@@ -405,7 +405,7 @@ public class MarriageRegistrationService {
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
 
-        workflowService.transition(marriageRegistration, workflowContainer, marriageRegistration.getApprovalComent());
+        workflowService.transition(marriageRegistration, workflowContainer, marriageRegistration.getApprovalComent(), false);
         if (marriageRegistration.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
@@ -526,7 +526,7 @@ public class MarriageRegistrationService {
         updateDocuments(marriageRegistration);
         update(marriageRegistration);
         if (marriageUtils.isDigitalSignEnabled()) {
-            workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+            workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments(), false);
             marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
             if (marriageRegistration.getSource() != null
                     && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
@@ -559,7 +559,7 @@ public class MarriageRegistrationService {
               
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
-        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments(), false);
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         if (marriageRegistration.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
@@ -609,7 +609,7 @@ public class MarriageRegistrationService {
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         marriageRegistration.setActive(true);
-        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments(), false);
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         if (marriageRegistration.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
@@ -631,7 +631,7 @@ public class MarriageRegistrationService {
                 : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(),
                 MarriageConstants.MODULE_NAME));
         marriageRegistration.setRejectionReason(workflowContainer.getApproverComments());
-        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments(), false);
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         if (marriageRegistration.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())

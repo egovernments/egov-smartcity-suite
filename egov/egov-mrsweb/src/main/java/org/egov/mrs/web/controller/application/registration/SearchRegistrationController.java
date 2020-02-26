@@ -53,6 +53,9 @@ import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.NOOFDAYSTOPRINT;
 import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_OPERATOR_ROLE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,6 +115,8 @@ public class SearchRegistrationController {
     private FileStoreUtils fileStoreUtils;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @Autowired
     public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService,
@@ -229,26 +234,36 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
     public String reissueCertificateSearch(final Model model, final HttpServletRequest request) {
+		return searchForReissue(model, request);
+    }
+    
+	@RequestMapping(value = "/reissuecertificate/form", method = RequestMethod.POST)
+	public String reissueCertificateSearchForWardSecretary(final Model model, final HttpServletRequest request) {
+		return searchForReissue(model, request);
+	}
+
+	private String searchForReissue(final Model model, final HttpServletRequest request) {
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter("transactionId");
+		String wsSource = request.getParameter("source");
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (isWardSecretaryUser) {
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		}
 		List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
 				.filter(role -> WARDSECRETARY_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
 				.collect(Collectors.toList());
-		boolean isWardSecretaryOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
-		model.addAttribute("isWardSecretaryOperator", isWardSecretaryOperator);
-		if (isWardSecretaryOperator) {
-			String wsTransactionId = request.getParameter("transactionId");
-			String wsSource = request.getParameter("source");
-			if (isWardSecretaryOperator
-					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute("wsTransactionId", request.getParameter("transactionId"));
-				model.addAttribute("wsSource", request.getParameter("source"));
-			}
-		}
 		model.addAttribute(REGISTRATION, new MarriageRegistration());
 		prepareSearchForm(model);
         return "registration-search-certificateissue";
-    }
+	}
 
     @RequestMapping(value = "/searchcertificates", method = RequestMethod.GET)
     public String showReportForm(final Model model) {

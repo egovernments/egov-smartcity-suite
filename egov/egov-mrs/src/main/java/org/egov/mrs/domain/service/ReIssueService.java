@@ -170,7 +170,7 @@ public class ReIssueService {
     }
 
     @Transactional
-    public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
+    public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer, boolean isWardSecretaryUser) {
         final boolean citizenPortalUser = workflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         if (StringUtils.isBlank(reIssue.getApplicationNo())) {
             reIssue.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextReIssueApplicationNumber(reIssue));
@@ -190,7 +190,7 @@ public class ReIssueService {
 
         marriageApplicantService.addDocumentsToFileStore(reIssue.getApplicant(), applicantDocumentAndId);
 
-        workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
+        workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent(), isWardSecretaryUser);
 
         create(reIssue);
         reiSsueUpdateIndexesService.createReIssueAppIndex(reIssue);
@@ -209,7 +209,7 @@ public class ReIssueService {
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
         update(reissue);
-        workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
+        workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent(), false);
         if (reissue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
                 && getPortalInbox(reissue.getApplicationNo()) != null)
@@ -224,7 +224,7 @@ public class ReIssueService {
                         MarriageConstants.MODULE_NAME));
         final ReIssue reissue1 = update(reissue);
         if (marriageUtils.isDigitalSignEnabled()) {
-            workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
+            workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments(), false);
             reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
         } else
             printCertificate(reissue1, workflowContainer);
@@ -271,7 +271,7 @@ public class ReIssueService {
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         reissue.setRejectionReason(workflowContainer.getApproverComments());
-        workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments(), false);
 		if (Source.WARDSECRETARY.toString().equalsIgnoreCase(reissue.getSource())
 				&& WFLOW_ACTION_STEP_CANCEL_REISSUE.equalsIgnoreCase(workflowContainer.getWorkFlowAction()))
 			marriageRegistrationService.publishEventForWardSecretary(null, reissue.getApplicationNo(), true, true,
@@ -316,7 +316,7 @@ public class ReIssueService {
                                        final WorkflowContainer workflowContainer) {
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(), MarriageConstants.MODULE_NAME));
-        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments(), false);
         reiSsueUpdateIndexesService.updateReIssueAppIndex(reIssue);
         if (reIssue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
@@ -339,7 +339,7 @@ public class ReIssueService {
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(),
                         MarriageConstants.MODULE_NAME));
         reIssue.setActive(true);
-        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
+        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments(), false);
         if (reIssue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
                 && getPortalInbox(reIssue.getApplicationNo()) != null)
@@ -455,10 +455,10 @@ public class ReIssueService {
     
 	@Transactional
 	public String reIssueCertificateAndPublishEventForWardSecretary(ReIssue reIssue, HttpServletRequest request,
-			WorkflowContainer workflowContainer, boolean loggedUserIsWardSecretaryUser) {
+			WorkflowContainer workflowContainer, boolean isWardSecretaryUser) {
 		String applicationNo = StringUtils.EMPTY;
 		try {
-			createReIssueApplication(reIssue, workflowContainer);
+			createReIssueApplication(reIssue, workflowContainer, isWardSecretaryUser);
 			applicationNo = reIssue.getApplicationNo();
 			marriageRegistrationService.publishEventForWardSecretary(request, applicationNo, true, true, MODE_CREATE,
 					StringUtils.EMPTY);
