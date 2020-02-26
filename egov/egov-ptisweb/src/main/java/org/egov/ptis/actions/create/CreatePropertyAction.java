@@ -343,7 +343,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
     private String wsTransactionId;
-    protected transient boolean wsPortalRequest;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -2427,13 +2426,5 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setWsTransactionId(String wsTransactionId) {
         this.wsTransactionId = wsTransactionId;
-    }
-
-    public boolean isWsPortalRequest() {
-        return wsPortalRequest;
-    }
-
-    public void setWsPortalRequest(boolean wsPortalRequest) {
-        this.wsPortalRequest = wsPortalRequest;
     }
 }

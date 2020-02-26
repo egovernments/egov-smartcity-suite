@@ -312,7 +312,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean editOwnerDetails = false;
-    private boolean isWardSecretaryUser;
     private String transactionId;
 
     @Autowired
@@ -362,6 +361,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private EventPublisher eventPublisher;
     @Autowired
     private transient PropertyThirdPartyService propertyThirdPartyService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public RevisionPetitionAction() {
 
@@ -419,7 +420,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
@@ -502,7 +502,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         }
         getPropertyView(propertyId);
-
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return MEESEVA_ERROR;
+        }
         if (objection != null && objection.getBasicProperty() != null
                 && objection.getBasicProperty().isUnderWorkflow()) {
             addActionMessage(
@@ -516,7 +519,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-        } else if (isWardSecretaryUser) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
 
             if (ThirdPartyService.validateWardSecretaryRequest(
@@ -571,7 +574,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
 
-        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
+                && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return NEW;
         }
@@ -598,7 +602,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 addActionMessage(getText("objection.grp.success") + objection.getObjectionNumber());
             revisionPetitionService.applyAuditing(objection.getState());
-            if (isWardSecretaryUser) {
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 revisionPetitionService.createRevisionPetition(objection);
                 wsDetails = revisionPetitionService.getViewURLAndMsgForWS(objection, wfType);
             } else if (isMeesevaUser) {
@@ -621,13 +625,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             currentStatus = REVISION_PETITION_CREATED;
             sendEmailandSms(objection, REVISION_PETITION_CREATED);
             applicationNumber = objection.getObjectionNumber();
-            if (isWardSecretaryUser)
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
                 eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                         objection.getObjectionNumber(), ApplicationStatus.INPROGRESS, wsDetails.get("viewURL"),
                         wsDetails.get("succeessMsg"));
         } catch (Exception ex) {
             logger.error("Error in creating petition application", ex);
-            if (isWardSecretaryUser)
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
                 eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                         objection.getObjectionNumber(), null, null, wsDetails.get("failureMsg"));
             clearMessages();

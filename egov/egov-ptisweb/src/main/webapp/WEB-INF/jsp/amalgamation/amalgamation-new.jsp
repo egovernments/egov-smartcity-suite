@@ -113,6 +113,7 @@
 			<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
 		    <s:hidden id="transactionId" name="transactionId" value="%{transactionId}" />
 		    <s:hidden id="applicationSource" name="applicationSource" value="%{applicationSource}" />
+		    <s:hidden name="wsPortalRequest" value="%{wsPortalRequest}"/>
 			
 			<div class="page-container" id="page-container">
 				<div class="row">

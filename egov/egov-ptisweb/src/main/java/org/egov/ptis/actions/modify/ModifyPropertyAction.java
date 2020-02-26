@@ -361,7 +361,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean blockActive;
     private Boolean wardActive;
     private Boolean electionWardActive;
-    private boolean isWardSecretaryUser;
     private String transactionId;
 
     @Autowired
@@ -419,6 +418,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public ModifyPropertyAction() {
         super();
@@ -447,6 +449,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             return COMMON_FORM;
         }
         String target;
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return MEESEVA_ERROR;
+        }
         target = populateFormData(Boolean.FALSE);
         isMeesevaUser = propService.isMeesevaUser(currentUser);
         if (isMeesevaUser)
@@ -455,9 +461,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-        isWardSecretaryUser = propService.isWardSecretaryUser(currentUser);
 
-        if (isWardSecretaryUser
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
                 && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return COMMON_FORM;
@@ -673,8 +678,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             allowEditDocument = Boolean.TRUE;
         }
         checkToDisplayAckButton();
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return NEW;
@@ -755,7 +759,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
         
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel, modifyRsn, transactionId);
         } else if (!isMeesevaUser)
             basicPropertyService.update(basicProp);

@@ -55,16 +55,14 @@
 	jQuery(document).ready(
 			function() {
 				var applicationType = '${applicationType}';
+				var applicationSource = '${applicationSource}';
+				var transactionId = '${transactionId}';
+				var wsPortalRequest = '${wsPortalRequest}';
 				if (applicationType == 'Transfer_of_Ownership') {
-
+					var type = 'REGISTERED TRANSFER';
 					var namespace = '/ptis'.concat('${actionNamespace}')
 							.concat('/new.action');
 					var assessmentNo = '${assessmentNum}';
-					var applicationSource = '${applicationSource}';
-					var transactionId = '${transactionId}';
-					var type = 'REGISTERED TRANSFER';
-					var wsPortalRequest = '${wsPortalRequest}';
-					alert(namespace);
 					jQuery('<form>.').attr({
 						method : 'post',
 						action : namespace,
@@ -95,8 +93,186 @@
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
 					})).appendTo(document.body).submit();
-				} else {
-					false;
+				}
+				if (applicationType == 'Alter_Assessment') {
+					var indexNumber = '${assessmentNum}';
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/modifyProperty-modifyForm.action');
+					var modifyRsn = 'ADD_OR_ALTER';
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'indexNumber',
+						name : 'indexNumber',
+						value : indexNumber
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'modifyRsn',
+						name : 'modifyRsn',
+						value : modifyRsn
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'Bifuracate_Assessment') {
+					var indexNumber = '${assessmentNum}';
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/modifyProperty-modifyForm.action');
+					var modifyRsn = 'BIFURCATE';
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'indexNumber',
+						name : 'indexNumber',
+						value : indexNumber
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'modifyRsn',
+						name : 'modifyRsn',
+						value : modifyRsn
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'Amalgamation') {
+					var indexNumber = '${assessmentNum}';
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/amalgamation-newForm.action');
+					var modifyRsn = 'AMALG';
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'indexNumber',
+						name : 'indexNumber',
+						value : indexNumber
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'modifyRsn',
+						name : 'modifyRsn',
+						value : modifyRsn
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'Revision_Petition') {
+					var propertyId = '${assessmentNum}';
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/revPetition-newForm.action');
+					var wfType = 'RP';
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'propertyId',
+						name : 'propertyId',
+						value : propertyId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wfType',
+						name : 'wfType',
+						value : wfType
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'General_Revision_Petition') {
+					var propertyId = '${assessmentNum}';
+					var namespace = '/ptis'.concat('${actionNamespace}')
+							.concat('/genRevPetition-newForm.action');
+					var wfType = 'GRP';
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'propertyId',
+						name : 'propertyId',
+						value : propertyId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wfType',
+						name : 'wfType',
+						value : wfType
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
 				}
 			});
 </script>

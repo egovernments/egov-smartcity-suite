@@ -53,7 +53,6 @@ import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATIONTYPEBYNATUREOFTASK;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
@@ -238,6 +237,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected boolean showCheckboxForGIS = false;
     protected boolean thirdPartyCheckbox = false;
     protected boolean disableThirdPartyCheckbox = false;
+    protected transient boolean wsPortalRequest;
 
     @Autowired
     protected FinancialUtil financialUtil;
@@ -1354,6 +1354,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setThirdPartyCheckbox(boolean thirdPartyCheckbox) {
         this.thirdPartyCheckbox = thirdPartyCheckbox;
+    }
+
+    public boolean isWsPortalRequest() {
+        return wsPortalRequest;
+    }
+
+    public void setWsPortalRequest(boolean wsPortalRequest) {
+        this.wsPortalRequest = wsPortalRequest;
     }
 
 }

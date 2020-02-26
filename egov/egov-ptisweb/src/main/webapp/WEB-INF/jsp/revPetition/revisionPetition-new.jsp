@@ -181,6 +181,7 @@
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 		<s:hidden name="wfType" id="wfType" value="%{wfType}" />
 		<s:hidden name="transactionId" id="transactionId" value="%{transactionId}" />
+		<s:hidden name="wsPortalRequest" value="%{wsPortalRequest}"/>
 		</s:push>
 	</s:form>
 </body>
