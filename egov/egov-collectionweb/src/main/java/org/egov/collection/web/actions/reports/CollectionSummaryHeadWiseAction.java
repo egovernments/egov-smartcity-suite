@@ -71,6 +71,8 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Action class for the cash collection summary report
@@ -159,7 +161,8 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("receiptStatuses",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.STATUS_OF_RECEIPTS));
+                collectionsUtil.getStatusByModuleAndExcludeCodeList(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                        Stream.of(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED).collect(Collectors.toList())));
         addDropdownData("revenueHeads",
                 chartOfAccountsHibernateDAO.getActiveAccountsForTypes(CollectionConstants.REVENUEHEADS));
         return INDEX;

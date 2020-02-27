@@ -53,6 +53,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -177,10 +179,9 @@ public class SearchReceiptAction extends SearchFormAction {
     }
 
     public List getReceiptStatuses() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? and code not in(?,?) order by description",
-                ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING,
-                CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
+        return collectionsUtil.getStatusByModuleAndExcludeCodeList(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                Stream.of(CollectionConstants.RECEIPT_STATUS_CODE_FAILED, CollectionConstants.RECEIPT_STATUS_CODE_PENDING)
+                        .collect(Collectors.toList()));
     }
 
     @Override

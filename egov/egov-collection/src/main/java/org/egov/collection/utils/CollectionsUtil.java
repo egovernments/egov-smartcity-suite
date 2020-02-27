@@ -242,6 +242,15 @@ public class CollectionsUtil {
     public List<EgwStatus> getAllReceiptHeaderStatus() {
         return egwStatusDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
+    
+    public List<EgwStatus> getStatusByModuleAndExcludeCodeList(String moduleType, List codeList)
+    {
+            Query query = persistenceService
+                    .getSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code not in(:codeList)  order by S.code");
+            query.setString("moduleType", moduleType);
+            query.setParameterList("codeList", codeList);
+            return query.list();
+    }
 
     /**
      * @param sessionMap Map of session variables

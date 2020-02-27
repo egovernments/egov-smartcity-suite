@@ -47,6 +47,16 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -63,13 +73,6 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Action class for the cash collection summary report
@@ -155,7 +158,8 @@ public class CollectionSummaryAction extends ReportFormAction {
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("receiptStatuses",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.STATUS_OF_RECEIPTS));
+                collectionsUtil.getStatusByModuleAndExcludeCodeList(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                        Stream.of(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED).collect(Collectors.toList())));
         serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         return INDEX;
