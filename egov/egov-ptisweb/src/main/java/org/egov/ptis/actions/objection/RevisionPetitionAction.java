@@ -803,6 +803,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
             return "view";
         }
+        if (revisionPetitionService.validateDemand(objection)) {
+            if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+                addActionError(getText("grp.tax.increase.msg"));
+            else
+                addActionError(getText("rp.tax.increase.msg"));
+            return "view";
+        }
         if (REVENUE_INSPECTOR_DESGN.equals(designation)) {
             propService.processAndStoreDocument(objection.getDocuments());
             if ((getDocumentTypeDetails() != null && isEditOwnerDetails())) {
