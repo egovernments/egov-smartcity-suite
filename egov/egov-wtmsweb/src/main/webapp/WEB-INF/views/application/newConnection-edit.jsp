@@ -89,7 +89,7 @@
         <input type="hidden" id="ownerPosition" name="ownerPosition" value="${ownerPosition}" />
         <input type="hidden" id="date" name="date" value="${waterConnectionDetails.applicationDate}" />
         <input type="hidden" id="hasEstimationDueForMetered" name="hasEstimationDueForMetered" value="${hasEstimationDueForMetered}" />
-        <input type="hidden" id="noActiveJAOrAE" name="noActiveJAOrAE" value="${noActiveJAOrAE}" />
+        <input type="hidden" id="noActiveJAOrSA" name="noActiveJAOrSA" value="${noActiveJAOrSA}" />
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">
