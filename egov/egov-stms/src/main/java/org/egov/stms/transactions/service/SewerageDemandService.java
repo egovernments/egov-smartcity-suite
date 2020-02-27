@@ -49,9 +49,11 @@
 package org.egov.stms.transactions.service;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
@@ -133,6 +135,8 @@ public class SewerageDemandService {
 	private SewerageTaxUtils sewerageTaxUtils;
 	@Autowired
 	private PropertyTaxUtil propertyTaxUtil;
+	@Autowired
+    private CFinancialYearService cFinancialYearService;
 
 	@SuppressWarnings("rawtypes")
 	@Autowired
@@ -373,8 +377,10 @@ public class SewerageDemandService {
 		BigDecimal totalDemandAmount = BigDecimal.ZERO;
 		BigDecimal totalCollectedAmount = BigDecimal.ZERO;
 		if (sewerageApplicationDetail != null && sewerageApplicationDetail.getCurrentDemand() == null) {
+			CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
+			DateTime dateTime = new DateTime(financialYear.getStartingDate());
 			final List<Installment> installmentList = sewerageTaxUtils
-					.getInstallmentsByModuleDesc(new DateTime().getYear());
+					.getInstallmentsByModuleDesc(dateTime.getYear());
 			for (final SewerageDemandDetail sdd : sewerageDemandDetail) {
 				final EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(sdd.getReasonMaster(),
 						sdd.getInstallmentId());
