@@ -114,6 +114,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_F
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 @Controller
 @RequestMapping(value = { "/vacancyremission" })
@@ -144,6 +145,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @Autowired
     public VacanyRemissionController(final VacancyRemissionService vacancyRemissionService,
@@ -165,11 +169,26 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     public List<DocumentType> documentsList(@ModelAttribute final VacancyRemission vacancyRemission) {
         return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISSION);
     }
+
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
-    public String newForm(final Model model,@ModelAttribute VacancyRemission vacancyRemission, @PathVariable final String assessmentNo, @PathVariable final String mode,
+    public String newForm(final Model model, @ModelAttribute VacancyRemission vacancyRemission,
+            @PathVariable final String assessmentNo, @PathVariable final String mode,
             @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
             @RequestParam(required = false) final String applicationSource) {
-        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
+        return vacancyRemissionForm(model, vacancyRemission, mode, meesevaApplicationNumber, request, applicationSource);
+    }
+    
+    @RequestMapping(value = "/create/form/{assessmentNo},{mode}", method = RequestMethod.POST)
+    public String wardSecretaryForm(final Model model, @ModelAttribute VacancyRemission vacancyRemission,
+            @PathVariable final String assessmentNo, @PathVariable final String mode,
+            @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
+            @RequestParam(required = false) final String applicationSource) {
+        return vacancyRemissionForm(model, vacancyRemission, mode, meesevaApplicationNumber, request, applicationSource);
+    }
+
+    private String vacancyRemissionForm(final Model model, VacancyRemission vacancyRemission, final String mode,
+            final String meesevaApplicationNumber, final HttpServletRequest request, final String applicationSource) {
+        BasicProperty basicProperty = vacancyRemission.getBasicProperty();
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
@@ -177,13 +196,17 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
             citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
             model.addAttribute("citizenPortalUser", citizenPortalUser);
-            if (propertyService.isWardSecretaryUser(loggedInUser)) {
+            boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                    ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                    : Boolean.FALSE;
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 if (ThirdPartyService.validateWardSecretaryRequest(
                         request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
                     model.addAttribute(ERROR_MSG, "WS.001");
                     return PROPERTY_VALIDATION_FOR_SPRING;
                 } else {
                     model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                    model.addAttribute("wsPortalRequest", request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
                 }
             }
             if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
@@ -342,7 +365,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
-        if (propertyService.isWardSecretaryUser(vacancyRemissionService.getLoggedInUser())
+        boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                : Boolean.FALSE;
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
                 && ThirdPartyService.validateWardSecretaryRequest(
                         request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
             model.addAttribute(ERROR_MSG, "Invalid Request. TransactionId or Source is not valid.");
@@ -395,7 +421,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
                         workFlowAction, propertyByEmployee, meesevaParams);
-            } else if (propertyService.isWardSecretaryUser(vacancyRemissionService.getLoggedInUser())) {
+            } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 vacancyRemissionService.saveVacancyRemissionAndPublishEvent(vacancyRemission, approvalPosition, approvalComent, workFlowAction,
                         propertyByEmployee, request);
 

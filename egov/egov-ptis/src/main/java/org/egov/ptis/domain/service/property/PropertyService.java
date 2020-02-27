@@ -2636,13 +2636,6 @@ public class PropertyService {
         return false;
     }
     
-    public Boolean isWardSecretaryUser(final User user) {
-        for (final Role role : user.getRoles())
-            if (role != null && WARDSCRETARY_OPERATOR_ROLE.equalsIgnoreCase( role.getName()))
-                return true;
-        return false;
-    }
-
     /**
      * Checks whether user is csc operator or not
      *

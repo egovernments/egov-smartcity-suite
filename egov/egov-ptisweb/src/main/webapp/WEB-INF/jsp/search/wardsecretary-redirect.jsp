@@ -274,6 +274,99 @@
 						value : wsPortalRequest
 					})).appendTo(document.body).submit();
 				}
+				if (applicationType == 'Tax_Exemption') {
+					var assessmentNo = '${assessmentNum}';
+					var namespace = '/ptis/exemption/form/wardsecretary/'.concat(assessmentNo);
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'assessmentNo',
+						name : 'assessmentNo',
+						value : assessmentNo
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'Demolition') {
+					var assessmentNo = '${assessmentNum}';
+					var namespace = '/ptis/property/demolition/form/'.concat(assessmentNo).concat('/').concat(applicationSource);
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'assessmentNo',
+						name : 'assessmentNo',
+						value : assessmentNo
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
+				if (applicationType == 'Vacancy_Remission') {
+					var assessmentNo = '${assessmentNum}';
+					var mode = '${mode}';
+					var namespace = '/ptis/vacancyremission/create/form/'.concat(assessmentNo).concat(',').concat(mode);
+					jQuery('<form>.').attr({
+						method : 'post',
+						action : namespace,
+						target : '_self'
+					}).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'assessmentNo',
+						name : 'assessmentNo',
+						value : assessmentNo
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'applicationSource',
+						name : 'applicationSource',
+						value : applicationSource
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'mode',
+						name : 'mode',
+						value : mode
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'transactionId',
+						name : 'transactionId',
+						value : transactionId
+					})).append(jQuery('<input>').attr({
+						type : 'hidden',
+						id : 'wsPortalRequest',
+						name : 'wsPortalRequest',
+						value : wsPortalRequest
+					})).appendTo(document.body).submit();
+				}
 			});
 </script>
 </head>

@@ -90,7 +90,11 @@ jQuery(document).on('click', "#Forward", function () {
 				</div>
 	</div>
 </c:if>
-<form:form id="vacancyRemissionForm" method="post"
+<c:if test="${wsPortalRequest == true}">
+	<c:set value="/ptis/vacancyremission/create/${property.basicProperty.upicNo},${mode}"
+		var="actionUrl" />
+</c:if>
+<form:form id="vacancyRemissionForm" method="post" action="${actionUrl}"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" enctype="multipart/form-data">
 	<div class="page-container" id="page-container">
         	<div class="main-content">
@@ -101,6 +105,7 @@ jQuery(document).on('click', "#Forward", function () {
 							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<form:hidden path="" name="applicationSource" value="${applicationSource}"/>
 							<form:hidden path="" name="transactionId" value="${transactionId}"/>
+							<form:hidden path="" name="wsPortalRequest" value="${wsPortalRequest}"/>
 							<div class="panel-body custom-form ">
 								<div class="panel-heading" style="text-align: left">
 									<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>

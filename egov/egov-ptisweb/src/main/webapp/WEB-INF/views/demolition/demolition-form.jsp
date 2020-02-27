@@ -69,7 +69,12 @@ body
 		</c:forEach>
 	</div>
 </c:if>
-<form:form id="demolition" method="post"
+<c:if test="${wsPortalRequest == true}">
+	<c:set
+		value="/ptis/property/demolition/${property.basicProperty.upicNo}/${applicationSource}"
+		var="actionUrl" />
+</c:if>
+<form:form id="demolition" method="post" action="${actionUrl}"
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
 		<div class="main-content">
@@ -84,6 +89,7 @@ body
 				value="${transactionId}" />
 			<input type="hidden" id="source" name="source"
 				value="${applicationSource}" />
+			<form:hidden path="" name="wsPortalRequest" value="${wsPortalRequest}"/>
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 			<jsp:include page="../common/ownerDetailsView.jsp"></jsp:include>
 

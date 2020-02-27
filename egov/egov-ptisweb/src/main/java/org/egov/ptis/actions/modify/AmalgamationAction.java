@@ -592,7 +592,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
         
-        if (propService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel,
                     PROPERTY_MODIFY_REASON_AMALG, transactionId);
         } else if (!propService.isMeesevaUser(securityUtils.getCurrentUser()))
