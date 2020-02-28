@@ -318,12 +318,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
             prepareWorkflow(model, property, new WorkflowContainer());
             target = TAX_EXEMPTION_FORM;
         } else {
-            if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
-                    && SOURCE_ONLINE.equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))
-                    && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()))
-                property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.TRUE));
-            else
-                property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.FALSE));
+            property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser,
+                    ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())));
             if (request.getParameter("taxExemptedReason") != null)
                 taxExemptedReason = request.getParameter("taxExemptedReason");
             if (request.getParameter("approvalComent") != null)
