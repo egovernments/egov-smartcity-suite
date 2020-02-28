@@ -226,8 +226,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
-    private String transactionId;
-    private String applicationSource;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -1496,20 +1494,5 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
-    }
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-    
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(String applicationSource) {
-        this.applicationSource = applicationSource;
     }
 }

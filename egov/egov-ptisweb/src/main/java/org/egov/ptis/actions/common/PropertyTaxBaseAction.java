@@ -238,6 +238,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected boolean thirdPartyCheckbox = false;
     protected boolean disableThirdPartyCheckbox = false;
     protected transient boolean wsPortalRequest;
+    protected String applicationSource;
+    protected String transactionId;
 
     @Autowired
     protected FinancialUtil financialUtil;
@@ -1362,6 +1364,22 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setWsPortalRequest(boolean wsPortalRequest) {
         this.wsPortalRequest = wsPortalRequest;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
 }

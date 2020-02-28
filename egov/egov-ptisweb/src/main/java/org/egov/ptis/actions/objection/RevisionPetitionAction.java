@@ -303,7 +303,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
-    private String applicationSource;
     private boolean isGenerateAck = true;
     private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private boolean isShowAckMessage;
@@ -312,7 +311,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean editOwnerDetails = false;
-    private String transactionId;
 
     @Autowired
     private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -2048,14 +2046,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(final String applicationSource) {
-        this.applicationSource = applicationSource;
-    }
-
     public boolean isGenerateAck() {
         return isGenerateAck;
     }
@@ -2115,13 +2105,5 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setEditOwnerDetails(boolean editOwnerDetails) {
         this.editOwnerDetails = editOwnerDetails;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 }

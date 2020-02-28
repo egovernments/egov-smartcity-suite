@@ -349,7 +349,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private transient List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
-    private String applicationSource;
     private boolean citizenPortalUser;
     private Long zoneId;
     private Long localityId;
@@ -361,7 +360,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean blockActive;
     private Boolean wardActive;
     private Boolean electionWardActive;
-    private String transactionId;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -2571,14 +2569,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.showAckBtn = showAckBtn;
     }
 
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(final String applicationSource) {
-        this.applicationSource = applicationSource;
-    }
-
     public boolean isCitizenPortalUser() {
         return citizenPortalUser;
     }
@@ -2665,13 +2655,5 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setElectionWardActive(final Boolean electionWardActive) {
         this.electionWardActive = electionWardActive;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 }
