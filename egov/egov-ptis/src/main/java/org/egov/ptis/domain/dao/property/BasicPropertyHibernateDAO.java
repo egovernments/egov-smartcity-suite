@@ -50,6 +50,7 @@ package org.egov.ptis.domain.dao.property;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -485,6 +486,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         return basicProperties;
     }
 
+    @ReadOnly
     @Override
     public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber,
             String propertyType, String doorNo) {

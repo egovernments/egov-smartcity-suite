@@ -233,6 +233,8 @@
     <bean id="bhudharDataSharingService" parent="abstractPersistenceService" scope="prototype">
          <constructor-arg name="type" value="org.egov.ptis.bean.aadharseeding.AadharSeeding" />
 	</bean>
+	<!-- Collection Integration Service Bean Ends-->
+	
 	<bean id="writeOffPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.WriteOff" />
     </bean>
@@ -240,6 +242,7 @@
     <bean id="WriteOffInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="writeOffPersistenceService"/>
     </bean>
-	 <!-- Collection Integration Service Bean Ends-->
+	
+	<bean id="propertyTaxService" class="org.egov.ptis.service.utils.PropertyTaxService"/>
 	
 </beans>

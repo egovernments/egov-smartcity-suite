@@ -71,6 +71,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.service.utils.PropertyTaxService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.web.security.oauth2.utils.TokenServiceUtils;
@@ -113,6 +114,9 @@ public class RestWaterConnectionCollection {
 
     @Autowired
     private TokenServiceUtils tokenServiceUtils;
+    
+    @Autowired
+    private PropertyTaxService propertyTaxService;
 
     /**
      * This method is used to pay the water tax.
@@ -237,7 +241,7 @@ public class RestWaterConnectionCollection {
             if (!consumerExists && ownerdetailsnotexists)
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             if (!consumerExists) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo,
+                propertyTaxDetailsList = propertyTaxService.getPropertyTaxDetails(assessmentNo,
                         waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo(), null, null);
                 if (propertyTaxDetailsList == null || propertyTaxDetailsList.isEmpty())
                     return JsonConvertor.convert(isEmptyWaterTaxDetails());
