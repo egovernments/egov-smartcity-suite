@@ -10,9 +10,9 @@ CREATE TABLE egpt_appeal_reason
 isactive boolean NOT NULL DEFAULT true
 );
 
-COMMENT ON TABLE egpt_appealpetition_reason IS 'Master table for property appeal petition list';
-COMMENT ON COLUMN egpt_appealpetition_reason.id IS 'Primary Key';
-COMMENT ON COLUMN egpt_appealpetition_reason.name IS 'Name of appeal petition reason';
+COMMENT ON TABLE egpt_appeal_reason IS 'Master table for property appeal petition list';
+COMMENT ON COLUMN egpt_appeal_reason.id IS 'Primary Key';
+COMMENT ON COLUMN egpt_appeal_reason.name IS 'Name of appeal petition reason';
 
 
 -------------------------document table for Appeal Petition--------------
