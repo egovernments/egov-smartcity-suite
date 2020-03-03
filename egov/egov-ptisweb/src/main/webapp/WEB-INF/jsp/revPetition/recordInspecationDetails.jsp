@@ -99,7 +99,7 @@
 							cssClass="datepicker"
 							name="objection.disposalDate"
 							 value="%{#disposalDates}" autocomplete="off"
-							id="disposalDate" size="12" maxlength="12" data-errormsg="disposal date is required!" ></s:textfield></td>	
+							id="disposalDate" size="12" maxlength="12" data-errormsg="disposal date is required!" onclick="validateDisposalDate()"></s:textfield></td>	
 							</s:if>
 				</tr>
 				<s:if

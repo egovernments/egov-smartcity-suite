@@ -1,0 +1,114 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="appealPetition-registerreport" pageWidth="695" pageHeight="852" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0a0a6bfd-1cdf-4285-89bc-0be3643eba33">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="5"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.ptis.domain.entity.property.*"/>
+	<import value="org.egov.infra.reporting.util.ReportUtil"/>
+	<parameter name="appealInfoList" class="java.util.List"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="selectedYear" class="java.lang.String"/>
+	<parameter name="cityGrade" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="168" splitType="Stretch">
+			<textField evaluationTime="Auto">
+				<reportElement x="10" y="4" width="640" height="25" uuid="1ae617d7-2e83-43b0-9cab-3b21245028ff">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityGrade}.equals("Corp") ? $P{cityName} + " Municipal Corporation": $P{cityGrade}.equals("NP") ? $P{cityName} + " Nagar Panchayat" : $P{cityName} + " Municipality"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="29" width="640" height="21" uuid="3d4b7593-6e06-45dc-a563-75b52231030e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Register of Appeals for the Year " + $P{selectedYear}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="70" width="655" height="35" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="dc11171c-63a9-4f61-9eda-32075f9cc64d"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{appealInfoList},false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("appealPetition-regiseter-subreport.jasper")]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="260" y="50" width="100" height="20" uuid="6d784e2d-58b9-4ff3-920c-ad313793ecd4"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<text><![CDATA[[Form-K]]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="119" splitType="Stretch"/>
+	</columnHeader>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

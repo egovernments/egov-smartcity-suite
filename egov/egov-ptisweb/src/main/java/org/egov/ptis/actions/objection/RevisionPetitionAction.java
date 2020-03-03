@@ -121,6 +121,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -183,6 +184,7 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.Apartment;
+import org.egov.ptis.domain.entity.property.AppealPetitionReasons;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
@@ -206,6 +208,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+import org.egov.ptis.domain.repository.AppealPetitionReason.AppealPetitionReasonRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.notice.NoticeService;
@@ -361,6 +364,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient PropertyThirdPartyService propertyThirdPartyService;
     @Autowired
     private ThirdPartyService thirdPartyService;
+    @Autowired
+    private transient AppealPetitionReasonRepository appealPetitionReasonRepository;
 
     public RevisionPetitionAction() {
 
@@ -461,6 +466,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         assessmentDocumentTypesRP = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
         setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES_RP);
         addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
+        addDropdownData("appealReasonList", appealPetitionReasonRepository.findAll());
     }
 
     /**
@@ -590,6 +596,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
             objection.setType(getWfType());
             propertyId = objection.getBasicProperty().getUpicNo();
+            if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType()) && objection.getReasons()!=null)
+                objection.setAppealReasons(getAppealReasonDetails(objection));
             addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                     approverComments, approverName));
             checkToDisplayAckButton();
@@ -1342,6 +1350,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
+        List<String> reasonList = objection.getAppealReasons().stream().map(AppealPetitionReasons::getDescription)
+                .collect(Collectors.toList());
+         objection.setReasons(String.join(",", reasonList));
         return "view";
     }
 
@@ -1642,6 +1653,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     }
 
+    public List<AppealPetitionReasons> getAppealReasonDetails(Petition petition) {
+        String[] appeal = petition.getReasons().split(",");
+        List<AppealPetitionReasons> appealList = new ArrayList<>();
+        for (String value : appeal) {
+            appealList.add(appealPetitionReasonRepository.findByCode(value.trim()));
+        }
+        return appealList;
+
+    }
+    
     public List<Floor> getFloorDetails() {
         return new ArrayList<>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }

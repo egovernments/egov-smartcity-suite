@@ -225,7 +225,34 @@
 		</td>
 	</tr>
 </table> <!--View Objection Details -  End -->
+<s:if
+	test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<th class="bluebgheadtd"><s:if
+					test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<s:text name="appeal.ground"></s:text>
+				</s:if></th>
+			<th class="bluebgheadtd"><s:if
+					test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<s:text name="appeal.others"></s:text>
+				</s:if></th>
+		</tr>
+		<tr>
+			<td class="blueborderfortd">
+				<div align="center">
+					<s:property default="N/A" value="%{reasons}" />
+				</div>
+			</td>
 
+			<td class="blueborderfortd">
+				<div align="center">
+					<s:property default="N/A" value="%{appealOtherRemarks}" />
+				</div>
+			</td>
+		</tr>
+	</table>
+</s:if>
 
 <!--View Hearing Details -  Start -->
 <s:if test="hearings!=null && hearings.size() >0 ">

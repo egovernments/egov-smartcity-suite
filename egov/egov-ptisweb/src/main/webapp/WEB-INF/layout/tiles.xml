@@ -904,4 +904,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/billcollectioncollection-form.jsp" />
 	</definition>
+	<definition name="appealpetitionreport-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.appeal.report.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/appealpetitionreport-form.jsp" />
+	</definition>
 </tiles-definitions> 

@@ -222,4 +222,28 @@ jQuery(document).ready(function() {
 	jQuery('#ownerdetails').hide();
 	jQuery('#docdetails').hide();
 	jQuery('#attachments').hide();
+	jQuery("option:selected").removeAttr("selected", false);
+	jQuery('#ordersdeatils').hide();
 });
+
+function validateDisposalDate() {
+	jQuery('#disposalDates').datepicker(new Date());
+}
+function getdropdownvalues() {
+	var value = jQuery("#appealDropDownList").val();
+	for (i = 0; i < value.length; i++) {
+		if (value[i] == "Others") {
+			jQuery("#appealDropDownList option:selected").removeAttr(
+					"selected", false);
+			jQuery("#appealDropDownList").prop('selected', true);
+			jQuery('#ordersdeatils').show();
+			return false;
+		}
+	}
+	jQuery('#appealDropDownList option').mousedown(function(e) {
+		e.preventDefault();
+		jQuery(this).prop('selected', !jQuery(this).prop('selected'));
+		return false;
+	});
+
+}
