@@ -126,11 +126,11 @@
 						<td style="padding-top:15px;"><s:select id="appealDropDownList" name="reasons"
 								headerKey="0" list="dropdownData.appealReasonList"
 								listKey="code" listValue="description"  multiple="true" size="8"
-								onclick="getdropdownvalues(this)" /></td>
+								onclick="getdropdownvalues()" /></td>
 								<div id="ordersdeatils">
-						<td class="greybox"  id="orders"><s:text name="appeal.others" />
-						<td class="greybox" width="30%" id="ordersdeatils"><s:textarea
-								cssClass="form-control" name="appealOtherReamrks"  cols="40"
+						<td class="greybox"  id="orderstext"><s:text name="appeal.ground" /><span class="mandatory1">*</span></td>
+						<td class="greybox" width="30%" id="ordersdetails"><s:textarea
+								cssClass="form-control" name="appealOtherRemarks"  cols="40"
 								rows="2" onblur="checkLength(this)">
 							</s:textarea></td>
 							</div>

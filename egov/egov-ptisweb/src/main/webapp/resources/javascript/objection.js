@@ -223,21 +223,28 @@ jQuery(document).ready(function() {
 	jQuery('#docdetails').hide();
 	jQuery('#attachments').hide();
 	jQuery("option:selected").removeAttr("selected", false);
-	jQuery('#ordersdeatils').hide();
+	jQuery('[id="ordersdetails"]').hide();
+	jQuery('[id="orderstext"]').hide();
 });
 
 function validateDisposalDate() {
-	jQuery('#disposalDates').datepicker(new Date());
+	jQuery('#disposalDate').datepicker('setEndDate', new Date());
 }
+
 function getdropdownvalues() {
 	var value = jQuery("#appealDropDownList").val();
 	for (i = 0; i < value.length; i++) {
-		if (value[i] == "Others") {
+		if (value[i] == "OTHERS") {
 			jQuery("#appealDropDownList option:selected").removeAttr(
 					"selected", false);
-			jQuery("#appealDropDownList").prop('selected', true);
-			jQuery('#ordersdeatils').show();
+			jQuery("select option[value='OTHERS']").prop("selected", true);
+			jQuery('[id="ordersdetails"]').show();
+			jQuery('[id="orderstext"]').show();
 			return false;
+		} else if (value[i] != "OTHERS") {
+			jQuery("select option[value='OTHERS']").prop("selected", false);
+			jQuery('[id="ordersdetails"]').hide();
+			jQuery('[id="orderstext"]').hide();
 		}
 	}
 	jQuery('#appealDropDownList option').mousedown(function(e) {

@@ -1659,6 +1659,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         for (String value : appeal) {
             appealList.add(appealPetitionReasonRepository.findByCode(value.trim()));
         }
+        if(!appealList.stream().anyMatch(o -> o.getCode().contains("OTHERS")))
+            objection.setAppealOtherRemarks("");
         return appealList;
 
     }

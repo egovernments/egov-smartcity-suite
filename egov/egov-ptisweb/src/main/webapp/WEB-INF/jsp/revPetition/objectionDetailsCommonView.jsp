@@ -235,7 +235,7 @@
 				</s:if></th>
 			<th class="bluebgheadtd"><s:if
 					test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
-					<s:text name="appeal.others"></s:text>
+					<s:text name="appeal.ground"></s:text>
 				</s:if></th>
 		</tr>
 		<tr>
