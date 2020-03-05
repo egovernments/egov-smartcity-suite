@@ -91,7 +91,7 @@ public class CaptchaServlet implements HttpRequestHandler {
         } catch (IOException | RuntimeException e) {
             LOG.error("Error in fetching recaptch image", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            throw new ApplicationRuntimeException(e.getMessage());
+            return;
         }
     }
 }
