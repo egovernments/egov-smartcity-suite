@@ -504,6 +504,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionError(getText("cannot.apply.appeal.petition"));
             return COMMON_FORM;
         }
+         final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProperty);
+         if (totalDue.compareTo(BigDecimal.ZERO) > 0) {
+             isGenerateAck = false;
+             addActionError(getText("tax.dues.error"));
+             return COMMON_FORM;
+         }
         }
         getPropertyView(propertyId);
         if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
