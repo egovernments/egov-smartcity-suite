@@ -246,7 +246,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
     {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
         final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
-                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
+                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and a.toDate >= current_date() and bill.state.id in (:IDS)";
         int size = stateIds.size();
         if (size > 999)
         {
