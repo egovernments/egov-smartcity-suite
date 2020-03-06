@@ -166,6 +166,8 @@ import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+    import org.egov.ptis.domain.entity.property.Test;
+    import org.egov.ptis.domain.entity.property.TestMaterlizeView;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.WallType;
@@ -178,6 +180,8 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.TestMaterlizeViewRepository;
+import org.egov.ptis.domain.repository.TestRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -314,6 +318,10 @@ public class PropertyService {
 
     @Autowired
     private PropertyHibernateDAO propertyHibernateDAO;
+    @Autowired
+    private TestMaterlizeViewRepository propertyMaterlizeViewRepository;
+    @Autowired
+    private TestRepository testRepository;
 
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -2967,6 +2975,14 @@ public class PropertyService {
     }
 
     public Map<String, Object> getMobileNumberQuery(final String mobileNumber) {
+      /*  Test test=new Test();
+        test.setId(2); 
+        test.setMobileNumber("1234567890");
+        testRepository.save(test);*/  
+        Test test_load =testRepository.findById(2);
+        Test test_load_mobile=testRepository.findByMobileNumber(mobileNumber);
+        List<TestMaterlizeView> temp=   propertyMaterlizeViewRepository.findBymobileNumberAndId(mobileNumber,2);
+        TestMaterlizeView temp_load=   propertyMaterlizeViewRepository.findById(2);  
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final String where = "where pmv.isActive = true and pmv.mobileNumber = ? ";
