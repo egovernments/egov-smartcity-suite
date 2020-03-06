@@ -70,7 +70,6 @@ public class ModuleService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    @ReadOnly
     public Module getModuleByName(String moduleName) {
         return moduleRepository.findByName(moduleName);
     }
