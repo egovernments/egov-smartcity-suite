@@ -486,7 +486,6 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         return basicProperties;
     }
 
-    @ReadOnly
     @Override
     public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber,
             String propertyType, String doorNo) {

@@ -54,7 +54,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ER
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -65,7 +64,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class PropertyTaxService {
 
     private static final String ASSESSMENT = "Assessment";
@@ -76,7 +74,6 @@ public class PropertyTaxService {
     @Autowired
     private PropertyExternalService propertyExternalService;
 
-    @ReadOnly
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
             final String mobileNumber, final String category, final String doorNo) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo,
