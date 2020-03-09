@@ -51,6 +51,7 @@ package org.egov.infra.admin.master.service;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.repository.ActionRepository;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,7 @@ public class ActionService {
         return actionRepository.save(action);
     }
 
+    @ReadOnly
     public Action getActionByUrlAndContextRoot(String url, String contextRoot) {
         Action action;
         if (url.contains("?")) {
