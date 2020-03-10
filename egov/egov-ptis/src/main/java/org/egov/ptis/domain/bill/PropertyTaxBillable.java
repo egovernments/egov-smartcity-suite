@@ -461,7 +461,7 @@ public class PropertyTaxBillable extends AbstractBillable implements LatePayPena
         BigDecimal collection = BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
 
-        if (getLevyPenalty()) {
+        if (getLevyPenalty() && !instWiseDmdMap.isEmpty()) {
 
             installmentWisePenaltyDemandDetail = penaltyCalculationService.getInstallmentWisePenaltyDemandDetails(
                     getBasicProperty().getProperty(), currentDemand);
