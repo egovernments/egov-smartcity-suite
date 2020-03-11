@@ -96,7 +96,6 @@ public class PropertyTaxService {
         return propTxDetailsList;
     }
 
-    @ReadOnly
     public List<String> getAssessmentsByOwnerOrMobile(final String assessmentNo, final String ownerName,
             final String mobileNumber) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo,
