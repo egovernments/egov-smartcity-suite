@@ -214,7 +214,7 @@ public class RestWaterConnectionCollection {
             waterTaxDetailsList.add(watertaxDetails);
             return JsonConvertor.convert(waterTaxDetailsList);
         } else {
-            List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<>();
+            List<String> assessmentNosList = new ArrayList<>();
             String assessmentNo = "";
 
             boolean consumerExists = false;
@@ -241,18 +241,18 @@ public class RestWaterConnectionCollection {
             if (!consumerExists && ownerdetailsnotexists)
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             if (!consumerExists) {
-                propertyTaxDetailsList = propertyTaxService.getPropertyTaxDetails(assessmentNo,
-                        waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo(), null, null);
-                if (propertyTaxDetailsList == null || propertyTaxDetailsList.isEmpty())
+				assessmentNosList = propertyTaxService.getAssessmentsByOwnerOrMobile(assessmentNo,
+						waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo());
+				if (assessmentNosList == null || assessmentNosList.isEmpty())
                     return JsonConvertor.convert(isEmptyWaterTaxDetails());
             }
             List<String> consumerCodesList = new ArrayList<>();
             if (consumerExists && !ownerdetailsnotexists)
                 consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
             else
-                for (PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
+                for (String upicNo : assessmentNosList) {
                     List<WaterConnection> waterConnectionList = waterConnectionService
-                            .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
+                            .findByPropertyIdentifier(upicNo);
                     for (WaterConnection waterconnection : waterConnectionList)
                         consumerCodesList.add(waterconnection.getConsumerCode());
                 }
