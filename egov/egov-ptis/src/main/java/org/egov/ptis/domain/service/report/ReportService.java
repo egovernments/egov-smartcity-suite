@@ -606,6 +606,7 @@ public class ReportService {
      * @return @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection
      * Details
      */
+    @ReadOnly
     public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
             final List<String> propertyTypes) {
 
