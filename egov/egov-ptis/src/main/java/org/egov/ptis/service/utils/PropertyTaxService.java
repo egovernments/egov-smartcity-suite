@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ER
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -61,7 +62,6 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PropertyTaxService {
@@ -96,4 +96,15 @@ public class PropertyTaxService {
         return propTxDetailsList;
     }
 
+    @ReadOnly
+    public List<String> getAssessmentsByOwnerOrMobile(final String assessmentNo, final String ownerName,
+            final String mobileNumber) {
+        final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo,
+                ownerName, mobileNumber);
+        List<String> assessmentList = new ArrayList<String>();
+        if (!basicProperties.isEmpty()) {
+            basicProperties.forEach(basicProperty -> assessmentList.add(basicProperty.getUpicNo()));
+        }
+        return assessmentList;
+    }
 }
