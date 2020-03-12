@@ -161,13 +161,15 @@ public class ViewPropertyAction extends BaseFormAction {
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
             else if (applicationNo != null && !applicationNo.isEmpty()) {
-                    getBasicPropForAppNo(applicationNo, applicationType);
+                getBasicPropForAppNo(applicationNo, applicationType);
                 setPropertyId(basicProperty.getUpicNo());
             }
-            if (property == null)
+            Ptdemand ptDemand = null;
+            if (getBasicProperty() != null && property == null) {
                 property = (PropertyImpl) getBasicProperty().getProperty();
-            Collections.sort(getBasicProperty().getPropertyOwnerInfo(), new OwnerNameComparator());
-            final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                Collections.sort(getBasicProperty().getPropertyOwnerInfo(), new OwnerNameComparator());
+                ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            }
             if (ptDemand == null) {
                 setErrorMessage("No Tax details for current Demand period.");
                 return "view";
@@ -177,11 +179,11 @@ public class ViewPropertyAction extends BaseFormAction {
             checkIsDemandActive(property);
             viewMap.put("doorNo", getBasicProperty().getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                     : getBasicProperty().getAddress().getHouseNoBldgApt());
-			viewMap.put("ownerAddress",
-					getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().isEmpty() ? NOT_AVAILABLE
-							: getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().get(0)
-									.toString());
-			viewMap.put("ownershipType", basicProperty.getProperty() != null
+            viewMap.put("ownerAddress",
+                    getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().isEmpty() ? NOT_AVAILABLE
+                            : getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().get(0)
+                                    .toString());
+            viewMap.put("ownershipType", basicProperty.getProperty() != null
                     ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
                     : property.getPropertyDetail().getPropertyTypeMaster()
                             .getType());
@@ -195,7 +197,8 @@ public class ViewPropertyAction extends BaseFormAction {
                         viewMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         viewMap.put(
                                 "firstHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
+                                        ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
                                         : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
                         viewMap.put(
                                 "firstHalfEC",
@@ -217,7 +220,8 @@ public class ViewPropertyAction extends BaseFormAction {
                         viewMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
                         viewMap.put(
                                 "secondHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
+                                        ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
                                         : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
                         viewMap.put(
                                 "secondHalfEC",
@@ -252,7 +256,7 @@ public class ViewPropertyAction extends BaseFormAction {
             PropertyStatusValues statusValues = propertyTaxCommonUtils.getPropStatusValues(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
-            
+
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null) {
                 setRoleName(getRolesForUserId(userId));
@@ -260,10 +264,10 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (StringUtils.isNotBlank(applicationNo))
                 return "viewApplication";
-			else {
-				getPropertyDocumentDetails();
-				return "view";
-			}
+            else {
+                getPropertyDocumentDetails();
+                return "view";
+            }
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             return "viewApplicationError";
