@@ -297,7 +297,9 @@ public class SewerageNoticeService {
             reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("estimationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("cityLogo", cityService.getCityLogoURL());
-            reportParams.put("estimationNumber", sewerageApplicationDetails.getEstimationNumber());
+			reportParams.put("estimationNumber",
+					StringUtils.isNotBlank(sewerageApplicationDetails.getEstimationNumber())
+							? sewerageApplicationDetails.getEstimationNumber() : "NA");
             reportParams.put(ASSESSMENT_NO, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             if (sewerageApplicationDetails.getCurrentDemand() != null)
                 for (final EgDemandDetails egDmdDetails : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails())
