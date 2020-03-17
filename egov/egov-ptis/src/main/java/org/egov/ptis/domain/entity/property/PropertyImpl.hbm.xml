@@ -180,11 +180,11 @@
 		</bag>
 		<one-to-one name="gisDetails"
 			class="org.egov.ptis.domain.entity.property.GisDetails" property-ref="applicationProperty"
-			cascade="all" />
+			cascade="all" fetch="select" />
 
 		<one-to-one name="demandVoucher"
 			class="org.egov.ptis.domain.model.demandvoucher.PropertyDemandVoucher"
-			property-ref="property" cascade="all" />
+			property-ref="property" cascade="all" fetch="select" />
 	</class>
 
 	<query name="PROPERTYIMPL_BYID">
