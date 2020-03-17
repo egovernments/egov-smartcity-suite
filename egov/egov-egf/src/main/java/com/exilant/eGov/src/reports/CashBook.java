@@ -715,8 +715,9 @@ public class CashBook {
                 + " AND gl.voucherHeaderId = gl1.voucherHeaderId AND f.id=vh.fundId "
                 + effTime
                 + " AND gl1.glcode in (SELECT GLCODE FROM CHARTOFACCOUNTS WHERE PURPOSEID=4 or purposeid=5) "
-                + " AND vh.id in ("
+                + " AND exists ("
                 + engineQry
+                + " and voucher.id = vh.id"
                 + " )"
                 + " AND (gl.debitamount>0 OR gl.creditamount>0)  "
                 + " order by \"vDate\",\"vhid\",\"order\" desc ";
