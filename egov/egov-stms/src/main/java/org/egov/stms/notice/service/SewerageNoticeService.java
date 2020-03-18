@@ -301,16 +301,13 @@ public class SewerageNoticeService {
 					StringUtils.isNotBlank(sewerageApplicationDetails.getEstimationNumber())
 							? sewerageApplicationDetails.getEstimationNumber() : "NA");
             reportParams.put(ASSESSMENT_NO, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            if (sewerageApplicationDetails.getCurrentDemand() != null)
-                for (final EgDemandDetails egDmdDetails : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails())
-                    if (egDmdDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                        donationCharges = egDmdDetails.getAmount().subtract(egDmdDetails.getAmtCollected());
             // TODO: CHECK THIS LOGIC AGAIN. IF FEE TYPE IS ESTIMATION FEES,
             // THEN WE NEED TO GROUP ALL FEESES.
             for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()){
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE))
                     estimationCharges = BigDecimal.valueOf(scf.getAmount());
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
+                	donationCharges = BigDecimal.valueOf(scf.getAmount());
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
                     sewerageCharges = BigDecimal.valueOf(scf.getAmount());
             }
