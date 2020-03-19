@@ -50,7 +50,9 @@
 $(document).ready( function () {
 	
 	var updateurl;
-	var isWardSecretary = $('#isWardSecretaryOperator').val();
+	var wsSource = $('#wsSource').val();
+	var wsTransactionId = $('#wsTransactionId').val();
+	var wsPortalRequest = $('#wsPortalRequest').val();
 	 updateurl='/mrs/reissue/create/';
 	
 
@@ -114,75 +116,88 @@ $(document).ready( function () {
 									return row.applicationNo;
 								}
 							},
-							"sClass" : "text-left"
-						}, {
-							"data" : "registrationDate",
-							"sClass" : "text-left"
-						}, {
-							"data" : "dateOfMarriage",
-							"sClass" : "text-left"
-						}, {
-							"data" : "husbandName",
-							"sClass" : "text-left"
-						}, {
-							"data" : "wifeName",
-							"sClass" : "text-left"
-						}, {
-							"data" : "feePaid",
-							"sClass" : "text-left"
-						},{
-							"data" : "status",
-							"sClass" : "text-left"
-						},{
-							"data" : "marriageRegistrationUnit",
-							"sClass" : "text-left"
-						},
-						{
-							"data" : null,
-						    sortable: false,
-						    "render": function ( data, type, row, meta ) {
-							        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
-							        
-						    }
-						
-						}]
-					 });
-					 $('#errorsDiv').hide();
-				} else if (response.error){
-					$('#errorsDiv').show();
-					$("#errorTable").dataTable({
-		    			"aaData":response.error,
-		    			"bDestroy": true,
-		    			"autoWidth": true, searching: false, paging: false, info: false,
-		    			"columns" : [
-		    		      { "data" : "errorMessage", "title":"Errors"},
-		    			  ],
-		                  "columnDefs": [
-		                                 {"className": "dt-center", "targets": "_all"}
-		                               ],
-		                               "createdRow": function( row, data, dataIndex){
-		                                    $(row).css('color', '#FF0000');
-		                                 }
-		    			});
-		            $('#searchResultsDiv').hide();
-		            $('#searchResultsLabelDiv').hide();
-				}
-			},
-			error : function (response) {
-				console.log(" ------------ failed ------------ ");
-			}
-		});
+							"bDestroy" : true,
+							"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+							"aLengthMenu" : [
+									[ 10, 25, 50, -1 ],
+									[ 10, 25, 50, "All" ] ],
+							"oTableTools" : {
+								"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+								"aButtons" : [ "xls", "pdf",
+										"print" ]
+							},
+							aaSorting : [],
+							columns : [{
+								"data" : "registrationNo",
+								render: function(data, type, row, meta){
+									 if(row.registrationNo == 'undefined' || row.registrationNo == '')
+									 {
+									 return "N/A";
+									 } else{
+										 return row.registrationNo;
+									 }
+							},
+								"sClass" : "text-left"
+							}, {
+								"data" : "applicationNo",
+								render : function(data,
+										type, row, meta) {
+									if (row.applicationNo == 'undefined'
+											|| row.applicationNo == '') {
+										return "N/A";
+									} else {
+										return row.applicationNo;
+									}
+								},
+								"sClass" : "text-left"
+							}, {
+								"data" : "registrationDate",
+								"sClass" : "text-left"
+							}, {
+								"data" : "dateOfMarriage",
+								"sClass" : "text-left"
+							}, {
+								"data" : "husbandName",
+								"sClass" : "text-left"
+							}, {
+								"data" : "wifeName",
+								"sClass" : "text-left"
+							}, {
+								"data" : "feePaid",
+								"sClass" : "text-left"
+							},{
+								"data" : "status",
+								"sClass" : "text-left"
+							},{
+								"data" : "marriageRegistrationUnit",
+								"sClass" : "text-left"
+							},
+							{
+								"data" : null,
+							    sortable: false,
+							    "render": function ( data, type, row, meta ) {
+							    	var reissueUrl;
+							    	if(wsSource == 'WARDSECRETARY')
+							    		reissueUrl = updateurl+'form/'+row.id;
+							    	else
+							    		reissueUrl = updateurl+row.id;
+							    		
+								        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+reissueUrl +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
+								        
+							    }
+							
+							}]
+							
+						});
 	}
 
 	$(document).on('click','.reissue',function(){
 	    var url = $(this).val();
-	    if(isWardSecretary){
-	    	url = url+'?wsTransactionId='+$('#wsTransactionId').val()+'&wsSource='+$('#wsSource').val();
-	    }
-	    if(url){
+	    if(wsSource == 'WARDSECRETARY')
+	    	reissueForm(url);
+	    else if(url){
 	    	openPopup(url);
 	    }
-	    
 	});
 
 	function openPopup(url)
@@ -190,7 +205,28 @@ $(document).ready( function () {
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 	}
 
-
+	function reissueForm(reissueUrl) {
+		jQuery('<form>.').attr({
+			method : 'POST',
+			action : reissueUrl,
+			target : '_self'
+		}).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsTransactionId',
+			name : 'wsTransactionId',
+			value : wsTransactionId
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsSource',
+			name : 'wsSource',
+			value : wsSource
+		})).append(jQuery('<input>').attr({
+			type : 'hidden',
+			id : 'wsPortalRequest',
+			name : 'wsPortalRequest',
+			value : wsPortalRequest
+		})).appendTo(document.body).submit();
+	}
 	
 });
 

@@ -52,6 +52,7 @@ import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.domain.entity.property.AppealPetitionReasons;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -113,6 +114,9 @@ public class Petition extends StateAware<Position> implements Auditable {
     private String source;
     private Date disposalDate;
     private String appellateComments;
+    private List<AppealPetitionReasons> appealReasons;
+    private String reasons;
+    private String appealOtherRemarks;
     
     @Override
     public String getStateDetails() {
@@ -332,5 +336,27 @@ public class Petition extends StateAware<Position> implements Auditable {
 
     public void setAppellateComments(String appellateComments) {
         this.appellateComments = appellateComments;
+    }
+    public List<AppealPetitionReasons> getAppealReasons() {
+        return appealReasons;
+    }
+
+    public void setAppealReasons(List<AppealPetitionReasons> appealReasons) {
+        this.appealReasons = appealReasons;
+    }
+ 
+    public String getAppealOtherRemarks() {
+        return appealOtherRemarks;
+    }
+
+    public void setAppealOtherRemarks(String appealOtherRemarks) {
+        this.appealOtherRemarks = appealOtherRemarks;
+    }
+    public String getReasons() {
+        return reasons;
+    }
+
+    public void setReasons(String reasons) {
+        this.reasons = reasons;
     }
 }

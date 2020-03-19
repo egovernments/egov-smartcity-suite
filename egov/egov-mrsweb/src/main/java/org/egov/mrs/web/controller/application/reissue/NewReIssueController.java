@@ -48,6 +48,17 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.mrs.application.MarriageConstants.WARDSECRETARY_WSPORTAL_REQUEST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -136,6 +147,8 @@ public class NewReIssueController extends GenericWorkFlowController {
 
     @Autowired
     private RegistrationWorkflowService registrationWorkFlowService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public void prepareNewForm(final Model model, final ReIssue reIssue) {
         model.addAttribute("marriageRegistrationUnit",
@@ -155,12 +168,35 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
     }
 
-    @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
-    public String showReIssueForm(@PathVariable final Long registrationId, final Model model, HttpServletRequest request) {
+	@RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
+	public String showReIssueForm(@PathVariable final Long registrationId, final Model model,
+			HttpServletRequest request) {
+		return prepareReissueForm(registrationId, model, request);
+	}
+    
+	@RequestMapping(value = "/create/form/{registrationId}", method = RequestMethod.POST)
+	public String showReIssueFormForWardSecretary(@PathVariable final Long registrationId, final Model model,
+			HttpServletRequest request) {
+		return prepareReissueForm(registrationId, model, request);
+	}
 
-        final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
+	private String prepareReissueForm(final Long registrationId, final Model model, HttpServletRequest request) {
+		final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
         final User logedinUser = securityUtils.getCurrentUser();
-        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (isWardSecretaryUser) {
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		}
         if (registration == null) {
             model.addAttribute(MESSAGE, "msg.invalid.request");
             return "marriagecommon-error";
@@ -176,21 +212,10 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
-		if (isWardSecretaryUser) {
-			String wsTransactionId = request.getParameter("wsTransactionId");
-			String wsSource = request.getParameter("wsSource");
-			if (isWardSecretaryUser
-					&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-				throw new ApplicationRuntimeException("WS.001");
-			else {
-				model.addAttribute("wsTransactionId", wsTransactionId);
-				model.addAttribute("wsSource", wsSource);
-			}
-		}
         prepareNewForm(model, reIssue);
 
         return "reissue-form";
-    }
+	}
 
     private void prepareWorkFlowForReIssue(final ReIssue reIssue, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
@@ -210,14 +235,17 @@ public class NewReIssueController extends GenericWorkFlowController {
             final RedirectAttributes redirectAttributes) {
         final User logedinUser = securityUtils.getCurrentUser();
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
-        boolean isWardSecretaryUser = registrationWorkFlowService.isWardSecretaryUser(logedinUser);
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+		
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
-		String wsTransactionId = request.getParameter("wsTransactionId");
-		String wsSource = request.getParameter("wsSource");
-		if (isWardSecretaryUser
-				&& ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
-			throw new ApplicationRuntimeException("WS.001");
         
         marriageFormValidator.validateReIssue(reIssue, errors);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee);
@@ -254,7 +282,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 			appNo = reIssueService.reIssueCertificateAndPublishEventForWardSecretary(reIssue, request,
 					workflowContainer, isWardSecretaryUser);
 		} else {
-			appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
+			appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer, isWardSecretaryUser);
 		}
         
                 if (!reIssue.isValidApprover()) {

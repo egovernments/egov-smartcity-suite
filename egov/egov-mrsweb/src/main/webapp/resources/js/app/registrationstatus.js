@@ -219,7 +219,7 @@ $(document)
 												render : function(data,
 														type, row, meta) {
 													return parseInt(row.cancelledCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
-															+ 'regunit='
+															+ 'registrationunit='
 															+ row.registrationUnit
 															+ '&'
 															+ 'status=CANCELLED'

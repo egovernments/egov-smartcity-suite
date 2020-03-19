@@ -362,7 +362,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private transient List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
-    private String applicationSource;
     private boolean citizenPortalUser;
     private Long zoneId;
     private Long localityId;
@@ -374,8 +373,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean blockActive;
     private Boolean wardActive;
     private Boolean electionWardActive;
-    private boolean isWardSecretaryUser;
-    private String transactionId;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -436,6 +433,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public ModifyPropertyAction() {
         super();
@@ -464,6 +464,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             return COMMON_FORM;
         }
         String target;
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return MEESEVA_ERROR;
+        }
         target = populateFormData(Boolean.FALSE);
         isMeesevaUser = propService.isMeesevaUser(currentUser);
         if (isMeesevaUser)
@@ -472,9 +476,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-        isWardSecretaryUser = propService.isWardSecretaryUser(currentUser);
 
-        if (isWardSecretaryUser
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
                 && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return COMMON_FORM;
@@ -691,8 +694,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             allowEditDocument = Boolean.TRUE;
         }
         checkToDisplayAckButton();
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return NEW;
@@ -771,7 +773,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
         
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel, modifyRsn, transactionId);
         } else if (!isMeesevaUser)
             basicPropertyService.update(basicProp);
@@ -2564,14 +2566,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.showAckBtn = showAckBtn;
     }
 
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(final String applicationSource) {
-        this.applicationSource = applicationSource;
-    }
-
     public boolean isCitizenPortalUser() {
         return citizenPortalUser;
     }
@@ -2658,13 +2652,5 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setElectionWardActive(final Boolean electionWardActive) {
         this.electionWardActive = electionWardActive;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 }

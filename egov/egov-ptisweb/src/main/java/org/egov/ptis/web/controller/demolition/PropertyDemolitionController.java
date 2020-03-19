@@ -103,6 +103,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_SOURCE_CODE;
 
 @Controller
@@ -138,6 +139,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable("assessmentNo") String assessmentNo) {
@@ -151,6 +155,18 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     public String newForm(@ModelAttribute PropertyImpl property, final Model model,
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @PathVariable("applicationSource") String applicationSource, final HttpServletRequest request) {
+        return demolitionForm(property, model, meesevaApplicationNumber, applicationSource, request);
+    }
+    
+    @PostMapping(value = "/form/{assessmentNo}/{applicationSource}")
+    public String wardSecretaryForm(@ModelAttribute PropertyImpl property, final Model model,
+            @RequestParam(required = false) final String meesevaApplicationNumber,
+            @PathVariable("applicationSource") String applicationSource, final HttpServletRequest request) {
+        return demolitionForm(property, model, meesevaApplicationNumber, applicationSource, request);
+    }
+
+    private String demolitionForm(PropertyImpl property, final Model model, final String meesevaApplicationNumber,
+            String applicationSource, final HttpServletRequest request) {
         BasicProperty basicProperty = property.getBasicProperty();
         if (basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
@@ -159,6 +175,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         }
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
         User loggedInUser = securityUtils.getCurrentUser();
+        boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                : Boolean.FALSE;
         if (hasChildPropertyUnderWorkflow) {
             model.addAttribute(ERROR_MSG, "error.msg.child.underworkflow");
             return PROPERTY_VALIDATION_FOR_SPRING;
@@ -182,13 +201,14 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             else
                 property.setMeesevaApplicationNumber(meesevaApplicationNumber);
 
-        if (propertyService.isWardSecretaryUser(loggedInUser)) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
                 model.addAttribute(ERROR_MSG, "WS.001");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             } else {
                 model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                model.addAttribute("wsPortalRequest", request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
             }
         }
         model.addAttribute("property", property);
@@ -241,7 +261,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
         Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
-        if (propertyService.isWardSecretaryUser(loggedInUser) && ThirdPartyService.validateWardSecretaryRequest(
+        boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                : Boolean.FALSE;
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && ThirdPartyService.validateWardSecretaryRequest(
                 request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
             errorMessages.put("ws.source.invalid", "WS.001");
         }
@@ -264,7 +287,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 				}
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams);
-                     	} else if (propertyService.isWardSecretaryUser(loggedInUser)) {
+                     } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                                propertyDemolitionService.savePropertyAndPublishEvent(property.getBasicProperty().getActiveProperty(), property,
                                 status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
                      	} else {

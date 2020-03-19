@@ -612,7 +612,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 						initiatorNotPresent = true;
 				}
 				if (initiatorNotPresent) {
-					model.addAttribute("noActiveJAOrAE", "Junior Assistant/Senior Assistant assignment is not active, please check");
+					model.addAttribute("noActiveJAOrSA", "Junior Assistant/Senior Assistant assignment is not active, please check");
+					model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
 					return NEWCONNECTION_EDIT;
 				}
 			}

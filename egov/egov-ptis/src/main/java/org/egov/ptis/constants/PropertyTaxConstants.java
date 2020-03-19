@@ -1867,4 +1867,8 @@ public interface PropertyTaxConstants {
     //Red Notice
     public static final String NOTICE_TYPE_RED_NOTICE = "Red Notice";
     public static final String TEMPLATENAME_MAIN_RED_NOTICE = "mainRedNotice";
+  //Appeal Report
+    public static final String APPEAL_FINANCIAL_START_DATE = "01/04/2019";
+    public static final String APPEAL_REPORT_TEMPLATE = "appealPetition-registerreport";
+   
 }

@@ -107,7 +107,7 @@ public class AdTaxSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandGenerationCron.setJobDetail(adtaxDemandGenerationJobDetail().getObject());
         demandGenerationCron.setGroup("ADTAX_TRIGGER_GROUP");
         demandGenerationCron.setName("ADTAX_DEMAND_GENERATION_TRIGGER");
-        demandGenerationCron.setCronExpression("0 */30 * * * ?");
+        demandGenerationCron.setCronExpression("0 */30 * * * ? 2050");
         demandGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return demandGenerationCron;
     }

@@ -60,7 +60,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -216,7 +215,6 @@ public class PropertyExternalService {
     private static final String PROP_SERVICE = "propService";
     private static final String FROM_BOUNDARY_B_WHERE_B_ID_ID = "from Boundary b where b.id = :id";
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyExternalService.class);
-    private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
@@ -565,27 +563,6 @@ public class PropertyExternalService {
         return propertyTaxDetails;
     }
 
-    public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
-            final String mobileNumber, final String category, final String doorNo) {
-        final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo,
-                ownerName, mobileNumber, category, doorNo);
-        List<PropertyTaxDetails> propTxDetailsList = new ArrayList<>();
-        if (null != basicProperties && !basicProperties.isEmpty())
-            for (final BasicProperty basicProperty : basicProperties) {
-                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
-                propTxDetailsList.add(propertyTaxDetails);
-            }
-        else {
-            PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-            final ErrorDetails errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PROPERTY_NOT_EXIST_ERR_CODE);
-            errorDetails.setErrorMessage(ASSESSMENT + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
-            propertyTaxDetails.setErrorDetails(errorDetails);
-            propTxDetailsList.add(propertyTaxDetails);
-        }
-        return propTxDetailsList;
-    }
-
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String circleName, final String zoneName,
             final String wardName, final String blockName, final String ownerName, final String doorNo,
             final String aadhaarNumber, final String mobileNumber) {
@@ -611,7 +588,7 @@ public class PropertyExternalService {
         return isAuthenticated;
     }
 
-    private PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty, String category) {
+    public PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty, String category) {
         final PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {

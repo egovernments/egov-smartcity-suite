@@ -452,7 +452,6 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public List getDmdCollAmtInstWise(final EgDemand egDemand) {
-        new ArrayList();
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append(
                 " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date, sum(ddv.dramount) as variation_amt "
@@ -464,11 +463,10 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdresmas.code not in ('"
                         + PropertyTaxConstants.ADVANCE_DMD_RSN_CODE
                         + "','"
-                        + PropertyTaxConstants.PENALTY_DMD_RSN_CODE
-                        + "','"
                         + PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES
-                        + "') " + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createNativeQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
+                        + "') and dmdresmas.module = (select id from eg_module where name = 'Property Tax') " 
+                        + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
+        final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
 

@@ -88,6 +88,7 @@ import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.report.PropertyTaxReportService;
+import org.egov.ptis.service.utils.PropertyTaxService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.LocalityCodeDetails;
 import org.egov.restapi.model.OwnershipCategoryDetails;
@@ -126,6 +127,9 @@ public class AssessmentController {
 
     @Autowired
     private PropertyTaxReportService propertyTaxReportService;
+    
+    @Autowired
+    private PropertyTaxService propertyTaxService;
 
     /**
      * This method is used get the property tax details.
@@ -291,10 +295,8 @@ public class AssessmentController {
                     return JsonConvertor.convert(errors);
                 }
             }
-            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)
-                    || !StringUtils.isBlank(doorNo)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber,
-                        category, doorNo);
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber) || !StringUtils.isBlank(doorNo)) {
+                propertyTaxDetailsList = propertyTaxService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category, doorNo);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();

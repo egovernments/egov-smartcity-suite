@@ -52,6 +52,7 @@ import org.egov.infra.admin.common.contracts.MenuLink;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.ModuleRepository;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +74,7 @@ public class ModuleService {
         return moduleRepository.findByName(moduleName);
     }
 
+    @ReadOnly
     public List<MenuLink> getMenuLinksForRoles(Set<Role> roles) {
         List<Object[]> elements = moduleRepository.fetchModulesForRoles(roles);
         List<MenuLink> menuLinks = new ArrayList<>();
@@ -87,6 +89,7 @@ public class ModuleService {
         return menuLinks;
     }
 
+    @ReadOnly
     public List<MenuLink> getMenuLinksByParentModuleId(Long parentId, Long userId) {
         List<Object[]> elements = moduleRepository.fetchModulesByParentModuleId(parentId, userId);
         List<MenuLink> menuLinks = new ArrayList<>();
@@ -102,6 +105,7 @@ public class ModuleService {
         return menuLinks;
     }
 
+    @ReadOnly
     public List<MenuLink> getUserFavouritesMenuLinks(Long userId) {
         List<Object[]> elements = moduleRepository.fetchUserFavourateModules(userId);
         List<MenuLink> menuLinks = new ArrayList<>();
@@ -115,6 +119,7 @@ public class ModuleService {
         return menuLinks;
     }
 
+    @ReadOnly
     public List<Module> getAllTopModules() {
         return moduleRepository.findByParentModuleIsNullAndEnabledTrueOrderByNameAsc();
     }

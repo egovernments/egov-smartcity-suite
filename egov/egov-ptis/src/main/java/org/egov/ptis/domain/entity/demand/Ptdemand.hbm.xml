@@ -68,7 +68,7 @@
     	<![CDATA[select dd from Ptdemand ptd left join ptd.egDemandDetails dd left join dd.egDemandReason dr left join ptd.egptProperty p left join p.basicProperty bp where bp = :basicProperty and bp.active = true and p.status = 'A' and dd.amount > 0 and ptd.egInstallmentMaster = :installment]]>
 	</query> 
 	<query name="QUERY_CURRENT_PTDEMAND">
-		<![CDATA[select ptd from Ptdemand ptd inner join ptd.egptProperty p inner join p.basicProperty bp where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') and bp = :basicProperty and ptd.egInstallmentMaster = :installment]]>	
+		<![CDATA[select ptd from Ptdemand ptd inner join ptd.egptProperty p inner join p.basicProperty bp where bp.active = true and p.status in ('A', 'I', 'W') and bp = :basicProperty and ptd.egInstallmentMaster = :installment]]>	
 	</query>
 	<query name="QUERY_DEMAND_DET">
 		<![CDATA[select dd from Ptdemand ptd left join ptd.egDemandDetails dd left join ptd.egptProperty p left join p.basicProperty bp where bp = :basicProperty and bp.active = true and p.status = 'A']]>

@@ -237,6 +237,7 @@
 				<s:hidden name="applicationSource" value="%{applicationSource}" />
 			    <s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
 			    <s:hidden name="transactionId" id="transactionId" value="%{transactionId}" />
+			    <s:hidden name="wsPortalRequest" value="%{wsPortalRequest}"/>
 				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
 				<div class="buttonbottom" align="center">
 					<input type="submit" id="Save" class="btn btn-primary" value="Save" onclick="submitDateEntry();"/> 

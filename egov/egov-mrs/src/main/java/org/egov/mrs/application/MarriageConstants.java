@@ -209,4 +209,7 @@ public class MarriageConstants {
     public static final String REISSUE_VIEW_LINK ="%s/mrs/reissue/viewapplication/%s";
     public static final String MODE_CREATE ="create";
     public static final String MODE_UPDATE ="update";
+    public static final String WARDSECRETARY_SOURCE_CODE = "wsSource";
+    public static final String WARDSECRETARY_TRANSACTIONID_CODE = "wsTransactionId";
+    public static final String WARDSECRETARY_WSPORTAL_REQUEST = "wsPortalRequest";
 }

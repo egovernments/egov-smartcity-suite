@@ -121,6 +121,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -189,6 +190,7 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.Apartment;
+import org.egov.ptis.domain.entity.property.AppealPetitionReasons;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
@@ -218,6 +220,7 @@ import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
 import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
 import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
 import org.egov.ptis.domain.repository.master.taxexemption.TaxExemptionReasonRepository;
+import org.egov.ptis.domain.repository.AppealPetitionReason.AppealPetitionReasonRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
@@ -316,7 +319,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
-    private String applicationSource;
     private boolean isGenerateAck = true;
     private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private boolean isShowAckMessage;
@@ -325,8 +327,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean editOwnerDetails = false;
-    private boolean isWardSecretaryUser;
-    private String transactionId;
 
     @Autowired
     private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -400,6 +400,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private EventPublisher eventPublisher;
     @Autowired
     private transient PropertyThirdPartyService propertyThirdPartyService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+    @Autowired
+    private transient AppealPetitionReasonRepository appealPetitionReasonRepository;
 
     public RevisionPetitionAction() {
 
@@ -457,7 +461,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
@@ -498,6 +501,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         assessmentDocumentTypesRP = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
         setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES_RP);
         addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
+        addDropdownData("appealReasonList", appealPetitionReasonRepository.findAll());
     }
 
     /**
@@ -535,9 +539,18 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionError(getText("cannot.apply.appeal.petition"));
             return COMMON_FORM;
         }
+         final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProperty);
+         if (totalDue.compareTo(BigDecimal.ZERO) > 0) {
+             isGenerateAck = false;
+             addActionError(getText("tax.dues.error"));
+             return COMMON_FORM;
+         }
         }
         getPropertyView(propertyId);
-
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return MEESEVA_ERROR;
+        }
         if (objection != null && objection.getBasicProperty() != null
                 && objection.getBasicProperty().isUnderWorkflow()) {
             addActionMessage(
@@ -551,7 +564,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-        } else if (isWardSecretaryUser) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
 
             if (ThirdPartyService.validateWardSecretaryRequest(
@@ -606,7 +619,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
 
-        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
+                && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionError(getText("WS.001"));
             return NEW;
         }
@@ -623,6 +637,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
             objection.setType(getWfType());
             propertyId = objection.getBasicProperty().getUpicNo();
+            if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType()) && objection.getReasons()!=null)
+                objection.setAppealReasons(getAppealReasonDetails(objection));
             addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                     approverComments, approverName));
             checkToDisplayAckButton();
@@ -633,7 +649,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 addActionMessage(getText("objection.grp.success") + objection.getObjectionNumber());
             revisionPetitionService.applyAuditing(objection.getState());
-            if (isWardSecretaryUser) {
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 revisionPetitionService.createRevisionPetition(objection);
                 wsDetails = revisionPetitionService.getViewURLAndMsgForWS(objection, wfType);
             } else if (isMeesevaUser) {
@@ -656,13 +672,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             currentStatus = REVISION_PETITION_CREATED;
             sendEmailandSms(objection, REVISION_PETITION_CREATED);
             applicationNumber = objection.getObjectionNumber();
-            if (isWardSecretaryUser)
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
                 eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
                         objection.getObjectionNumber(), ApplicationStatus.INPROGRESS, wsDetails.get("viewURL"),
                         wsDetails.get("succeessMsg"));
         } catch (Exception ex) {
             logger.error("Error in creating petition application", ex);
-            if (isWardSecretaryUser)
+            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
                 eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
                         objection.getObjectionNumber(), null, null, wsDetails.get("failureMsg"));
             clearMessages();
@@ -831,6 +847,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 documentTypes.addAll(propService.getDocumentTypesForTransactionType(TransactionType.APPEALPETITION));
                 objection.getDocuments().add(new Document());
             }
+            return "view";
+        }
+        if (revisionPetitionService.validateDemand(objection)) {
+            if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+                addActionError(getText("grp.tax.increase.msg"));
+            else
+                addActionError(getText("rp.tax.increase.msg"));
             return "view";
         }
         if (REVENUE_INSPECTOR_DESGN.equals(designation)) {
@@ -1366,6 +1389,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
+        List<String> reasonList = objection.getAppealReasons().stream().map(AppealPetitionReasons::getDescription)
+                .collect(Collectors.toList());
+         objection.setReasons(String.join(",", reasonList));
         return "view";
     }
 
@@ -1662,6 +1688,18 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     }
 
+    public List<AppealPetitionReasons> getAppealReasonDetails(Petition petition) {
+        String[] appeal = petition.getReasons().split(",");
+        List<AppealPetitionReasons> appealList = new ArrayList<>();
+        for (String value : appeal) {
+            appealList.add(appealPetitionReasonRepository.findByCode(value.trim()));
+        }
+        if(!appealList.stream().anyMatch(o -> o.getCode().contains("OTHERS")))
+            objection.setAppealOtherRemarks("");
+        return appealList;
+
+    }
+    
     public List<Floor> getFloorDetails() {
         return new ArrayList<>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }
@@ -2058,14 +2096,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(final String applicationSource) {
-        this.applicationSource = applicationSource;
-    }
-
     public boolean isGenerateAck() {
         return isGenerateAck;
     }
@@ -2125,13 +2155,5 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setEditOwnerDetails(boolean editOwnerDetails) {
         this.editOwnerDetails = editOwnerDetails;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 }

@@ -891,9 +891,9 @@ public class GeneralLedgerReport {
                     .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id and cdet.glcodeid = coa.id and gl.glcode = :glCode1")
                     .append(" AND f.id = vh.fundId ")
                     .append(entityCondition)
-                    .append(" and vh.id in (")
+                    .append(" and exists (")
                     .append(queryString)
-                    .append(" ) AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
+                    .append(" and voucher.id = vh.id) AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
                     .append(" order by vh.id asc , gl.glCode");
         else {
             query = new StringBuilder("SELECT gl.glcode as \"code\", (select ca.type from chartofaccounts ca")
@@ -911,13 +911,14 @@ public class GeneralLedgerReport {
                     .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id AND f.id = vh.fundid")
                     .append(" AND gl.glcode = :glCode1 AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
                     .append(functionCondition)
-                    .append(" and vh.id in (")
-                    .append(queryString).append(" )")
+                    .append(" and exists (")
+                    .append(queryString).append(" and voucher.id = vh.id)")
                     .append(" group by vh.id, gl.glcode, vh.voucherDate, vh.voucherNumber, coa.name, gl.description,")
                     .append(" vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2")
                     .append(" THEN '(Reversal)' ELSE '' END) END, gl.debitamount , gl.creditamount  ,f.name,")
                     .append(" vh.isconfirmed, vh.type  ||'-'  ||vh.name, gl.functionid")
                     .append(" order by \"code\", \"vDate\" ");
+
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("____________________________________________________________" + query.toString());
         }

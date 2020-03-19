@@ -413,7 +413,7 @@ div.floors-tbl-freeze-column-div {
 												id="resolutionType" name="resolutionType"
 												cssStyle="width: 100%">
 												<form:option value="">Select</form:option>
-												<form:option value="MPI. Council">Council</form:option>
+												<form:option value="MPl. Council">Council</form:option>
 												<form:option value="Standing Committee">Standing Committee</form:option>
 											</form:select>
 											<form:errors path="resolutionType"

@@ -52,6 +52,8 @@ import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.repository.ActionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +88,7 @@ public class ActionService {
         return actionRepository.save(action);
     }
 
+    @ReadOnly
     public Optional<Action> getActionByUrlAndContextRoot(String fullURL, String queryString, String contextRoot) {
         Action action;
         if (isBlank(queryString)) {

@@ -155,8 +155,7 @@ public class RegistrationWorkflowService {
     }
     
     public void transition(final MarriageRegistration registration, final WorkflowContainer workflowContainer,
-            final String approvalComent) {
-
+            final String approvalComent, boolean isWardSecretaryUser) {
         final User user = securityUtils.getCurrentUser();
         final String natureOfTask = "Marriage Registration :: New Registration";
         WorkFlowMatrix workflowMatrix;
@@ -164,11 +163,11 @@ public class RegistrationWorkflowService {
         String nextState = null;
         String nextAction = null;
         String currentState;
+        Assignment assignment = getWorkFlowInitiator(registration);
+
         final Boolean isCscOperator = isCscOperator(user);
         boolean loggedUserIsMeesevaUser = isMeesevaUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
-        Assignment assignment = getWorkFlowInitiator(registration);
-	boolean isWardSecretaryUser = isWardSecretaryUser(user);
 
         // In case of CSC Operator or online user or meeseva  will execute this block 
 	if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser || citizenPortalUser 
@@ -279,8 +278,7 @@ public class RegistrationWorkflowService {
 
     }
 
-    public void transition(final ReIssue reIssue, final WorkflowContainer workflowContainer, final String approvalComent) {
-
+    public void transition(final ReIssue reIssue, final WorkflowContainer workflowContainer, final String approvalComent, boolean isWardSecretaryUser) {
         final User user = securityUtils.getCurrentUser();
         final String natureOfTask = "Marriage Registration :: Re-Issue";
 
@@ -291,7 +289,6 @@ public class RegistrationWorkflowService {
         String currentState;
         Assignment assignment = getWorkFlowInitiatorForReissue(reIssue);
         final Boolean isCscOperator = isCscOperator(user);
-        boolean isWardSecretaryUser = isWardSecretaryUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
         // In case of CSC Operator will execute this block
 		if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
@@ -671,12 +668,5 @@ public class RegistrationWorkflowService {
     public Boolean isApplicationOwner(User currentUser, StateAware state) {
         return positionMasterService.getPositionsForEmployee(currentUser.getId())
                 .contains(state.getCurrentState().getOwnerPosition());
-	}
-
-    public boolean isWardSecretaryUser(final User user) {
-        for (final Role role : user.getRoles())
-                if (role != null && role.getName().equalsIgnoreCase(WARDSECRETARY_OPERATOR_ROLE))
-                        return true;
-        return false;
-    }
+        }
 }

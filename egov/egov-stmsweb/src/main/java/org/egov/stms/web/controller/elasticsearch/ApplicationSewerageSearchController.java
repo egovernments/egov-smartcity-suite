@@ -130,7 +130,8 @@ public class ApplicationSewerageSearchController {
             SewerageConnection sewerageConnection = sewerageConnectionService
                     .findByShscNumberAndStatusList(searchRequest.getShscNumber(),
                             Arrays.asList(INPROGRESS, ACTIVE, CLOSED));
-            searchRequest.setLegacy(sewerageConnection.getLegacy());
+            if(sewerageConnection != null)
+            	searchRequest.setLegacy(sewerageConnection.getLegacy());
         }
 
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),

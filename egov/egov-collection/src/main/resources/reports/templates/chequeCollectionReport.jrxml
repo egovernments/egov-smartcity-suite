@@ -99,7 +99,7 @@
 		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "" : "AND CH.CREATEDBY = " + $P{EGOV_COUNTER_OPERATOR_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_BOUNDARY_ID" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "" : "AND CM.ID = " + $P{EGOV_BOUNDARY_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BOUNDARY_ID} == null || $P{EGOV_BOUNDARY_ID} == -1) ? "" : "AND EB.ID = " + $P{EGOV_BOUNDARY_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_RECEIPT_IDS" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for receipt header ids]]></parameterDescription>
@@ -137,7 +137,8 @@ WHERE
 	AND IH.ID=CI.INSTRUMENTHEADER AND IH.BANKID=BK.ID
 	AND IH.INSTRUMENTTYPE IN (SELECT ID FROM EGF_INSTRUMENTTYPE WHERE TYPE IN ('cheque','dd'))
         AND IH.ID_STATUS = ST.ID
-        AND ST.DESCRIPTION != 'Cancelled'
+        AND ST.CODE != 'Cancelled'
+        AND ST.MODULETYPE = 'Instrument'
 	AND CH.RECEIPTDATE >= $P{EGOV_FROM_DATE}
 	AND CH.RECEIPTDATE < $P{EGOV_TO_DATE_PLUS_ONE}
 	$P!{Q_COUNTER_ID}

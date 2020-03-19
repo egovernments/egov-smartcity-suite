@@ -399,8 +399,9 @@ $(document).ready(
             $('#meterSerialNumber').focus();
         }
         
-        if($('#noActiveJAOrAE').val() != ''){
-    		bootbox.alert($('#noActiveJAOrAE').val());
+        if($('#noActiveJAOrSA').val() != ''){
+    		bootbox.alert($('#noActiveJAOrSA').val());
+    		$('#approverDetailHeading').hide();
     		return false;
     	}
 

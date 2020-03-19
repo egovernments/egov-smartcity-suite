@@ -690,7 +690,7 @@ public class CashBook {
                 .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id AND gl.voucherHeaderId = vh.id AND gl.voucherHeaderId = gl1.voucherHeaderId AND f.id = vh.fundId ")
                 .append(effTime)
                 .append(" AND gl1.glcode in (SELECT GLCODE FROM CHARTOFACCOUNTS WHERE PURPOSEID = 4 or purposeid = 5) ")
-                .append(" AND vh.id in (").append(engineQry).append(" ) AND (gl.debitamount > 0 OR gl.creditamount > 0) order by \"vDate\", \"vhid\", \"order\" desc").toString();
+                .append(" AND exists (").append(engineQry).append(" and voucher.id = vh.id ) AND (gl.debitamount > 0 OR gl.creditamount > 0) order by \"vDate\", \"vhid\", \"order\" desc").toString();
     }
 
     private OpBalance getOpeningBalance(final String glCode, final String fundId,

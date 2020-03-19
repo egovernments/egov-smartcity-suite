@@ -124,7 +124,7 @@ public class RedNoticeController {
             final HttpServletRequest request, final Model model) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
+        headers.add("content-disposition", "inline;filename=RedNotice_"+assessmentNo+".pdf");
         final ReportOutput reportOutput = redNoticeService.generateNotice(assessmentNo,
                 PropertyTaxConstants.NOTICE_TYPE_RED_NOTICE);
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);

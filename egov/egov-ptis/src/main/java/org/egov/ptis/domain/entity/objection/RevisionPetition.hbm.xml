@@ -138,6 +138,11 @@
 		<property name="source" column="source" type="java.lang.String"/>
 		 <property name="disposalDate" column="DISPOSAL_DATE" type="java.util.Date" not-null="false"/>
 		 <property name="appellateComments" column="APPEALLATE_COMMENTS" type="java.lang.String"/>
+		<bag name="appealReasons" table="EGPT_APPEAL_PETITION_REASON" cascade="all">
+			<key column="PETITION"/>
+			<many-to-many class="org.egov.ptis.domain.entity.property.AppealPetitionReasons" column="appeal_reasons"/>
+		</bag>
+		<property name="appealOtherRemarks" column="OTHER_REMARKS" type="java.lang.String"/>
     </class>
     
     <query name="RP_BY_APPLICATIONNO">

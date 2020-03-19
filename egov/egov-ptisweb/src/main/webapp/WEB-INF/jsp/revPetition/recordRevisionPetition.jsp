@@ -117,7 +117,27 @@
 				<td class="greybox" width="25%"><s:textarea cssClass="form-control" name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" >
 				</s:textarea></td>
 			</tr>
-		</table>
+				<s:if
+					test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_APPEALPETITION)}">
+					<tr>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox" width="25%"><s:text name="appeal.ground" />
+							<span class="mandatory1">*</span></td>
+						<td style="padding-top:15px;"><s:select id="appealDropDownList" name="reasons"
+								headerKey="0" list="dropdownData.appealReasonList"
+								listKey="code" listValue="description"  multiple="true" size="8"
+								onclick="getdropdownvalues()" /></td>
+								<div id="ordersdeatils">
+						<td class="greybox"  id="orderstext"><s:text name="appeal.ground" /><span class="mandatory1">*</span></td>
+						<td class="greybox" width="30%" id="ordersdetails"><s:textarea
+								cssClass="form-control" name="appealOtherRemarks"  cols="40"
+								rows="2" onblur="checkLength(this)">
+							</s:textarea></td>
+							</div>
+
+					</tr>
+				</s:if>
+			</table>
 		</td>
 	</tr>
 </table>

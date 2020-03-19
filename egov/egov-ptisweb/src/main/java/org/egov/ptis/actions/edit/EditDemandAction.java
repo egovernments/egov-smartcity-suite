@@ -168,7 +168,7 @@ public class EditDemandAction extends BaseFormAction {
     private static final String QUERYINSTPTDEMAND = "select ptd from Ptdemand ptd inner join fetch ptd.egDemandDetails dd "
             + "inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm "
             + "inner join fetch ptd.egptProperty p inner join fetch p.basicProperty bp "
-            + "where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
+            + "where bp.active = true and p.status in ('A', 'I', 'W') "
             + "and bp = :bp and ptd.egInstallmentMaster = :installment ";
 
     private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + " AND dd.amount >= 0 ";

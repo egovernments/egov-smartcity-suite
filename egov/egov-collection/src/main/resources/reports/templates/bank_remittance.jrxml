@@ -99,7 +99,8 @@ WHERE
     AND es.id=ih.id_status
     AND it.type in ('cheque', 'dd')
     AND ih.isPayCheque = '0'
-    AND es.description = 'New'
+    AND es.code = 'New'
+    AND es.moduletype = 'Instrument'
     $P!{Q_DEPT_ID}]]>
 	</queryString>
 	<field name="instrumentNumber" class="java.lang.String">

@@ -51,6 +51,7 @@ package org.egov.infra.web.support.ui.menu;
 import org.egov.infra.admin.common.contracts.MenuLink;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +81,7 @@ public class ApplicationMenuRenderingService {
     @Autowired
     private ModuleService moduleService;
 
+    @ReadOnly
     public Menu getApplicationMenuForUser(User user) {
         List<MenuLink> menuLinks = moduleService.getMenuLinksForRoles(user.getRoles());
         Menu menu = new Menu();

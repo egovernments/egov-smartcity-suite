@@ -92,7 +92,10 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
         WaterConnectionDetails connectionDetails = isNotBlank(applicationNumber)
                 ? waterConnectionDetailsService.findByApplicationNumber(applicationNumber)
                 : waterConnectionDetailsService.findByConsumerCode(consumerNumber);
-        EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
+        
+        EstimationNotice estimationNotice = null;
+        if(connectionDetails != null)
+        	estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
         
         if (isNotBlank(applicationNumber) && isNotBlank(consumerNumber)) {
             if (connectionDetails == null || connectionDetails.getConnection() == null

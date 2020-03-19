@@ -67,10 +67,14 @@ body
 				</div>
 	</div>
 </c:if>
-<div class="row">
+	<c:if test="${wsPortalRequest == true}">
+		<c:set value="/ptis/exemption/form/${property.basicProperty.upicNo}"
+			var="actionUrl" />
+	</c:if>
+	<div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
-			name="taxExemptionForm" id="taxExemptionForm" action=""
+			name="taxExemptionForm" id="taxExemptionForm" action="${actionUrl}"
 			modelAttribute="property" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
@@ -80,7 +84,8 @@ body
 			    <form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 			    <form:hidden path="" name="applicationSource" value="${applicationSource}"/>
 			    <form:hidden path="" name="exemptionReason" value="${exemptionReason}"/>
-			     <form:hidden path="" name="transactionId" value="${transactionId}"/>
+			    <form:hidden path="" name="transactionId" value="${transactionId}"/>
+			    <form:hidden path="" name="wsPortalRequest" value="${wsPortalRequest}"/>
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.exemption.heading" />

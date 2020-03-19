@@ -51,12 +51,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -144,6 +144,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private SecurityUtils securityUtils;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable("assessmentNo") String assessmentNo) {
@@ -189,20 +191,36 @@ public class TaxExemptionController extends GenericWorkFlowController {
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @RequestParam(required = false) final String applicationSource,
             @PathVariable("assessmentNo") final String assessmentNo) {
+        return prepareExemptionForm(property, request, model, meesevaApplicationNumber, applicationSource);
+    }
+    
+    @RequestMapping(value = "/form/wardsecretary/{assessmentNo}", method = RequestMethod.POST)
+    public String wardSecretaryExemptionForm(@ModelAttribute PropertyImpl property, final HttpServletRequest request, final Model model,
+            @RequestParam(required = false) final String meesevaApplicationNumber,
+            @RequestParam(required = false) final String applicationSource,
+            @PathVariable("assessmentNo") final String assessmentNo) {
+        return prepareExemptionForm(property, request, model, meesevaApplicationNumber, applicationSource);
+    }
+
+    private String prepareExemptionForm(PropertyImpl property, final HttpServletRequest request, final Model model,
+            final String meesevaApplicationNumber, final String applicationSource) {
         Date effectiveDate = new Date();
         BasicProperty basicProperty = property.getBasicProperty();
         boolean isExempted = basicProperty.getActiveProperty().getIsExemptedFromTax();
         User loggedInUser = securityUtils.getCurrentUser();
         citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
         boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
-
-        if (propertyService.isWardSecretaryUser(loggedInUser)) {
+        boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                : Boolean.FALSE;
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), applicationSource)) {
                 model.addAttribute(ERROR_MSG, "WS.001");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             } else {
                 model.addAttribute("transactionId", request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                model.addAttribute("wsPortalRequest", request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
             }
         }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
@@ -276,8 +294,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
-        boolean isWardSecretaryUser = propertyService.isWardSecretaryUser(loggedInUser);
-        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(
+        boolean wsPortalRequest = request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST) != null
+                ? Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST))
+                : Boolean.FALSE;
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && ThirdPartyService.validateWardSecretaryRequest(
                 request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
             model.addAttribute(ERROR_MSG, "WS.001");
             return PROPERTY_VALIDATION_FOR_SPRING;
@@ -297,12 +317,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
             prepareWorkflow(model, property, new WorkflowContainer());
             target = TAX_EXEMPTION_FORM;
         } else {
-            if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
-                    && SOURCE_ONLINE.equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))
-                    && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()))
-                property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.TRUE));
-            else
-                property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.FALSE));
+            property.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser,
+                    ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())));
             if (request.getParameter("taxExemptedReason") != null)
                 taxExemptedReason = request.getParameter("taxExemptedReason");
             if (request.getParameter("approvalComent") != null)
@@ -342,7 +358,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
-            } else if (isWardSecretaryUser) {
+            } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 taxExemptionService.savePropertyAndPublishEvent(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, request);
             } else

@@ -79,7 +79,7 @@ public class CollectionService {
             final BigDecimal paymentAmount, final Character collectionType) {
         // only newly created receipts need to be initialised with the data.
         // The cancelled receipt can be excluded from this processing.
-        if (receiptHeader.getStatus() == null) {
+        if (receiptHeader != null && receiptHeader.getStatus() == null) {
             receiptHeader.setReceiptdate(new Date());
             receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
             receiptHeader.setIsModifiable(Boolean.FALSE);

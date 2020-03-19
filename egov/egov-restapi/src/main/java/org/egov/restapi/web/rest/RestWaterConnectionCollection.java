@@ -71,6 +71,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.service.utils.PropertyTaxService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.web.security.oauth2.utils.TokenServiceUtils;
@@ -113,6 +114,9 @@ public class RestWaterConnectionCollection {
 
     @Autowired
     private TokenServiceUtils tokenServiceUtils;
+    
+    @Autowired
+    private PropertyTaxService propertyTaxService;
 
     /**
      * This method is used to pay the water tax.
@@ -210,7 +214,7 @@ public class RestWaterConnectionCollection {
             waterTaxDetailsList.add(watertaxDetails);
             return JsonConvertor.convert(waterTaxDetailsList);
         } else {
-            List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<>();
+            List<String> assessmentNosList = new ArrayList<>();
             String assessmentNo = "";
 
             boolean consumerExists = false;
@@ -237,18 +241,18 @@ public class RestWaterConnectionCollection {
             if (!consumerExists && ownerdetailsnotexists)
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             if (!consumerExists) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo,
-                        waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo(), null, null);
-                if (propertyTaxDetailsList == null || propertyTaxDetailsList.isEmpty())
+				assessmentNosList = propertyTaxService.getAssessmentsByOwnerOrMobile(assessmentNo,
+						waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo());
+				if (assessmentNosList == null || assessmentNosList.isEmpty())
                     return JsonConvertor.convert(isEmptyWaterTaxDetails());
             }
             List<String> consumerCodesList = new ArrayList<>();
             if (consumerExists && !ownerdetailsnotexists)
                 consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
             else
-                for (PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
+                for (String upicNo : assessmentNosList) {
                     List<WaterConnection> waterConnectionList = waterConnectionService
-                            .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
+                            .findByPropertyIdentifier(upicNo);
                     for (WaterConnection waterconnection : waterConnectionList)
                         consumerCodesList.add(waterconnection.getConsumerCode());
                 }

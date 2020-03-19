@@ -123,7 +123,8 @@
 									<s:textfield id="fromDate"	name="fromDate" value="%{fromDate}"
 										onkeyup="DateFormat(this,this.value,event,false,'3')"
 										placeholder="DD/MM/YYYY"
-										cssClass="form-control datepicker"
+										cssClass="form-control datepicker today"
+										data-date-end-date="0d"
 										data-inputmask="'mask': 'd/m/y'"
 										onblur="validateDateFormat(this);" />
 								</div>
@@ -135,7 +136,8 @@
 									<s:textfield id="toDate" name="toDate" value="%{toDate}"
 										onkeyup="DateFormat(this,this.value,event,false,'3')"
 										placeholder="DD/MM/YYYY"
-										cssClass="form-control datepicker"
+										cssClass="form-control datepicker today"
+										data-date-end-date="0d"
 										data-inputmask="'mask': 'd/m/y'"
 										onblur="validateDateFormat(this);" />
 								</div>

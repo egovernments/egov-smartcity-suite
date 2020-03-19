@@ -815,35 +815,36 @@ public class PropertyTaxElasticSearchIndexService {
             String userNameAndNumber = StringUtils.EMPTY;
             final List<BillCollectorIndex> billCollectorsList = collectionIndexElasticSearchService
                     .getBillCollectorDetails(collectionDetailsRequest);
-            for (final BillCollectorIndex billCollIndex : billCollectorsList)
-                if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null
-                        && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
-                    if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
-                        userNameAndNumber = billCollIndex.getBillCollector().concat("~")
-                                .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
-                                        : billCollIndex.getBillCollectorMobileNo())
-                                .concat("~").concat(billCollIndex.getBillCollectorCode());
-                    else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
-                        userNameAndNumber = billCollIndex.getRevenueInspector().concat("~")
-                                .concat(StringUtils.isBlank(billCollIndex.getRevenueInspectorMobileNo()) ? StringUtils.EMPTY
-                                        : billCollIndex.getRevenueInspectorMobileNo())
-                                .concat("~").concat(billCollIndex.getRevenueInspectorCode());
-                    else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
-                        userNameAndNumber = billCollIndex.getRevenueOfficer().concat("~")
-                                .concat(StringUtils.isBlank(billCollIndex.getRevenueOfficerMobileNo()) ? StringUtils.EMPTY
-                                        : billCollIndex.getRevenueOfficerMobileNo())
-                                .concat("~").concat(billCollIndex.getRevenueOfficerCode());
-                    if (billCollectorWiseMap.isEmpty()) {
-                        taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
-                    } else if (!billCollectorWiseMap.containsKey(userNameAndNumber)) {
-                        taxPayerDetailsList = new ArrayList<>();
-                        taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
-                    } else
-                        billCollectorWiseMap.get(userNameAndNumber)
-                                .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                }
+            if (wardWiseTaxPayersDetails != null && !wardWiseTaxPayersDetails.isEmpty())
+                for (final BillCollectorIndex billCollIndex : billCollectorsList)
+                    if (StringUtils.isNotBlank(billCollIndex.getRevenueWard())
+                            && wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null) {
+                        if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                            userNameAndNumber = billCollIndex.getBillCollector().concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getBillCollectorMobileNo())
+                                    .concat("~").concat(billCollIndex.getBillCollectorCode());
+                        else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                            userNameAndNumber = billCollIndex.getRevenueInspector().concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueInspectorMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueInspectorMobileNo())
+                                    .concat("~").concat(billCollIndex.getRevenueInspectorCode());
+                        else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                            userNameAndNumber = billCollIndex.getRevenueOfficer().concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueOfficerMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueOfficerMobileNo())
+                                    .concat("~").concat(billCollIndex.getRevenueOfficerCode());
+                        if (billCollectorWiseMap.isEmpty()) {
+                            taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
+                            billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
+                        } else if (!billCollectorWiseMap.containsKey(userNameAndNumber)) {
+                            taxPayerDetailsList = new ArrayList<>();
+                            taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
+                            billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
+                        } else
+                            billCollectorWiseMap.get(userNameAndNumber)
+                                    .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
+                    }
         } catch (Exception e) {
             LOGGER.error("Error while preparing Bill CollectorWise Map Data " + e);
         }

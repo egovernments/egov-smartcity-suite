@@ -810,7 +810,7 @@ public class PropertyTaxUtil {
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
                 + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
+                + "where bp.active = true " + "and p.status in ('A', 'I') " + "and p = :property "
                 + "and ptd.egInstallmentMaster = :installment";
 
         Query queryRes = entityManager.unwrap(Session.class).createQuery(query).setEntity(PROPERTY, property)
@@ -871,7 +871,7 @@ public class PropertyTaxUtil {
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
                 + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
+                + "where bp.active = true " + "and p.status in ('A', 'I', 'W') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
         final List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query)
@@ -1207,7 +1207,7 @@ public class PropertyTaxUtil {
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
                 + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-                + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
+                + "where bp.active = true " + "and p.status in ('A', 'I', 'W') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
         List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setParameter("property", property)
@@ -1496,7 +1496,7 @@ public class PropertyTaxUtil {
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
                 + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
+                + "where bp.active = true " + "and p.status in ('A', 'I', 'W') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :demandInstallment ";
 
         final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)

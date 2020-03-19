@@ -109,7 +109,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 @Results({
         @Result(name = NEW, location = "searchProperty-new.jsp"),
-        @Result(name = SearchPropertyAction.REDIRECT, location = "search-property-redirect.jsp"),
+        @Result(name = SearchPropertyAction.REDIRECT, location = "wardsecretary-redirect.jsp"),
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
@@ -532,21 +532,21 @@ public class SearchPropertyAction extends SearchFormAction {
             if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
                 return REDIRECT;
             } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
-                return APPLICATION_TYPE_ALTER_ASSESSENT;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
-                return APPLICATION_TYPE_DEMOLITION;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
-                return APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_TAX_EXEMTION.equals(applicationType)) {
-                return APPLICATION_TYPE_TAX_EXEMTION;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType)) {
-                return APPLICATION_TYPE_VACANCY_REMISSION;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_AMALGAMATION.equals(applicationType)) {
-                return APPLICATION_TYPE_AMALGAMATION;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
-                return APPLICATION_TYPE_REVISION_PETITION;
+                return REDIRECT;
             } else if (APPLICATION_TYPE_GRP.equals(applicationType)) {
-                return APPLICATION_TYPE_GRP;
+                return REDIRECT;
             }
 
         }
@@ -1175,6 +1175,7 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Action(value = "/search/searchproperty-amalgamation")
     public String amalgamation() {
+        setActionNamespace("/amalgamation");
         setApplicationType(APPLICATION_TYPE_AMALGAMATION);
         return commonForm();
     }

@@ -225,9 +225,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
-    private boolean isWardSecretaryUser;
-    private String transactionId;
-    private String applicationSource;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -278,6 +275,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private DemandVoucherService demandVoucherService;
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     public AmalgamationAction() {
         super();
@@ -308,7 +307,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         setUserDesignations();
         PropertyImpl propertyById;
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
-        isWardSecretaryUser = propService.isWardSecretaryUser(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp(basicPropertyDAO.getBasicPropertyByProperty(Long.valueOf(getModelId())));
             if (logger.isDebugEnabled())
@@ -355,6 +353,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @Action(value = "/amalgamation-newForm")
     public String newForm() {
         mode = EDIT;
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)) {
+            addActionMessage(getText("WS.002"));
+            return RESULT_ERROR;
+        }
         populateFormData();
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser) {
@@ -365,7 +367,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             } else
                 propertyModel.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
         }
-        if (isWardSecretaryUser) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (ThirdPartyService.validateWardSecretaryRequest(
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter("applicationSource"))) {
@@ -537,11 +539,11 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser && StringUtils.isBlank(propertyModel.getMeesevaApplicationNumber()))
             propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
 
-        if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)
+                && ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
             addActionMessage(getText("WS.001"));
             return RESULT_ERROR;
         }
-        
         if (hasErrors())
             if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
@@ -589,7 +591,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
         
-        if (propService.isWardSecretaryUser(securityUtils.getCurrentUser())) {
+        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
             propertyThirdPartyService.updateBasicPropertyAndPublishEvent(basicProp, propertyModel,
                     PROPERTY_MODIFY_REASON_AMALG, transactionId);
         } else if (!propService.isMeesevaUser(securityUtils.getCurrentUser()))
@@ -1486,20 +1488,5 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
-    }
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-    
-    public String getApplicationSource() {
-        return applicationSource;
-    }
-
-    public void setApplicationSource(String applicationSource) {
-        this.applicationSource = applicationSource;
     }
 }

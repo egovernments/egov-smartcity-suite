@@ -48,22 +48,28 @@
 
 package org.egov.infra.security.utils.captcha;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.HttpRequestHandler;
+import static org.egov.infra.utils.ImageUtils.JPG_MIME_TYPE;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
-import static org.egov.infra.utils.ImageUtils.JPG_MIME_TYPE;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestHandler;
 
 @Component("jcaptcha")
 public class CaptchaServlet implements HttpRequestHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CaptchaServlet.class);
 
     @Autowired
     private DefaultCaptchaService defaultCaptchaService;
@@ -83,6 +89,7 @@ public class CaptchaServlet implements HttpRequestHandler {
             responseStream.flush();
             responseStream.close();
         } catch (IOException | RuntimeException e) {
+            LOG.error("Error in fetching recaptch image", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

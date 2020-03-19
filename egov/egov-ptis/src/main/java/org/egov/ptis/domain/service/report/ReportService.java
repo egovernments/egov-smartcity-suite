@@ -606,6 +606,7 @@ public class ReportService {
      * @return @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection
      * Details
      */
+    @ReadOnly
     public NativeQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
             final List<String> propertyTypes) {
 
@@ -648,7 +649,7 @@ public class ReportService {
 
         // Conditions to Retrieve data based on selected boundary types
         if (!mode.equalsIgnoreCase(PROPERTY)) {
-            finalSelectQry = "select count(distinct pi.upicno) as \"assessmentCount\",cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
+            finalSelectQry = "select count(distinct pi.upicno) as \"assessmentCount\",cast(boundary.id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
         }
         if (propertyTypes == null)
