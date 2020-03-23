@@ -565,37 +565,12 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
-        if (marriageRegistration.getSource().equalsIgnoreCase(Source.CHPK.toString())) {
-            sendMarriageCertificate(marriageRegistration);
-        }
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
 
         return marriageRegistration;
-    }
-
-    private void sendMarriageCertificate(final MarriageRegistration marriageRegistration) {
-        MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
-        if (marriageCertificate != null) {
-            final RestTemplate restTemplate = new RestTemplate();
-            MultiValueMap<String, Object> requestObjectMap = new LinkedMultiValueMap<>();
-            HttpHeaders headers = new HttpHeaders();
-            File file = fileStoreService.fetch(marriageCertificate.getFileStore().getFileStoreId(),
-                    MarriageConstants.FILESTORE_MODULECODE);
-            requestObjectMap.add("certificate", new FileSystemResource(file));
-            requestObjectMap.add("ApplicationKey", marriageMessageSource.getMessage("mrs.cpk.apikey", null, null));
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            HttpEntity<MultiValueMap<String, Object>> requestObj = new HttpEntity<>(requestObjectMap, headers);
-            try {
-                restTemplate.postForObject(CPK_END_POINT_URL +
-                        marriageRegistration.getApplicationNo(),
-                        requestObj, String.class);
-            } catch (Exception e) {
-                LOG.error("Error occured while sending certificate --------- " + e.getMessage());
-            }
-        }
     }
 
     @Transactional
@@ -615,9 +590,6 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
-        if (marriageRegistration.getSource().equalsIgnoreCase(Source.CHPK.toString())) {
-            sendMarriageCertificate(marriageRegistration);
-        }
         return marriageRegistration;
     }
 
