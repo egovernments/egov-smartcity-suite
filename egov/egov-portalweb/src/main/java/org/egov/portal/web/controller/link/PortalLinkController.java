@@ -80,11 +80,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PortalLinkController {
 
     private static final String REFERER_IP = "103.21.58.98";
+
+    private static final String NON_EMPLOYE_PORTAL_HOME = "/portal/home";
+    
     @Autowired
     private PortalLinkService portalLinkService;
     @Autowired
@@ -161,6 +166,14 @@ public class PortalLinkController {
             model.addAttribute("consumerCode", consumerCode);
             return "connectionlink-success";
         }
+    }
+    
+    @RequestMapping(value = "/citizen/delinkconnection/", method = RequestMethod.POST)
+    public ModelAndView delinkConnection(
+            final String consumerCode, final String moduleName, final String applicantName,
+            final Model model) {
+    	portalLinkService.delink(consumerCode,moduleName,securityUtils.getCurrentUser().getId());
+        return new ModelAndView(new RedirectView(NON_EMPLOYE_PORTAL_HOME, false));
     }
 
     public String getPaymentURL(String moduleName, String consumerCode) {

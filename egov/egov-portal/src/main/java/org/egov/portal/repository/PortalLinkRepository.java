@@ -53,7 +53,11 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.portal.entity.PortalLink;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface PortalLinkRepository extends JpaRepository<PortalLink, Long> {
@@ -61,5 +65,10 @@ public interface PortalLinkRepository extends JpaRepository<PortalLink, Long> {
     PortalLink findByConsumerNo(String consumerNo);
 
     List<PortalLink> findByUser(User userId);
+    
+    @Modifying
+    @Transactional
+    @Query("delete from PortalLink pl where pl.consumerNo =:consumerCode and pl.moduleName=:moduleName and pl.user.id=:userId")
+    void delink(@Param("consumerCode") final String consumerCode, @Param("moduleName") final String moduleName, @Param("userId") Long userId);
 
 }

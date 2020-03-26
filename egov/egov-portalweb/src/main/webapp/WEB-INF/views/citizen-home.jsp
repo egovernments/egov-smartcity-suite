@@ -49,6 +49,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<script src="<cdn:url  value='/resources/js/servicesearch.js?rnd=${app_release_no}'/>" type="text/javascript"></script>
+
     <div class="container-fluid">
       <div class="">
         <div class="left-menu">
@@ -306,6 +309,7 @@
                     <th><spring:message code="lbl.linkeddate" /></th>
                     <th><spring:message code="lbl.servicegroup" /></th>
                     <th><spring:message code="lbl.action" /></th>
+                    <th><spring:message code="lbl.delink.service" /></th>
                  
                   </tr>
                 </thead>
@@ -323,6 +327,10 @@
 		                   <td>${linkedItem.moduleName} </td>
 		                   <td><input type="Button" type="submit" value="Pay Tax" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.paymentURL}');"> 
 		                   		<input type="Button" type="submit" value="View DCB" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.viewDcbURL}');">
+		                   </td>
+		                   <td>
+		                   		<input type="Button" type="submit" value="Delink" class="buttonsubmit"
+		                   		onclick="unlinkService('${linkedItem.consumerNo}','${linkedItem.moduleName}','${linkedItem.applicantName}');"/>
 		                   </td>
 		                 </tr>
                   </c:forEach>
