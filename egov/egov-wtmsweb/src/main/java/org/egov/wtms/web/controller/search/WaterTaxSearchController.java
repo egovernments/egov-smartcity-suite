@@ -48,10 +48,14 @@
 
 package org.egov.wtms.web.controller.search;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.rest.error.ErrorResponse;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.service.WaterTaxSearchService;
@@ -68,22 +72,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -101,8 +95,10 @@ public class WaterTaxSearchController {
 
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
-        User currentUser = userService.getUserById(getUserId());
-        return currentUser == null ? true : waterTaxUtils.compareUserRoleWithParameter(currentUser, WaterTaxConstants.ROLE_PUBLIC);
+    	boolean hasCitizenOrPublicRole = false;
+    	if(waterTaxUtils.isPublicRole() || waterTaxUtils.isCurrentUserCitizenRole())
+    		hasCitizenOrPublicRole = true;
+        return hasCitizenOrPublicRole;
     }
 
     @ModelAttribute("revenueWards")
