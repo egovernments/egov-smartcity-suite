@@ -99,7 +99,7 @@ public class PastPaymentService {
         if (pastPaymentRequest.getFromDate() != null)
             qry.setParameter("fromDate", pastPaymentRequest.getFromDate());
         if (pastPaymentRequest.getToDate() != null)
-            qry.setParameter("toDate", pastPaymentRequest.getToDate());
+            qry.setParameter("toDate", DateUtils.add(pastPaymentRequest.getToDate(), Calendar.DATE, 1));
         qry.setParameter("userId", securityUtils.getCurrentUser().getId());
         return qry.setMaxResults(MAX_RESULT_SIZE).getResultList();
 
@@ -116,7 +116,7 @@ public class PastPaymentService {
             params.add(pastPaymentRequest.getFromDate());
         }
         if (pastPaymentRequest.getToDate() != null) {
-            searchQueryString.append(" and receipt.receiptdate <= :toDate ");
+            searchQueryString.append(" and receipt.receiptdate < :toDate ");
             params.add(DateUtils.add(pastPaymentRequest.getToDate(), Calendar.DATE, 1));
         }
         searchQueryString.append(" and receipt.createdBy.id = :userId ");
