@@ -125,6 +125,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "arrearColl", "title": "Arrear Collection"},
 						  { "data" : "currentColl", "title": "Current Collection"},
 						  { "data" : "waivedOffPT", "title": "Penalty Waiver"},
+						  { "data" : "courtVerdictAndWOAmount", "title": "Covered by Court Case / Write Off"},
 						  { "data" : "totalColl", "title": "Total Collection"},
 						  ],
 						  "aaSorting": [] 
