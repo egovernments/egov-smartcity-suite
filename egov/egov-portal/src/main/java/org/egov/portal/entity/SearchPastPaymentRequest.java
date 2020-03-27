@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,40 +45,42 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.portal.util.constant;
+package org.egov.portal.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Date;
 
-public final class PortalConstants {
+import org.springframework.format.annotation.DateTimeFormat;
 
-    public static final String PROPERTY_TAX = "Property Tax";
-    public static final String WATER_CHARGES = "Water Charges";
-    public static final String SEWERAGE_TAX = "Sewerage Tax";
-    public static final String TRADE_LICENSE = "Trade License";
-    public static final String LEASES_AND_AGREEMENTS = "Leases And Agreements";
-    public static final String PTIS_URL = "%s/restapi/property/propertytaxdetails";
-    public static final String WTMS_URL = "%s/restapi/watercharges/getwatertaxdetails";
-    public static final String STMS_URL = "%s/restapi/sewerage/getseweragedetails";
-    private static final List<String> MODULELIST = new ArrayList<>();
+public class SearchPastPaymentRequest {
 
-    private PortalConstants() {
-        // To hide implicit public
+    private String serviceName;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date fromDate;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date toDate;
+
+    public String getServiceName() {
+        return serviceName;
     }
 
-    static {
-        MODULELIST.add(PROPERTY_TAX);
-        MODULELIST.add(WATER_CHARGES);
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public static List<String> getModuleList() {
-        return Collections.unmodifiableList(MODULELIST);
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public static List<String> getServiceList() {
-        return Collections.unmodifiableList(Arrays.asList(PROPERTY_TAX, WATER_CHARGES, TRADE_LICENSE, LEASES_AND_AGREEMENTS));
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
     }
 
 }

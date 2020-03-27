@@ -125,4 +125,8 @@
 		<put-attribute name="page-title" value="title.citizenHome" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/link/common-error.jsp" />
 	</definition>
+	<definition name="view-payment" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewpayments" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/payment/view-payment.jsp"/>
+    </definition>
 </tiles-definitions>

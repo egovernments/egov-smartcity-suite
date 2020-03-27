@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,40 +45,51 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.portal.util.constant;
+package org.egov.portal.web.controller.viewpayment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public final class PortalConstants {
+import org.apache.commons.lang3.StringUtils;
+import org.egov.portal.entity.SearchPastPaymentRequest;
+import org.egov.portal.service.PastPaymentService;
+import org.egov.portal.util.constant.PortalConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-    public static final String PROPERTY_TAX = "Property Tax";
-    public static final String WATER_CHARGES = "Water Charges";
-    public static final String SEWERAGE_TAX = "Sewerage Tax";
-    public static final String TRADE_LICENSE = "Trade License";
-    public static final String LEASES_AND_AGREEMENTS = "Leases And Agreements";
-    public static final String PTIS_URL = "%s/restapi/property/propertytaxdetails";
-    public static final String WTMS_URL = "%s/restapi/watercharges/getwatertaxdetails";
-    public static final String STMS_URL = "%s/restapi/sewerage/getseweragedetails";
-    private static final List<String> MODULELIST = new ArrayList<>();
+@Controller
+@RequestMapping(value = "/pastpayments")
+public class PastPaymentController {
 
-    private PortalConstants() {
-        // To hide implicit public
+    private static final String ERROR_MSG = "errorMsg";
+    @Autowired
+    private PastPaymentService pastPaymentService;
+
+    @GetMapping("view")
+    public String viewPaymentSearchForm(final Model model) {
+        List<Object> receipts = pastPaymentService.findPastPaymentsByCitizenUser();
+        model.addAttribute("serviceList", PortalConstants.getServiceList());
+        model.addAttribute("receipts", receipts);
+        model.addAttribute("pastPaymentRequest", new SearchPastPaymentRequest());
+
+        return "view-payment";
     }
 
-    static {
-        MODULELIST.add(PROPERTY_TAX);
-        MODULELIST.add(WATER_CHARGES);
-    }
+    @PostMapping("search")
+    public String searchPastPayments(@ModelAttribute final SearchPastPaymentRequest pastPaymentRequest, final Model model) {
 
-    public static List<String> getModuleList() {
-        return Collections.unmodifiableList(MODULELIST);
+        if (StringUtils.isBlank(pastPaymentRequest.getServiceName())) {
+            model.addAttribute(ERROR_MSG, "error.past.payment.invalid.servicename");
+        } else {
+            List<Object> receipts = pastPaymentService.findAllPastPaymentsByCitizenUser(pastPaymentRequest);
+            model.addAttribute("receipts", receipts);
+        }
+        model.addAttribute("serviceList", PortalConstants.getServiceList());
+        model.addAttribute("pastPaymentRequest", pastPaymentRequest);
+        return "view-payment";
     }
-
-    public static List<String> getServiceList() {
-        return Collections.unmodifiableList(Arrays.asList(PROPERTY_TAX, WATER_CHARGES, TRADE_LICENSE, LEASES_AND_AGREEMENTS));
-    }
-
 }

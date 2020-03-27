@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,40 +45,41 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.portal.util.constant;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+jQuery(document).ready(function() {
+	$(".datepicker").datepicker({
+		format : 'dd/mm/yyyy',
+		autoclose : true
+	});
+	var service = $("#serviceNameHidden").val();
+	if (service) {
+		jQuery("#serviceName option").filter(function() {
+			return this.text == service;
+		}).attr('selected', true);
+	}
 
-public final class PortalConstants {
+});
 
-    public static final String PROPERTY_TAX = "Property Tax";
-    public static final String WATER_CHARGES = "Water Charges";
-    public static final String SEWERAGE_TAX = "Sewerage Tax";
-    public static final String TRADE_LICENSE = "Trade License";
-    public static final String LEASES_AND_AGREEMENTS = "Leases And Agreements";
-    public static final String PTIS_URL = "%s/restapi/property/propertytaxdetails";
-    public static final String WTMS_URL = "%s/restapi/watercharges/getwatertaxdetails";
-    public static final String STMS_URL = "%s/restapi/sewerage/getseweragedetails";
-    private static final List<String> MODULELIST = new ArrayList<>();
+jQuery('#searchPastPayment').click(
+		function(e) {
+			if ($('#serviceName').val() == '') {
+				bootbox.alert("please select service name.");
+				e.preventDefault();
+				return false;
+			} else {
+				jQuery('#viewPaymentsSearchForm').attr('method', 'post');
+				jQuery('#viewPaymentsSearchForm').attr('action',
+						'/portal/pastpayments/search');
+				jQuery('#viewPaymentsSearchForm').submit();
+			}
 
-    private PortalConstants() {
-        // To hide implicit public
-    }
+		});
 
-    static {
-        MODULELIST.add(PROPERTY_TAX);
-        MODULELIST.add(WATER_CHARGES);
-    }
-
-    public static List<String> getModuleList() {
-        return Collections.unmodifiableList(MODULELIST);
-    }
-
-    public static List<String> getServiceList() {
-        return Collections.unmodifiableList(Arrays.asList(PROPERTY_TAX, WATER_CHARGES, TRADE_LICENSE, LEASES_AND_AGREEMENTS));
-    }
-
-}
+jQuery('#fromDate').change(function() {
+	var val = $(this).val();
+	$('#fromDate').text(val);
+});
+jQuery('#toDate').change(function() {
+	var val = $(this).val();
+	$('#toDate').text(val);
+});
