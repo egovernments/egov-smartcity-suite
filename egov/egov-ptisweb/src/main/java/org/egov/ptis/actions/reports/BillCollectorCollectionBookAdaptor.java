@@ -92,12 +92,12 @@ public class BillCollectorCollectionBookAdaptor implements DataTableJsonAdapter<
                     DateUtils.getFormattedDate(collectionIndexInfoObj.getReceiptDate(), DATE_FORMAT_DDMMYYY));
             jsonObject.addProperty("name", collectionIndexInfoObj.getCreatedBy().getName());
             jsonObject.addProperty("ward", collectionIndexInfoObj.getWardId());
-            if (billCollectorBookReportService.getbalanceAmount(collectionIndexInfoObj.getId()))
-                jsonObject.addProperty("assessmentNo", collectionIndexInfoObj.getConsumerCode() + "[P]");
-            else
-                jsonObject.addProperty("assessmentNo", collectionIndexInfoObj.getConsumerCode());
+            jsonObject.addProperty("assessmentNo", collectionIndexInfoObj.getConsumerCode());
             jsonObject.addProperty("fromInstallment", collectionIndexInfoObj.getFromInstallment());
-            jsonObject.addProperty("toInstallment", collectionIndexInfoObj.getToInstallment());
+            if (billCollectorBookReportService.getbalanceAmount(collectionIndexInfoObj.getId()))
+                jsonObject.addProperty("toInstallment", collectionIndexInfoObj.getToInstallment() + "[P]");
+            else
+                jsonObject.addProperty("toInstallment", collectionIndexInfoObj.getToInstallment());
             jsonObject.addProperty("arrearPropertyTax", collectionIndexInfoObj.getArrearAmount() == null ? BigDecimal.ZERO
                     : collectionIndexInfoObj.getArrearAmount());
             jsonObject.addProperty("currentPropertyTax", collectionIndexInfoObj.getCurrentAmount() == null ? BigDecimal.ZERO
