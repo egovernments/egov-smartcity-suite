@@ -63,51 +63,10 @@
 <div class="row display-hide report-section">
 	<br />
 	<spring:message code="reports.note.text" />
-	<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle" />
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.title.buidingagewise.report" /></div> 
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
-			id="tbldcbdrilldown">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.name" /></th> 
-					<th><spring:message code="lbl.doorno" /></th> 
-					<th><spring:message code="lbl.OwnerName" /></th>
-					<th><spring:message code="lbl.arrear.propertytax"/></th>
-					<th><spring:message code="lbl.arrear.penalty"/></th>
-					<th><spring:message code="lbl.arreartotal"/></th>
-					<th><spring:message code="lbl.current.propertytax"/></th>
-					<th><spring:message code="lbl.current.penalty"/></th>
-					<th><spring:message code="lbl.current.total"/></th>
-					<th><spring:message code="lbl.total.demand"/></th>
-					<th><spring:message code="lbl.arrear.propertytax"/></th>
-					<th><spring:message code="lbl.arrear.penalty"/></th>
-				
-				</tr>
-			</thead>
-			<tfoot id="report-footer">
-				<tr>
-					<td>Total</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tfoot>
+			id="buildAgewiselReport-table">
 		</table>
 	</div>
 </div>
-
-<div id="report-backbutton" class="col-xs-12 text-center">
-	<div class="form-group">
-		<button class="btn btn-primary" id="backButton">Back</button>
-	</div>
-</div>
+<div id="footeTitle"></div>

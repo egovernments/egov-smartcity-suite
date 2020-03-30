@@ -45,58 +45,42 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.service.BuildingAgeWiseAssessmentReport;
 
-package org.egov.ptis.report.bean;
+import java.util.List;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.report.bean.BuidingAgeWiseReportResult;
+import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
+import org.egov.ptis.repository.spec.BuildingAgeWiseAssessmentSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class BuidingAgeWiseReportResult extends DataTableSearchRequest {
+@Service
+@Transactional(readOnly = true)
+public class BuildingAgeWiseAssessmentReportService {
 
-    private String fromAge;
-    private String toAge;
-    private String propertyTypeMaster;
-    private String filterName;
-    private ReportFormat printFormat;
+    @Autowired
+    private PropertyMVInfoRepository BuildingAgeWiseRepository;
 
-    public String getFromAge() {
-        return fromAge;
+    @ReadOnly
+    public Page<PropertyMVInfo> pagedAgeWiseRecord(final BuidingAgeWiseReportResult buidingAgeWiseReportResult) {
+        return BuildingAgeWiseRepository.findAll(
+                BuildingAgeWiseAssessmentSpec.pagedAgeWiseRecordSpecification(buidingAgeWiseReportResult),
+                new PageRequest(buidingAgeWiseReportResult.pageNumber(), buidingAgeWiseReportResult.pageSize(),
+                        buidingAgeWiseReportResult.orderDir(), buidingAgeWiseReportResult.orderBy()));
+
     }
 
-    public void setFromAge(String fromAge) {
-        this.fromAge = fromAge;
-    }
-
-    public String getToAge() {
-        return toAge;
-    }
-
-    public void setToAge(String toAge) {
-        this.toAge = toAge;
-    }
-
-    public String getPropertyTypeMaster() {
-        return propertyTypeMaster;
-    }
-
-    public void setPropertyTypeMaster(String propertyTypeMaster) {
-        this.propertyTypeMaster = propertyTypeMaster;
-    }
-
-    public String getFilterName() {
-        return filterName;
-    }
-
-    public void setFilterName(String filterName) {
-        this.filterName = filterName;
-    }
-
-    public ReportFormat getPrintFormat() {
-        return printFormat;
-    }
-
-    public void setPrintFormat(ReportFormat printFormat) {
-        this.printFormat = printFormat;
+    @ReadOnly
+    public List<PropertyMVInfo> getAllpagedAgeWiseRecord(
+            final BuidingAgeWiseReportResult buidingAgeWiseReportResult) {
+        return BuildingAgeWiseRepository
+                .findAll(BuildingAgeWiseAssessmentSpec.pagedAgeWiseRecordSpecification(buidingAgeWiseReportResult));
     }
 
 }

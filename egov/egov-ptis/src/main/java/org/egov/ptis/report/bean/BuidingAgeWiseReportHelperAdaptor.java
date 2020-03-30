@@ -49,34 +49,49 @@
 package org.egov.ptis.report.bean;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.ptis.domain.entity.property.view.FloorDetailsInfo;
+import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-public class BuidingAgeWiseReportHelperAdaptor implements JsonSerializer<BuidingAgeWiseReportResult> {
+public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<PropertyMVInfo> {
 
     @Override
-    public JsonElement serialize(final BuidingAgeWiseReportResult buildingAgeWiseReportObj, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (buildingAgeWiseReportObj != null) {
-            jsonObject.addProperty("assessmentNo", buildingAgeWiseReportObj.getAssessmentNo());
-            jsonObject.addProperty("doorNo", buildingAgeWiseReportObj.getDoorNo());
-            jsonObject.addProperty("ownerName", buildingAgeWiseReportObj.getOwnerName());
-            jsonObject.addProperty("revenueZone", buildingAgeWiseReportObj.getRevenueZone());
-            jsonObject.addProperty("revenueWard", buildingAgeWiseReportObj.getRevenueWard());
-            jsonObject.addProperty("revenueBlock", buildingAgeWiseReportObj.getRevenueBlock());
+    public JsonElement serialize(DataTable<PropertyMVInfo> buildingAgeWiseResponse, Type typeOfSrc,
+            JsonSerializationContext context) {
+        final List<PropertyMVInfo> buildingAgeWiseInfo = buildingAgeWiseResponse.getData();
+        final JsonArray buildingAgeWiseDetails = new JsonArray();
+        buildingAgeWiseInfo.forEach(buildingAgeWiseInfoObj -> {
+            final JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("assessmentNo", buildingAgeWiseInfoObj.getPropertyId());
+            jsonObject.addProperty("doorNo", buildingAgeWiseInfoObj.getHouseNo());
+            jsonObject.addProperty("name", buildingAgeWiseInfoObj.getOwnerName());
+            jsonObject.addProperty("zone", buildingAgeWiseInfoObj.getZone().getName());
+            jsonObject.addProperty("ward", buildingAgeWiseInfoObj.getWard().getName());
+            jsonObject.addProperty("block", buildingAgeWiseInfoObj.getBlock().getName());
+            jsonObject.addProperty("locality", buildingAgeWiseInfoObj.getLocality().getName());
+            for (InstDmdCollInfo demand : buildingAgeWiseInfoObj.getInstDmdColl()) {
+                jsonObject.addProperty("propertyTax",
+                        demand.getGeneralTax().add(demand.getLightTax()).add(demand.getVacantLandTax())
+                                .add(demand.getDrainageTax()).add(demand.getWaterTax()).add(demand.getScavengeTax()));
+                jsonObject.addProperty("eduTax", demand.getEduCessTax());
+                jsonObject.addProperty("libCess", demand.getLibCessTax());
+                jsonObject.addProperty("ucPenalty", demand.getUnauthPenaltyTax());
+                jsonObject.addProperty("total", demand.getGeneralTax().add(demand.getLibCessTax()).add(demand.getEduCessTax())
+                        .add(demand.getUnauthPenaltyTax()));
 
-            jsonObject.addProperty("locality", buildingAgeWiseReportObj.getLocality());
-            jsonObject.addProperty("propertyTax", buildingAgeWiseReportObj.getPropertyTax());
-            jsonObject.addProperty("libraryCess", buildingAgeWiseReportObj.getLibraryCess());
-
-            jsonObject.addProperty("educationTax", buildingAgeWiseReportObj.getEducationTax());
-            jsonObject.addProperty("assessmentCount", buildingAgeWiseReportObj.getAssessmentCount());
-
-        }
-        return jsonObject;
+            }
+            buildingAgeWiseDetails.add(jsonObject);
+        });
+        return enhance(buildingAgeWiseDetails, buildingAgeWiseResponse);
     }
 }

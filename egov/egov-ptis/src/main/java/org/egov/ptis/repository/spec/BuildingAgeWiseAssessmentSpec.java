@@ -45,58 +45,51 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.repository.spec;
 
-package org.egov.ptis.report.bean;
+import java.util.Calendar;
+import java.util.Date;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import javax.persistence.criteria.Predicate;
 
-public class BuidingAgeWiseReportResult extends DataTableSearchRequest {
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.report.bean.BuidingAgeWiseReportResult;
+import org.springframework.data.jpa.domain.Specification;
 
-    private String fromAge;
-    private String toAge;
-    private String propertyTypeMaster;
-    private String filterName;
-    private ReportFormat printFormat;
+public class BuildingAgeWiseAssessmentSpec {
 
-    public String getFromAge() {
-        return fromAge;
-    }
-
-    public void setFromAge(String fromAge) {
-        this.fromAge = fromAge;
-    }
-
-    public String getToAge() {
-        return toAge;
-    }
-
-    public void setToAge(String toAge) {
-        this.toAge = toAge;
-    }
-
-    public String getPropertyTypeMaster() {
-        return propertyTypeMaster;
-    }
-
-    public void setPropertyTypeMaster(String propertyTypeMaster) {
-        this.propertyTypeMaster = propertyTypeMaster;
-    }
-
-    public String getFilterName() {
-        return filterName;
-    }
-
-    public void setFilterName(String filterName) {
-        this.filterName = filterName;
-    }
-
-    public ReportFormat getPrintFormat() {
-        return printFormat;
-    }
-
-    public void setPrintFormat(ReportFormat printFormat) {
-        this.printFormat = printFormat;
+    public static Specification<PropertyMVInfo> pagedAgeWiseRecordSpecification(
+            final BuidingAgeWiseReportResult buidingAgeWiseReportResult) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (buidingAgeWiseReportResult.getFromAge() != null) {
+                Calendar cal = Calendar.getInstance();
+                if (buidingAgeWiseReportResult.getFromAge().equals("0"))
+                    cal.add(Calendar.YEAR, Integer.parseInt(buidingAgeWiseReportResult.getFromAge()));
+                else
+                    cal.add(Calendar.YEAR, Integer.parseInt("-" + buidingAgeWiseReportResult.getFromAge()));
+                cal.add(Calendar.DAY_OF_MONTH, -1);
+                Date fromDate = cal.getTime();
+                predicate.getExpressions()
+                        .add(builder.lessThanOrEqualTo(root.join("floorDetails").get("constructionDate"), fromDate));
+            }
+            if (buidingAgeWiseReportResult.getToAge() != null) {
+                Calendar calendar = Calendar.getInstance();
+                if (buidingAgeWiseReportResult.getToAge().equals("0"))
+                    calendar.add(Calendar.YEAR, Integer.parseInt("-1"));
+                else
+                    calendar.add(Calendar.YEAR, Integer.parseInt("-" + buidingAgeWiseReportResult.getToAge()));
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                Date toDate = calendar.getTime();
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(root.join("floorDetails").get("constructionDate"), toDate));
+            }
+            if (buidingAgeWiseReportResult.getPropertyTypeMaster() != null
+                    && !buidingAgeWiseReportResult.getPropertyTypeMaster().equals("-1"))
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("propType"), buidingAgeWiseReportResult.getPropertyTypeMaster()));
+            return predicate;
+        };
     }
 
 }
