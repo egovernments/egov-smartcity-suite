@@ -56,6 +56,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
 
     @PersistenceContext
@@ -70,20 +71,19 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
     }
 
     public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
-        final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
+        return entityManager.find(ScheduleCategory.class,
                 scheduleCategoryId);
-        return scheduleCategory;
     }
 
+    @SuppressWarnings("unchecked")
     public List<ScheduleCategory> getAllScheduleCategories() {
-        final Query query = entityManager.createQuery("from ScheduleCategory sc");
-        final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
-        return scheduleCategoryList;
+        return entityManager.createQuery("from ScheduleCategory sc").getResultList();
     }
 
+    @SuppressWarnings("rawtypes")
     public boolean checkForSOR(final Long id) {
-        final Query query = entityManager.createQuery(" from ScheduleOfRate rate where sor_category_id  = "
-                + "(select id from ScheduleCategory  where id = :id)");
+        final Query query = entityManager.createQuery(new StringBuffer(" from ScheduleOfRate rate")
+                .append(" where sor_category_id  = (select id from ScheduleCategory  where id = :id)").toString());
         query.setParameter("id", Long.valueOf(id));
         final List retList = query.getResultList();
         if (retList != null && !retList.isEmpty())
@@ -92,6 +92,7 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
             return true;
     }
 
+    @SuppressWarnings("rawtypes")
     public boolean checkForScheduleCategory(final String code) {
         final Query query = entityManager.createQuery(" from ScheduleCategory  where code = :code");
         query.setParameter("code", code);

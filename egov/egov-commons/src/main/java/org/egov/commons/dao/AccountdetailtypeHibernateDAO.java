@@ -50,6 +50,7 @@ package org.egov.commons.dao;
 import org.egov.commons.Accountdetailtype;
 import org.egov.infra.exception.ApplicationException;
 import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,9 +130,9 @@ public class AccountdetailtypeHibernateDAO  {
     }
 
     public Accountdetailtype getAccountdetailtypeByName(final String name) {
-        final Query qry = getCurrentSession().createQuery("from Accountdetailtype where name =:name");
-        qry.setString("name", name);
-        return (Accountdetailtype) qry.uniqueResult();
+        return (Accountdetailtype) getCurrentSession().createQuery("from Accountdetailtype where name = :name")
+                .setParameter("name", name, StringType.INSTANCE)
+                .uniqueResult();
     }
 
     

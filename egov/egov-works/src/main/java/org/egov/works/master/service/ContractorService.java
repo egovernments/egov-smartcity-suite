@@ -47,6 +47,15 @@
  */
 package org.egov.works.master.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -65,7 +74,6 @@ import org.egov.works.models.masters.ExemptionForm;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -74,38 +82,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
+@SuppressWarnings("deprecation")
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
 
+    private final Logger logger = Logger.getLogger(getClass());
+
+    private static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
+
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
+
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private WorksService worksService;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
     public ContractorService() {
         super(Contractor.class);
     }
 
-    private final Logger logger = Logger.getLogger(getClass());
-    @Autowired
-    private WorksService worksService;
-    @Autowired
-    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
-        return findAllBy(
-                "select distinct contractorDet.contractor from ContractorDetail contractorDet "
-                        + "where contractorDet.status.description=?1 and contractorDet.status.moduletype=?2",
+        return findAllBy(new StringBuffer("select distinct contractorDet.contractor from ContractorDetail contractorDet ")
+                .append("where contractorDet.status.description=?1 and contractorDet.status.moduletype=?2").toString(),
                 "Active", "Contractor");
     }
 
@@ -121,56 +125,51 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         }
     };
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Contractor> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1 and contractorDet.status.moduletype=?2 and (upper(cont.code) like ?3 "
-                + "or upper(cont.name) like ?4) order by cont.code,cont.name";
-        return findPageBy(qry, 0, pageSize, "Active", "Contractor", param, param).getList();
+        final StringBuffer qry = new StringBuffer("select distinct cont from Contractor cont, ContractorDetail contractorDet ")
+                .append("where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1")
+                .append(" and contractorDet.status.moduletype=?2 and (upper(cont.code) like ?3 ")
+                .append(" or upper(cont.name) like ?4) order by cont.code,cont.name");
+        return findPageBy(qry.toString(), 0, pageSize, "Active", "Contractor", param, param).getList();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public List getAssetCodesForProjectCode(final Integer accountdetailkey) throws ValidationException {
         return null;
     }
 
+    @SuppressWarnings({ "unchecked" })
     @Override
     public List<Contractor> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
-
-        List<Contractor> entities = null;
-        final Query entitysQuery = getSession()
-                .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )");
-        entitysQuery.setParameterList("IDS", idsList);
-        entities = entitysQuery.list();
-        return entities;
+        return getSession()
+                .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )")
+                .setParameterList("IDS", idsList)
+                .list();
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Contractor> getEntitiesById(final List<Long> idsList) throws ValidationException {
-
-        List<Contractor> entities = null;
-        final Query entitysQuery = getSession().createQuery(" from Contractor where id in ( :IDS )");
-        entitysQuery.setParameterList("IDS", idsList);
-        entities = entitysQuery.list();
-        return entities;
+        return getSession().createQuery(" from Contractor where id in ( :IDS )").setParameterList("IDS", idsList).list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Contractor> getAllContractors() {
-        List<Contractor> entities = null;
-        final Query entityQuery = getSession().createQuery(" from Contractor con order by code asc");
-        entities = entityQuery.list();
-        return entities;
+        return getSession().createQuery(" from Contractor con order by code asc").list();
     }
 
     public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
         List<Contractor> contractorList = null;
         StringBuilder contractorStr = new StringBuilder();
         final List<Object> paramList = new ArrayList<>();
-        int index = 1; 
+        int index = 1;
         Object[] params;
         final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
         final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
@@ -249,17 +248,17 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         }
 
         if (statusId != null) {
-            contractorStr.append(" and detail.status.id = ? ").append(index++);
+            contractorStr.append(" and detail.status.id = ?").append(index++);
             paramList.add(statusId);
         }
 
         if (departmentId != null) {
-            contractorStr.append(" and detail.department.id = ? ").append(index++);
+            contractorStr.append(" and detail.department.id = ?").append(index++);
             paramList.add(departmentId);
         }
 
         if (gradeId != null) {
-            contractorStr.append(" and detail.grade.id = ? ").append(index);
+            contractorStr.append(" and detail.grade.id = ?").append(index);
             paramList.add(gradeId);
         }
         final String query = "select distinct detail.contractor " + contractorStr;
@@ -307,7 +306,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     }
 
     public void createAccountDetailKey(final Contractor cont) {
-        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName(ACCOUNTDETAIL_TYPE_CONTRACTOR);
         final Accountdetailkey adk = new Accountdetailkey();
         adk.setGroupid(1);
         adk.setDetailkey(cont.getId().intValue());
@@ -324,14 +323,16 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         return filterActiveEntitiesByCode(queryString, 0, null);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Contractor> filterActiveEntitiesByCode(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1 and contractorDet.status.moduletype=?2 and upper(cont.code) like ?3 "
-                + "order by cont.code,cont.name";
-        return findPageBy(qry, 0, pageSize, "Active", "Contractor", param).getList();
+        final StringBuffer qry = new StringBuffer("select distinct cont from Contractor cont, ContractorDetail contractorDet ")
+                .append(" where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1")
+                .append(" and contractorDet.status.moduletype=?2 and upper(cont.code) like ?3 ")
+                .append(" order by cont.code,cont.name");
+        return findPageBy(qry.toString(), 0, pageSize, "Active", "Contractor", param).getList();
     }
 
     public String generateContractorCode(final Contractor contractor) {

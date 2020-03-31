@@ -65,6 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = OverheadAction.NEW, location = "overhead-new.jsp")
 public class OverheadAction extends BaseFormAction {

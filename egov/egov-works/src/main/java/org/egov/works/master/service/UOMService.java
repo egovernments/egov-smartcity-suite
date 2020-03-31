@@ -53,9 +53,9 @@ import org.egov.infstr.services.PersistenceService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class UOMService extends PersistenceService<UOM, Long> {
 
     @PersistenceContext
@@ -74,9 +74,8 @@ public class UOMService extends PersistenceService<UOM, Long> {
         return uom;
     }
 
+    @SuppressWarnings("unchecked")
     public List<UOM> getAllUOMs() {
-        final Query query = entityManager.createQuery("from UOM  order by upper(uom)");
-        final List<UOM> uomList = query.getResultList();
-        return uomList;
+        return entityManager.createQuery("from UOM  order by upper(uom)").getResultList();
     }
 }

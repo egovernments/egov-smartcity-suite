@@ -56,12 +56,12 @@ import org.egov.works.utils.WorksConstants;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class ContractorGradeService extends PersistenceService<ContractorGrade, Long> {
 
     @PersistenceContext
@@ -76,14 +76,12 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
     }
 
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
-        final ContractorGrade contractorGrade = entityManager.find(ContractorGrade.class, contractorGradeId);
-        return contractorGrade;
+        return entityManager.find(ContractorGrade.class, contractorGradeId);
     }
 
+    @SuppressWarnings("unchecked")
     public List<ContractorGrade> getAllContractorGrades() {
-        final Query query = entityManager.createQuery("from ContractorGrade order by upper(grade)");
-        final List<ContractorGrade> contractorGradeList = query.getResultList();
-        return contractorGradeList;
+        return entityManager.createQuery("from ContractorGrade order by upper(grade)").getResultList();
     }
 
     public SearchQuery prepareSearchQuery(final Map<String, Object> criteriaMap) {
@@ -94,21 +92,22 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         final String grade = (String) criteriaMap.get(WorksConstants.GRADE);
         final Double minAmount = (Double) criteriaMap.get(WorksConstants.MIN_AMOUNT);
         final Double maxAmount = (Double) criteriaMap.get(WorksConstants.MAX_AMOUNT);
+        int index = 1;
         if (grade != null && !grade.trim().equals("") || minAmount != -1 || maxAmount != -1)
-            contractorGradeSql.append(" where 1=1");
+            contractorGradeSql.append(" where 1 = 1");
 
         if (grade != null && !grade.trim().equals("")) {
-            contractorGradeSql.append(" and UPPER(cg.grade) like ?");
+            contractorGradeSql.append(" and UPPER(cg.grade) like ?").append(index++);
             paramList.add("%" + grade.trim().toUpperCase() + "%");
         }
 
         if (minAmount != -1) {
-            contractorGradeSql.append(" and cg.minAmount = ?");
+            contractorGradeSql.append(" and cg.minAmount = ?").append(index++);
             paramList.add(BigDecimal.valueOf(minAmount));
         }
 
         if (maxAmount != -1) {
-            contractorGradeSql.append(" and cg.maxAmount = ?");
+            contractorGradeSql.append(" and cg.maxAmount = ?").append(index++);
             paramList.add(BigDecimal.valueOf(maxAmount));
         }
         contractorGradeSql.append(" group by cg.id");
@@ -118,8 +117,8 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
     }
 
     public ContractorGrade findByContractorClass(final String contractorClass) {
-        final String query = "from ContractorGrade as cg where upper(cg.grade) = '" + contractorClass.toUpperCase() + "'";
-        return find(query);
+        final String query = "from ContractorGrade as cg where upper(cg.grade) = ?1";
+        return find(query, contractorClass.toUpperCase());
     }
 
 }

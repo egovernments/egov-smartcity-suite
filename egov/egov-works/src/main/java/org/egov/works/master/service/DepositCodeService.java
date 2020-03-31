@@ -48,6 +48,11 @@
 
 package org.egov.works.master.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
@@ -58,19 +63,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Service("depositCodeService")
 @Transactional
 public class DepositCodeService extends PersistenceService<DepositCode, Long> {
 
+    private static final String ACCOUNTDETAILTYPE_DEPOSITCODE = "DEPOSITCODE";
+
     @Autowired
     private WorksService worksService;
+
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -83,18 +88,16 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> {
     }
 
     public DepositCode getDepositCodeById(final Long DepositCodeId) {
-        final DepositCode depositCode = entityManager.find(DepositCode.class, DepositCodeId);
-        return depositCode;
+        return entityManager.find(DepositCode.class, DepositCodeId);
     }
 
+    @SuppressWarnings("unchecked")
     public List<DepositCode> getAllDepositCodes() {
-        final Query query = entityManager.createQuery("from DepositCode");
-        final List<DepositCode> depositCodeList = query.getResultList();
-        return depositCodeList;
+        return entityManager.createQuery("from DepositCode").getResultList();
     }
 
     public void createAccountDetailKey(final DepositCode dc) {
-        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName(ACCOUNTDETAILTYPE_DEPOSITCODE);
         final Accountdetailkey adk = new Accountdetailkey();
         adk.setGroupid(1);
         adk.setDetailkey(dc.getId().intValue());

@@ -59,6 +59,7 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults.jsp"),
         @Result(name = ScheduleOfRateSearchAction.SOR, location = "scheduleOfRateSearch-SOR.jsp") })

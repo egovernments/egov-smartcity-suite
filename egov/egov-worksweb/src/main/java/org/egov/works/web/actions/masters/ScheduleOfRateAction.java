@@ -82,6 +82,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 @Results({
         @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
         @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
@@ -120,7 +121,9 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private List<SORRate> actionRates = new LinkedList<SORRate>();
     private List<MarketRate> actionMarketRates = new LinkedList<MarketRate>();
 
+    @SuppressWarnings("rawtypes")
     private List abstractEstimateList = null;
+    @SuppressWarnings("rawtypes")
     private List woeList = null;
     private Date woDate;
     private String woDateFlag = WorksConstants.NO;

@@ -55,7 +55,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
+import org.hibernate.Session;
+import org.hibernate.type.StringType;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -81,6 +85,13 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
     private double marketRateValue = 0;
     private double[] marketRateValues;
     private String estimatesExists;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public double[] getMarketRateValues() {
         return marketRateValues;
@@ -117,11 +128,16 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
         return codeNumberUniqueCheck;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean getCodenoCheck() {
         ScheduleOfRate scheduleOfRate = null;
         boolean codeNoexistsOrNot = false;
-        scheduleOfRate = scheduleOfRateService.find("from ScheduleOfRate sor where sor.code=? and sor.scheduleCategory.id=?",
-                codeNo, scheduleCategoryId);
+        List<ScheduleOfRate> results = getCurrentSession()
+                .createQuery("from ScheduleOfRate sor where sor.code = :code and sor.scheduleCategory.id = :scheduleCategoryId")
+                .setParameter("code", codeNo, StringType.INSTANCE)
+                .setParameter("scheduleCategoryId", scheduleCategoryId)
+                .list();
+        scheduleOfRate = results.isEmpty() ? null : results.get(0);
         if (scheduleOfRate != null)
             codeNoexistsOrNot = true;
         return codeNoexistsOrNot;
@@ -177,7 +193,7 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
 
     public String checkIfEstimateExists() {
         final List<Long> ids = persistenceService.findAllBy(
-                "select distinct act.abstractEstimate.id from Activity act where act.schedule.id = ? and act.abstractEstimate.rateContract.id is not null and act.abstractEstimate.egwStatus.code != 'CANCELLED'",
+                "select distinct act.abstractEstimate.id from Activity act where act.schedule.id = ?1 and act.abstractEstimate.rateContract.id is not null and act.abstractEstimate.egwStatus.code != 'CANCELLED'",
                 scheduleId);
         if (ids != null && !ids.isEmpty())
             estimatesExists = WorksConstants.YES;

@@ -71,6 +71,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({
         @Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
@@ -245,26 +246,27 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        String dynQuery = " from MilestoneTemplate mt where mt.id is not null ";
+        int index = 1;
+        StringBuffer dynQuery = new StringBuffer(" from MilestoneTemplate mt where mt.id is not null ");
         final List<Object> paramList = new ArrayList<Object>();
         if (template.getTypeOfWork() != null && template.getTypeOfWork().getId() != -1) {
-            dynQuery = dynQuery + " and mt.typeOfWork.id = ? ";
+            dynQuery.append(" and mt.typeOfWork.id = ?").append(index++);
             paramList.add(template.getTypeOfWork().getId());
         }
         if (template.getSubTypeOfWork() != null && template.getSubTypeOfWork().getId() != -1) {
-            dynQuery = dynQuery + " and mt.subTypeOfWork.id = ? ";
+            dynQuery.append(" and mt.subTypeOfWork.id = ?").append(index++);
             paramList.add(template.getSubTypeOfWork().getId());
         }
         if (StringUtils.isNotBlank(template.getCode().trim())) {
-            dynQuery = dynQuery + " and UPPER(mt.code) like '%'||?||'%'";
+            dynQuery.append(" and UPPER(mt.code) like '%'||?").append(index++).append("||'%'");
             paramList.add(template.getCode().trim().toUpperCase());
         }
         if (template.getStatus() != null && template.getStatus() != -1) {
-            dynQuery = dynQuery + " and mt.status = ? ";
+            dynQuery.append(" and mt.status = ?").append(index++);
             paramList.add(template.getStatus());
         }
         final String countQuery = "select distinct count(mt) " + dynQuery;
-        return new SearchQueryHQL(dynQuery, countQuery, paramList);
+        return new SearchQueryHQL(dynQuery.toString(), countQuery, paramList);
     }
 
     public MilestoneTemplate getTemplate() {

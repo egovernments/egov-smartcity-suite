@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("deprecation")
 @Results({
         @Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
         @Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
@@ -114,6 +115,7 @@ public class ContractorGradeAction extends SearchFormAction {
         return SEARCH;
     }
 
+    @SuppressWarnings({ "unchecked" })
     @Override
     public void prepare() {
         if (id != null)

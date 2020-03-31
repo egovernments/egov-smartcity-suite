@@ -47,6 +47,10 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -54,10 +58,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AjaxSubledgerCodeAction extends BaseFormAction {
     /**
@@ -91,16 +91,18 @@ public class AjaxSubledgerCodeAction extends BaseFormAction {
         return wardList;
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private void populateProjectCodeList() {
-        String strquery = "";
         final ArrayList<Object> params = new ArrayList<Object>();
-        strquery = "from ProjectCode pc where upper(pc.code) like '%'||?||'%'"
-                + " and pc.egwStatus.code=? and pc.id in (select mbh.workOrderEstimate.estimate.projectCode.id from MBHeader mbh left outer join mbh.egBillregister egbr where egbr.status.code=? and egbr.billtype=? and mbh.workOrderEstimate.estimate.depositCode is null )";
+        StringBuffer strquery = new StringBuffer("from ProjectCode pc where upper(pc.code) like '%'||?1||'%'")
+                .append(" and pc.egwStatus.code=?2 and pc.id in (select mbh.workOrderEstimate.estimate.projectCode.id")
+                .append(" from MBHeader mbh left outer join mbh.egBillregister egbr where egbr.status.code=?3 and egbr.billtype=?4")
+                .append(" and mbh.workOrderEstimate.estimate.depositCode is null )");
         params.add(query.toUpperCase());
         params.add("CREATED");
         params.add("APPROVED");
         params.add("Final Bill");
-        projectCodeList = getPersistenceService().findAllBy(strquery, params.toArray());
+        projectCodeList = getPersistenceService().findAllBy(strquery.toString(), params.toArray());
     }
 
     public String searchProjectCode() {

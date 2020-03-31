@@ -48,17 +48,18 @@
 
 package org.egov.works.master.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.ScheduleOfRate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Long> {
 
     @PersistenceContext
@@ -73,51 +74,54 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
     }
 
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
-        final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
-                scheduleOfRateId);
-        return scheduleOfRate;
+        return entityManager.find(ScheduleOfRate.class, scheduleOfRateId);
     }
 
+    @SuppressWarnings("unchecked")
     public List<ScheduleOfRate> getAllScheduleOfRates() {
-        final Query query = entityManager.createQuery("from ScheduleOfRate sor order by code asc");
-        final List<ScheduleOfRate> scheduleOfRateList = query.getResultList();
-        return scheduleOfRateList;
+        return entityManager.createQuery("from ScheduleOfRate sor order by code asc").getResultList();
     }
 
+    @SuppressWarnings("rawtypes")
     public List getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
-        final Query query = entityManager.createQuery(
-                "select ae from AbstractEstimate ae, Activity act where act.abstractEstimate = ae and act.abstractEstimate.parent is null and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = :scheduleOfRateId");
-        query.setParameter("scheduleOfRateId", scheduleOfRateId);
-        final List list = query.getResultList();
-        return list;
+        return entityManager.createQuery(new StringBuffer("select ae")
+                .append(" from AbstractEstimate ae, Activity act")
+                .append(" where act.abstractEstimate = ae and act.abstractEstimate.parent is null")
+                .append(" and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = :scheduleOfRateId")
+                .toString())
+                .setParameter("scheduleOfRateId", scheduleOfRateId)
+                .getResultList();
     }
 
+    @SuppressWarnings("rawtypes")
     public List getAllWorkOrderEstimateByScheduleOfRateId(final Long scheduleOfRateId) {
-        final Query query = entityManager.createQuery(
-                "select distinct(woa.workOrderEstimate) from WorkOrderActivity woa where woa.workOrderEstimate.estimate.parent.id is not null and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED' and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id and sor.id = :scheduleOfRateId )");
-        query.setParameter("scheduleOfRateId", scheduleOfRateId);
-        final List list = query.getResultList();
-        return list;
+        return entityManager.createQuery(new StringBuffer("select distinct(woa.workOrderEstimate)")
+                .append(" from WorkOrderActivity woa")
+                .append(" where woa.workOrderEstimate.estimate.parent.id is not null")
+                .append(" and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED'")
+                .append(" and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id")
+                .append(" and sor.id = :scheduleOfRateId )").toString())
+                .setParameter("scheduleOfRateId", scheduleOfRateId)
+                .getResultList();
     }
 
     public SearchQuery prepareSearchQuery(final Long scheduleCategoryId, final String code, final String description) {
         final StringBuffer scheduleOfRateSql = new StringBuffer(100);
-        String scheduleOfRateStr = "";
         final List<Object> paramList = new ArrayList<Object>();
-        scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?");
+        int index = 1;
+        scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?").append(index++);
         paramList.add(scheduleCategoryId);
 
         if (code != null && !code.equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.code) like ?");
+            scheduleOfRateSql.append(" and UPPER(sor.code) like ?").append(index++);
             paramList.add("%" + code.toUpperCase() + "%");
         }
 
         if (description != null && !description.equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.description) like ?");
+            scheduleOfRateSql.append(" and UPPER(sor.description) like ?").append(index);
             paramList.add("%" + description.toUpperCase() + "%");
         }
-        scheduleOfRateStr = scheduleOfRateSql.toString();
-        final String countQuery = "select count(*) " + scheduleOfRateStr;
-        return new SearchQueryHQL(scheduleOfRateStr, countQuery, paramList);
+        final String countQuery = "select count(*) " + scheduleOfRateSql;
+        return new SearchQueryHQL(scheduleOfRateSql.toString(), countQuery, paramList);
     }
 }

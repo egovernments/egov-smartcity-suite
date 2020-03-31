@@ -103,6 +103,7 @@ public class MilestoneTemplateService {
         return milestoneTemplateRepository.findByCodeContainingIgnoreCase(code);
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public List<MilestoneTemplate> searchMilestoneTemplate(final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(MilestoneTemplate.class);
         if (searchRequestMilestoneTemplate != null) {
