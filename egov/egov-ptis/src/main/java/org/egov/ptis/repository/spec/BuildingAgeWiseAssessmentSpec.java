@@ -88,6 +88,7 @@ public class BuildingAgeWiseAssessmentSpec {
                     && !buidingAgeWiseReportResult.getPropertyTypeMaster().equals("-1"))
                 predicate.getExpressions()
                         .add(builder.equal(root.get("propType"), buidingAgeWiseReportResult.getPropertyTypeMaster()));
+            query.distinct(true);
             return predicate;
         };
     }

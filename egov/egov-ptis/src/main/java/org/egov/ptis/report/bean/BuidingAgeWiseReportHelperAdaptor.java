@@ -49,6 +49,7 @@
 package org.egov.ptis.report.bean;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,11 @@ public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<P
         final JsonArray buildingAgeWiseDetails = new JsonArray();
         buildingAgeWiseInfo.forEach(buildingAgeWiseInfoObj -> {
             final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("assessmentNo", buildingAgeWiseInfoObj.getPropertyId());
+            boolean duplicateConstrDate = validateConstructiveDate(buildingAgeWiseInfoObj.getFloorDetails().stream().collect(Collectors.toList()));
+            if (duplicateConstrDate)
+                jsonObject.addProperty("assessmentNo", buildingAgeWiseInfoObj.getPropertyId());
+            else
+                jsonObject.addProperty("assessmentNo", buildingAgeWiseInfoObj.getPropertyId() + "[P]");
             jsonObject.addProperty("doorNo", buildingAgeWiseInfoObj.getHouseNo());
             jsonObject.addProperty("name", buildingAgeWiseInfoObj.getOwnerName());
             jsonObject.addProperty("zone", buildingAgeWiseInfoObj.getZone().getName());
@@ -93,5 +98,13 @@ public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<P
             buildingAgeWiseDetails.add(jsonObject);
         });
         return enhance(buildingAgeWiseDetails, buildingAgeWiseResponse);
+    }
+    
+    public Boolean validateConstructiveDate(List<FloorDetailsInfo> floorList) {
+        Date firstFloorconstructionDate = floorList.get(0).getConstructionDate();
+        return floorList.stream()
+                .filter(floor -> floor != null)
+                .filter(floor -> floor.getConstructionDate() != null)
+                .allMatch(floor -> floor.getConstructionDate().equals(firstFloorconstructionDate));
     }
 }
