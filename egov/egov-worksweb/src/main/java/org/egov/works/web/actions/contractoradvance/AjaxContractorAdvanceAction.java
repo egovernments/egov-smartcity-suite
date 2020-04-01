@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.contractoradvance;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -56,12 +65,6 @@ import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.WorksConstants;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AjaxContractorAdvanceAction extends BaseFormAction {
     /**
@@ -78,14 +81,17 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     private static final String DRAWINGOFFICER_SEARCH_RESULTS = "drawingOfficers";
 
     private String query;
-    private List<String> estimateNumberSearchList = new LinkedList<String>();
-    private List<String> workOrderNumberSearchList = new LinkedList<String>();
-    private List<String> wpNumberSearchList = new LinkedList<String>();
-    private List<String> tenderNegotiationNumberSearchList = new LinkedList<String>();
-    private List<HashMap> drawingOfficerList = new LinkedList<HashMap>();
+    private List<String> estimateNumberSearchList = new LinkedList<>();
+    private List<String> workOrderNumberSearchList = new LinkedList<>();
+    private List<String> wpNumberSearchList = new LinkedList<>();
+    private List<String> tenderNegotiationNumberSearchList = new LinkedList<>();
+    private List<HashMap> drawingOfficerList = new LinkedList<>();
 
     private ContractorAdvanceService contractorAdvanceService;
     private Date advanceRequisitionDate;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -100,22 +106,27 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for estimates where WO is approved and part bills are not created
      */
+    @SuppressWarnings({ "unchecked" })
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate woe where woe.estimate.parent is null "
-                    +
-                    "and NOT EXISTS (select 1 from MBHeader mbh where mbh.workOrderEstimate.id = woe.id and mbh.egwStatus.code = ? and (mbh.egBillregister is not null and mbh.egBillregister.billstatus <> ?)) "
-                    +
-                    "and woe.workOrder.egwStatus.code = ? and UPPER(woe.estimate.estimateNumber) like '%'||?||'%' and woe.estimate.egwStatus.code = ? order by woe.estimate.estimateNumber";
-            params.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            params.add(ContractorBillRegister.BillStatus.CANCELLED.toString());
-            params.add(WorksConstants.APPROVED.toString());
-            params.add(query.toUpperCase());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            strquery.append("select distinct(woe.estimate.estimateNumber)")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.estimate.parent is null ")
+                    .append(" and NOT EXISTS (select 1 from MBHeader mbh where mbh.workOrderEstimate.id = woe.id and mbh.egwStatus.code = :mbStatus")
+                    .append(" and (mbh.egBillregister is not null and mbh.egBillregister.billstatus <> :billStatus)) ")
+                    .append(" and woe.workOrder.egwStatus.code = :workOrderStatus and UPPER(woe.estimate.estimateNumber) like '%'||:estimateNumber||'%'")
+                    .append(" and woe.estimate.egwStatus.code = :estimateStatus")
+                    .append(" order by woe.estimate.estimateNumber");
 
-            estimateNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("mbStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
+                    .setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString())
+                    .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
+
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -123,17 +134,25 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for WPs where WO is approved
      */
+    @SuppressWarnings({ "unchecked" })
     public String searchWPNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
+        final ArrayList<Object> params = new ArrayList<>();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(woe.workOrder.packageNumber) from WorkOrderEstimate woe where woe.workOrder.parent is null "
-                    +
-                    " and woe.workOrder.egwStatus.code = ?  and UPPER(woe.workOrder.packageNumber) like '%'||?||'%' order by woe.workOrder.packageNumber";
+            strquery.append("select distinct(woe.workOrder.packageNumber)")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null ")
+                    .append(" and woe.workOrder.egwStatus.code = :workOrderStatus ")
+                    .append(" and UPPER(woe.workOrder.packageNumber) like '%'||:packageNumber||'%'")
+                    .append(" order by woe.workOrder.packageNumber");
             params.add(WorksConstants.APPROVED.toString());
             params.add(query.toUpperCase());
 
-            wpNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            wpNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
+                    .setParameter("packageNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return WP_NUMBER_SEARCH_RESULTS;
     }
@@ -141,17 +160,22 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for TNs where WO is approved
      */
+    @SuppressWarnings("unchecked")
     public String searchTNNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(woe.workOrder.negotiationNumber) from WorkOrderEstimate woe where woe.workOrder.parent is null "
-                    +
-                    " and woe.workOrder.egwStatus.code = ?  and UPPER(woe.workOrder.negotiationNumber) like '%'||?||'%' order by woe.workOrder.negotiationNumber";
-            params.add(WorksConstants.APPROVED.toString());
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(woe.workOrder.negotiationNumber)")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null ")
+                    .append(" and woe.workOrder.egwStatus.code = :workOrderStatus")
+                    .append(" and UPPER(woe.workOrder.negotiationNumber) like '%'||:negotiationNumber||'%'")
+                    .append(" order by woe.workOrder.negotiationNumber");
 
-            tenderNegotiationNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            tenderNegotiationNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
+                    .setParameter("negotiationNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return TN_NUMBER_SEARCH_RESULTS;
     }
@@ -159,17 +183,22 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for Approved WOs
      */
+    @SuppressWarnings("unchecked")
     public String searchWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate woe where woe.workOrder.parent is null "
-                    +
-                    " and woe.workOrder.egwStatus.code = ?  and UPPER(woe.workOrder.workOrderNumber) like '%'||?||'%' order by woe.workOrder.workOrderNumber";
-            params.add(WorksConstants.APPROVED.toString());
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(woe.workOrder.workOrderNumber)")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null ")
+                    .append(" and woe.workOrder.egwStatus.code = :workOrderStatus")
+                    .append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||:workOrderNumber||'%'")
+                    .append(" order by woe.workOrder.workOrderNumber");
 
-            workOrderNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            workOrderNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return WORKORDER_NUMBER_SEARCH_RESULTS;
     }
@@ -186,17 +215,21 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for distinct estimates from ARF
      */
+    @SuppressWarnings("unchecked")
     public String searchEstimateNumberFromARF() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(arf.workOrderEstimate.estimate.estimateNumber) from ContractorAdvanceRequisition arf where arf.status.code <> ? and "
-                    +
-                    "UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'  order by arf.workOrderEstimate.estimate.estimateNumber";
-            params.add(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString());
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(arf.workOrderEstimate.estimate.estimateNumber)")
+                    .append(" from ContractorAdvanceRequisition arf")
+                    .append(" where arf.status.code <> :carStatus and ")
+                    .append(" UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||:estimateNumber||'%'")
+                    .append("  order by arf.workOrderEstimate.estimate.estimateNumber");
 
-            estimateNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("carStatus", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString())
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -204,17 +237,21 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for Approved WOs
      */
+    @SuppressWarnings("unchecked")
     public String searchWorkOrderNumberFromARF() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(arf.workOrderEstimate.workOrder.workOrderNumber) from ContractorAdvanceRequisition arf where arf.status.code <> ? and "
-                    +
-                    "UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'  order by arf.workOrderEstimate.workOrder.workOrderNumber";
-            params.add(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString());
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(arf.workOrderEstimate.workOrder.workOrderNumber)")
+                    .append(" from ContractorAdvanceRequisition arf")
+                    .append(" where arf.status.code <> :arfStatus")
+                    .append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||:workOrderNumber||'%'")
+                    .append(" order by arf.workOrderEstimate.workOrder.workOrderNumber");
 
-            workOrderNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            workOrderNumberSearchList = entityManager.createQuery(strquery.toString())
+                    .setParameter("arfStatus", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString())
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return WORKORDER_NUMBER_SEARCH_RESULTS;
     }

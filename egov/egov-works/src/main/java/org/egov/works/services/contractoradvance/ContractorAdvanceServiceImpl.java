@@ -47,6 +47,19 @@
  */
 package org.egov.works.services.contractoradvance;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -75,18 +88,11 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorAdvanceRequisition, Long> implements
         ContractorAdvanceService {
 
+    @SuppressWarnings("rawtypes")
     protected PersistenceService persistenceService;
     private WorksService worksService;
     private EisUtilService eisService;
@@ -96,6 +102,8 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     private FinancialYearHibernateDAO financialYearHibernateDAO;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private ContractorAdvanceRequisitionNumberGenerator contractorAdvanceRequisitionNumberGenerator;
     private static final String CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE = "CONTRACTOR_ADVANCE_ACCOUNTCODE";
@@ -112,11 +120,11 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceServiceImpl.class);
 
-    public ContractorAdvanceServiceImpl(){
+    public ContractorAdvanceServiceImpl() {
         super(ContractorAdvanceRequisition.class);
     }
 
-    public ContractorAdvanceServiceImpl(Class<ContractorAdvanceRequisition> type){
+    public ContractorAdvanceServiceImpl(Class<ContractorAdvanceRequisition> type) {
         super(type);
     }
 
@@ -124,9 +132,11 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     public BigDecimal getAdvancePaidByWOEstimateId(final Long workOrderEstimateId) throws ValidationException {
         BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;
         try {
-            advanceAlreadyPaid = (BigDecimal) persistenceService
-                    .find("select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where status.code<>'CANCELLED' and workOrderEstimate.id = ?",
-                            workOrderEstimateId);
+            advanceAlreadyPaid = (BigDecimal) entityManager.createQuery(
+                    "select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where status.code<>'CANCELLED' and workOrderEstimate.id = :woeId")
+                    .setParameter("woeId", workOrderEstimateId)
+                    .getSingleResult();
+
         } catch (final ValidationException validationException) {
             throw new ValidationException(validationException.getErrors());
         }
@@ -138,9 +148,13 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             final Long contractorAdvanceRequisitionId) throws ValidationException {
         BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;
         try {
-            advanceAlreadyPaid = (BigDecimal) persistenceService
-                    .find("select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where status.code<>'CANCELLED' and workOrderEstimate.id = ? and id < ?",
-                            workOrderEstimateId, contractorAdvanceRequisitionId);
+            advanceAlreadyPaid = (BigDecimal) entityManager.createQuery(new StringBuffer("select sum(advanceRequisitionAmount)")
+                    .append(" from ContractorAdvanceRequisition")
+                    .append(" where status.code<>'CANCELLED' and workOrderEstimate.id = :woeId and id < :carId").toString())
+                    .setParameter("woeId", workOrderEstimateId)
+                    .setParameter("carId", contractorAdvanceRequisitionId)
+                    .getSingleResult();
+
         } catch (final ValidationException validationException) {
             throw new ValidationException(validationException.getErrors());
         }
@@ -303,8 +317,9 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
             for (final EgAdvanceRequisitionDetails advanceRequisitionDetails : contractorAdvanceRequisition
                     .getEgAdvanceReqDetailses())
                 egAdvanceRequisitionDetails = advanceRequisitionDetails;
-            egAdvanceRequisitionDetails.setChartofaccounts((CChartOfAccounts) persistenceService.find(
-                    "from  CChartOfAccounts where id=?", advanceAccountCode));
+            egAdvanceRequisitionDetails.setChartofaccounts((CChartOfAccounts) entityManager
+                    .createQuery("from  CChartOfAccounts where id = :id").setParameter("id", advanceAccountCode)
+                    .getSingleResult());
             egAdvanceRequisitionDetails.setFunction(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate()
                     .getFinancialDetails().get(0).getFunction());
             egAdvanceRequisitionDetails.setDebitamount(contractorAdvanceRequisition.getAdvanceRequisitionAmount());
@@ -325,7 +340,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                                 setRequisitionPayeeDetail(contractorAdvanceRequisition, egAdvanceRequisitionDetails,
                                         adt));
                     if (adt == null) {
-                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        final List<ValidationError> errors = new ArrayList<>();
                         errors.add(new ValidationError("advancerequisition.validate_glcode_for_subledger",
                                 "advancerequisition.validate_glcode_for_subledger"));
                         throw new ValidationException(errors);
@@ -367,18 +382,19 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return contractorAdvanceRequisition;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public List<HashMap> getDrawingOfficerListForARF(final String query, final Date advanceRequisitionDate) {
-        final List<HashMap> drawingOfficers = new ArrayList<HashMap>();
+        final List<HashMap> drawingOfficers = new ArrayList<>();
         try {
-            final List<Designation> designationsList = new LinkedList<Designation>();
-            final List<Long> designationsIdList = new LinkedList<Long>();
+            final List<Designation> designationsList = new LinkedList<>();
+            final List<Long> designationsIdList = new LinkedList<>();
             final String drawingOfficerDesignations = worksService
                     .getWorksConfigValue("CONTRACTORADVANCE_DRAWINGOFFICER_DESIGNATIONS");
 
             if (drawingOfficerDesignations != null) {
                 final String[] designationNames = drawingOfficerDesignations.toUpperCase().split(",");
-                final List<String> desgListUpper = new ArrayList<String>(Arrays.asList(designationNames));
+                final List<String> desgListUpper = new ArrayList<>(Arrays.asList(designationNames));
                 designationsList.addAll(persistenceService.findAllByNamedQuery("getDesignationForListOfDesgNames",
                         desgListUpper));
             }
@@ -395,9 +411,11 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     @Override
     public List<CChartOfAccounts> getContractorAdvanceAccountcodes() throws ValidationException {
-        List<CChartOfAccounts> coaList = Collections.EMPTY_LIST;
-        final AccountCodePurpose accountCodePurpose = (AccountCodePurpose) persistenceService.find(
-                "from AccountCodePurpose where name = ?", CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE);
+        List<CChartOfAccounts> coaList = Collections.emptyList();
+        final AccountCodePurpose accountCodePurpose = (AccountCodePurpose) entityManager.createQuery(
+                "from AccountCodePurpose where name = :name")
+                .setParameter("name", CONTRACTOR_ADVANCE_ACCOUNTCODE_PURPOSE)
+                .getSingleResult();
         if (accountCodePurpose != null)
             coaList = chartOfAccountsHibernateDAO
                     .getAccountCodeByPurpose(Integer.valueOf(accountCodePurpose.getId().toString()));
@@ -420,6 +438,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return totalEstimateValue;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Integer getFunctionaryForWorkflow(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
         Integer workflowFunctionaryId = null;
@@ -438,8 +457,12 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                         || contractorAdvanceRequisition
                                 .getCurrentState().getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
                                 && contractorAdvanceRequisition.getCurrentState().getValue().equalsIgnoreCase("REJECTED"))) {
-            final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
-                    "UAC");
+            List<Functionary> results = entityManager.createQuery(" from  Functionary where upper(name) = :name")
+                    .setParameter("name", "UAC")
+                    .getResultList();
+
+            final Functionary func = results.isEmpty() ? null : results.get(0);
+
             if (func != null)
                 workflowFunctionaryId = func.getId();
         }
@@ -458,13 +481,15 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<EgwStatus> getAllContractorAdvanceRequisitionStatus() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where s.moduletype=? and s.code <>'NEW' order by orderId",
-                ContractorAdvanceRequisition.class.getSimpleName());
+        return entityManager.createQuery("from EgwStatus s where s.moduletype=:moduleType and s.code <>'NEW' order by orderId")
+                .setParameter("moduleType", ContractorAdvanceRequisition.class.getSimpleName())
+                .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<DrawingOfficer> getAllDrawingOfficerFromARF() {
         final List<DrawingOfficer> drawingOfficerList = persistenceService
@@ -472,14 +497,19 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return drawingOfficerList;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public CChartOfAccounts getContractorAdvanceAccountcodeForWOE(final Long workOrderEstimateId) {
         CChartOfAccounts advanceCOA = null;
-        final List<ContractorAdvanceRequisition> arfList = persistenceService
-                .findAllBy(
-                        "select distinct arf from ContractorAdvanceRequisition arf where arf.workOrderEstimate.id = ? and arf.status.code = ? and arf.arftype = ?",
-                        workOrderEstimateId,
-                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(), ARF_TYPE);
+        final List<ContractorAdvanceRequisition> arfList = entityManager.createQuery(
+                new StringBuffer("select distinct arf ")
+                        .append("from ContractorAdvanceRequisition arf")
+                        .append(" where arf.workOrderEstimate.id = :woeId and arf.status.code = :status and arf.arftype = :type")
+                        .toString())
+                .setParameter("woeId", workOrderEstimateId)
+                .setParameter("status", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString())
+                .setParameter("type", ARF_TYPE)
+                .getResultList();
         if (arfList != null && !arfList.isEmpty())
             for (final EgAdvanceRequisitionDetails advanceRequisitionDetails : arfList.get(0)
                     .getEgAdvanceReqDetailses())
@@ -489,25 +519,37 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     @Override
     public BigDecimal getTotalAdvancePaymentMadeByWOEstimateId(final Long workOrderEstimateId, final Date asOnDate) {
-        BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;
-        advanceAlreadyPaid = (BigDecimal) persistenceService
-                .find("select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where status.code = ? and workOrderEstimate.id = ? "
-                        + " and egAdvanceReqMises.voucherheader.status = 0 and egAdvanceReqMises.voucherheader.voucherDate <= ?",
-                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),
-                        workOrderEstimateId, asOnDate);
-        return advanceAlreadyPaid;
+        return (BigDecimal) entityManager.createQuery(
+                new StringBuffer("select sum(advanceRequisitionAmount)")
+                        .append(" from ContractorAdvanceRequisition")
+                        .append(" where status.code = :status and workOrderEstimate.id = :woeId ")
+                        .append(" and egAdvanceReqMises.voucherheader.status = 0 and egAdvanceReqMises.voucherheader.voucherDate <= :voucherDate")
+                        .toString())
+                .setParameter("status", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString())
+                .setParameter("woeId", workOrderEstimateId)
+                .setParameter("voucherDate", asOnDate, TemporalType.DATE)
+                .getSingleResult();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ContractorAdvanceRequisition getContractorARFInWorkflowByWOEId(final Long workOrderEstimateId) {
-        final ContractorAdvanceRequisition arf = find(
-                "from ContractorAdvanceRequisition arf where arf.workOrderEstimate.id = ? and arf.status.code not in(?,?) and arf.arftype = ?",
-                workOrderEstimateId,
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString(), ARF_TYPE);
+        final List<ContractorAdvanceRequisition> results = entityManager
+                .createQuery(new StringBuffer("from ContractorAdvanceRequisition arf")
+                        .append(" where arf.workOrderEstimate.id = :woeId and arf.status.code not in :arfStatus and arf.arftype = :arfType")
+                        .toString())
+                .setParameter("woeId", workOrderEstimateId)
+                .setParameter("arfStatus",
+                        Arrays.asList(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),
+                                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString()))
+                .setParameter("arfType", ARF_TYPE)
+                .getResultList();
+
+        final ContractorAdvanceRequisition arf = results.isEmpty() ? null : results.get(0);
         return arf;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }

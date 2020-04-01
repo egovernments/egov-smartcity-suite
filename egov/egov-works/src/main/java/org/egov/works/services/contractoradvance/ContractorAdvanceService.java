@@ -132,6 +132,7 @@ public interface ContractorAdvanceService {
      * Get List of Drawing officer from given list of designations which are read from app config values based on the date passed
      * and for given search criteria from auto complete as name or code(query string)
      */
+    @SuppressWarnings("rawtypes")
     public List<HashMap> getDrawingOfficerListForARF(String query, Date advanceRequisitionDate);
 
     /**

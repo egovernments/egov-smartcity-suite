@@ -47,8 +47,15 @@
  */
 package org.egov.works.web.actions.contractoradvance;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -76,16 +83,10 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 @ParentPackage("egov")
 @Result(name = ContractorAdvanceRequisitionAction.NEW, location = "contractorAdvanceRequisition-new.jsp")
 public class ContractorAdvanceRequisitionAction extends BaseFormAction {
 
-    private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceRequisitionAction.class);
     private static final long serialVersionUID = 1L;
     private ContractorAdvanceRequisition contractorAdvanceRequisition = new ContractorAdvanceRequisition();
     private Long workOrderEstimateId;
@@ -116,21 +117,27 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
     private String nextDesignation;
     private String drawingOfficerName;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public ContractorAdvanceRequisitionAction() {
         addRelatedEntity("drawingOfficer", DrawingOfficer.class);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StateAware getModel() {
         return contractorAdvanceRequisition;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void prepare() {
 
         if (workOrderEstimateId != null) {
-            contractorAdvanceRequisition.setWorkOrderEstimate((WorkOrderEstimate) persistenceService.find(
-                    "from WorkOrderEstimate where id = ?", workOrderEstimateId));
+            contractorAdvanceRequisition
+                    .setWorkOrderEstimate((WorkOrderEstimate) entityManager.createQuery("from WorkOrderEstimate where id = :id")
+                            .setParameter("id", workOrderEstimateId).getSingleResult());
 
             if (id == null)
                 // Approved ARF amount
@@ -292,23 +299,36 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected void checkForBills() {
-        final Long billCount = (Long) persistenceService.find(
-                "select count(*) from MBHeader mbh where mbh.workOrderEstimate.id = ? and mbh.egwStatus.code = ? "
-                        + "and (mbh.egBillregister is not null and mbh.egBillregister.billstatus <> ?)",
-                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                MBHeader.MeasurementBookStatus.APPROVED.toString(),
-                ContractorBillRegister.BillStatus.CANCELLED.toString());
+        final StringBuffer queryStr = new StringBuffer("select count(*)")
+                .append(" from MBHeader mbh")
+                .append(" where mbh.workOrderEstimate.id = :woeId and mbh.egwStatus.code = :mbhStatus")
+                .append("and (mbh.egBillregister is not null and mbh.egBillregister.billstatus <> :billStatus");
+        final Long billCount = (Long) entityManager.createQuery(queryStr.toString())
+                .setParameter("woeId", contractorAdvanceRequisition.getWorkOrderEstimate().getId())
+                .setParameter("mbhStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
+                .setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString())
+                .getSingleResult();
+
         if (billCount != null && billCount > 0)
             addActionError(getText("advancerequisition.validate.billcreated.message"));
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     protected void checkARFInWorkflowForEstimate() {
-        final ContractorAdvanceRequisition arf = (ContractorAdvanceRequisition) persistenceService
-                .find(" from ContractorAdvanceRequisition arf where arf.workOrderEstimate.id = ? and arf.status.code not in(?, ?) ",
-                        contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),
-                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        final StringBuffer queryStr = new StringBuffer("from ContractorAdvanceRequisition arf")
+                .append(" where arf.workOrderEstimate.id = :woeId and arf.status.code not in :arfStatus ");
+
+        final List<ContractorAdvanceRequisition> results = entityManager.createQuery(queryStr.toString())
+                .setParameter("woeId", contractorAdvanceRequisition.getWorkOrderEstimate().getId())
+                .setParameter("arfStatus",
+                        Arrays.asList(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),
+                                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString()))
+                .getResultList();
+
+        final ContractorAdvanceRequisition arf = results.isEmpty() ? null : results.get(0);
+
         if (arf != null)
             addActionError(getText("advancerequisition.validate.arf.in.workflow.message",
                     new String[] { arf.getAdvanceRequisitionNumber() }));

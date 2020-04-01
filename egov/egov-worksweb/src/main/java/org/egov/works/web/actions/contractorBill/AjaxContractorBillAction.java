@@ -47,6 +47,22 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -92,19 +108,7 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 public class AjaxContractorBillAction extends BaseFormAction {
 
     private static final long serialVersionUID = -3316045051992569984L;
@@ -118,7 +122,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private static final String COMPLETION_DETAILS = "completionDetails";
     private static final String APPCONFIG_KEY_NAME = "SKIP_BUDGET_CHECK";
     private WorkCompletionInfo workcompletionInfo;
-    private List<WorkCompletionDetailInfo> workCompletionDetailInfo = new LinkedList<WorkCompletionDetailInfo>();;
+    private List<WorkCompletionDetailInfo> workCompletionDetailInfo = new LinkedList<>();;
     private ContractorBillService contractorBillService;
     private EgBillregister egBillregister;
     private WorkOrder workOrder;
@@ -130,7 +134,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private String deductionType;
     private String rowId;
     private Long workOrderEstimateId;
-    private List<CChartOfAccounts> standardDeductionAccountList = new LinkedList<CChartOfAccounts>();
+    private List<CChartOfAccounts> standardDeductionAccountList = new LinkedList<>();
     private boolean noMBsPresent;
     private String latestBillDateStr;
     private Long billId;
@@ -141,15 +145,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private Long woId;
     private String refNo;
 
-    public void setStandardDeductionAccountList(
-            final List<CChartOfAccounts> standardDeductionAccountList) {
-        this.standardDeductionAccountList = standardDeductionAccountList;
-    }
-
-    private List<AppConfigValues> finalBillChecklist = new LinkedList<AppConfigValues>();
-    private List<String> checklistValues = new LinkedList<String>();
+    private List<AppConfigValues> finalBillChecklist = new LinkedList<>();
+    private List<String> checklistValues = new LinkedList<>();
     private String[] selectedchecklistvalues;
-    private List<MBHeader> approvedMBHeaderList = new LinkedList<MBHeader>();
+    private List<MBHeader> approvedMBHeaderList = new LinkedList<>();
     private BigDecimal totalWorkValueRecorded = BigDecimal.ZERO;
     private BigDecimal totalTenderedItemsAmt = BigDecimal.ZERO;
     private BigDecimal totalUtilizedAmount = BigDecimal.ZERO;
@@ -168,8 +167,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
-    private List<CChartOfAccounts> coaList = new LinkedList<CChartOfAccounts>();
-    private List<AssetsForWorkOrder> assetList = new LinkedList<AssetsForWorkOrder>();
+    private List<CChartOfAccounts> coaList = new LinkedList<>();
+    private List<AssetsForWorkOrder> assetList = new LinkedList<>();
     private static final String SKIP_BUDGCHECK_APPCONF_KEYNAME = "SKIP_BUDGET_CHECK";
     private Long glCode;
     private BigDecimal budgBalance;
@@ -203,10 +202,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private Long contractorBillId;
     private String estimateNumber;
     private String query = "";
-    private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
-    private List<ContractorBillRegister> contractorBillList = new LinkedList<ContractorBillRegister>();
+    private List<WorkOrder> workOrderList = new LinkedList<>();
+    private List<ContractorBillRegister> contractorBillList = new LinkedList<>();
     private String trackMlsCheck;
-    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
+    private List<AbstractEstimate> estimateList = new LinkedList<>();
     private String yearEndApprCheck;
     private String estimateNo;
     private static final String VALID = "valid";
@@ -219,9 +218,16 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private EmployeeServiceOld employeeService;
     private static final String ARF_IN_WORKFLOW_CHECK = "arfInWorkflowCheck";
     private String showValidationMsg = "";
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void setBudgetService(final BudgetService budgetService) {
         this.budgetService = budgetService;
+    }
+
+    public void setStandardDeductionAccountList(
+            final List<CChartOfAccounts> standardDeductionAccountList) {
+        this.standardDeductionAccountList = standardDeductionAccountList;
     }
 
     @Override
@@ -246,9 +252,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
         List<EgBillregister> billList;
         Date latestBillDt;
         latestBillDateStr = "";
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager
+                .createQuery("from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         if (workOrderEstimate != null) {
             billList = contractorBillService.getListOfNonCancelledBillsforEstimate(workOrderEstimate.getEstimate(), new Date());
             if (billList != null && !billList.isEmpty()) {
@@ -263,17 +270,20 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String totalCumulativeBillValue() {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager
+                .createQuery("from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         cumulativeBillValue = contractorBillService.getTotalValueWoForUptoBillDate(billDate,
                 workOrderEstimate.getWorkOrder().getId(), workOrderEstimate.getId());
         return CUMULATIVE_BILL_VALUE;
     }
 
     public String yearEndApprCheckForBillCreation() {
-        final AbstractEstimate estimate = (AbstractEstimate) persistenceService
-                .find("select woe.estimate from WorkOrderEstimate woe where woe.id = ? ", workOrderEstimateId);
+        final AbstractEstimate estimate = entityManager.createQuery(
+                "select woe.estimate from WorkOrderEstimate woe where woe.id = :id ", AbstractEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         yearEndApprCheck = VALID;
         estimateNo = estimate.getEstimateNumber();
         Long billDateFinYearId = 0L;
@@ -321,9 +331,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
 
     private void isSkipBudgetCheck(final Long workOrderEstimateId) {
         final List<AppConfigValues> appConfigValuesList = worksService.getAppConfigValue(WORKS, SKIP_BUDGCHECK_APPCONF_KEYNAME);
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager.createQuery(
+                "from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         logger.info("length of appconfig values>>>>>> " + appConfigValuesList.size());
         for (final AppConfigValues appValues : appConfigValuesList)
             if (appValues.getValue().equals(workOrderEstimate.getEstimate().getNatureOfWork().getName())) {
@@ -334,9 +345,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String completionInfo() {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager.createQuery(
+                "from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         workcompletionInfo = contractorBillService.setWorkCompletionInfoFromBill(null, workOrderEstimate);
         workCompletionDetailInfo.addAll(contractorBillService.setWorkCompletionDetailInfoList(workOrderEstimate));
         return COMPLETION_DETAILS;
@@ -347,9 +359,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
      * @return String
      */
     public String calculateAdvanceAdjustment() {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager.createQuery(
+                "from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         totalAdvancePaid = contractorAdvanceService.getTotalAdvancePaymentMadeByWOEstimateId(workOrderEstimate.getId(), billDate);
         totalPendingBalance = contractorBillService.calculateTotalPendingAdvance(totalAdvancePaid, billDate, workOrderEstimate,
                 billId);
@@ -357,9 +370,10 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String billCheckListDetails() throws NumberFormatException, ApplicationException {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager.createQuery(
+                "from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         checklistValues.add("N/A");
         checklistValues.add("Yes");
         checklistValues.add("No");
@@ -385,9 +399,14 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String trackMilestoneCheckForFinalBill() {
-        final List<TrackMilestone> tm = persistenceService.findAllBy(
-                " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.id = ? and trmls.total=100 ",
-                workOrderEstimateId);
+        final List<TrackMilestone> tm = entityManager.createQuery(
+                new StringBuffer("select trmls")
+                        .append(" from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls")
+                        .append(" where trmls.egwStatus.code='APPROVED' and woe.id = :woeId and trmls.total=100 ").toString(),
+                TrackMilestone.class)
+                .setParameter("woeId", workOrderEstimateId)
+                .getResultList();
+
         trackMlsCheck = "invalid";
         if (tm != null && !tm.isEmpty() && tm.get(0) != null)
             trackMlsCheck = "valid";
@@ -395,9 +414,14 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String trackMilestoneCheckForPartBill() {
-        final List<TrackMilestone> tm = persistenceService.findAllBy(
-                " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.id = ? and trmls.total>0 ",
-                workOrderEstimateId);
+        final List<TrackMilestone> tm = entityManager.createQuery(
+                new StringBuffer("select trmls")
+                        .append(" from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls")
+                        .append(" where trmls.egwStatus.code='APPROVED' and woe.id = :woeId and trmls.total>0 ").toString(),
+                TrackMilestone.class)
+                .setParameter("woeId", workOrderEstimateId)
+                .getResultList();
+
         trackMlsCheck = "invalid";
         if (tm != null && !tm.isEmpty() && tm.get(0) != null)
             trackMlsCheck = "valid";
@@ -410,10 +434,13 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public void setDespositWorksAccBal() throws Exception {
-        final CChartOfAccounts coaObj = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
-                getGlCodeId());
-        final AbstractEstimate estimate = (AbstractEstimate) persistenceService.find("from AbstractEstimate where id=?",
-                getEstimateId());
+        final CChartOfAccounts coaObj = entityManager
+                .createQuery("from CChartOfAccounts where id = :id", CChartOfAccounts.class)
+                .setParameter("id", getGlCodeId())
+                .getSingleResult();
+        final AbstractEstimate estimate = entityManager
+                .createQuery("from AbstractEstimate where id = :id", AbstractEstimate.class)
+                .setParameter("id", getEstimateId()).getSingleResult();
         final Accountdetailtype adt = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coaObj.getGlcode(), "DEPOSITCODE");
         String fundCode = null;
         if (estimate != null && estimate.getFinancialDetails().get(0) != null) {
@@ -482,9 +509,11 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String getDebitAccountCodes() {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                "from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = entityManager.createQuery(
+                "from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
+
         if (workOrderEstimate != null && workOrderEstimate.getId() != null) {
             isSkipBudgetCheck(workOrderEstimate.getId());
             addDropdownData(WorksConstants.ASSET_LIST, workOrderEstimate.getAssetValues());
@@ -499,13 +528,13 @@ public class AjaxContractorBillAction extends BaseFormAction {
                             Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP)));
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
-                    final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                    final List<BudgetGroup> budgetGroupList = new ArrayList<>();
                     if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
                         budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
                     coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
-                    coaList = Collections.EMPTY_LIST;
+                    coaList = Collections.emptyList();
             } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode()
                     .equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
@@ -514,13 +543,13 @@ public class AjaxContractorBillAction extends BaseFormAction {
                             Integer.valueOf(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS)));
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "yes".equals(accountCodeFromBudgetHead)) {
-                    final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                    final List<BudgetGroup> budgetGroupList = new ArrayList<>();
                     if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
                         budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup());
                     coaList = budgetService.getAccountCodeForBudgetHead(budgetGroupList);
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
-                    coaList = Collections.EMPTY_LIST;
+                    coaList = Collections.emptyList();
             } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getNatureOfWork().getName()))
                 if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && checkBudget) {
                     // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
@@ -543,20 +572,23 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     if (!coaList.isEmpty())
                         addDropdownData(WorksConstants.COA_LIST, coaList);
                     else
-                        coaList = Collections.EMPTY_LIST;
+                        coaList = Collections.emptyList();
                     if (coaList.isEmpty()) {
                         showValidationMsg = WorksConstants.YES;
                         return WorksConstants.COA_LIST;
                     }
                 } else
-                    coaList = Collections.EMPTY_LIST;
+                    coaList = Collections.emptyList();
         }
         return WorksConstants.COA_LIST;
     }
 
     public String getBudgetDetails() throws Exception {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) persistenceService
-                .find("from WorkOrderEstimate woe where woe.estimate.id=?", getEstimateId());
+        final List<WorkOrderEstimate> results = entityManager.createQuery(
+                "from WorkOrderEstimate woe where woe.estimate.id = :estimateId", WorkOrderEstimate.class)
+                .setParameter("estimateId", getEstimateId())
+                .getResultList();
+        final WorkOrderEstimate workOrderEstimate = results.isEmpty() ? null : results.get(0);
         isSkipBudgetCheck(workOrderEstimate.getId());
         // if(checkBudget){
         setBudgetAmtAndBalForCapitalWorks(workOrderEstimate);
@@ -567,7 +599,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     private void setBudgetAmtAndBalForCapitalWorks(final WorkOrderEstimate workOrderEstimate) {
-        final Map<String, Object> queryParamMap = new HashMap<String, Object>();
+        final Map<String, Object> queryParamMap = new HashMap<>();
         try {
 
             if (workOrderEstimate.getEstimate() != null && workOrderEstimate.getEstimate().getFinancialDetails().get(0) != null)
@@ -610,8 +642,11 @@ public class AjaxContractorBillAction extends BaseFormAction {
                 queryParamMap.put("asondate", getBillDate());
             }
             if (getGlCodeId() != null) {
-                final CChartOfAccounts coaObj = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
-                        getGlCodeId());
+                final CChartOfAccounts coaObj = entityManager
+                        .createQuery("from CChartOfAccounts where id = :id", CChartOfAccounts.class)
+                        .setParameter("id", getGlCodeId())
+                        .getSingleResult();
+
                 queryParamMap.put("glcode", coaObj.getGlcode());
                 queryParamMap.put("glcodeid", getGlCodeId());
                 try {
@@ -688,10 +723,17 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String getProjectClosureEstimateForBill() {
-        final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService()
-                .find("select distinct mb.workOrderEstimate from MBHeader mb where mb.egBillregister.id=? and " +
-                        " mb.egBillregister.billstatus='APPROVED' and mb.workOrderEstimate.estimate.projectCode.egwStatus.code='CLOSED'",
-                        contractorBillId);
+        final List<WorkOrderEstimate> results = entityManager.createQuery(
+                new StringBuffer("select distinct mb.workOrderEstimate")
+                        .append(" from MBHeader mb")
+                        .append(" where mb.egBillregister.id = :billRegisterId and mb.egBillregister.billstatus='APPROVED'")
+                        .append(" and mb.workOrderEstimate.estimate.projectCode.egwStatus.code = 'CLOSED'").toString(),
+                WorkOrderEstimate.class)
+                .setParameter("billRegisterId", contractorBillId)
+                .getResultList();
+
+        final WorkOrderEstimate woe = results.isEmpty() ? null : results.get(0);
+
         if (woe != null)
             estimateNumber = woe.getEstimate().getEstimateNumber();
         else
@@ -700,42 +742,50 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public String searchWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct mbh.workOrder from MBHeader mbh where mbh.workOrder.parent is null and mbh.egBillregister is not null "
-                    +
-                    "and mbh.egBillregister.billstatus <> ? and mbh.workOrder.workOrderNumber like '%'||?||'%' ";
-            params.add("NEW");
-            params.add(query.toUpperCase());
+            strquery.append("select distinct mbh.workOrder")
+                    .append(" from MBHeader mbh")
+                    .append(" where mbh.workOrder.parent is null and mbh.egBillregister is not null ")
+                    .append(" and mbh.egBillregister.billstatus <> :billStatus and mbh.workOrder.workOrderNumber like '%'||:workOrderNumber||'%' ");
 
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("billStatus", "NEW")
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return "workOrderNoSearchResults";
     }
 
     public String searchContractorBillNo() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = " from ContractorBillRegister cbr where cbr.billnumber like '%'||?||'%' and cbr.billstatus <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            contractorBillList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(" from ContractorBillRegister cbr")
+                    .append(" where cbr.billnumber like '%'||:billnumber||'%' and cbr.billstatus <> :billstatus ");
+
+            contractorBillList = entityManager.createQuery(strquery.toString(), ContractorBillRegister.class)
+                    .setParameter("billnumber", query.toUpperCase())
+                    .setParameter("billstatus", "NEW")
+                    .getResultList();
+
         }
         return "billNumberSearchResults";
     }
 
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.estimate.estimateNumber like '%'||?||'%' "
-                    +
-                    " and woe.id in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egBillregister.id in (select egbr.id from EgBillregister egbr where egbr.billstatus <> ?) )";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select woe.estimate")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and woe.estimate.estimateNumber like '%'||:estimateNumber||'%' ")
+                    .append(" and woe.id in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egBillregister.id in")
+                    .append(" (select egbr.id from EgBillregister egbr where egbr.billstatus <> :billstatus) )");
+
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("billstatus", "NEW")
+                    .getResultList();
         }
         return "estimateNoSearchResults";
     }

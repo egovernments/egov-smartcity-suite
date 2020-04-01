@@ -47,8 +47,20 @@
  */
 package org.egov.works.web.actions.contractoradvance;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -69,29 +81,16 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * @author Sathish P
  *
  */
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = SearchContractorAdvanceRequisitionAction.SEARCH, location = "searchContractorAdvanceRequisition-search.jsp")
 public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 
     private static final long serialVersionUID = -2101507785101129271L;
-    private static final Logger LOGGER = Logger.getLogger(SearchContractorAdvanceRequisitionAction.class);
     public static final String SEARCH = "search";
     private Integer arfStatus;
     private String estimateNumber;
@@ -137,45 +136,50 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         return SEARCH;
     }
 
+    @SuppressWarnings("rawtypes")
     private Map getQuery() {
         final StringBuffer query = new StringBuffer(700);
-        final List<Object> paramList = new ArrayList<Object>();
-        final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append("from ContractorAdvanceRequisition arf where arf.status.code <> ? ");
+        final List<Object> paramList = new ArrayList<>();
+        final HashMap<String, Object> queryAndParams = new HashMap<>();
+        int index = 1;
+        query.append("from ContractorAdvanceRequisition arf where arf.status.code <> ?").append(index++);
         paramList.add(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString());
         if (arfStatus != null && arfStatus != -1) {
-            query.append(" and arf.status.id = ?");
+            query.append(" and arf.status.id = ?").append(index++);
             paramList.add(arfStatus);
         }
 
         if (StringUtils.isNotBlank(estimateNumber)) {
-            query.append(" and UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'");
+            query.append(" and UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(estimateNumber).toUpperCase());
         }
 
         if (advanceRequisitionFromDate != null && advanceRequisitionToDate != null && getFieldErrors().isEmpty()) {
-            query.append(" and arf.advanceRequisitionDate between ? and ? ");
+            query.append(" and arf.advanceRequisitionDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(advanceRequisitionFromDate);
             paramList.add(advanceRequisitionToDate);
         }
 
         if (contractorId != 0 && contractorId != -1) {
-            query.append(" and arf.workOrderEstimate.workOrder.contractor.id = ? ");
+            query.append(" and arf.workOrderEstimate.workOrder.contractor.id = ?").append(index++);
             paramList.add(Long.valueOf(contractorId));
         }
 
         if (executingDepartmentId != 0 && executingDepartmentId != -1) {
-            query.append(" and arf.workOrderEstimate.estimate.executingDepartment.id = ? ");
+            query.append(" and arf.workOrderEstimate.estimate.executingDepartment.id = ?").append(index++);
             paramList.add(executingDepartmentId);
         }
 
         if (StringUtils.isNotBlank(workOrderNumber)) {
-            query.append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'");
+            query.append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(workOrderNumber).toUpperCase());
         }
 
         if (drawingOfficerId != null && drawingOfficerId != 0 && drawingOfficerId != -1) {
-            query.append(" and arf.drawingOfficer.id = ?");
+            query.append(" and arf.drawingOfficer.id = ?").append(index++);
             paramList.add(drawingOfficerId);
         }
 
@@ -186,12 +190,13 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         return queryAndParams;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         String query = null;
         String countQuery = null;
         Map queryAndParms = null;
-        List<Object> paramList = new ArrayList<Object>();
+        List<Object> paramList = new ArrayList<>();
         queryAndParms = getQuery();
         paramList = (List<Object>) queryAndParms.get("params");
         query = (String) queryAndParms.get("query");
@@ -234,8 +239,9 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         return SEARCH;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setOwnerName() {
-        final List<ContractorAdvanceRequisition> arfList = new LinkedList<ContractorAdvanceRequisition>();
+        final List<ContractorAdvanceRequisition> arfList = new LinkedList<>();
 
         final Iterator iter = searchResult.getList().iterator();
         while (iter.hasNext()) {
@@ -254,11 +260,11 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         final String actions = worksService.getWorksConfigValue("ARF_SHOW_ACTIONS");
         if (actions != null)
             return Arrays.asList(actions.split(","));
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public Map<String, Object> getContractorsInARF() {
-        final Map<String, Object> contractorsInARFList = new LinkedHashMap<String, Object>();
+        final Map<String, Object> contractorsInARFList = new LinkedHashMap<>();
         final List<Contractor> contractorList = contractorService.findAllByNamedQuery("getAllContractorsInARF");
         if (contractorList != null)
             for (final Contractor contractor : contractorList)
