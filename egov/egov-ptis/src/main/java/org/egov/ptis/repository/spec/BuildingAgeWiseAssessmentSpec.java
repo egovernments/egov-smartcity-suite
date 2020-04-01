@@ -58,6 +58,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BuildingAgeWiseAssessmentSpec {
 
+    private static final String FLOORDETAILS = "floorDetails";
+    private static final String CONSTRUCTION_DATE = "constructionDate";
+
     public static Specification<PropertyMVInfo> pagedAgeWiseRecordSpecification(
             final BuidingAgeWiseReportResult buidingAgeWiseReportResult) {
         return (root, query, builder) -> {
@@ -68,21 +71,27 @@ public class BuildingAgeWiseAssessmentSpec {
                     cal.add(Calendar.YEAR, Integer.parseInt(buidingAgeWiseReportResult.getFromAge()));
                 else
                     cal.add(Calendar.YEAR, Integer.parseInt("-" + buidingAgeWiseReportResult.getFromAge()));
-                cal.add(Calendar.DAY_OF_MONTH, -1);
-                Date fromDate = cal.getTime();
+                Date fromDate = getDate(cal);
                 predicate.getExpressions()
-                        .add(builder.lessThanOrEqualTo(root.join("floorDetails").get("constructionDate"), fromDate));
+                        .add(builder.lessThanOrEqualTo(root.join(FLOORDETAILS).get(CONSTRUCTION_DATE), fromDate));
             }
             if (buidingAgeWiseReportResult.getToAge() != null) {
                 Calendar calendar = Calendar.getInstance();
-                if (buidingAgeWiseReportResult.getToAge().equals("0"))
+                if (buidingAgeWiseReportResult.getToAge().equals("0")) {
                     calendar.add(Calendar.YEAR, Integer.parseInt("-1"));
-                else
+                    Date toDate = getDate(calendar);
+                    predicate.getExpressions()
+                            .add(builder.greaterThan(root.join(FLOORDETAILS).get(CONSTRUCTION_DATE), toDate));
+                } else{
                     calendar.add(Calendar.YEAR, Integer.parseInt("-" + buidingAgeWiseReportResult.getToAge()));
-                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    calendar.set(Calendar.HOUR_OF_DAY, 00);
+                    calendar.set(Calendar.MINUTE, 00);
+                    calendar.set(Calendar.SECOND, 00);
+                    calendar.set(Calendar.MILLISECOND, 000);
                 Date toDate = calendar.getTime();
                 predicate.getExpressions()
-                        .add(builder.greaterThanOrEqualTo(root.join("floorDetails").get("constructionDate"), toDate));
+                        .add(builder.greaterThanOrEqualTo(root.join(FLOORDETAILS).get(CONSTRUCTION_DATE), toDate));
+                }
             }
             if (buidingAgeWiseReportResult.getPropertyTypeMaster() != null
                     && !buidingAgeWiseReportResult.getPropertyTypeMaster().equals("-1"))
@@ -91,6 +100,14 @@ public class BuildingAgeWiseAssessmentSpec {
             query.distinct(true);
             return predicate;
         };
+    }
+
+    public static Date getDate(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
     }
 
 }
