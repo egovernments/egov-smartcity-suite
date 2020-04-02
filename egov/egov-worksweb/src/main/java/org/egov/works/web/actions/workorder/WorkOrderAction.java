@@ -253,7 +253,6 @@ public class WorkOrderAction extends BaseFormAction {
         ajaxWorkOrderAction.setPersonalInformationService(personalInformationService);
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
         ajaxEstimateAction.setEisService(eisService);
         addDropdownData("executingDepartmentList",
                 getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)"));

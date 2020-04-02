@@ -47,6 +47,16 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -63,12 +73,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "egBillRegisterPDF", params = { "inputName",
         "egBillRegisterPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
@@ -84,6 +89,8 @@ public class ContractorBillPDFAction extends BaseFormAction {
     private WorksService worksService;
     private Boundary boundary = null;
     private ContractorAdvanceService contractorAdvanceService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -92,12 +99,21 @@ public class ContractorBillPDFAction extends BaseFormAction {
             MBHeader mBHeader = new MBHeader();
             MBForCancelledBill mbCancelBillObj = new MBForCancelledBill();
             if (egBillregister.getBillstatus().equals("CANCELLED")) {
-                mbCancelBillObj = (MBForCancelledBill) persistenceService
-                        .find("from MBForCancelledBill mbHeader where mbHeader.egBillregister.id = ?", egbillRegisterId);
+                List<MBForCancelledBill> resutls = entityManager
+                        .createQuery("from MBForCancelledBill mbHeader where mbHeader.egBillregister.id = :billRegisterId",
+                                MBForCancelledBill.class)
+                        .setParameter("billRegisterId", egbillRegisterId)
+                        .getResultList();
+                mbCancelBillObj = resutls.isEmpty() ? null : resutls.get(0);
                 mBHeader = mbCancelBillObj.getMbHeader();
-            } else
-                mBHeader = (MBHeader) getPersistenceService().find("from MBHeader mbHeader where mbHeader.egBillregister.id = ?",
-                        egbillRegisterId);
+            } else {
+                List<MBHeader> results = entityManager
+                        .createQuery("from MBHeader mbHeader where mbHeader.egBillregister.id = :billRegisterId", MBHeader.class)
+                        .setParameter("billRegisterId", egbillRegisterId)
+                        .getResultList();
+
+                mBHeader = results.isEmpty() ? null : results.get(0);
+            }
             final AbstractEstimate estimate = mBHeader.getWorkOrderEstimate().getEstimate();
             boundary = getTopLevelBoundary(estimate.getWard());
             final Map<String, String> pdfLabel = getPdfReportLabel();
@@ -121,8 +137,10 @@ public class ContractorBillPDFAction extends BaseFormAction {
     }
 
     private ContractorBillRegister getEgBillregister() {
-        return (ContractorBillRegister) getPersistenceService().find("from ContractorBillRegister egBillregister where id = ?",
-                egbillRegisterId);
+        return entityManager
+                .createQuery("from ContractorBillRegister egBillregister where id = :id", ContractorBillRegister.class)
+                .setParameter("id", egbillRegisterId)
+                .getSingleResult();
     }
 
     protected Boundary getTopLevelBoundary(final Boundary boundary) {
@@ -149,7 +167,7 @@ public class ContractorBillPDFAction extends BaseFormAction {
     }
 
     public Map<String, String> getPdfReportLabel() {
-        final Map<String, String> pdfLabel = new HashMap<String, String>();
+        final Map<String, String> pdfLabel = new HashMap<>();
         pdfLabel.put("contractorbill.pdf.leftheader", "Form No.CON 51");
         pdfLabel.put("contractorbill.pdf.mainheader", boundary == null ? "" : boundary.getName() + "\n   Contractor Bill");
         pdfLabel.put("contractorbill.pdf.rightheader", "User Department: ");

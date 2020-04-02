@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -61,18 +70,14 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
+import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Results({
         @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
         @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp"),
@@ -84,8 +89,8 @@ public class EstimateTemplateAction extends SearchFormAction {
     private static final long serialVersionUID = 3610026596221473556L;
     private static final String VIEW = "view";
     private EstimateTemplate estimateTemplate = new EstimateTemplate();
-    private List<EstimateTemplateActivity> sorActivities = new LinkedList<EstimateTemplateActivity>();
-    private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
+    private List<EstimateTemplateActivity> sorActivities = new LinkedList<>();
+    private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<>();
     @Autowired
     private AssignmentService assignmentService;
     private WorksService worksService;
@@ -102,6 +107,9 @@ public class EstimateTemplateAction extends SearchFormAction {
     public static final String EDIT = "edit";
     public static final String SUCCESS = "success";
     private AbstractEstimateService abstractEstimateService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public EstimateTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
@@ -126,7 +134,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            estimateTemplate = estimateTemplateService.findById(id, false);
+            estimateTemplate = entityManager.find(EstimateTemplate.class, id);
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
@@ -135,13 +143,14 @@ public class EstimateTemplateAction extends SearchFormAction {
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
+                entityManager.createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
+        List<UOM> uomList = entityManager.createQuery("from UOM order by upper(uom)", UOM.class).getResultList();
         if (!VIEW.equals(mode))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
         addDropdownData("scheduleCategoryList",
-                getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
+                entityManager.createQuery("from ScheduleCategory order by upper(code)", ScheduleCategory.class).getResultList());
         populateCategoryList(ajaxEstimateAction, estimateTemplate.getWorkType() != null);
 
     }
@@ -175,8 +184,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     protected void populateSorActivities() {
         for (final EstimateTemplateActivity activity : sorActivities)
             if (validSorActivity(activity)) {
-                activity.setSchedule((ScheduleOfRate) getPersistenceService().find("from ScheduleOfRate where id = ?",
-                        activity.getSchedule().getId()));
+                activity.setSchedule(entityManager.find(ScheduleOfRate.class, activity.getSchedule().getId()));
                 activity.setUom(activity.getSchedule().getUom());
                 estimateTemplate.addActivity(activity);
             }
@@ -292,29 +300,33 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        String dynQuery = " from EstimateTemplate et where et.id is not null ";
-        final List<Object> paramList = new ArrayList<Object>();
-        dynQuery = dynQuery + " and et.status = ?";
+        final StringBuffer dynQuery = new StringBuffer(" from EstimateTemplate et where et.id is not null ");
+        final List<Object> paramList = new ArrayList<>();
+        int index = 1;
+        dynQuery.append(" and et.status = ?").append(index++);
         paramList.add(estimateTemplate.getStatus());
         if (estimateTemplate.getWorkType() != null && estimateTemplate.getWorkType().getId() != -1) {
-            dynQuery = dynQuery + " and et.workType.id = ? ";
+            dynQuery.append(" and et.workType.id = ?").append(index++);
             paramList.add(estimateTemplate.getWorkType().getId());
         }
         if (estimateTemplate.getSubType() != null && estimateTemplate.getSubType().getId() != -1) {
-            dynQuery = dynQuery + " and et.subType.id = ? ";
+            dynQuery.append(" and et.subType.id = ?").append(index++);
             paramList.add(estimateTemplate.getSubType().getId());
         }
-        if (StringUtils.isNotBlank(estimateTemplate.getCode().trim()))
-            dynQuery = dynQuery + " and UPPER(et.code) like '%" + estimateTemplate.getCode().trim().toUpperCase()
-                    + "%'";
-        if (StringUtils.isNotBlank(estimateTemplate.getName().trim()))
-            dynQuery = dynQuery + " and UPPER(et.name) like '%" + estimateTemplate.getName().trim().toUpperCase()
-                    + "%'";
-        if (StringUtils.isNotBlank(estimateTemplate.getDescription().trim()))
-            dynQuery = dynQuery + " and UPPER(et.description) like '%"
-                    + estimateTemplate.getDescription().trim().toUpperCase() + "%'";
+        if (StringUtils.isNotBlank(estimateTemplate.getCode().trim())) {
+            dynQuery.append(" and UPPER(et.code) like '%'||?").append(index++).append("||'%'");
+            paramList.add(estimateTemplate.getCode().trim().toUpperCase());
+        }
+        if (StringUtils.isNotBlank(estimateTemplate.getName().trim())) {
+            dynQuery.append(" and UPPER(et.name) like '%'||?").append(index++).append("||'%'");
+            paramList.add(estimateTemplate.getName().trim().toUpperCase());
+        }
+        if (StringUtils.isNotBlank(estimateTemplate.getDescription().trim())) {
+            dynQuery.append(" and UPPER(et.description) like '%'||?").append(index++).append("||'%'");
+            paramList.add(estimateTemplate.getDescription().trim().toUpperCase());
+        }
         final String countQuery = "select distinct count(et) " + dynQuery;
-        return new SearchQueryHQL(dynQuery, countQuery, paramList);
+        return new SearchQueryHQL(dynQuery.toString(), countQuery, paramList);
     }
 
     public String getSourcePage() {

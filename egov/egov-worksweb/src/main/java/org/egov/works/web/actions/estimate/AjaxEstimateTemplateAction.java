@@ -47,15 +47,19 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.masters.SORRate;
-
-import java.util.Date;
-import java.util.List;
 
 @Results({
         @Result(name = AjaxEstimateTemplateAction.SEARCH_RESULTS, location = "ajaxEstimateTemplate-searchResults.jsp"),
@@ -77,6 +81,9 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private String query;
     private List<EstimateTemplate> estimateTemplateList;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     public Object getModel() {
 
@@ -90,22 +97,31 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     }
 
     public List<EstimateTemplate> getEstimateTemplates() {
-        String strquery = "";
+        final StringBuffer strquery = new StringBuffer();
         if (workTypeId > 0)
-            strquery = "from EstimateTemplate et where upper(et.code) like '" + query.toUpperCase()
-                    + "%' and et.workType.id=" + workTypeId;
+            strquery.append(
+                    "from EstimateTemplate et where upper(et.code) like ''||:etCode||'%' and et.workType.id = :workTypeId");
         if (subTypeId > 0)
-            strquery += " and et.subType.id=" + subTypeId;
+            strquery.append(" and et.subType.id = :subTypeId");
         if (status == 1)
-            strquery += " and et.status=" + status;
-        return getPersistenceService().findAllBy(strquery);
+            strquery.append(" and et.status = :status");
+        final TypedQuery<EstimateTemplate> typedQuery = entityManager.createQuery(strquery.toString(), EstimateTemplate.class);
+        if (workTypeId > 0)
+            typedQuery.setParameter("etCode", query.toUpperCase())
+                    .setParameter("workTypeId", workTypeId);
+        if (subTypeId > 0)
+            typedQuery.setParameter("subTypeId", subTypeId);
+        if (status == 1)
+            typedQuery.setParameter("status", status);
+
+        return typedQuery.getResultList();
     }
 
     @Action(value = "/estimate/ajaxEstimateTemplate-findCodeAjax")
     public String findCodeAjax() {
-        estimateTemplate = (EstimateTemplate) getPersistenceService().find("from EstimateTemplate where upper(code)=?",
-                code.toUpperCase());
-
+        estimateTemplate = entityManager.createQuery("from EstimateTemplate where upper(code) = :code", EstimateTemplate.class)
+                .setParameter("code", code.toUpperCase())
+                .getSingleResult();
         return ACTIVITIES;
     }
 
@@ -113,6 +129,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         return CODEUNIQUECHECK;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean getCodeCheck() {
         boolean codeexistsOrNot = false;
         Long estimateTemplateId = null;

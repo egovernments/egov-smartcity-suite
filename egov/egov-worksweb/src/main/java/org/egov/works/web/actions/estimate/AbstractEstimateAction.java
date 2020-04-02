@@ -47,9 +47,24 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -95,6 +110,7 @@ import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.masters.Overhead;
+import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.ContractorBillService;
@@ -104,19 +120,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import net.sf.jasperreports.engine.JRException;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "stream", location = "XlsInputStream", params = {
@@ -130,7 +134,6 @@ import java.util.Set;
 public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = -4801105778751138267L;
-    private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String CANCEL_ACTION = "Cancel";
     private static final String SAVE_ACTION = "Save";
     private static final Object REJECT_ACTION = "Reject";
@@ -142,11 +145,11 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     public static final String HISTORY = "history";
     public static final String ABSTRACTESTIMATE = "AbstractEstimate";
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
-    private List<Activity> sorActivities = new LinkedList<Activity>();
-    private List<Activity> nonSorActivities = new LinkedList<Activity>();
-    private List<OverheadValue> actionOverheadValues = new LinkedList<OverheadValue>();
-    private List<AssetsForEstimate> actionAssetValues = new LinkedList<AssetsForEstimate>();
-    private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<MultiYearEstimate>();
+    private List<Activity> sorActivities = new LinkedList<>();
+    private List<Activity> nonSorActivities = new LinkedList<>();
+    private List<OverheadValue> actionOverheadValues = new LinkedList<>();
+    private List<AssetsForEstimate> actionAssetValues = new LinkedList<>();
+    private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<>();
     private AbstractEstimateService abstractEstimateService;
 
     @Autowired
@@ -201,9 +204,12 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     @Qualifier("workflowService")
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
     private Long stateId;
-    private final List<StateHistory> workflowHistory = new LinkedList<StateHistory>();
+    @SuppressWarnings("rawtypes")
+    private final List<StateHistory> workflowHistory = new LinkedList<>();
     @Autowired
     private StateService stateService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public String getMessageKey() {
         return messageKey;
@@ -246,8 +252,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         return EDIT;
     }
 
+    @SuppressWarnings("deprecation")
     private void getWorkOrderDetails() {
-        final ArrayList<Integer> projectCodeIdList = new ArrayList<Integer>();
+        final ArrayList<Integer> projectCodeIdList = new ArrayList<>();
         if (WorksConstants.ADMIN_SANCTIONED_STATUS.equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())) {
             woDetails = abstractEstimateService.getWODetailsForEstimateId(id);
             wpDetails = abstractEstimateService.getWPDetailsForEstimateId(id);
@@ -259,6 +266,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         }
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     @SkipValidation
     @Action(value = "/estimate/abstractEstimate-viewBillOfQuantitiesXls")
     public String viewBillOfQuantitiesXls() throws JRException, Exception {
@@ -272,14 +280,16 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         return PRINT;
     }
 
+    @SuppressWarnings("rawtypes")
     private Map createHeaderParams(final AbstractEstimate estimate, final String type) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         if (type.equalsIgnoreCase(BOQ)) {
             reportParams.put("workName", estimate.getName());
             reportParams.put("deptName", estimate.getExecutingDepartment().getName());
             reportParams.put("estimateNo", estimate.getEstimateNumber());
-            reportParams.put("activitySize", estimate.getSORActivities() == null ? 0 : estimate.getSORActivities()
-                    .size());
+            reportParams.put("activitySize", estimate.getSORActivities() == null ? 0
+                    : estimate.getSORActivities()
+                            .size());
             reportParams.put("NonSOR_Activities", estimate.getNonSORActivities());
             reportParams.put("grandTotalAmt", getGrandTotalForEstimate(estimate));
         }
@@ -293,6 +303,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         return total;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Action(value = "/estimate/abstractEstimate-workflowHistory")
     public String workflowHistory() {
         if (stateId != null) {
@@ -303,6 +314,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         return HISTORY;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StateAware getModel() {
         return abstractEstimate;
@@ -312,6 +324,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         this.abstractEstimate = abstractEstimate;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void prepare() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
@@ -330,9 +343,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
         setupDropdownDataExcluding("ward", "category", "parentCategory", "fundSource", "depositCode");
 
-        addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
+        addDropdownData("parentCategoryList", entityManager
+                .createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class).getResultList());
+        List<UOM> uomList = entityManager.createQuery("from UOM  order by upper(uom)", UOM.class).getResultList();
         if (id == null && abstractEstimate.getEgwStatus() == null
                 || !SOURCE_SEARCH.equals(sourcepage) && abstractEstimate.getEgwStatus() != null
                         && abstractEstimate.getEgwStatus().getCode().equals("REJECTED")
@@ -340,9 +353,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                         && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
+        addDropdownData("financialYearList",
+                entityManager.createQuery("from CFinancialYear where isActive=true", CFinancialYear.class).getResultList());
         addDropdownData("scheduleCategoryList",
-                getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
+                entityManager.createQuery("from ScheduleCategory order by upper(code)", ScheduleCategory.class).getResultList());
 
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
@@ -357,6 +371,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Action(value = "/estimate/abstractEstimate-save")
     public String save() {
         // final String actionName = parameters.get("actionName")[0];
@@ -370,7 +385,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         if (!(CANCEL_ACTION.equals(workFlowAction) && abstractEstimate.getId() == null))
             if (abstractEstimate.getEgwStatus() != null
                     && !(abstractEstimate.getEgwStatus().getCode().equals(AbstractEstimate.EstimateStatus.REJECTED.toString())
-                            && (workFlowAction.equals(FORWARD_ACTION) || workFlowAction.equals(SAVE_ACTION)) || abstractEstimate
+                            && (workFlowAction.equals(FORWARD_ACTION) || workFlowAction.equals(SAVE_ACTION))
+                            || abstractEstimate
                                     .getEgwStatus().getCode().equals("NEW"))) {
                 // If Estimate is in work flow other than Rejected or in Drafts
                 // case then do nothing(do not delete child tables and insert
@@ -448,7 +464,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             }
         } else {
             if (null != approverPositionId && approverPositionId != -1)
-                position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+                position = entityManager.createQuery("from Position where id = :id", Position.class)
+                        .setParameter("id", approverPositionId).getSingleResult();
             if (abstractEstimate.getState() == null) {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
@@ -465,7 +482,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction());
                 else
-                    abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
+                    abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName())
+                            .withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
                             .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate
@@ -542,8 +560,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         final Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
         for (final Activity activity : nonSorActivities)
             if (activity != null && activity.getNonSor().getUom() != null) {
-                final UOM nonSorUom = (UOM) getPersistenceService().find("from UOM where id = ?",
-                        activity.getNonSor().getUom().getId());
+                final UOM nonSorUom = entityManager.createQuery("from UOM where id = :id", UOM.class)
+                        .setParameter("id", activity.getNonSor().getUom().getId())
+                        .getSingleResult();
                 if (nonSorUom != null && exceptionSor.contains(nonSorUom.getUom())) {
                     setSourcepage("inbox");
                     throw new ValidationException(Arrays.asList(new ValidationError("validate.nonSor.uom",
@@ -613,16 +632,19 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected void populateSorActivities() {
         for (final Activity activity : sorActivities)
             if (validSorActivity(activity)) {
-                activity.setSchedule((ScheduleOfRate) getPersistenceService().find("from ScheduleOfRate where id = ?",
-                        activity.getSchedule().getId()));
+                activity.setSchedule(entityManager.createQuery("from ScheduleOfRate where id = :id", ScheduleOfRate.class)
+                        .setParameter("id", activity.getSchedule().getId())
+                        .getSingleResult());
                 activity.setUom(activity.getSchedule().getUom());
                 abstractEstimate.addActivity(activity);
             }
     }
 
+    @SuppressWarnings("deprecation")
     protected boolean validSorActivity(final Activity activity) {
         if (activity != null && activity.getSchedule() != null && activity.getSchedule().getId() != null)
             return true;
@@ -656,11 +678,13 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected void populateOverheads() {
         for (final OverheadValue overheadValue : actionOverheadValues)
             if (validOverhead(overheadValue)) {
-                overheadValue.setOverhead((Overhead) getPersistenceService().find("from Overhead where id = ?",
-                        overheadValue.getOverhead().getId()));
+                overheadValue.setOverhead(entityManager.createQuery("from Overhead where id = :id", Overhead.class)
+                        .setParameter("id", overheadValue.getOverhead().getId())
+                        .getSingleResult());
                 overheadValue.setAbstractEstimate(abstractEstimate);
                 // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
                 // on update of estimate for child objects
@@ -672,6 +696,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             }
     }
 
+    @SuppressWarnings("deprecation")
     protected boolean validOverhead(final OverheadValue overheadValue) {
         if (overheadValue != null && overheadValue.getOverhead() != null && overheadValue.getOverhead().getId() != null
                 && overheadValue.getOverhead().getId() != -1 && overheadValue.getOverhead().getId() != 0)
@@ -680,13 +705,13 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     }
 
     protected void populateAssets() {
-        final List<ValidationError> valErrList = new LinkedList<ValidationError>();
+        final List<ValidationError> valErrList = new LinkedList<>();
         final List<String> strStatus = getStatusList();
-        final Set<String> validAssetCodes = new HashSet<String>();
+        final Set<String> validAssetCodes = new HashSet<>();
         for (final AssetsForEstimate assetValue : actionAssetValues)
             if (validAsset(assetValue)) {
-                final Asset lAsset = (Asset) getPersistenceService().find("from Asset where code = ?",
-                        assetValue.getAsset().getCode());
+                final Asset lAsset = entityManager.createQuery("from Asset where code = :code", Asset.class)
+                        .setParameter("code", assetValue.getAsset().getCode()).getSingleResult();
                 if (lAsset == null) {
                     final String message = "Asset code \'" + assetValue.getAsset().getCode()
                             + "\' does not exist. Please create the asset before link.";
@@ -722,7 +747,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     private List<String> getStatusList() {
         List<String> strStatus = null;
         if (assetStatus == null)
-            strStatus = new ArrayList<String>();
+            strStatus = new ArrayList<>();
         else
             strStatus = Arrays.asList(assetStatus.split(","));
 
@@ -748,8 +773,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         double totalPerc = 0.0;
         for (final MultiYearEstimate multiYearEstimate : actionMultiYearEstimateValues) {
             if (validMultiYearEstimate(multiYearEstimate)) {
-                multiYearEstimate.setFinancialYear((CFinancialYear) getPersistenceService().find(
-                        "from CFinancialYear where id = ?", multiYearEstimate.getFinancialYear().getId()));
+                multiYearEstimate.setFinancialYear(entityManager.createQuery(
+                        "from CFinancialYear where id = :id", CFinancialYear.class)
+                        .setParameter("id", multiYearEstimate.getFinancialYear().getId())
+                        .getSingleResult());
                 multiYearEstimate.setAbstractEstimate(abstractEstimate);
                 totalPerc = totalPerc + multiYearEstimate.getPercentage();
                 // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
@@ -784,6 +811,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     public String cancelApprovedEstimate() {
         abstractEstimate = abstractEstimateService.findById(estimateId, false);
 

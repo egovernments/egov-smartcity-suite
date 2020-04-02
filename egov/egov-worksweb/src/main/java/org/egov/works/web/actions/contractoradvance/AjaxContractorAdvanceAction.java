@@ -106,7 +106,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for estimates where WO is approved and part bills are not created
      */
-    @SuppressWarnings({ "unchecked" })
     public String searchEstimateNumber() {
         final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
@@ -119,7 +118,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
                     .append(" and woe.estimate.egwStatus.code = :estimateStatus")
                     .append(" order by woe.estimate.estimateNumber");
 
-            estimateNumberSearchList = entityManager.createQuery(strquery.toString())
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("mbStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
                     .setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString())
                     .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
@@ -134,7 +133,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for WPs where WO is approved
      */
-    @SuppressWarnings({ "unchecked" })
     public String searchWPNumber() {
         final StringBuffer strquery = new StringBuffer();
         final ArrayList<Object> params = new ArrayList<>();
@@ -148,7 +146,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
             params.add(WorksConstants.APPROVED.toString());
             params.add(query.toUpperCase());
 
-            wpNumberSearchList = entityManager.createQuery(strquery.toString())
+            wpNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
                     .setParameter("packageNumber", query.toUpperCase())
                     .getResultList();
@@ -160,7 +158,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for TNs where WO is approved
      */
-    @SuppressWarnings("unchecked")
     public String searchTNNumber() {
         final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
@@ -171,7 +168,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
                     .append(" and UPPER(woe.workOrder.negotiationNumber) like '%'||:negotiationNumber||'%'")
                     .append(" order by woe.workOrder.negotiationNumber");
 
-            tenderNegotiationNumberSearchList = entityManager.createQuery(strquery.toString())
+            tenderNegotiationNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
                     .setParameter("negotiationNumber", query.toUpperCase())
                     .getResultList();
@@ -183,7 +180,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for Approved WOs
      */
-    @SuppressWarnings("unchecked")
     public String searchWorkOrderNumber() {
         final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
@@ -194,7 +190,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
                     .append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||:workOrderNumber||'%'")
                     .append(" order by woe.workOrder.workOrderNumber");
 
-            workOrderNumberSearchList = entityManager.createQuery(strquery.toString())
+            workOrderNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("workOrderStatus", WorksConstants.APPROVED.toString())
                     .setParameter("workOrderNumber", query.toUpperCase())
                     .getResultList();
@@ -215,7 +211,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for distinct estimates from ARF
      */
-    @SuppressWarnings("unchecked")
     public String searchEstimateNumberFromARF() {
         final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
@@ -225,7 +220,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
                     .append(" UPPER(arf.workOrderEstimate.estimate.estimateNumber) like '%'||:estimateNumber||'%'")
                     .append("  order by arf.workOrderEstimate.estimate.estimateNumber");
 
-            estimateNumberSearchList = entityManager.createQuery(strquery.toString())
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("carStatus", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString())
                     .setParameter("estimateNumber", query.toUpperCase())
                     .getResultList();
@@ -237,7 +232,6 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
     /*
      * Autocomplete for Approved WOs
      */
-    @SuppressWarnings("unchecked")
     public String searchWorkOrderNumberFromARF() {
         final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
@@ -247,7 +241,7 @@ public class AjaxContractorAdvanceAction extends BaseFormAction {
                     .append(" and UPPER(arf.workOrderEstimate.workOrder.workOrderNumber) like '%'||:workOrderNumber||'%'")
                     .append(" order by arf.workOrderEstimate.workOrder.workOrderNumber");
 
-            workOrderNumberSearchList = entityManager.createQuery(strquery.toString())
+            workOrderNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
                     .setParameter("arfStatus", ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.NEW.toString())
                     .setParameter("workOrderNumber", query.toUpperCase())
                     .getResultList();

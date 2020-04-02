@@ -47,6 +47,21 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -55,6 +70,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.egf.commons.EgovCommon;
@@ -71,21 +87,8 @@ import org.egov.pims.service.EisUtilService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
@@ -113,8 +116,10 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Long empID;
     @Autowired
     private AssignmentService assignmentService;
+    @SuppressWarnings("rawtypes")
     private List usersInExecutingDepartment;
     private Assignment assignment;
+    @SuppressWarnings("rawtypes")
     private List subCategories;
     private Long category;
     private boolean isSkipDeptChange;
@@ -125,25 +130,26 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Overhead overhead;
     private String uomVal;
     private Double rate;
+    @SuppressWarnings("rawtypes")
     private List workflowUsers;
     private Integer departmentId;
     private Integer designationId;
     private Integer wardId;
+    @SuppressWarnings("rawtypes")
     private List workflowKDesigList;
     private String scriptName;
     private String stateName;
     private Long estimateId;
     private WorksService worksService;
     private EisUtilService eisService;
-    private AbstractEstimateService abstractEstimateService;
     private Money worktotalValue;
     private String query;
     private String wpNumber = "";
     private boolean isVoucherExists = false;
     private EgovCommon egovCommon;
-    private List<String> estimateNumberSearchList = new LinkedList<String>();
-    private List<String> projectCodeList = new LinkedList<String>();
-    private List<String> draftsEstimateNumberSearchList = new LinkedList<String>();
+    private List<String> estimateNumberSearchList = new LinkedList<>();
+    private List<String> projectCodeList = new LinkedList<>();
+    private List<String> draftsEstimateNumberSearchList = new LinkedList<>();
     private String estimateNum = "";
     private boolean isCancelEstCopyExists = false;
     private Integer approverDepartmentId;
@@ -156,10 +162,12 @@ public class AjaxEstimateAction extends BaseFormAction {
     private String woNumber = "";
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-    private List<String> estimateNoList = new LinkedList<String>();
+    private List<String> estimateNoList = new LinkedList<>();
     private BigDecimal estimateAmount;
     @Autowired
     private ScriptService scriptService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -189,17 +197,24 @@ public class AjaxEstimateAction extends BaseFormAction {
     public String searchEstimateNumberForYearendAppr() {
         CFinancialYear currentFinYear;
         currentFinYear = financialYearHibernateDAO.getFinancialYearByDate(new Date());
-        String strquery = "";
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select ae.estimateNumber from AbstractEstimate ae where ae.projectCode.egwStatus.code!='CLOSED' and ae.depositCode is null and ae.egwStatus.code='ADMIN_SANCTIONED' and ae.estimateNumber like  '%'||?||'%'  "
-                    + "and NOT EXISTS (select 'true' from  AbstractEstimateAppropriation aea where aea.abstractEstimate.id=ae.id and aea.budgetUsage.releasedAmount=0 and aea.budgetUsage.financialYearId=?) "
-                    + "and NOT EXISTS (select 'true' from MBHeader as mbh left outer join mbh.egBillregister egbr where mbh.workOrderEstimate.estimate.id=ae.id"
-                    + " and (egbr.billtype='Final Bill' and egbr.billstatus<>'CANCELLED'))"
-                    + "  and NOT EXISTS (select 'true' from MultiyearEstimateApprDetail myea where myea.estimate.id=ae.id "
-                    + "and myea.multiyearEstimateAppr.status.code<>'CANCELLED' and myea.multiyearEstimateAppr.financialYear.id=?)  ";
+            strquery.append("select ae.estimateNumber")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.projectCode.egwStatus.code!='CLOSED' and ae.depositCode is null and ae.egwStatus.code='ADMIN_SANCTIONED'")
+                    .append(" and ae.estimateNumber like  '%'||:estimateNumber||'%'")
+                    .append(" and NOT EXISTS (select 'true' from  AbstractEstimateAppropriation aea where aea.abstractEstimate.id=ae.id and aea.budgetUsage.releasedAmount=0")
+                    .append(" and aea.budgetUsage.financialYearId = :buFinYearId)")
+                    .append(" and NOT EXISTS (select 'true' from MBHeader as mbh left outer join mbh.egBillregister egbr where mbh.workOrderEstimate.estimate.id=ae.id")
+                    .append(" and (egbr.billtype='Final Bill' and egbr.billstatus<>'CANCELLED'))")
+                    .append(" and NOT EXISTS (select 'true' from MultiyearEstimateApprDetail myea where myea.estimate.id=ae.id ")
+                    .append(" and myea.multiyearEstimateAppr.status.code<>'CANCELLED' and myea.multiyearEstimateAppr.financialYear.id = :mteaFinId)");
 
-            estimateNoList = getPersistenceService().findAllBy(strquery, query.toUpperCase(),
-                    Integer.valueOf(currentFinYear.getId().toString()), currentFinYear.getId());
+            estimateNoList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("buFinYearId", Integer.valueOf(currentFinYear.getId().toString()))
+                    .setParameter("mteaFinId", currentFinYear.getId())
+                    .getResultList();
 
         }
         return "estimateNumSearchResults";
@@ -208,7 +223,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     @Action(value = "/estimate/ajaxEstimate-usersInExecutingDepartment")
     public String usersInExecutingDepartment() {
         try {
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            final HashMap<String, Object> criteriaParams = new HashMap<>();
             if (executingDepartment != null && executingDepartment != -1)
                 criteriaParams.put("departmentId", executingDepartment.toString());
             if (StringUtils.isNotBlank(employeeCode))
@@ -228,14 +243,18 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     @Action(value = "/estimate/ajaxEstimate-subcategories")
     public String subcategories() {
-        subCategories = getPersistenceService().findAllBy("from EgwTypeOfWork where parentid.id=?", category);
+        subCategories = entityManager.createQuery("from EgwTypeOfWork where parentid.id = :parentid", EgwTypeOfWork.class)
+                .setParameter("parentid", category)
+                .getResultList();
         return SUBCATEGORIES;
     }
 
     public String isSkipDepartmentChange() {
         Department department = null;
         if (departmentId != null && departmentId != -1)
-            department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
+            department = entityManager.createQuery("from Department where id = :id", Department.class)
+                    .setParameter("id", departmentId)
+                    .getSingleResult();
         final String departmentCodes = worksService.getWorksConfigValue("REAPPROPRIATION_DEPARTMENTS");
         isSkipDeptChange = true;
         if (department != null && departmentCodes != null)
@@ -247,6 +266,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         return CHANGE_DEPARTMENT;
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     @Action(value = "/estimate/ajaxEstimate-overheads")
     public String overheads() {
         overheads = getPersistenceService().findAllByNamedQuery(Overhead.OVERHEADS_BY_DATE, estDate, estDate);
@@ -276,14 +296,14 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public String getWorkFlowUsers() {
         if (designationId != -1) {
-            final HashMap<String, Object> paramMap = new HashMap<String, Object>();
+            final HashMap<String, Object> paramMap = new HashMap<>();
             if (departmentId != null && departmentId != -1)
                 paramMap.put("departmentId", departmentId.toString());
             if (wardId != null && wardId != -1)
                 paramMap.put("boundaryId", wardId.toString());
 
             paramMap.put("designationId", designationId.toString());
-            final List roleList = worksService.getWorksRoles();
+            final List<String> roleList = worksService.getWorksRoles();
             if (roleList != null)
                 paramMap.put("roleList", roleList);
             workflowUsers = eisService.getEmployeeInfoList(paramMap);
@@ -294,14 +314,14 @@ public class AjaxEstimateAction extends BaseFormAction {
     public String getPositionByPassingDesigId() {
         if (designationId != null && designationId != -1) {
 
-            final HashMap<String, Object> paramMap = new HashMap<String, Object>();
+            final HashMap<String, Object> paramMap = new HashMap<>();
             if (approverDepartmentId != null && approverDepartmentId != -1)
                 paramMap.put("departmentId", approverDepartmentId.toString());
             paramMap.put("designationId", designationId.toString());
-            final List roleList = worksService.getWorksRoles();
+            final List<String> roleList = worksService.getWorksRoles();
             if (roleList != null)
                 paramMap.put("roleList", roleList);
-            approverList = new ArrayList<Object>();
+            approverList = new ArrayList<>();
             final List<? extends Object> empList = eisService.getEmployeeInfoList(paramMap);
             for (final Object emp : empList)
                 approverList.add(emp);
@@ -309,18 +329,19 @@ public class AjaxEstimateAction extends BaseFormAction {
         return "workFlowApprovers";
     }
 
+    @SuppressWarnings("unchecked")
     public String getDesgByDeptAndType() {
         workflowKDesigList = new ArrayList<Designation>();
         String departmentName = "";
         Department department = null;
         if (departmentId != -1) {
-            department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
+            department = entityManager.find(Department.class, departmentId);
             departmentName = department.getName();
         }
         Designation designation = null;
         AbstractEstimate abstractEstimate = null;
         if (estimateId != null)
-            abstractEstimate = abstractEstimateService.findById(estimateId, false);
+            abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
 
         final ScriptContext scriptContext = ScriptService.createContext("state", stateName, "department",
                 departmentName, "wfItem", abstractEstimate);
@@ -340,16 +361,23 @@ public class AjaxEstimateAction extends BaseFormAction {
     public String validateEstimateForCancel() {
         woNumber = "";
         if (woNumber.equals("")) {
-            wpNumber = (String) getPersistenceService().find(
-                    "select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate.id=? "
-                            + "and wpd.estimate.egwStatus.code=? and wpd.worksPackage.egwStatus.code<>?",
-                    estimateId,
-                    AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                    WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
+
+            final List<String> results = entityManager.createQuery(new StringBuffer("select wpd.worksPackage.wpNumber")
+                    .append(" from WorksPackageDetails wpd")
+                    .append(" where wpd.estimate.id = :estimateId and wpd.estimate.egwStatus.code = :estimateStatus")
+                    .append(" and wpd.worksPackage.egwStatus.code <> :wpStatus").toString(), String.class)
+                    .setParameter("estimateId", estimateId)
+                    .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .setParameter("wpStatus", WorksPackage.WorkPacakgeStatus.CANCELLED.toString())
+                    .getResultList();
+            wpNumber = results.isEmpty() ? null : results.get(0);
             if (wpNumber == null)
                 wpNumber = "";
-            final Long projectCodeId = (Long) getPersistenceService().find(
-                    "select ae.projectCode.id from AbstractEstimate ae where ae.id=?", estimateId);
+            final List<Long> projCoderesults = entityManager
+                    .createQuery("select ae.projectCode.id from AbstractEstimate ae where ae.id = :id", Long.class)
+                    .setParameter("id", estimateId)
+                    .getResultList();
+            final Long projectCodeId = projCoderesults.isEmpty() ? null : projCoderesults.get(0);
             final List<Map<String, String>> expenditureDetails = egovCommon.getExpenditureDetailsforProject(
                     projectCodeId, new Date());
             if (expenditureDetails != null && !expenditureDetails.isEmpty())
@@ -363,14 +391,17 @@ public class AjaxEstimateAction extends BaseFormAction {
      * Autocomplete of Admin sanctioned Estimate nos for Cancel Estimate screen
      */
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(ae.estimateNumber) from AbstractEstimate ae where ae.parent is null and UPPER(ae.estimateNumber) like '%'||?||'%' "
-                    + " and ae.egwStatus.code = ? )";
-            params.add(query.toUpperCase());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
-            estimateNumberSearchList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct(ae.estimateNumber)")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is null and UPPER(ae.estimateNumber) like '%'||:estimateNumber||'%' ")
+                    .append(" and ae.egwStatus.code = :statusCode )");
+
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("statusCode", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -379,14 +410,17 @@ public class AjaxEstimateAction extends BaseFormAction {
      * Autocomplete for estimates in Drafts - Planend Estimate Report
      */
     public String searchEstimateNumberForDraftEstimates() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(ae.estimateNumber) from AbstractEstimate ae where ae.parent is null and UPPER(ae.estimateNumber) like '%'||?||'%' "
-                    + " and ae.egwStatus.code = 'NEW' )";
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(ae.estimateNumber)")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is null and UPPER(ae.estimateNumber) like '%'||:estimateNumber||'%' ")
+                    .append(" and ae.egwStatus.code = 'NEW' )");
 
-            draftsEstimateNumberSearchList = getPersistenceService().findAllBy(strquery, params.toArray());
+            draftsEstimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return DRAFT_ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -396,13 +430,16 @@ public class AjaxEstimateAction extends BaseFormAction {
      */
     public String searchProjectCodes() {
         if (!StringUtils.isEmpty(query)) {
-            String strquery = "";
-            final ArrayList<Object> params = new ArrayList<Object>();
-            strquery = "select distinct(ae.projectCode.code) from AbstractEstimate ae where ae.parent is null and upper(ae.projectCode.code) like '%'||?||'%'"
-                    + " and ae.egwStatus.code=? and ae.projectCode.isActive=1";
-            params.add(query.toUpperCase());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
-            projectCodeList = getPersistenceService().findAllBy(strquery, params.toArray());
+            final StringBuffer strquery = new StringBuffer();
+            strquery.append("select distinct(ae.projectCode.code)")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is null and upper(ae.projectCode.code) like '%'||:projectCode||'%'")
+                    .append(" and ae.egwStatus.code = :statusCode and ae.projectCode.isActive=1");
+
+            projectCodeList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("projectCode", query.toUpperCase())
+                    .setParameter("statusCode", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
         }
         return PROJECT_CODE_SEARCH_RESULTS;
     }
@@ -414,8 +451,11 @@ public class AjaxEstimateAction extends BaseFormAction {
      */
     public String validateCancelledEstForCopy() {
         final String estNo = estimateNum.substring(0, estimateNum.length() - 2);
-        final String cancelledEst = (String) getPersistenceService().find(
-                "select est.estimateNumber from AbstractEstimate est where est.estimateNumber= ?", estNo);
+        final List<String> results = entityManager.createQuery(
+                "select est.estimateNumber from AbstractEstimate est where est.estimateNumber = :estimateNumber", String.class)
+                .setParameter("estimateNumber", estNo)
+                .getResultList();
+        final String cancelledEst = results.isEmpty() ? null : results.get(0);
         if (cancelledEst != null)
             isCancelEstCopyExists = true;
         return "copyCancelledEst";
@@ -435,6 +475,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         this.worksService = worksService;
     }
 
+    @SuppressWarnings("rawtypes")
     public List getUsersInExecutingDepartment() {
         return usersInExecutingDepartment;
     }
@@ -451,6 +492,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         this.category = category;
     }
 
+    @SuppressWarnings("rawtypes")
     public List getSubCategories() {
         return subCategories;
     }
@@ -519,6 +561,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         this.rate = rate;
     }
 
+    @SuppressWarnings("rawtypes")
     public List getWorkflowUsers() {
         return workflowUsers;
     }
@@ -539,6 +582,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         return designationId;
     }
 
+    @SuppressWarnings("rawtypes")
     public List getWorkflowKDesigList() {
         return workflowKDesigList;
     }
@@ -565,10 +609,6 @@ public class AjaxEstimateAction extends BaseFormAction {
 
     public void setStateName(final String stateName) {
         this.stateName = stateName;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public void setEstimateId(final Long estimateId) {

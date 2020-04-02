@@ -47,25 +47,28 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.Collection;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.DepositCode;
-
-import java.util.Collection;
 
 @Result(name = DepositCodeSearchAction.SEARCH_RESULTS, location = "depositCodeSearch-searchResults")
 @ParentPackage("egov")
 public class DepositCodeSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = 7203092403134880647L;
-    private PersistenceService<DepositCode, Long> depositCodeService;
     public static final String SEARCH_RESULTS = "searchResults";
     private static final String SEARCH_DC_RESULTS = "searchDepCodeResults";
     private String query;
     private Integer fundId;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void setQuery(final String query) {
         this.query = query;
@@ -86,13 +89,12 @@ public class DepositCodeSearchAction extends BaseFormAction {
     }
 
     public Collection<DepositCode> getDepositCodeList() {
-        return depositCodeService.findAllBy(
-                "from DepositCode where isActive=1 and fund.id=? and upper(code) like ? || '%'", fundId,
-                query.toUpperCase());
-    }
-
-    public void setDepositCodeService(final PersistenceService<DepositCode, Long> depositCodeService) {
-        this.depositCodeService = depositCodeService;
+        return entityManager
+                .createQuery("from DepositCode where isActive=1 and fund.id = :fundId and upper(code) like :code || '%'",
+                        DepositCode.class)
+                .setParameter("fundId", fundId)
+                .setParameter("code", query.toUpperCase())
+                .getResultList();
     }
 
     public Integer getFundId() {

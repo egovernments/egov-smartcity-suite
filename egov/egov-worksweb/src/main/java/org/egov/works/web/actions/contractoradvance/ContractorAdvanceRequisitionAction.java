@@ -136,8 +136,9 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
 
         if (workOrderEstimateId != null) {
             contractorAdvanceRequisition
-                    .setWorkOrderEstimate((WorkOrderEstimate) entityManager.createQuery("from WorkOrderEstimate where id = :id")
-                            .setParameter("id", workOrderEstimateId).getSingleResult());
+                    .setWorkOrderEstimate(
+                            entityManager.createQuery("from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                                    .setParameter("id", workOrderEstimateId).getSingleResult());
 
             if (id == null)
                 // Approved ARF amount
@@ -305,7 +306,7 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
                 .append(" from MBHeader mbh")
                 .append(" where mbh.workOrderEstimate.id = :woeId and mbh.egwStatus.code = :mbhStatus")
                 .append("and (mbh.egBillregister is not null and mbh.egBillregister.billstatus <> :billStatus");
-        final Long billCount = (Long) entityManager.createQuery(queryStr.toString())
+        final Long billCount = entityManager.createQuery(queryStr.toString(), Long.class)
                 .setParameter("woeId", contractorAdvanceRequisition.getWorkOrderEstimate().getId())
                 .setParameter("mbhStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
                 .setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString())
@@ -315,12 +316,13 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
             addActionError(getText("advancerequisition.validate.billcreated.message"));
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({ "deprecation" })
     protected void checkARFInWorkflowForEstimate() {
         final StringBuffer queryStr = new StringBuffer("from ContractorAdvanceRequisition arf")
                 .append(" where arf.workOrderEstimate.id = :woeId and arf.status.code not in :arfStatus ");
 
-        final List<ContractorAdvanceRequisition> results = entityManager.createQuery(queryStr.toString())
+        final List<ContractorAdvanceRequisition> results = entityManager
+                .createQuery(queryStr.toString(), ContractorAdvanceRequisition.class)
                 .setParameter("woeId", contractorAdvanceRequisition.getWorkOrderEstimate().getId())
                 .setParameter("arfStatus",
                         Arrays.asList(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString(),

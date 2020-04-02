@@ -243,7 +243,7 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
         return SEARCH;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void setTenderType() {
         final List<WorkOrderEstimate> woeList = new ArrayList<>();
 
@@ -252,7 +252,8 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
             final WorkOrderEstimate woe = (WorkOrderEstimate) i.next();
 
             List<TenderResponse> results = entityManager.createQuery(
-                    "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber and tr.egwStatus.code = :status")
+                    "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber and tr.egwStatus.code = :status",
+                    TenderResponse.class)
                     .setParameter("negotiationNumber", woe.getWorkOrder().getNegotiationNumber())
                     .setParameter("status", TenderResponse.TenderResponseStatus.APPROVED.toString())
                     .getResultList();

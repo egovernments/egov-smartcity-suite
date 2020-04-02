@@ -47,6 +47,13 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -74,13 +81,7 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @Result(name = SearchBillAction.SEARCH, location = "searchBill-search.jsp")
 public class SearchBillAction extends BaseFormAction {
 
@@ -131,7 +132,7 @@ public class SearchBillAction extends BaseFormAction {
 
     public List<EgwStatus> getBillStatuses() {
         final List<EgwStatus> statusList = egwStatusHibernateDAO.getStatusByModule(BILL_MODULE_KEY);
-        final List<EgwStatus> latestStatusList = new ArrayList<EgwStatus>();
+        final List<EgwStatus> latestStatusList = new ArrayList<>();
         if (!statusList.isEmpty())
             for (final EgwStatus egwStatus : statusList)
                 if (!egwStatus.getCode().equals(NEW_STATUS))
@@ -153,10 +154,11 @@ public class SearchBillAction extends BaseFormAction {
         return searchBill();
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public String searchBill() {
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
-        final List<Object> paramList = new ArrayList<Object>();
-        List<String> qryObj = new ArrayList<String>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
+        final List<Object> paramList = new ArrayList<>();
+        Map<String, String> qryObj = new HashMap();
         Page resPage;
         Long count;
         Object[] params;
@@ -197,17 +199,16 @@ public class SearchBillAction extends BaseFormAction {
             criteriaMap.put(ContractorBillServiceImpl.BILLSTATUS, getStatus());
 
         qryObj = contractorBillService.searchContractorBill(criteriaMap, paramList);
-        final String qry = qryObj.get(0);
         if (paramList.isEmpty()) {
             params = null;
-            count = (Long) persistenceService.find(qryObj.get(0));
-            final Query qry1 = persistenceService.getSession().createQuery(qry);
-            resPage = new Page(qry1, page, pageSize);
+            count = (Long) persistenceService.find(qryObj.get("countQuery"));
+            final Query qry = persistenceService.getSession().createQuery(qryObj.get("selectQuery"));
+            resPage = new Page(qry, page, pageSize);
         } else {
             params = new Object[paramList.size()];
             params = paramList.toArray(params);
-            count = (Long) persistenceService.find(qryObj.get(1), params);
-            resPage = persistenceService.findPageBy(qry, page, pageSize, params);
+            count = (Long) persistenceService.find(qryObj.get("countQuery"), params);
+            resPage = persistenceService.findPageBy(qryObj.get("selectQuery"), page, pageSize, params);
         }
         pagedResults = new EgovPaginatedList(resPage, count.intValue());
         contractorBillList = pagedResults != null ? pagedResults.getList() : null;
@@ -219,6 +220,7 @@ public class SearchBillAction extends BaseFormAction {
         return SEARCH;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void prepare() {
         super.prepare();
@@ -330,7 +332,7 @@ public class SearchBillAction extends BaseFormAction {
     }
 
     protected List<ContractorBillRegister> getPositionAndUser(final List<ContractorBillRegister> results) {
-        final List<ContractorBillRegister> billList = new ArrayList<ContractorBillRegister>();
+        final List<ContractorBillRegister> billList = new ArrayList<>();
         for (final ContractorBillRegister br : results) {
             PersonalInformation emp = null;
             if (!br.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
@@ -363,7 +365,7 @@ public class SearchBillAction extends BaseFormAction {
     }
 
     public Map<String, Object> getContractorForApprovedWorkOrder() {
-        final Map<String, Object> contractorsWithWOList = new HashMap<String, Object>();
+        final Map<String, Object> contractorsWithWOList = new HashMap<>();
         if (workOrderService.getContractorsWithWO() != null)
             for (final Contractor contractor : workOrderService.getContractorsWithWO())
                 contractorsWithWOList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());

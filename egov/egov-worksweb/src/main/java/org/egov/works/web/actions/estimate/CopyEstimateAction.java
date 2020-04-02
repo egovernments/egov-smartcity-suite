@@ -47,6 +47,13 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -64,10 +71,7 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = CopyEstimateAction.SUCCESS, location = "copyEstimate-success.jsp")
 public class CopyEstimateAction extends BaseFormAction {
@@ -86,6 +90,8 @@ public class CopyEstimateAction extends BaseFormAction {
     @Autowired
     private FinancialYearHibernateDAO finHibernateDo;
     private WorksService worksService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void prepare() {
@@ -93,7 +99,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     public String copyEstimate() {
-        final AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
+        final AbstractEstimate abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
         employeeService
                 .getEmpForUserId(worksService.getCurrentLoggedInUserId());
 
@@ -141,7 +147,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     private List<OverheadValue> cloneOverheadValue(final List<OverheadValue> overHeadValueList) {
-        final List<OverheadValue> newOverHeadList = new ArrayList<OverheadValue>();
+        final List<OverheadValue> newOverHeadList = new ArrayList<>();
         for (final OverheadValue overhead : overHeadValueList) {
             final OverheadValue newOverhead = new OverheadValue();
 
@@ -155,7 +161,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     private List<MultiYearEstimate> cloneMultiYearEstimate(final List<MultiYearEstimate> multiYearEstList) {
-        final List<MultiYearEstimate> newMultiYearEstList = new ArrayList<MultiYearEstimate>();
+        final List<MultiYearEstimate> newMultiYearEstList = new ArrayList<>();
         for (final MultiYearEstimate multiYearEst : multiYearEstList) {
             final MultiYearEstimate newMultiYearEst = new MultiYearEstimate();
 
@@ -169,7 +175,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     private List<Activity> cloneActivity(final List<Activity> activityList) {
-        final List<Activity> newActivityList = new ArrayList<Activity>();
+        final List<Activity> newActivityList = new ArrayList<>();
         for (final Activity activity : activityList) {
             final Activity newActivity = new Activity();
 
@@ -192,7 +198,7 @@ public class CopyEstimateAction extends BaseFormAction {
     }
 
     private List<AssetsForEstimate> closeAssetForEstimate(final List<AssetsForEstimate> assetEstList) {
-        final List<AssetsForEstimate> newAssetEstList = new ArrayList<AssetsForEstimate>();
+        final List<AssetsForEstimate> newAssetEstList = new ArrayList<>();
         for (final AssetsForEstimate asset : assetEstList) {
             final AssetsForEstimate newAssetEst = new AssetsForEstimate();
 

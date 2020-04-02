@@ -229,9 +229,9 @@ public class WorksService {
         accountdetailkeyHibernateDAO.create(adk);
     }
 
-    public List getWorksRoles() {
+    public List<String> getWorksRoles() {
         final String configVal = getWorksConfigValue("WORKS_ROLES");
-        final List rolesList = new ArrayList();
+        final List<String> rolesList = new ArrayList<>();
         if (StringUtils.isNotBlank(configVal)) {
             final String[] configVals = configVal.split(",");
             for (final String configVal2 : configVals)

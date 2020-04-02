@@ -47,7 +47,24 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -57,6 +74,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
@@ -71,6 +89,7 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
@@ -98,21 +117,9 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
+@SuppressWarnings("deprecation")
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = AbstractEstimateAction.NEW, location = "financialDetail-add.jsp")
@@ -132,8 +139,8 @@ public class FinancialDetailAction extends BaseFormAction {
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
 
     private AbstractEstimate abstractEstimate;
-    private List<FinancingSource> financingSourceList = new LinkedList<FinancingSource>();
-    private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<MultiYearEstimate>();
+    private List<FinancingSource> financingSourceList = new LinkedList<>();
+    private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<>();
     private List<Fundsource> fundSourceList;
     private Long estimateId;
     private Long id;
@@ -152,6 +159,9 @@ public class FinancialDetailAction extends BaseFormAction {
     private String source = " ";
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /*
      * added by prashanth on 2nd nov 09 for disp user and desgination in success page
@@ -173,11 +183,11 @@ public class FinancialDetailAction extends BaseFormAction {
     private static final String SEARCH_BUDGET_FOLIO = "searchBudgetFolio";
     private static final String SEARCH_DEPOSIT_WORKS_FOLIO = "searchDepositWorksFolio";
     private static final String BUDGET_GROUP_SEARCH_LIST = "budgetHeadList";
-    private Map<String, Object> queryParamMap = new HashMap<String, Object>();
+    private Map<String, Object> queryParamMap = new HashMap<>();
     private Long userDepartment;
     private Date reportDate;
     private BudgetDetailsDAO budgetDetailsDAO;
-    private Map<String, String> mandatoryFields = new HashMap<String, String>();
+    private Map<String, String> mandatoryFields = new HashMap<>();
     private String option;
     private String deptName = "";
     private static final String Fund = "fund";
@@ -193,7 +203,6 @@ public class FinancialDetailAction extends BaseFormAction {
 
     private String appValueLabel;
     private DepositWorksUsageService depositWorksUsageService;
-    private PersistenceService<DepositCode, Long> depositCodeService;
     public static final String RESULTS = "searchResult";
     private Date asOnDate;
     private String code;
@@ -321,7 +330,7 @@ public class FinancialDetailAction extends BaseFormAction {
             final List<ValidationError> errorList = exp.getErrors();
             for (final ValidationError error : errorList) {
                 if (error.getMessage().contains("DatabaseSequenceFirstTimeException")) {
-                    abstractEstimate = abstractEstimateService.findById(estimateId, false);
+                    abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
                     financialDetail.setAbstractEstimate(abstractEstimate);
                     prepare();
                     throw new ValidationException(Arrays.asList(new ValidationError("error", error.getMessage())));
@@ -362,10 +371,11 @@ public class FinancialDetailAction extends BaseFormAction {
     private void persistFinancialDetail() {
 
         if (depositCodeId != null && depositCodeId != -1)
-            abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
+            abstractEstimate.setDepositCode(entityManager.find(DepositCode.class, depositCodeId));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
+                && fundSourceDAO
+                        .fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
             abstractEstimate.setFundSource(fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList)
                     .getFundSource().getId().intValue()));
 
@@ -386,7 +396,7 @@ public class FinancialDetailAction extends BaseFormAction {
         ajaxFinancialDetailAction.setPersistenceService(getPersistenceService());
         ajaxFinancialDetailAction.setBudgetGroupDAO(budgetGroupDAO);
         abstractEstimateService.setBudgetGroupDAO(budgetGroupDAO);
-        abstractEstimate = abstractEstimateService.findById(estimateId, false);
+        abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
         if (abstractEstimate != null) {
             // Incase of revision estimate, get the parent's financial details
             if (abstractEstimate.getParent() != null)
@@ -403,10 +413,12 @@ public class FinancialDetailAction extends BaseFormAction {
         addDropdownData("fundList", fundDao.findAllActiveIsLeafFunds());
         addDropdownData("functionList", functionHibDao.getAllActiveFunctions());
         addDropdownData("functionaryList", functionaryDao.findAllActiveFunctionary());
-        final List departmentList = getPersistenceService().findAllBy("from DepartmentImpl");
+        final List<Department> departmentList = entityManager.createQuery("from DepartmentImpl", Department.class)
+                .getResultList();
         addDropdownData("userDepartmentList", departmentList);
         addDropdownData("executingDepartmentList", departmentList);
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true"));
+        addDropdownData("financialYearList",
+                entityManager.createQuery("from CFinancialYear where isActive=true", CFinancialYear.class).getResultList());
         final List<CFinancialYear> finYrList = worksService.getAllFinancialYearsForWorks();
         addDropdownData("finYearList", finYrList);
         finYearRangeStr = generateFinYrList(finYrList);
@@ -459,7 +471,7 @@ public class FinancialDetailAction extends BaseFormAction {
             asOnDate = new Date();
             try {
                 final String config = worksService.getWorksConfigValue("SLDEPOSITCODE_SHOW_FUNDS");
-                final List<String> code = new ArrayList<String>();
+                final List<String> code = new ArrayList<>();
 
                 if (config == null)
                     addDropdownData("fundList", code);
@@ -553,15 +565,14 @@ public class FinancialDetailAction extends BaseFormAction {
     protected void populateFinancingSourceDetails() {
         for (final FinancingSource finSource : financingSourceList)
             if (validFinancingSource(finSource)) {
-                finSource.setFundSource((Fundsource) getPersistenceService().find("from Fundsource where id = ? ",
-                        finSource.getFundSource().getId()));
+                finSource.setFundSource(entityManager.find(Fundsource.class, finSource.getFundSource().getId()));
                 financialDetail.addFinancingSource(finSource);
             }
     }
 
     protected void populateMultiYearEstimates() {
         financialDetail.getAbstractEstimate().getMultiYearEstimates().clear();
-        final List<ValidationError> multiYearErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> multiYearErrors = new ArrayList<>();
         double totalPerc = 0.0;
         Boolean isPercError = Boolean.FALSE;
         Boolean isFinYearError = Boolean.FALSE;
@@ -570,8 +581,8 @@ public class FinancialDetailAction extends BaseFormAction {
                 if (multiYearEstimate.getFinancialYear() != null
                         && multiYearEstimate.getFinancialYear().getId() != null
                         && multiYearEstimate.getFinancialYear().getId() != -1)
-                    multiYearEstimate.setFinancialYear((CFinancialYear) getPersistenceService().find(
-                            "from CFinancialYear where id = ?", multiYearEstimate.getFinancialYear().getId()));
+                    multiYearEstimate.setFinancialYear(
+                            entityManager.find(CFinancialYear.class, multiYearEstimate.getFinancialYear().getId()));
                 multiYearEstimate.setAbstractEstimate(financialDetail.getAbstractEstimate());
                 totalPerc = totalPerc + multiYearEstimate.getPercentage();
                 financialDetail.getAbstractEstimate().addMultiYearEstimate(multiYearEstimate);
@@ -637,10 +648,12 @@ public class FinancialDetailAction extends BaseFormAction {
         this.status = status;
     }
 
-    public List getEstimateStatuses() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? and s.code<> 'BUDGETARY_APPR_VALIDATED' " + "order by orderId",
-                AbstractEstimate.class.getSimpleName());
+    public List<EgwStatus> getEstimateStatuses() {
+        return entityManager.createQuery(new StringBuffer("from EgwStatus s")
+                .append(" where moduletype = :moduletype and s.code <> 'BUDGETARY_APPR_VALIDATED'")
+                .append(" order by orderId").toString(), EgwStatus.class)
+                .setParameter("moduletype", AbstractEstimate.class.getSimpleName())
+                .getResultList();
     }
 
     public void setBudgetGroupDAO(final BudgetGroupDAO budgetGroupDAO) {
@@ -772,7 +785,7 @@ public class FinancialDetailAction extends BaseFormAction {
 
     public String viewDepositFolio() {
         final Fund fund = fundDao.fundById(fundId, false);
-        final DepositCode depositCode = depositCodeService.findById(depositCodeId, false);
+        final DepositCode depositCode = entityManager.find(DepositCode.class, depositCodeId);
         final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(glcodeId, false);
         financialDetail.setCoa(coa);
         financialDetail.setFund(fund);
@@ -809,10 +822,13 @@ public class FinancialDetailAction extends BaseFormAction {
         CChartOfAccounts coa = null;
         try {
             final AbstractEstimate abstractEstimate = new AbstractEstimate();
-            final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where name=?", "DEPOSITCODE");
-            fund = (Fund) persistenceService.find("from Fund where id=?", financialDetail.getFund().getId());
-            coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?", financialDetail
+            final Accountdetailtype accountdetailtype = entityManager.createQuery(
+                    "from Accountdetailtype where name = :name", Accountdetailtype.class)
+                    .setParameter("name", "DEPOSITCODE")
+                    .getSingleResult();
+
+            fund = entityManager.find(Fund.class, financialDetail.getFund().getId());
+            coa = entityManager.find(CChartOfAccounts.class, financialDetail
                     .getCoa().getId());
             final Map<String, Object> reportParams = getDepositFolioDetails(abstractEstimate, fund, coa,
                     accountdetailtype, depositCodeId, asOnDate);
@@ -829,14 +845,14 @@ public class FinancialDetailAction extends BaseFormAction {
                 e.setBalanceAvailable(totalDepositAmount);
                 e.setCumulativeExpensesIncurred(latestCumulativeExpense);
                 e.setActualBalanceAvailable(totalDepositAmount.doubleValue() - latestCumulativeExpense);
-                final List<BudgetFolioDetail> tempList = new ArrayList<BudgetFolioDetail>();
+                final List<BudgetFolioDetail> tempList = new ArrayList<>();
                 tempList.add(e);
                 if (approvedBudgetFolioDetails == null || approvedBudgetFolioDetails.isEmpty())
-                    approvedBudgetFolioDetails = new ArrayList<BudgetFolioDetail>();
+                    approvedBudgetFolioDetails = new ArrayList<>();
                 else
                     approvedBudgetFolioDetails.add(e);
             } else
-                approvedBudgetFolioDetails = new ArrayList<BudgetFolioDetail>();
+                approvedBudgetFolioDetails = new ArrayList<>();
         } catch (final ValidationException e) {
             logger.error("GlCodeValidation >>" + e.getErrors().get(0).getMessage());
             addFieldError("glCodeValidate", e.getErrors().get(0).getMessage());
@@ -844,6 +860,7 @@ public class FinancialDetailAction extends BaseFormAction {
         return RESULTS;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void search(final String src) {
         if (APP.equalsIgnoreCase(src) && abstractEstimate != null
                 && abstractEstimate.getFinancialDetails().get(0) != null)
@@ -858,7 +875,7 @@ public class FinancialDetailAction extends BaseFormAction {
             queryParamMap.put("functionid", financialDetail.getFunction().getId());
         if (financialDetail != null && financialDetail.getBudgetGroup() != null
                 && financialDetail.getBudgetGroup().getId() != null && financialDetail.getBudgetGroup().getId() != -1) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(financialDetail.getBudgetGroup());
             queryParamMap.put("budgetheadid", budgetheadid);
         }
@@ -915,7 +932,7 @@ public class FinancialDetailAction extends BaseFormAction {
             }
             final Map<String, List> approvedBudgetFolioDetailsMap = abstractEstimateService
                     .getApprovedAppropriationDetailsForBugetHead(queryParamMap);
-            approvedBudgetFolioDetails = new ArrayList<BudgetFolioDetail>();
+            approvedBudgetFolioDetails = new ArrayList<>();
             if (approvedBudgetFolioDetailsMap != null && !approvedBudgetFolioDetailsMap.isEmpty()) {
                 approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
                 setReportLatestValues(approvedBudgetFolioDetailsMap);
@@ -963,6 +980,7 @@ public class FinancialDetailAction extends BaseFormAction {
      * @throws JRException ,Exception
      */
     // @SkipValidation
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public String viewBudgetFolioPdf() throws JRException, Exception {
         Map reportParams = new HashMap();
         if (!StringUtils.isBlank(option) && "searchPdf".equalsIgnoreCase(option)) {
@@ -1032,14 +1050,14 @@ public class FinancialDetailAction extends BaseFormAction {
                 depositCodeId = Long.valueOf(parameters.get("depositCodeId")[0]);
             if (parameters.get("functionId") != null) {
                 functionId = Long.valueOf(parameters.get("functionId")[0]);
-                function = (CFunction) persistenceService.find("from CFunction where id=?", functionId);
+                function = entityManager.find(CFunction.class, functionId);
             }
             if (parameters.get("asOnDate") != null) {
                 final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
                 appropriationDate = sdf.parse(parameters.get("asOnDate")[0]);
             }
-            fund = (Fund) persistenceService.find("from Fund where id=?", fundId);
-            coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?", glcodeId);
+            fund = entityManager.find(Fund.class, fundId);
+            coa = entityManager.find(CChartOfAccounts.class, glcodeId);
         }
         reportParams = getDepositFolioDetails(abstractEstimate, fund, coa, accountdetailtype, depositCodeId,
                 appropriationDate);
@@ -1053,13 +1071,14 @@ public class FinancialDetailAction extends BaseFormAction {
         return PRINT;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map<String, Object> getDepositFolioDetails(final AbstractEstimate abstractEstimate, final Fund fund,
             final CChartOfAccounts coa, final Accountdetailtype accountdetailtype, final Long depositCodeId,
             final Date appropriationDate) {
-        final DepositCode depositCode = (DepositCode) persistenceService.find("from DepositCode where id=?",
+        final DepositCode depositCode = entityManager.find(DepositCode.class,
                 depositCodeId);
 
-        final HashMap<String, Object> reportParams = new HashMap<String, Object>();
+        final HashMap<String, Object> reportParams = new HashMap<>();
         final Map<String, List> approvedBudgetFolioDetailsMap = depositWorksUsageService.getDepositFolioDetails(
                 abstractEstimate, fund, coa, accountdetailtype, depositCodeId, appropriationDate);
 
@@ -1070,7 +1089,7 @@ public class FinancialDetailAction extends BaseFormAction {
             latestCumulative = 0.0D;
             latestCumulativeExpense = 0.0D;
         } else {
-            approvedBudgetFolioDetails = new ArrayList<BudgetFolioDetail>();
+            approvedBudgetFolioDetails = new ArrayList<>();
             approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("depositFolioList");
             final List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
             latestCumulative = (Double) calculatedValuesList.get(0);
@@ -1088,6 +1107,7 @@ public class FinancialDetailAction extends BaseFormAction {
         return reportParams;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setReportLatestValues(final Map<String, List> approvedBudgetFolioDetailsMap) {
         final List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
         latestCumulative = (Double) calculatedValuesList.get(0);
@@ -1298,7 +1318,6 @@ public class FinancialDetailAction extends BaseFormAction {
     }
 
     public void setDepositCodeService(final PersistenceService<DepositCode, Long> depositCodeService) {
-        this.depositCodeService = depositCodeService;
     }
 
     public Date getAsOnDate() {

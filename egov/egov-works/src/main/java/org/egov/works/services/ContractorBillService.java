@@ -172,7 +172,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * @param paramList TODO
      * @return
      */
-    List<String> searchContractorBill(Map<String, Object> paramsMap, List<Object> paramList);
+    Map<String, String> searchContractorBill(Map<String, Object> paramsMap, List<Object> paramList);
 
     /**
      * API will returns the Total value for the workorder upto billdate

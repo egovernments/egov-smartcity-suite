@@ -91,6 +91,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     public static final String newLine = "\n";
     public static final String CONTRACTOR_PDF_ERROR = "egBillRegister.pdf.error";
@@ -108,6 +109,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private final List<MBHeader> mbHeaderList = new ArrayList<>();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     private final ContractorBillService contractorBillService;
+    @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;

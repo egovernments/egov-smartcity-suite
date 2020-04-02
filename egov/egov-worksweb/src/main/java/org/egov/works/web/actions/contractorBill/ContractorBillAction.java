@@ -47,6 +47,27 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -124,24 +145,7 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.script.ScriptContext;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
         "inputName", "CompletionCertificatePDF", "contentType", "application/pdf", "contentDisposition",
@@ -171,9 +175,9 @@ public class ContractorBillAction extends BaseFormAction {
     @Autowired
     private UserService userService;
     private PersistenceService<EgChecklists, Long> checklistService;
-    private List<StatutoryDeductionsForBill> actionStatutorydetails = new LinkedList<StatutoryDeductionsForBill>();
-    private List<AssetForBill> accountDetailsForBill = new ArrayList<AssetForBill>();
-    private Map<Long, String> contratorCoaPayableMap = new HashMap<Long, String>();
+    private List<StatutoryDeductionsForBill> actionStatutorydetails = new LinkedList<>();
+    private List<AssetForBill> accountDetailsForBill = new ArrayList<>();
+    private Map<Long, String> contratorCoaPayableMap = new HashMap<>();
     private String disp;
     private BigDecimal totalAdvancePaid = BigDecimal.ZERO;
     private BigDecimal totalPendingBalance = BigDecimal.ZERO;
@@ -189,16 +193,16 @@ public class ContractorBillAction extends BaseFormAction {
     private Date completionDate;
     private Integer partbillNo;
     private String sourcepage = "";
-    private List<String> checklistValues = new LinkedList<String>();
-    private List<AppConfigValues> finalBillChecklist = new LinkedList<AppConfigValues>();
-    private List<CChartOfAccounts> standardDeductionAccountList = new LinkedList<CChartOfAccounts>();
-    private List<CChartOfAccounts> customDeductionAccountList = new LinkedList<CChartOfAccounts>();
-    private List<CChartOfAccounts> retentionMoneyAccountList = new LinkedList<CChartOfAccounts>();
-    private List<String> standardDeductionConfValues = new LinkedList<String>();
-    private List<DeductionTypeForBill> standardDeductions = new LinkedList<DeductionTypeForBill>();
-    private List<EgBilldetails> customDeductions = new LinkedList<EgBilldetails>();
-    private List<EgBilldetails> retentionMoneyDeductions = new LinkedList<EgBilldetails>();
-    private List<MBHeader> mbHeaderList = new LinkedList<MBHeader>();
+    private List<String> checklistValues = new LinkedList<>();
+    private List<AppConfigValues> finalBillChecklist = new LinkedList<>();
+    private List<CChartOfAccounts> standardDeductionAccountList = new LinkedList<>();
+    private List<CChartOfAccounts> customDeductionAccountList = new LinkedList<>();
+    private List<CChartOfAccounts> retentionMoneyAccountList = new LinkedList<>();
+    private List<String> standardDeductionConfValues = new LinkedList<>();
+    private List<DeductionTypeForBill> standardDeductions = new LinkedList<>();
+    private List<EgBilldetails> customDeductions = new LinkedList<>();
+    private List<EgBilldetails> retentionMoneyDeductions = new LinkedList<>();
+    private List<MBHeader> mbHeaderList = new LinkedList<>();
     private Long[] appConfigValueId;
     private String[] selectedchecklistValue;
     private String[] remarks;
@@ -230,7 +234,7 @@ public class ContractorBillAction extends BaseFormAction {
     @Qualifier("recoveryPersistenceService")
     private RecoveryService recoveryService;
     private Long workOrderEstimateId;
-    private List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
+    private List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<>();
     private WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
     public static final String PRINT = "print";
     private InputStream completionCertificatePDF;
@@ -239,7 +243,7 @@ public class ContractorBillAction extends BaseFormAction {
     private VoucherService voucherService;
     private ScriptService scriptExecutionService;
     private WorkCompletionInfo completionInfo;
-    private List<WorkCompletionDetailInfo> completionDetailInfoList = new ArrayList<WorkCompletionDetailInfo>();
+    private List<WorkCompletionDetailInfo> completionDetailInfoList = new ArrayList<>();
     private boolean skipBudget;
     private static final String CHECK_BUDGET = "CHECK_BUDGET";
     private static final String ACCOUNTDETAIL_TYPE_PROJECTCODE = "PROJECTCODE";
@@ -253,8 +257,8 @@ public class ContractorBillAction extends BaseFormAction {
     private String rebatePremLevel;
 
     // Added for Automatic calculation of statutory recoveries in bill
-    private List<EgPartytype> subPartyTypeDtls = new ArrayList<EgPartytype>();
-    private List<EgwTypeOfWork> typeOfWorkDtls = new ArrayList<EgwTypeOfWork>();
+    private List<EgPartytype> subPartyTypeDtls = new ArrayList<>();
+    private List<EgwTypeOfWork> typeOfWorkDtls = new ArrayList<>();
     public static final String BILL_STATUTORYDEDUCTIONS_SHOW_PARTYSUBTYPE = "BILL_STATUTORYDEDUCTIONS_SHOW_PARTYSUBTYPE";
     public static final String BILL_STATUTORYDEDUCTIONS_SHOW_SERVICETYPE = "BILL_STATUTORYDEDUCTIONS_SHOW_SERVICETYPE";
     public static final String BILL_STATUTORYDEDUCTIONS_EDITABLE = "BILL_STATUTORYDEDUCTIONS_EDITABLE";
@@ -277,7 +281,7 @@ public class ContractorBillAction extends BaseFormAction {
     private final String PENDING_FOR_CHECK = "Pending for Check";
     private Integer workflowFunctionaryId;
     private Long[] mbHeaderId;
-    private List<MBHeader> mbHeaderListForBillId = new LinkedList<MBHeader>();
+    private List<MBHeader> mbHeaderListForBillId = new LinkedList<>();
     private ContractorAdvanceService contractorAdvanceService;
     @Autowired
     private EmployeeServiceOld employeeService;
@@ -298,11 +302,14 @@ public class ContractorBillAction extends BaseFormAction {
     private String allowForward = "";
     private Date latestMBDate;
     private String refNo;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public ContractorBillAction() {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
         super.prepare();
@@ -324,7 +331,9 @@ public class ContractorBillAction extends BaseFormAction {
         }
 
         if (workOrderId != null) {
-            workOrder = (WorkOrder) persistenceService.find("from WorkOrder where id=?", workOrderId);
+            workOrder = entityManager.createQuery("from WorkOrder where id = :id", WorkOrder.class)
+                    .setParameter("id", workOrderId)
+                    .getSingleResult();
             workOrderEstimateList.addAll(getPersistenceService().findAllByNamedQuery(
                     "getWorkOrderEstimateByWorkOrderId", workOrderId));
             loadTenderDetails();
@@ -339,8 +348,9 @@ public class ContractorBillAction extends BaseFormAction {
                         .getApprovedMBAmountOfTenderedItemsForBill(contractorBillRegister);
         }
         if (workOrderEstimateId != null)
-            workOrderEstimate = (WorkOrderEstimate) persistenceService.find("from WorkOrderEstimate where id=?",
-                    workOrderEstimateId);
+            workOrderEstimate = entityManager.createQuery("from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                    .setParameter("id", workOrderEstimateId)
+                    .getSingleResult();
         if (workOrderEstimateList.isEmpty())
             addDropdownData("workOrderEstimateList", Collections.EMPTY_LIST);
         else {
@@ -368,7 +378,7 @@ public class ContractorBillAction extends BaseFormAction {
                                 .getWorksConfigValue(KEY_CWIP))));
                     else if (StringUtils.isNotBlank(accountCodeFromBudgetHead)
                             && "yes".equals(accountCodeFromBudgetHead)) {
-                        final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                        final List<BudgetGroup> budgetGroupList = new ArrayList<>();
                         if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
                             budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0)
                                     .getBudgetGroup());
@@ -384,7 +394,7 @@ public class ContractorBillAction extends BaseFormAction {
                                 .getWorksConfigValue(KEY_REPAIRS))));
                     else if (StringUtils.isNotBlank(accountCodeFromBudgetHead)
                             && "yes".equals(accountCodeFromBudgetHead)) {
-                        final List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
+                        final List<BudgetGroup> budgetGroupList = new ArrayList<>();
                         if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getBudgetGroup() != null)
                             budgetGroupList.add(workOrderEstimate.getEstimate().getFinancialDetails().get(0)
                                     .getBudgetGroup());
@@ -447,8 +457,12 @@ public class ContractorBillAction extends BaseFormAction {
                         || contractorBillRegister.getState()
                                 .getNextAction().equalsIgnoreCase(PENDING_FOR_CHECK)
                                 && contractorBillRegister.getState().getValue().equalsIgnoreCase("REJECTED"))) {
-            final Functionary func = (Functionary) persistenceService.find(" from  Functionary where upper(name) = ?",
-                    "UAC");
+            final List<Functionary> results = entityManager
+                    .createQuery(" from  Functionary where upper(name) = :name", Functionary.class)
+                    .setParameter("name", "UAC")
+                    .getResultList();
+            final Functionary func = results.isEmpty() ? null : results.get(0);
+
             workflowFunctionaryId = func.getId();
         }
 
@@ -459,8 +473,8 @@ public class ContractorBillAction extends BaseFormAction {
         editStatutoryAmount = worksService.getWorksConfigValue(BILL_STATUTORYDEDUCTIONS_EDITABLE);
         logger.debug("editStatutoryAmount>>>>>>> " + editStatutoryAmount);
 
-        List<EgPartytype> subPartyTypeList = new ArrayList<EgPartytype>();
-        List<EgwTypeOfWork> typeOfWorkList = new ArrayList<EgwTypeOfWork>();
+        List<EgPartytype> subPartyTypeList = new ArrayList<>();
+        List<EgwTypeOfWork> typeOfWorkList = new ArrayList<>();
         if (showSubPartyType != null && showSubPartyType != "") {
             subPartyTypeList = egPartytypeHibernateDAO.getSubPartyTypesForCode(PARTY_TYPE_CODE);
             addDropdownData("subPartyTypeList", subPartyTypeList);
@@ -468,7 +482,8 @@ public class ContractorBillAction extends BaseFormAction {
             addDropdownData("subPartyTypeList", subPartyTypeList);
 
         if (showTypeOfWork != null && showTypeOfWork != "") {
-            typeOfWorkList = getPersistenceService().findAllBy("from EgwTypeOfWork wt where wt.parentid is null");
+            typeOfWorkList = entityManager.createQuery("from EgwTypeOfWork wt where wt.parentid is null", EgwTypeOfWork.class)
+                    .getResultList();
             addDropdownData("typeOfWorkList", typeOfWorkList);
         } else
             addDropdownData("typeOfWorkList", typeOfWorkList);
@@ -540,9 +555,14 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     private void loadTenderDetails() {
-        tenderResponse = (TenderResponse) persistenceService.find(
-                "from TenderResponse tr where tr.negotiationNumber=? and " + " tr.egwStatus.code !=? ",
-                workOrder.getNegotiationNumber(), TenderResponse.TenderResponseStatus.CANCELLED.toString());
+        final List<TenderResponse> results = entityManager.createQuery(
+                "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber and tr.egwStatus.code != :statusCode ",
+                TenderResponse.class)
+                .setParameter("negotiationNumber", workOrder.getNegotiationNumber())
+                .setParameter("statusCode", TenderResponse.TenderResponseStatus.CANCELLED.toString())
+                .getResultList();
+        tenderResponse = results.isEmpty() ? null : results.get(0);
+
         rebatePremLevel = worksService.getWorksConfigValue("REBATE_PREMIUM_LEVEL");
         if (rebatePremLevel.equalsIgnoreCase(WorksConstants.BILL))
             isRebatePremLevelBill = WorksConstants.YES;
@@ -628,7 +648,7 @@ public class ContractorBillAction extends BaseFormAction {
     @SkipValidation
     public String viewCompletionCertificate() {
         ReportRequest reportRequest = null;
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put(WorksConstants.PARAMETERNAME_WORKCOMPLETIONINFO, getWorkcompletionInfo());
         reportRequest = new ReportRequest(WorksConstants.TEMPLATENAME_COMPLETIONCERTIFICATE,
                 getWorkCompletionDetailInfo(), reportParams);
@@ -643,7 +663,7 @@ public class ContractorBillAction extends BaseFormAction {
                 WorksConstants.QUERY_GETALLMBHEADERSBYBILLID, contractorBillRegister.getId());
         if (!mbHeaderList.isEmpty())
             return contractorBillService.setWorkCompletionDetailInfoList(mbHeaderList.get(0).getWorkOrderEstimate());
-        return new ArrayList<WorkCompletionDetailInfo>();
+        return new ArrayList<>();
     }
 
     public WorkCompletionInfo getWorkcompletionInfo() {
@@ -694,18 +714,23 @@ public class ContractorBillAction extends BaseFormAction {
         if (id == null) {
             List<TrackMilestone> tm = null;
             if (contractorBillRegister.getBilltype().equals(contractorBillService.getBillType().get(1).toString())) {
-                tm = persistenceService
-                        .findAllBy(
-                                " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = ? and trmls.total=100 ",
-                                workOrderId);
+                tm = entityManager.createQuery(new StringBuffer(" select trmls")
+                        .append(" from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls")
+                        .append(" where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = :workOrderId and trmls.total=100 ")
+                        .toString(), TrackMilestone.class)
+                        .setParameter("workOrderId", workOrderId)
+                        .getResultList();
                 if (tm == null || tm.isEmpty() || tm.get(0) == null)
                     addActionError(getText("contactor.final.bill.milestone.ajaxmsg"));
             }
             if (contractorBillRegister.getBilltype().equals(contractorBillService.getBillType().get(0).toString())) {
-                tm = persistenceService
-                        .findAllBy(
-                                " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = ? and trmls.total>0 ",
-                                workOrderId);
+                tm = entityManager.createQuery(new StringBuffer(" select trmls")
+                        .append(" from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls")
+                        .append(" where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = :workOrderId and trmls.total>0 ")
+                        .toString(),
+                        TrackMilestone.class)
+                        .setParameter("workOrderId", workOrderId)
+                        .getResultList();
                 if (tm == null || tm.isEmpty() || tm.get(0) == null)
                     addActionError(getText("contactor.final.bill.milestone.ajaxmsg"));
             }
@@ -726,8 +751,9 @@ public class ContractorBillAction extends BaseFormAction {
             contractorBillRegister.getDeductionTypeList().clear();
             contractorBillRegister.getAssetDetailsList().clear();
         }
-        workOrderEstimate = (WorkOrderEstimate) persistenceService.find("from WorkOrderEstimate where id=?",
-                workOrderEstimateId);
+        workOrderEstimate = entityManager.createQuery("from WorkOrderEstimate where id = :id", WorkOrderEstimate.class)
+                .setParameter("id", workOrderEstimateId)
+                .getSingleResult();
         validateMilestoneCompletion();
 
         if (id == null)
@@ -801,8 +827,10 @@ public class ContractorBillAction extends BaseFormAction {
             for (int i = 0; i < appConfigValueId.length; i++)
                 if (appConfigValueId[i] != null && !selectedchecklistValue[i].equals("-1")) {
                     final EgChecklists checklist = new EgChecklists();
-                    checklist.setAppconfigvalue((AppConfigValues) getPersistenceService().find(
-                            "from AppConfigValues where id=?", Integer.valueOf(appConfigValueId[i].toString())));
+                    checklist.setAppconfigvalue(entityManager.createQuery(
+                            "from AppConfigValues where id = :id", AppConfigValues.class)
+                            .setParameter("id", Integer.valueOf(appConfigValueId[i].toString()))
+                            .getSingleResult());
                     checklist.setChecklistvalue(selectedchecklistValue[i]);
                     checklist.setObjectid(contractorBillRegister.getId());
                     checklistService.persist(checklist);
@@ -955,7 +983,7 @@ public class ContractorBillAction extends BaseFormAction {
             // validation to avoid duplication of bill generation
             if (contractorBillRegister.getId() == null && contractorBillRegister.getStatus() == null)
                 if (mbHeaderId != null && mbHeaderId.length > 0) {
-                    final List<MBHeader> mbHeaderWithBill = new ArrayList<MBHeader>();
+                    final List<MBHeader> mbHeaderWithBill = new ArrayList<>();
 
                     for (final Long mbId : mbHeaderId) {
                         final MBHeader mbHeader = measurementBookService.findById(mbId, false);
@@ -1064,8 +1092,12 @@ public class ContractorBillAction extends BaseFormAction {
                     BigDecimal totalExpAmount = BigDecimal.ZERO;
                     final Fund fund = financialDetails.getFund();
                     final CChartOfAccounts coa = financialDetails.getCoa();
-                    final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
-                            "from Accountdetailtype where name=?", "DEPOSITCODE");
+                    final List<Accountdetailtype> results = entityManager.createQuery(
+                            "from Accountdetailtype where name = :name", Accountdetailtype.class)
+                            .setParameter("name", "DEPOSITCODE")
+                            .getResultList();
+                    final Accountdetailtype accountdetailtype = results.isEmpty() ? null : results.get(0);
+
                     if (fund != null && fund.getId() != null && coa != null && coa.getId() != null
                             && workOrderEstimate.getEstimate().getDepositCode().getId() != null) {
                         final BigDecimal totalAmountDeposited = egovCommon.getDepositAmountForDepositCode(new Date(),
@@ -1167,7 +1199,7 @@ public class ContractorBillAction extends BaseFormAction {
         final Collection<AssetForBill> assetAndAccountDetails = contractorBillService
                 .getAssetAndAccountDetails(accountDetailsForBill);
         if (!assetAndAccountDetails.isEmpty() && workOrderEstimate.getAssetValues().isEmpty()) {
-            final Set<Long> coaSet = new HashSet<Long>();
+            final Set<Long> coaSet = new HashSet<>();
             for (final AssetForBill assetForBill : assetAndAccountDetails)
                 if (assetForBill.getCoa() != null && assetForBill.getCoa().getId() > 0L) {
                     if (coaSet.contains(assetForBill.getCoa().getId()))
@@ -1181,7 +1213,7 @@ public class ContractorBillAction extends BaseFormAction {
     public boolean checkForCOADuplicatesInCustomDed() {
         final Collection<EgBilldetails> customDeductionTypes = contractorBillService.getCustomDeductionTypes(customDeductions);
         if (!customDeductionTypes.isEmpty()) {
-            final Set<BigDecimal> coaSet = new HashSet<BigDecimal>();
+            final Set<BigDecimal> coaSet = new HashSet<>();
             for (final EgBilldetails egBilldetails : customDeductionTypes)
                 if (egBilldetails.getGlcodeid() != null
                         && worksService.checkBigDecimalValue(egBilldetails.getGlcodeid(), BigDecimal.valueOf(0))) {
@@ -1338,7 +1370,7 @@ public class ContractorBillAction extends BaseFormAction {
 
                 }
                 if (adt1 == null && adt2 == null && adt3 == null) {
-                    final List<ValidationError> errors = new ArrayList<ValidationError>();
+                    final List<ValidationError> errors = new ArrayList<>();
                     errors.add(new ValidationError("contractorBill.validate_glcode_for_subledger", getText(
                             "contractorBill.validate_glcode_for_subledger", new String[] { coa.getGlcode() })));
                     throw new ValidationException(errors);
@@ -1373,11 +1405,13 @@ public class ContractorBillAction extends BaseFormAction {
             final EgBillPayeedetails egPayeeDtls) {
         final StatutoryDeductionsForBill sdb = new StatutoryDeductionsForBill();
         if (statutoryDeductionBill.getSubPartyType().getId() != null)
-            sdb.setSubPartyType((EgPartytype) persistenceService.find("from EgPartytype where id=?",
-                    statutoryDeductionBill.getSubPartyType().getId()));
+            sdb.setSubPartyType(entityManager.createQuery("from EgPartytype where id = :id", EgPartytype.class)
+                    .setParameter("id", statutoryDeductionBill.getSubPartyType().getId())
+                    .getSingleResult());
         if (statutoryDeductionBill.getTypeOfWork().getId() != null)
-            sdb.setTypeOfWork((EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?",
-                    statutoryDeductionBill.getTypeOfWork().getId()));
+            sdb.setTypeOfWork(entityManager.createQuery("from EgwTypeOfWork where id = :id", EgwTypeOfWork.class)
+                    .setParameter("id", statutoryDeductionBill.getTypeOfWork().getId())
+                    .getSingleResult());
         sdb.setEgBillPayeeDtls(egPayeeDtls);
         sdb.setEgBillReg(contractorBillRegister);
         contractorBillRegister.addStatutoryDeductions(sdb);
@@ -1436,8 +1470,8 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     public Map<String, BigDecimal> getGlcodesForDebit() {
-        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<String, BigDecimal>();
-        final Set<Long> coaSet = new HashSet<Long>();
+        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<>();
+        final Set<Long> coaSet = new HashSet<>();
         for (final AssetForBill assetBill : accountDetailsForBill)
             if (assetBill != null && assetBill.getCoa() != null && assetBill.getCoa().getId() != null) {
                 if (coaSet.contains(assetBill.getCoa().getId())) {
@@ -1461,7 +1495,7 @@ public class ContractorBillAction extends BaseFormAction {
             final Asset assetNew = assetService.findOne(adb.getAsset().getId());
             final String value = worksService.getWorksConfigValue("WORKS_ASSET_STATUS");
             if (StringUtils.isBlank(value)) {
-                final List<ValidationError> errors = new ArrayList<ValidationError>();
+                final List<ValidationError> errors = new ArrayList<>();
                 errors.add(new ValidationError("asset.status", "asset.status.configvalue"));
                 throw new ValidationException(errors);
             }
@@ -1480,8 +1514,8 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     public Map<String, BigDecimal> getGlcodesForstanDed() {
-        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<String, BigDecimal>();
-        final Set<BigDecimal> coaSet = new HashSet<BigDecimal>();
+        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<>();
+        final Set<BigDecimal> coaSet = new HashSet<>();
         for (final DeductionTypeForBill deductionBill : standardDeductions)
             if (deductionBill != null && deductionBill.getGlcodeid() != null) {
                 if (coaSet.contains(deductionBill.getGlcodeid())) {
@@ -1513,8 +1547,8 @@ public class ContractorBillAction extends BaseFormAction {
     }
 
     public Map<String, BigDecimal> getGlcodesForStatDed() {
-        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<String, BigDecimal>();
-        final Set<Long> coaSet = new HashSet<Long>();
+        final Map<String, BigDecimal> debitGlcodeAndAmountMap = new HashMap<>();
+        final Set<Long> coaSet = new HashSet<>();
         for (final StatutoryDeductionsForBill bpd : contractorBillService.getStatutoryDeductions(actionStatutorydetails))
             if (bpd != null && bpd.getEgBillPayeeDtls().getRecovery() != null
                     && bpd.getEgBillPayeeDtls().getRecovery().getId() != null
@@ -1552,7 +1586,7 @@ public class ContractorBillAction extends BaseFormAction {
                     customDeductionAccountList.addAll(pList);
             }
         if (!contractorBillService.getStandardDeductionsFromConfig().isEmpty())
-            standardDeductionConfValues = new LinkedList<String>(contractorBillService
+            standardDeductionConfValues = new LinkedList<>(contractorBillService
                     .getStandardDeductionsFromConfig().keySet());
 
         if (StringUtils.isNotBlank(worksService.getWorksConfigValue(RETENTION_MONEY_PURPOSE)))

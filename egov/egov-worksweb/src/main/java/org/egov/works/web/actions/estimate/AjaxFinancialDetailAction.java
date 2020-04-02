@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CFunction;
 import org.egov.commons.Scheme;
@@ -56,11 +65,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.budget.BudgetGroup;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 public class AjaxFinancialDetailAction extends BaseFormAction {
 
@@ -79,6 +83,9 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
     private Date estimateDate;
     private String loadBudgetGroupsValidationError = "";
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public Date getEstimateDate() {
         return estimateDate;
     }
@@ -92,17 +99,22 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
     }
 
     public String loadSchemes() {
-        schemes = getPersistenceService()
-                .findAllBy(
-                        "from org.egov.commons.Scheme sc where sc.isactive=true and sc.fund.id=? and ? between validfrom and validto",
-                        fundId, estimateDate);
+        schemes = entityManager.createQuery(new StringBuffer("from org.egov.commons.Scheme sc")
+                .append(" where sc.isactive=true and sc.fund.id = :fundId and :estimteDate between validfrom and validto")
+                .toString(), Scheme.class)
+                .setParameter("fundId", fundId)
+                .setParameter("estimteDate", estimateDate, TemporalType.DATE)
+                .getResultList();
         return SCHEMES;
     }
 
     public String loadSubSchemes() {
-        subSchemes = getPersistenceService().findAllBy(
-                "from org.egov.commons.SubScheme where scheme.id=? and ? between validfrom and validto", schemeId,
-                estimateDate);
+        subSchemes = entityManager.createQuery(new StringBuffer("from org.egov.commons.SubScheme")
+                .append(" where scheme.id = :schemeId and :estimateDate between validfrom and validto").toString(),
+                SubScheme.class)
+                .setParameter("schemeId", schemeId)
+                .setParameter("estimateDate", estimateDate)
+                .getResultList();
         return SUBSCHEMES;
     }
 
@@ -111,8 +123,7 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
             if (functionId == -1)
                 budgetGroups = budgetGroupDAO.getBudgetGroupList();
             else {
-                final CFunction function = (CFunction) getPersistenceService().find(
-                        "from org.egov.commons.CFunction where id = ? ", functionId);
+                final CFunction function = entityManager.find(CFunction.class, functionId);
                 if (function == null)
                     throw new ValidationException(Arrays.asList(new ValidationError("nobudgetforfunction",
                             "Budget head information not available for the chosen function")));
@@ -121,7 +132,7 @@ public class AjaxFinancialDetailAction extends BaseFormAction {
             }
         } catch (final ValidationException egovEx) {
             logger.error("Unable to load budget head information>>>" + egovEx.getMessage());
-            budgetGroups = new ArrayList<BudgetGroup>();
+            budgetGroups = new ArrayList<>();
             addActionError("Unable to load budget head information");
             return BUDGETGROUPS;
 
