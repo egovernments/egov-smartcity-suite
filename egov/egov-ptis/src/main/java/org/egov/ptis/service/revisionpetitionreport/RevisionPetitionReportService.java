@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.Petition;
@@ -51,6 +52,7 @@ public class RevisionPetitionReportService {
         return entityManager.unwrap(Session.class);
     }
 
+    @ReadOnly
     public List<RevisionPetitionReport> getReportList(final String fromDate, final String toDate) {
         int recordCount = 0;
         List<RevisionPetitionReport> reportList = new ArrayList<>();
@@ -76,6 +78,7 @@ public class RevisionPetitionReportService {
         return reportList;
     }
 
+    @ReadOnly
     public List<PropertyImpl> prepareQueryforRPList(final Date fromDate, final Date toDate) {
         Query getreportQuery = null;
         StringBuilder query = new StringBuilder("select  distinct prop from PropertyImpl prop,Petition petition,State states")
@@ -91,6 +94,7 @@ public class RevisionPetitionReportService {
         return getreportQuery.list();
     }
 
+    @ReadOnly
     public PropertyImpl getPreviousPropertyList(final PropertyImpl property) {
         Query getreportQuery = null;
         PropertyImpl propertyImpl = null;
@@ -108,6 +112,7 @@ public class RevisionPetitionReportService {
         return propertyImpl;
     }
 
+    @ReadOnly
     public Petition getPetition(Long propertyId) {
         Query qry = null;
         qry = getCurrentSession()
@@ -124,6 +129,7 @@ public class RevisionPetitionReportService {
         return revisionPetitionReportTax;
     }
 
+    @ReadOnly
     public List<Map<String, BigDecimal>> getAmount(Ptdemand ptdemand, Date effectiveDate) {
         Query qry = null;
         Map<String, BigDecimal> mapValue = new HashMap<String, BigDecimal>();

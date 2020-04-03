@@ -23,6 +23,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -132,6 +133,7 @@ public class AppealReportService {
                     ? ptdemand.getBaseDemand().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
     }
 
+    @ReadOnly
     public List<PropertyImpl> prepareQueryforAppealList(final CFinancialYear financialYear, Long ward, Long electionWard) {
         Query getreportQuery = null;
         StringBuilder query = new StringBuilder("select  distinct prop from PropertyImpl prop,Petition petition,State states")
@@ -156,6 +158,7 @@ public class AppealReportService {
         return getreportQuery.list();
     }
 
+    @ReadOnly
     public PropertyImpl getPreviousRPPropertyList(final PropertyImpl property) {
         Query getreportQuery = null;
         PropertyImpl propertyImpl = null;
@@ -173,6 +176,7 @@ public class AppealReportService {
         return propertyImpl;
     }
 
+    @ReadOnly
     public PropertyImpl getBeforeRPTransactionDetails(final PropertyImpl property) {
         Query getreportQuery = null;
         StringBuilder query = new StringBuilder(
@@ -199,6 +203,7 @@ public class AppealReportService {
                     }
     }
 
+    @ReadOnly
     public Petition getPetition(Long propertyId) {
         Query qry = null;
         qry = getCurrentSession()
@@ -208,6 +213,7 @@ public class AppealReportService {
         return (Petition) qry.list().get(0);
     }
 
+    @ReadOnly
     public PtNotice getNoticeDateByApplicationNum(String applicationNo, String noticeType) {
 
         Query qry = null;
@@ -220,6 +226,7 @@ public class AppealReportService {
         return (PtNotice) qry.list().get(0);
     }
 
+    @ReadOnly
     public String getCityGrade() {
         final Query query = (Query) entityManager.createQuery("from City");
         final City city = (City) ((javax.persistence.Query) query).getSingleResult();
