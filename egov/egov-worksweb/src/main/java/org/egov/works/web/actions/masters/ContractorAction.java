@@ -47,6 +47,20 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -72,19 +86,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
         @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
@@ -108,7 +110,7 @@ public class ContractorAction extends SearchFormAction {
     private Map<String, String> exmptionMap = ContractorService.exemptionForm;
 
     private List<Contractor> contractorList = null;
-    private List<ContractorDetail> actionContractorDetails = new LinkedList<ContractorDetail>();
+    private List<ContractorDetail> actionContractorDetails = new LinkedList<>();
     private Long id;
     private String mode;
 
@@ -164,7 +166,7 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-edit")
     public String edit() {
-        contractor = contractorService.findById(contractor.getId(), false);
+        contractor = entityManager.find(Contractor.class, contractor.getId());
         if (mode.equals(WorksConstants.EDIT))
             return EDIT;
         else
@@ -308,7 +310,7 @@ public class ContractorAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            contractor = contractorService.findById(id, false);
+            contractor = entityManager.find(Contractor.class, id);
         super.prepare();
         setupDropdownDataExcluding(WorksConstants.BANK);
         addDropdownData("departmentList", departmentService.getAllDepartments());
@@ -477,7 +479,7 @@ public class ContractorAction extends SearchFormAction {
     }
 
     private Map<String, Object> createCriteriaMap() {
-        criteriaMap = new HashMap<String, Object>();
+        criteriaMap = new HashMap<>();
         criteriaMap.put(WorksConstants.CONTRACTOR_NAME, contractorName);
         criteriaMap.put(WorksConstants.CONTRACTOR_CODE, contractorCode);
         criteriaMap.put(WorksConstants.DEPARTMENT_ID, departmentId);
@@ -489,7 +491,7 @@ public class ContractorAction extends SearchFormAction {
 
     public List<ValidationError> getContractorMasterMandatoryFieldsErrors(final Contractor contractor,
             final String[] mandatoryFields) {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         final String[] contractorMasterMandatoryFields = mandatoryFields;
 
         for (final String val : contractorMasterMandatoryFields) {
@@ -531,7 +533,7 @@ public class ContractorAction extends SearchFormAction {
     }
 
     private void validateContractorMasterMandatoryFields(final ContractorDetail contractorDetail) {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         final String[] contractorMasterMandatoryFields = contractorService.getContractorMasterMandatoryFields();
 
         validationErrors.addAll(getContractorMasterMandatoryFieldsErrors(contractor, contractorMasterMandatoryFields));

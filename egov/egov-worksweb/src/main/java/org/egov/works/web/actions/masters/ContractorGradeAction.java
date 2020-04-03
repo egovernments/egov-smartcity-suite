@@ -47,6 +47,14 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -58,14 +66,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 @Results({
@@ -99,7 +99,7 @@ public class ContractorGradeAction extends SearchFormAction {
     public String save() {
         contractorGrade = contractorGradeService.persist(contractorGrade);
         addActionMessage(getText("contractor.grade.save.success"));
-        contractorGradeList = new ArrayList<ContractorGrade>();
+        contractorGradeList = new ArrayList<>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
     }
@@ -124,8 +124,8 @@ public class ContractorGradeAction extends SearchFormAction {
                 .findAllByNamedQuery("getContractorGradeMaxAmountList");
         final List<BigDecimal> tempMinAmountList = persistenceService
                 .findAllByNamedQuery("getContractorGradeMinAmountList");
-        maxAmountList = new ArrayList<String>();
-        minAmountList = new ArrayList<String>();
+        maxAmountList = new ArrayList<>();
+        minAmountList = new ArrayList<>();
 
         final NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMinimumFractionDigits(2);
@@ -286,7 +286,7 @@ public class ContractorGradeAction extends SearchFormAction {
     }
 
     private Map<String, Object> createCriteriaMap() {
-        criteriaMap = new HashMap<String, Object>();
+        criteriaMap = new HashMap<>();
         criteriaMap.put(WorksConstants.GRADE, grade);
         criteriaMap.put(WorksConstants.MIN_AMOUNT, minAmount);
         criteriaMap.put(WorksConstants.MAX_AMOUNT, maxAmount);

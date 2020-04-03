@@ -106,78 +106,81 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
         final String countQry = "select count(distinct mbh) from MBHeader mbh where mbh.id != null and mbh.egwStatus.code != 'NEW' ";
         final String resultQry = "select distinct mbh from MBHeader mbh where mbh.id != null and mbh.egwStatus.code != 'NEW'";
         StringBuffer commonFilter = new StringBuffer();
+        int index = 1;
 
         // List<Object> paramList = new ArrayList<Object>();
 
         if (criteriaMap.get(WORKORDER_NO) != null) {
-            commonFilter = commonFilter.append(" and mbh.workOrder.workOrderNumber like ?");
+            commonFilter.append(" and mbh.workOrder.workOrderNumber like ?").append(index++);
             paramList.add("%" + criteriaMap.get(WORKORDER_NO) + "%");
         }
         if (criteriaMap.get(CONTRACTOR_ID) != null && !"-1".equals(criteriaMap.get(CONTRACTOR_ID))) {
-            commonFilter = commonFilter.append(" and mbh.workOrder.contractor.id = ?");
+            commonFilter.append(" and mbh.workOrder.contractor.id = ?").append(index++);
             paramList.add(criteriaMap.get(CONTRACTOR_ID));
         }
         if (criteriaMap.get(DEPT_ID) != null && !"-1".equals(criteriaMap.get(DEPT_ID))) {
-            commonFilter = commonFilter.append(" and mbh.workOrderEstimate.estimate.executingDepartment.id = ?");
+            commonFilter.append(" and mbh.workOrderEstimate.estimate.executingDepartment.id = ?").append(index++);
             paramList.add(criteriaMap.get(DEPT_ID));
         }
         if (criteriaMap.get(CREATE_DATE) != null) {
-            commonFilter = commonFilter.append(" and mbh.mbDate = ?");
+            commonFilter.append(" and mbh.mbDate = ?").append(index++);
             paramList.add(criteriaMap.get(CREATE_DATE));
         }
         if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) == null) {
-            commonFilter = commonFilter.append(" and mbh.mbDate >= ? ");
+            commonFilter.append(" and mbh.mbDate >= ?").append(index++);
             paramList.add(criteriaMap.get(FROM_DATE));
 
         } else if (criteriaMap.get(TO_DATE) != null && criteriaMap.get(FROM_DATE) == null) {
-            commonFilter = commonFilter.append(" and mbh.mbDate <= ? ");
+            commonFilter.append(" and mbh.mbDate <= ?").append(index++);
             paramList.add(criteriaMap.get(TO_DATE));
         } else if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) != null) {
-            commonFilter = commonFilter.append(" and mbh.mbDate between ? and ? ");
+            commonFilter.append(" and mbh.mbDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(criteriaMap.get(FROM_DATE));
             paramList.add(criteriaMap.get(TO_DATE));
         }
 
         if (criteriaMap.get(EST_NO) != null) {
-            commonFilter = commonFilter.append(" and mbh.workOrderEstimate.estimate.estimateNumber like ?");
+            commonFilter.append(" and mbh.workOrderEstimate.estimate.estimateNumber like ?").append(index++);
             paramList.add("%" + criteriaMap.get(EST_NO) + "%");
         }
 
         if (criteriaMap.get(MB_REF_NO) != null) {
-            commonFilter = commonFilter.append(" and mbh.mbRefNo = ?");
+            commonFilter.append(" and mbh.mbRefNo = ?").append(index++);
             paramList.add(criteriaMap.get(MB_REF_NO));
         }
         if (criteriaMap.get(MB_PAGE_NO) != null) {
-            commonFilter = commonFilter.append(" and ? between mbh.fromPageNo and mbh.toPageNo ");
+            commonFilter.append(" and ?").append(index++)
+                    .append(" between mbh.fromPageNo and mbh.toPageNo ");
             paramList.add(criteriaMap.get(MB_PAGE_NO));
         }
         if ("1".equals(criteriaMap.get(ALL_STATUS)))
-            commonFilter = commonFilter.append(" and mbh.egBillregister.id is not null");
+            commonFilter.append(" and mbh.egBillregister.id is not null");
         else if (!"-1".equals(criteriaMap.get(STATUS))
                 && criteriaMap.get(STATUS) != null
                 && (criteriaMap.get(STATUS).equals(MBHeader.MeasurementBookStatus.APPROVED.toString()) || criteriaMap
                         .get(STATUS).equals(MBHeader.MeasurementBookStatus.CANCELLED.toString()))) {
-            commonFilter = commonFilter.append(" and mbh.egwStatus.code = ?");
+            commonFilter.append(" and mbh.egwStatus.code = ?").append(index++);
             paramList.add(criteriaMap.get(STATUS));
         } else if (!"-1".equals(criteriaMap.get(STATUS)) && criteriaMap.get(STATUS) != null) {
-            commonFilter = commonFilter.append(" and mbh.egwStatus.code = ?");
+            commonFilter.append(" and mbh.egwStatus.code = ?").append(index++);
             paramList.add(criteriaMap.get(STATUS));
         }
         // Adding criteria for search bill-Sreekanth D.
         if (criteriaMap.get(BILLDATE) != null) {
-            commonFilter = commonFilter.append(" and trunc(mbh.egBillregister.billdate) = ?");
+            commonFilter.append(" and trunc(mbh.egBillregister.billdate) = ?").append(index++);
             paramList.add(criteriaMap.get(BILLDATE));
         }
         if (criteriaMap.get(BILLSTATUS) != null && !criteriaMap.get(BILLSTATUS).equals("-1")) {
-            commonFilter = commonFilter.append(" and mbh.egBillregister.status.code like ?");
+            commonFilter.append(" and mbh.egBillregister.status.code like ?").append(index++);
             paramList.add("%" + criteriaMap.get(BILLSTATUS) + "%");
         }
         if (criteriaMap.get(BILLNO) != null) {
-            commonFilter = commonFilter.append(" and mbh.egBillregister.billnumber= ? ");
+            commonFilter.append(" and mbh.egBillregister.billnumber = ?").append(index++);
             paramList.add(criteriaMap.get(BILLNO));
         }
 
-        commonFilter = commonFilter.append(" order by mbh.mbDate ");
+        commonFilter.append(" order by mbh.mbDate ");
 
         final String searchQry = resultQry + commonFilter;
         final String countResultQry = countQry + commonFilter;

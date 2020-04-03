@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -71,14 +80,7 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.egov.works.web.actions.estimate.AjaxFinancialDetailAction;
-import org.hibernate.query.Query;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
@@ -111,13 +113,16 @@ public class DepositCodeAction extends BaseFormAction {
     private String estimateNumber;
     private Date completionDate;
     private String lastVoucherDate;
-    private final Map<String, Object> projectDetails = new HashMap<String, Object>();
+    private final Map<String, Object> projectDetails = new HashMap<>();
     @Autowired
     private DepositCodeService depositCodeService;
     @Autowired
     private CFinancialYearRepository cFinancialYearRepository;
     public static final String SEARCH = "search";
     private List<DepositCode> depositCodeList = null;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -166,15 +171,16 @@ public class DepositCodeAction extends BaseFormAction {
         return "changeStatus";
     }
 
-    @SuppressWarnings({ "rawtypes", "deprecation" })
+    @SuppressWarnings("deprecation")
     private void search() {
         StringBuffer queryStr = new StringBuffer("from DepositCode ");
         if (estimateNumber != null && !StringUtils.isEmpty(estimateNumber))
             queryStr.append(" and upper(ae.estimateNumber) like '%'||:estimateNumber||'%'");
-        final Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
+        final TypedQuery<AbstractEstimate> query = entityManager.createQuery(queryStr.toString(), AbstractEstimate.class);
         if (estimateNumber != null && !StringUtils.isEmpty(estimateNumber))
-            query.setParameter("estimateNumber", estimateNumber, StringType.INSTANCE);
-        final AbstractEstimate estimate = (AbstractEstimate) query.uniqueResult();
+            query.setParameter("estimateNumber", estimateNumber);
+        final List<AbstractEstimate> results = query.getResultList();
+        final AbstractEstimate estimate = results.isEmpty() ? null : results.get(0);
         if (estimate == null)
             addActionError(getText("search.noresultfound"));
         else {

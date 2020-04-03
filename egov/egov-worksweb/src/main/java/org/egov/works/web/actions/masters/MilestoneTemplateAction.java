@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,12 +73,6 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
@@ -92,12 +95,15 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Autowired
     private WorksService worksService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     Long id;
     private String mode;
     private String messageKey;
     private String sourcepage;
 
-    private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
+    private List<MilestoneTemplateActivity> templateActivities = new LinkedList<>();
     public static final String SEARCH = "search";
     public static final String SUCCESS = "success";
     public static final String EDIT = "edit";
@@ -117,7 +123,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw where etw.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         populateCategoryList(ajaxEstimateAction, template.getTypeOfWork() != null);
     }
 
@@ -248,7 +255,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         int index = 1;
         StringBuffer dynQuery = new StringBuffer(" from MilestoneTemplate mt where mt.id is not null ");
-        final List<Object> paramList = new ArrayList<Object>();
+        final List<Object> paramList = new ArrayList<>();
         if (template.getTypeOfWork() != null && template.getTypeOfWork().getId() != -1) {
             dynQuery.append(" and mt.typeOfWork.id = ?").append(index++);
             paramList.add(template.getTypeOfWork().getId());

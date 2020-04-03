@@ -47,6 +47,18 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -72,15 +84,6 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("deprecation")
 @Results({
@@ -112,23 +115,24 @@ public class ScheduleOfRateAction extends SearchFormAction {
     private String code;
     private String description;
 
-    private Map<Long, String> deletFlagMap = new HashMap<Long, String>();
-    private Map<Long, String> deleteFlagMap2 = new HashMap<Long, String>();
+    private Map<Long, String> deletFlagMap = new HashMap<>();
+    private Map<Long, String> deleteFlagMap2 = new HashMap<>();
     private String estimateDtFlag = WorksConstants.NO;
     private Date estimateDate;
     public static final String flagValue = WorksConstants.YES;
 
-    private List<SORRate> actionRates = new LinkedList<SORRate>();
-    private List<MarketRate> actionMarketRates = new LinkedList<MarketRate>();
+    private List<SORRate> actionRates = new LinkedList<>();
+    private List<MarketRate> actionMarketRates = new LinkedList<>();
 
-    @SuppressWarnings("rawtypes")
-    private List abstractEstimateList = null;
-    @SuppressWarnings("rawtypes")
-    private List woeList = null;
+    private List<AbstractEstimate> abstractEstimateList = null;
+    private List<WorkOrderEstimate> woeList = null;
     private Date woDate;
     private String woDateFlag = WorksConstants.NO;
-    private List<SORRate> editableRateList = new ArrayList<SORRate>();
+    private List<SORRate> editableRateList = new ArrayList<>();
     public static final String SEARCH = "search";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public ScheduleOfRateAction() {
         addRelatedEntity("scheduleCategory", ScheduleCategory.class);
@@ -184,8 +188,8 @@ public class ScheduleOfRateAction extends SearchFormAction {
             getRateDetailsForSORIdForREValidation(true);
         }
         scheduleOfRateService.persist(scheduleOfRate);
-        scheduleOfRate = scheduleOfRateService.findById(scheduleOfRate.getId(), false);
-        scheduleOfRateList = new ArrayList<ScheduleOfRate>();
+        scheduleOfRate = entityManager.find(ScheduleOfRate.class, scheduleOfRate.getId());
+        scheduleOfRateList = new ArrayList<>();
         scheduleOfRateList.add(scheduleOfRate);
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("sor.save.success"));
@@ -230,7 +234,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            scheduleOfRate = scheduleOfRateService.findById(id, false);
+            scheduleOfRate = entityManager.find(ScheduleOfRate.class, id);
         super.prepare();
         scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         addDropdownData("scheduleCategoryList", scheduleCategoryList);
@@ -374,12 +378,12 @@ public class ScheduleOfRateAction extends SearchFormAction {
             iterateWOList(woeList, rate, validationMessageFlag);
     }
 
-    public void iterateAbstractList(final List abstractEstimateList, final SORRate rate,
+    public void iterateAbstractList(final List<AbstractEstimate> abstractEstimateList, final SORRate rate,
             final boolean validationMessageRequired) {
         AbstractEstimate abstractEstimate = null;
-        final Map<Integer, String> trackFlagMap = new HashMap<Integer, String>();
+        final Map<Integer, String> trackFlagMap = new HashMap<>();
         for (int i = 0; i < abstractEstimateList.size(); i++) {
-            abstractEstimate = (AbstractEstimate) abstractEstimateList.get(i);
+            abstractEstimate = abstractEstimateList.get(i);
             if (abstractEstimate != null) {
                 estimateDate = abstractEstimate.getEstimateDate();
                 if (rate != null) {
@@ -408,13 +412,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
         }        // end of for abstractestimate
     }
 
-    public void iterateWOList(final List woeList, final SORRate rate, final boolean validationMessageFlag) {
+    @SuppressWarnings("null")
+    public void iterateWOList(final List<WorkOrderEstimate> woeList, final SORRate rate, final boolean validationMessageFlag) {
         WorkOrder revisionWO = null;
         WorkOrder parentWO = null;
         WorkOrderEstimate woe = null;
-        final Map<Integer, String> trackFlagMap = new HashMap<Integer, String>();
+        final Map<Integer, String> trackFlagMap = new HashMap<>();
         for (int i = 0; i < woeList.size(); i++) {
-            woe = (WorkOrderEstimate) woeList.get(i);
+            woe = woeList.get(i);
             revisionWO = woe.getWorkOrder();
             parentWO = revisionWO.getParent();
             if (parentWO != null) {
@@ -446,6 +451,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         }      // end of for wo
     }
 
+    @SuppressWarnings("rawtypes")
     public void validateWODate(final boolean flag, final List woList) {
         final WorkOrderEstimate woe1 = (WorkOrderEstimate) woList.get(0);
         if (flag == true)
@@ -555,14 +561,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
     /**
      * @return the abstractEstimateList
      */
-    public List getAbstractEstimateList() {
+    public List<AbstractEstimate> getAbstractEstimateList() {
         return abstractEstimateList;
     }
 
     /**
      * @param abstractEstimateList the abstractEstimateList to set
      */
-    public void setAbstractEstimateList(final List abstractEstimateList) {
+    public void setAbstractEstimateList(final List<AbstractEstimate> abstractEstimateList) {
         this.abstractEstimateList = abstractEstimateList;
     }
 
@@ -595,11 +601,11 @@ public class ScheduleOfRateAction extends SearchFormAction {
         this.woDateFlag = woDateFlag;
     }
 
-    public List getWoeList() {
+    public List<WorkOrderEstimate> getWoeList() {
         return woeList;
     }
 
-    public void setWoeList(final List woeList) {
+    public void setWoeList(final List<WorkOrderEstimate> woeList) {
         this.woeList = woeList;
     }
 

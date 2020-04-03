@@ -47,6 +47,12 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -55,9 +61,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
-
-import java.util.Date;
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
@@ -78,6 +81,9 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
     private Long estimateId;
     private List<ScheduleOfRate> scheduleOfRateList;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public void setQuery(final String query) {
         this.query = query;
     }
@@ -90,7 +96,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
 
     @Action(value = "/masters/scheduleOfRateSearch-findSORAjax")
     public String findSORAjax() {
-        sor = scheduleOfRateService.findById(sorID, false);
+        sor = entityManager.find(ScheduleOfRate.class, sorID);
         if (estimateDate != null)
             currentRate = sor.getRateOn(estimateDate);
         return SOR;

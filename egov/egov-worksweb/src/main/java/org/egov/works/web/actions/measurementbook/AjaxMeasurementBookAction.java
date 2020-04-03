@@ -47,10 +47,22 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -67,14 +79,6 @@ import org.egov.works.models.workorder.WorkOrderActivity;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AjaxMeasurementBookAction extends BaseFormAction {
 
@@ -94,7 +98,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
     private Assignment assignment;
     private Long empID;
     private Long executingDepartment;
-    private List usersInExecutingDepartment;
+    private List<EmployeeView> usersInExecutingDepartment;
     private WorkOrder workOrder;
     private String workOrderNumber;
     private Long woActivityId;
@@ -112,22 +116,25 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
     private Long modelId;
     private String modelType;
     private Integer wardId;
-    private List workflowKDesigList;
-    private List workflowUsers;
+    private List<Designation> workflowKDesigList;
+    private List<EmployeeView> workflowUsers;
     private PersonalInformationService personalInformationService;
     private WorksService worksService;
     private String activityRemarks;
     // -------------------------------------------------------------------
 
     private String query = "";
-    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
-    private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
-    private List<MBHeader> mbHeaderList = new LinkedList<MBHeader>();
+    private List<AbstractEstimate> estimateList = new LinkedList<>();
+    private List<WorkOrder> workOrderList = new LinkedList<>();
+    private List<MBHeader> mbHeaderList = new LinkedList<>();
     private Long estId;
     private Date latestMBDate;
     private Long woId;
     @Autowired
     private ScriptService scriptService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -145,10 +152,10 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     public String usersInExecutingDepartment() {
         try {
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            final HashMap<String, Object> criteriaParams = new HashMap<>();
             criteriaParams.put("departmentId", executingDepartment);
             if (executingDepartment == null || executingDepartment == -1)
-                usersInExecutingDepartment = Collections.EMPTY_LIST;
+                usersInExecutingDepartment = Collections.emptyList();
             else
                 usersInExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
                         criteriaParams, -1, -1);
@@ -162,13 +169,17 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     public String workOrderDetails() {
         try {
-            workOrder = (WorkOrder) persistenceService.find("from WorkOrder where workOrderNumber=?", workOrderNumber);
+            final List<WorkOrder> results = entityManager
+                    .createQuery("from WorkOrder where workOrderNumber = :workOrderNumber", WorkOrder.class)
+                    .setParameter("workOrderNumber", workOrderNumber)
+                    .getResultList();
+            workOrder = results.isEmpty() ? null : results.get(0);
             if (workOrder != null) {
-                final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+                final HashMap<String, Object> criteriaParams = new HashMap<>();
                 criteriaParams.put("departmentId", executingDepartment);
                 criteriaParams.put("isPrimary", "Y");
                 if (executingDepartment == null || executingDepartment == -1)
-                    usersInExecutingDepartment = Collections.EMPTY_LIST;
+                    usersInExecutingDepartment = Collections.emptyList();
                 else
                     usersInExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
                             criteriaParams, -1, -1);
@@ -184,8 +195,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         prevCulmEntry = null;
         activityRemarks = "";
         try {
-            workOrderActivity = (WorkOrderActivity) persistenceService.find("from WorkOrderActivity where id=?",
-                    woActivityId);
+            workOrderActivity = entityManager.find(WorkOrderActivity.class, woActivityId);
             prevCulmEntry = measurementBookService.prevCumulativeQuantityIncludingCQ(woActivityId, mbHeaderId,
                     workOrderActivity.getActivity().getId(), workOrderActivity.getWorkOrderEstimate().getWorkOrder());
             if (modelType != null && modelType.equalsIgnoreCase("MB"))
@@ -208,9 +218,12 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
             // activities where the
             // associated Est/REs are not
             // cancelled
-            final WorkOrderActivity revWorkOrderActivity = (WorkOrderActivity) persistenceService
-                    .find("from WorkOrderActivity where activity.parent.id=? and workOrderEstimate.estimate.egwStatus.code !='CANCELLED'  ",
-                            workOrderActivity.getActivity().getId());
+            final List<WorkOrderActivity> results = entityManager.createQuery(new StringBuffer("from WorkOrderActivity")
+                    .append(" where activity.parent.id = :parentId and workOrderEstimate.estimate.egwStatus.code != 'CANCELLED'  ")
+                    .toString(), WorkOrderActivity.class)
+                    .setParameter("parentId", workOrderActivity.getActivity().getId())
+                    .getResultList();
+            final WorkOrderActivity revWorkOrderActivity = results.isEmpty() ? null : results.get(0);
             if (revWorkOrderActivity != null)
                 activityRemarks = CHANGE_QUANTITY;
         } catch (final Exception e) {
@@ -222,14 +235,14 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     public String getWorkFlowUsers() {
         if (designationId != -1) {
-            final HashMap<String, Object> paramMap = new HashMap<String, Object>();
+            final HashMap<String, Object> paramMap = new HashMap<>();
             if (departmentId != null && departmentId != -1)
                 paramMap.put("departmentId", departmentId.toString());
             if (wardId != null && wardId != -1)
                 paramMap.put("boundaryId", wardId.toString());
 
             paramMap.put("designationId", designationId.toString());
-            final List roleList = worksService.getWorksRoles();
+            final List<String> roleList = worksService.getWorksRoles();
             if (roleList != null)
                 paramMap.put("roleList", roleList);
             workflowUsers = eisService.getEmployeeInfoList(paramMap);
@@ -237,18 +250,19 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         return WORKFLOW_USER_LIST;
     }
 
+    @SuppressWarnings("unchecked")
     public String getDesgByDeptAndType() {
-        workflowKDesigList = new ArrayList<Designation>();
+        workflowKDesigList = new ArrayList<>();
         String departmentName = "";
         Department department = null;
         if (departmentId != -1) {
-            department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
+            department = entityManager.find(Department.class, departmentId);
             departmentName = department.getName();
         }
         Designation designation = null;
         MBHeader mbHeader = null;
         if (modelId != null)
-            mbHeader = (MBHeader) getPersistenceService().find("from MBHeader where id=?", modelId);
+            mbHeader = entityManager.find(MBHeader.class, modelId);
         final ScriptContext scriptContext = ScriptService.createContext("state", stateName, "department",
                 departmentName, "wfItem", mbHeader);
         final List<String> list = (List<String>) scriptService.executeScript(scriptName, scriptContext);
@@ -269,39 +283,45 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
     }
 
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.estimate.estimateNumber like '%'||?||'%' "
-                    + " and woe.id in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egwStatus.code <> ? )";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select woe.estimate")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and woe.estimate.estimateNumber like '%'||:estimateNumber||'%' ")
+                    .append(" and woe.id in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egwStatus.code <> :statusCode )");
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("statusCode", "NEW")
+                    .getResultList();
         }
         return "estimateNoSearchResults";
     }
 
     public String searchWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct mbh.workOrder from MBHeader mbh where mbh.workOrder.parent is null and mbh.workOrder.workOrderNumber like '%'||?||'%' "
-                    + "and mbh.egwStatus.code <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct mbh.workOrder")
+                    .append(" from MBHeader mbh")
+                    .append(" where mbh.workOrder.parent is null and mbh.workOrder.workOrderNumber like '%'||:workOrderNumber||'%' ")
+                    .append(" and mbh.egwStatus.code <> :statusCode ");
+
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .setParameter("statusCode", "NEW")
+                    .getResultList();
         }
         return "workOrderNoSearchResults";
     }
 
     public String searchMbRefNo() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = " from MBHeader mbh where mbh.mbRefNo like '%'||?||'%' and mbh.egwStatus.code <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            mbHeaderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(
+                    " from MBHeader mbh where mbh.mbRefNo like '%'||:mbRefNo||'%' and mbh.egwStatus.code <> :statusCode ");
+            mbHeaderList = entityManager.createQuery(strquery.toString(), MBHeader.class)
+                    .setParameter("mbRefNo", query.toUpperCase())
+                    .setParameter("statusCode", "NEW")
+                    .getResultList();
         }
         return "mbRefNoSearchResults";
     }
@@ -319,7 +339,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         this.empID = empID;
     }
 
-    public List getUsersInExecutingDepartment() {
+    public List<EmployeeView> getUsersInExecutingDepartment() {
         return usersInExecutingDepartment;
     }
 
@@ -419,11 +439,11 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         this.eisService = eisService;
     }
 
-    public List getWorkflowKDesigList() {
+    public List<Designation> getWorkflowKDesigList() {
         return workflowKDesigList;
     }
 
-    public List getWorkflowUsers() {
+    public List<EmployeeView> getWorkflowUsers() {
         return workflowUsers;
     }
 

@@ -57,7 +57,9 @@ import javax.persistence.PersistenceContext;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 
 @SuppressWarnings("deprecation")
 public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Long> {
@@ -82,25 +84,23 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
         return entityManager.createQuery("from ScheduleOfRate sor order by code asc").getResultList();
     }
 
-    @SuppressWarnings("rawtypes")
-    public List getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
+    public List<AbstractEstimate> getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
         return entityManager.createQuery(new StringBuffer("select ae")
                 .append(" from AbstractEstimate ae, Activity act")
                 .append(" where act.abstractEstimate = ae and act.abstractEstimate.parent is null")
                 .append(" and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = :scheduleOfRateId")
-                .toString())
+                .toString(), AbstractEstimate.class)
                 .setParameter("scheduleOfRateId", scheduleOfRateId)
                 .getResultList();
     }
 
-    @SuppressWarnings("rawtypes")
-    public List getAllWorkOrderEstimateByScheduleOfRateId(final Long scheduleOfRateId) {
+    public List<WorkOrderEstimate> getAllWorkOrderEstimateByScheduleOfRateId(final Long scheduleOfRateId) {
         return entityManager.createQuery(new StringBuffer("select distinct(woa.workOrderEstimate)")
                 .append(" from WorkOrderActivity woa")
                 .append(" where woa.workOrderEstimate.estimate.parent.id is not null")
                 .append(" and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED'")
                 .append(" and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id")
-                .append(" and sor.id = :scheduleOfRateId )").toString())
+                .append(" and sor.id = :scheduleOfRateId )").toString(), WorkOrderEstimate.class)
                 .setParameter("scheduleOfRateId", scheduleOfRateId)
                 .getResultList();
     }

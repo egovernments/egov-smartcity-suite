@@ -47,6 +47,12 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -61,9 +67,6 @@ import org.egov.works.models.masters.ExpenditureType;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
@@ -97,10 +100,13 @@ public class OverheadAction extends BaseFormAction {
 
     private List<Overhead> overheadList = null;
 
-    private List<ExpenditureType> expenditureTypeList = new ArrayList<ExpenditureType>();
+    private List<ExpenditureType> expenditureTypeList = new ArrayList<>();
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Default constructor
@@ -134,7 +140,7 @@ public class OverheadAction extends BaseFormAction {
      * @return
      */
     public String list() {
-        overheadList = overheadService.findAllBy(" from Overhead o order by name asc");
+        overheadList = entityManager.createQuery(" from Overhead o order by name asc", Overhead.class).getResultList();
         return INDEX;
     }
 
@@ -161,14 +167,15 @@ public class OverheadAction extends BaseFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            overhead = overheadService.findById(id, false);
+            overhead = entityManager.find(Overhead.class, id);
 
         // expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from WorkType");
-        expenditureTypeList = (List) overheadService.findAllBy("select distinct expenditureType from Overhead");
+        expenditureTypeList = entityManager.createQuery("select distinct expenditureType from Overhead", ExpenditureType.class)
+                .getResultList();
         super.prepare();
         setupDropdownDataExcluding("account");
         try {
-            List<CChartOfAccounts> accounts = new ArrayList<CChartOfAccounts>();
+            List<CChartOfAccounts> accounts = new ArrayList<>();
             // TODO:
             if (worksService.getWorksConfigValue("OVERHEAD_PURPOSE") != null)
                 accounts = chartOfAccountsHibernateDAO

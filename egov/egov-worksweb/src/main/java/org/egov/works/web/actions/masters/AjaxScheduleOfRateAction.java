@@ -47,6 +47,17 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -55,19 +66,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Session;
-import org.hibernate.type.StringType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletResponseAware {
 
     /**
@@ -85,13 +85,9 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
     private double marketRateValue = 0;
     private double[] marketRateValues;
     private String estimatesExists;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     public double[] getMarketRateValues() {
         return marketRateValues;
@@ -128,15 +124,15 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
         return codeNumberUniqueCheck;
     }
 
-    @SuppressWarnings("unchecked")
     public boolean getCodenoCheck() {
         ScheduleOfRate scheduleOfRate = null;
         boolean codeNoexistsOrNot = false;
-        List<ScheduleOfRate> results = getCurrentSession()
-                .createQuery("from ScheduleOfRate sor where sor.code = :code and sor.scheduleCategory.id = :scheduleCategoryId")
-                .setParameter("code", codeNo, StringType.INSTANCE)
+        List<ScheduleOfRate> results = entityManager
+                .createQuery("from ScheduleOfRate sor where sor.code = :code and sor.scheduleCategory.id = :scheduleCategoryId",
+                        ScheduleOfRate.class)
+                .setParameter("code", codeNo)
                 .setParameter("scheduleCategoryId", scheduleCategoryId)
-                .list();
+                .getResultList();
         scheduleOfRate = results.isEmpty() ? null : results.get(0);
         if (scheduleOfRate != null)
             codeNoexistsOrNot = true;
@@ -170,7 +166,7 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
     public String getMarketValueAsOnDate() {
         final String[] schId = scheduleIds.split("~");
         int count = 0;
-        final List<Long> params = new LinkedList<Long>();
+        final List<Long> params = new LinkedList<>();
         for (final String element : schId)
             params.add(Long.valueOf(element));
         marketRateValues = new double[schId.length];
@@ -192,9 +188,12 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
     }
 
     public String checkIfEstimateExists() {
-        final List<Long> ids = persistenceService.findAllBy(
-                "select distinct act.abstractEstimate.id from Activity act where act.schedule.id = ?1 and act.abstractEstimate.rateContract.id is not null and act.abstractEstimate.egwStatus.code != 'CANCELLED'",
-                scheduleId);
+        final List<Long> ids = entityManager.createQuery(new StringBuffer("select distinct act.abstractEstimate.id")
+                .append(" from Activity act")
+                .append(" where act.schedule.id = :scheduleId and act.abstractEstimate.rateContract.id is not null")
+                .append(" and act.abstractEstimate.egwStatus.code != 'CANCELLED'").toString(), Long.class)
+                .setParameter("scheduleId", scheduleId)
+                .getResultList();
         if (ids != null && !ids.isEmpty())
             estimatesExists = WorksConstants.YES;
         else

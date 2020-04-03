@@ -47,6 +47,21 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -57,6 +72,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -91,18 +107,7 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = MeasurementBookAction.NEW, location = "measurementBook-new.jsp")
 public class MeasurementBookAction extends BaseFormAction {
@@ -116,7 +121,7 @@ public class MeasurementBookAction extends BaseFormAction {
     private static final String DATEFORMAT = "dd-MMM-yyyy";
 
     private MBHeader mbHeader = new MBHeader();
-    private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
+    private List<MBDetails> mbDetails = new LinkedList<>();
     private String messageKey;
     private Long id;
     @Autowired
@@ -132,11 +137,11 @@ public class MeasurementBookAction extends BaseFormAction {
     private MeasurementBookService measurementBookService;
     private WorksService worksService;
     private WorkOrderService workOrderService;
-    private List<MBDetails> actionMbDetailValues = new LinkedList<MBDetails>();
+    private List<MBDetails> actionMbDetailValues = new LinkedList<>();
     private double quantityFactor;
     private List<WorkOrderActivity> activityList; // for search page
     private List<MBHeader> mbList; // for search page
-    private List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
+    private List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<>();
     private String workorderNo;
     private Long workOrderId;
     private String mode;
@@ -196,10 +201,14 @@ public class MeasurementBookAction extends BaseFormAction {
     private Date latestMBDate;
     private Long woId;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public MeasurementBookAction() {
         addRelatedEntity("workOrder", WorkOrder.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
         final AjaxMeasurementBookAction ajaxMBAction = new AjaxMeasurementBookAction();
@@ -223,7 +232,8 @@ public class MeasurementBookAction extends BaseFormAction {
 
         super.prepare();
         setupDropdownDataExcluding("workOrder");
-        addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from DepartmentImpl"));
+        addDropdownData("executingDepartmentList",
+                entityManager.createQuery("from DepartmentImpl", Department.class).getResultList());
         if (getLatestAssignmentForCurrentLoginUser() != null)
             departmentId = getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
 
@@ -287,7 +297,7 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     public String searchActivitiesForMB() {
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
         if (workorderNo != null && !"".equalsIgnoreCase(workorderNo))
             criteriaMap.put(WorkOrderServiceImpl.WORKORDER_NO, workorderNo);
         if (estimateId != null)
@@ -320,10 +330,11 @@ public class MeasurementBookAction extends BaseFormAction {
         return MB_SEARCH;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String searchMB() {
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
-        final List<Object> paramList = new ArrayList<Object>();
-        List<String> qryObj = new ArrayList<String>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
+        final List<Object> paramList = new ArrayList<>();
+        List<String> qryObj = new ArrayList<>();
         Object[] params;
         if (workorderNo != null && !"".equalsIgnoreCase(workorderNo))
             criteriaMap.put(MeasurementBookServiceImpl.WORKORDER_NO, workorderNo);
@@ -390,7 +401,7 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     protected List<MBHeader> getPositionAndUser(final List<MBHeader> results) {
-        final List<MBHeader> mbHeaderList = new ArrayList<MBHeader>();
+        final List<MBHeader> mbHeaderList = new ArrayList<>();
         for (final MBHeader mbh : results) {
             if (!mbh.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !mbh.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
@@ -408,7 +419,7 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     public Map<String, Object> getContractorForApprovedWorkOrder() {
-        final Map<String, Object> contractorsWithWOList = new HashMap<String, Object>();
+        final Map<String, Object> contractorsWithWOList = new HashMap<>();
         if (workOrderService.getContractorsWithWO() != null)
             for (final Contractor contractor : workOrderService.getContractorsWithWO())
                 contractorsWithWOList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());
@@ -416,8 +427,10 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     public List<EgwStatus> getMbStatusList() {
-        return persistenceService.findAllBy("from EgwStatus s where moduletype=? and code<>'NEW' order by orderId",
-                MBHeader.class.getSimpleName());
+        return entityManager
+                .createQuery("from EgwStatus s where moduletype = :moduleType and code<>'NEW' order by orderId", EgwStatus.class)
+                .setParameter("moduleType", MBHeader.class.getSimpleName())
+                .getResultList();
     }
 
     public List<Contractor> getContractorList() {
@@ -611,6 +624,7 @@ public class MeasurementBookAction extends BaseFormAction {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void validateMBAmount(final WorkOrderEstimate workOrderEstimate) {
         double negoPerc = 0;
         String tenderType = "";
@@ -620,9 +634,15 @@ public class MeasurementBookAction extends BaseFormAction {
         Double woEstimateAmount = 0D;
         Double totalWOAmount = 0D;
         TenderEstimate tenderEstimate;
-        final Object[] obj = (Object[]) persistenceService
-                .find("select tr.percNegotiatedAmountRate,tr.tenderEstimate,tr.tenderNegotiatedValue from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = ? ",
-                        workOrderEstimate.getWorkOrder().getNegotiationNumber());
+        final List<Object[]> results = entityManager
+                .createQuery(new StringBuffer("select tr.percNegotiatedAmountRate,tr.tenderEstimate,tr.tenderNegotiatedValue")
+                        .append(" from TenderResponse tr")
+                        .append(" where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = :negotiationNumber ")
+                        .toString())
+                .setParameter("negotiationNumber", workOrderEstimate.getWorkOrder().getNegotiationNumber())
+                .getResultList();
+
+        final Object[] obj = results.isEmpty() ? null : results.get(0);
 
         tenderEstimate = (TenderEstimate) obj[1];
         tenderType = tenderEstimate.getTenderType();
@@ -637,19 +657,30 @@ public class MeasurementBookAction extends BaseFormAction {
         currMBTotal = getAmountsForCurrentMB(mbHeader.getMbDetails(), negoPerc, tenderType);
         allMBsTotal = totalMBAmount.add(currMBTotal);
 
-        final Double approvedRevisionWOAmount = (Double) persistenceService
-                .find(" select sum(woe.workOrder.workOrderAmount) from WorkOrderEstimate woe where woe.workOrder.parent is not null and woe.workOrder.egwStatus.code='APPROVED' and woe.estimate.parent.id=? ",
-                        estimateId);
+        final Double approvedRevisionWOAmount = entityManager
+                .createQuery(new StringBuffer(" select sum(woe.workOrder.workOrderAmount)")
+                        .append(" from WorkOrderEstimate woe")
+                        .append(" where woe.workOrder.parent is not null and woe.workOrder.egwStatus.code='APPROVED' and woe.estimate.parent.id = :parentId ")
+                        .toString(),
+                        Double.class)
+                .setParameter("parentId", estimateId)
+                .getSingleResult();
+
         if (StringUtils.isNotBlank(tenderType) && tenderType.equalsIgnoreCase(WorksConstants.PERC_TENDER)) {
-            final Double estimateAmt = (Double) persistenceService
-                    .find("select woe.estimate.workValue.value from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' and woe.estimate.id=? ",
-                            estimateId);
+            final List<Double> result = entityManager.createQuery(new StringBuffer("select woe.estimate.workValue.value")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' and woe.estimate.id = :estimateId ")
+                    .toString(), Double.class)
+                    .setParameter("estimateId", estimateId)
+                    .getResultList();
+            final Double estimateAmt = result.isEmpty() ? null : result.get(0);
             woEstimateAmount = estimateAmt + estimateAmt * negoPerc / 100;
         } else
             for (final WorkOrderActivity woa : workOrderEstimate.getWorkOrderActivities())
                 woEstimateAmount = woEstimateAmount + woa.getApprovedAmount();
-        totalWOAmount = approvedRevisionWOAmount == null ? woEstimateAmount : approvedRevisionWOAmount
-                + woEstimateAmount;
+        totalWOAmount = approvedRevisionWOAmount == null ? woEstimateAmount
+                : approvedRevisionWOAmount
+                        + woEstimateAmount;
 
         if (allMBsTotal.doubleValue() > totalWOAmount) {
             setApprovedQtyAndPrevCumlVal();
@@ -691,8 +722,8 @@ public class MeasurementBookAction extends BaseFormAction {
             if (mbDetails != null) {
                 mbDetails.setMbHeader(mbHeader);
                 if (mbDetails.getWorkOrderActivity().getActivity().getId() == null)
-                    mbDetails.setWorkOrderActivity((WorkOrderActivity) getPersistenceService().find(
-                            "from WorkOrderActivity where id=?", mbDetails.getWorkOrderActivity().getId()));
+                    mbDetails.setWorkOrderActivity(
+                            entityManager.find(WorkOrderActivity.class, mbDetails.getWorkOrderActivity().getId()));
                 mbHeader.addMbDetails(mbDetails);
             }
     }

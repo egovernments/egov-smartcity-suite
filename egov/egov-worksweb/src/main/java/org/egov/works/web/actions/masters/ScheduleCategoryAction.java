@@ -47,6 +47,11 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -55,8 +60,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -75,6 +78,9 @@ public class ScheduleCategoryAction extends BaseFormAction {
     private Long id;
     private String mode;
     private String code;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public String getMode() {
         return mode;
@@ -116,10 +122,11 @@ public class ScheduleCategoryAction extends BaseFormAction {
     public void prepare() {
         scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         if (id != null)
-            scheduleCategory = scheduleCategoryService.findById(id, false);
+            scheduleCategory = entityManager.find(ScheduleCategory.class, id);
         super.prepare();
     }
 
+    @SuppressWarnings("deprecation")
     @Action(value = "/masters/scheduleCategory-save")
     public String save() {
         if (mode.equals("edit") && !scheduleCategoryService.checkForSOR(id)) {

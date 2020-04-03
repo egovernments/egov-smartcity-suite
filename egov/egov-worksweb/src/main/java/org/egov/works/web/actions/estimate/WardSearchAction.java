@@ -47,13 +47,16 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-
-import java.util.List;
 
 @Result(name = WardSearchAction.SEARCH_RESULTS, location = "wardSearch-searchResults.jsp")
 @ParentPackage("egov")
@@ -64,6 +67,9 @@ public class WardSearchAction extends BaseFormAction {
     private String query;
     private Boolean isBoundaryHistory;
     private List<Boundary> boundaryList;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void setQuery(final String query) {
         this.query = query;
@@ -82,12 +88,14 @@ public class WardSearchAction extends BaseFormAction {
 
     public List<Boundary> getJurisdictionList() {
         final StringBuilder boundaryListQuery = new StringBuilder(1000);
-        boundaryListQuery.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') "
-                + " and upper(boundaryType.hierarchyType.name)='ADMINISTRATION' and upper(name) like '%' || ? || '%' ");
+        boundaryListQuery.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') ")
+                .append(" and upper(boundaryType.hierarchyType.name)='ADMINISTRATION' and upper(name) like '%' || :name || '%' ");
         if (!isBoundaryHistory)
             boundaryListQuery.append(" and active = true ");
         boundaryListQuery.append(" order by name ");
-        return getPersistenceService().findAllBy(boundaryListQuery.toString(), query.toUpperCase());
+        return entityManager.createQuery(boundaryListQuery.toString(), Boundary.class)
+                .setParameter("name", query.toUpperCase())
+                .getResultList();
     }
 
     public Boolean getIsBoundaryHistory() {

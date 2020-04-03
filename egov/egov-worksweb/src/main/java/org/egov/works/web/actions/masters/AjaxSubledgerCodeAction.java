@@ -47,9 +47,11 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -65,13 +67,16 @@ public class AjaxSubledgerCodeAction extends BaseFormAction {
      */
     private static final long serialVersionUID = -6196824108886258714L;
     private static final Logger LOGGER = Logger.getLogger(AjaxSubledgerCodeAction.class);
-    private List<Boundary> wardList = new LinkedList<Boundary>();
+    private List<Boundary> wardList = new LinkedList<>();
     private Long zoneId;	    // Set by Ajax call
     public static final String WARDS = "wards";
     private String query = "wards";
-    private List<ProjectCode> projectCodeList = new LinkedList<ProjectCode>();
+    private List<ProjectCode> projectCodeList = new LinkedList<>();
     @Autowired
     private BoundaryService boundaryService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Populate the ward list by zone
@@ -91,18 +96,17 @@ public class AjaxSubledgerCodeAction extends BaseFormAction {
         return wardList;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
     private void populateProjectCodeList() {
-        final ArrayList<Object> params = new ArrayList<Object>();
-        StringBuffer strquery = new StringBuffer("from ProjectCode pc where upper(pc.code) like '%'||?1||'%'")
-                .append(" and pc.egwStatus.code=?2 and pc.id in (select mbh.workOrderEstimate.estimate.projectCode.id")
-                .append(" from MBHeader mbh left outer join mbh.egBillregister egbr where egbr.status.code=?3 and egbr.billtype=?4")
+        final StringBuffer strquery = new StringBuffer("from ProjectCode pc where upper(pc.code) like '%'||:projectCode||'%'")
+                .append(" and pc.egwStatus.code = :pcStatus and pc.id in (select mbh.workOrderEstimate.estimate.projectCode.id")
+                .append(" from MBHeader mbh left outer join mbh.egBillregister egbr where egbr.status.code = :egbrStatus and egbr.billtype = :billType")
                 .append(" and mbh.workOrderEstimate.estimate.depositCode is null )");
-        params.add(query.toUpperCase());
-        params.add("CREATED");
-        params.add("APPROVED");
-        params.add("Final Bill");
-        projectCodeList = getPersistenceService().findAllBy(strquery.toString(), params.toArray());
+        projectCodeList = entityManager.createQuery(strquery.toString(), ProjectCode.class)
+                .setParameter("projectCode", query.toUpperCase())
+                .setParameter("pcStatus", "CREATED")
+                .setParameter("egbrStatus", "APPROVED")
+                .setParameter("billType", "Final Bill")
+                .getResultList();
     }
 
     public String searchProjectCode() {

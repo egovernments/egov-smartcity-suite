@@ -47,14 +47,18 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -75,15 +79,16 @@ import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
+@SuppressWarnings("deprecation")
 public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     public static final String MEASUREMENTBOOK_PDF_ERROR = "measurementbook.pdf.error";
     private static final Logger logger = Logger.getLogger(MeasurementBookPDFGenerator.class);
@@ -91,6 +96,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     private final MBHeader mbHeader;
     private final NumberFormat formatter = new DecimalFormat("#0.00");
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -99,9 +105,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     @Autowired
     private EmployeeServiceOld employeeService;
     private boolean includeRevisionTypeColumn;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public MeasurementBookPDFGenerator(final MBHeader mbHeader, final OutputStream out,
-                                       final Map<String, String> pdfLabel) {
+            final Map<String, String> pdfLabel) {
         super(out, "landscape");
         this.pdfLabel = pdfLabel;
         this.mbHeader = mbHeader;
@@ -177,7 +185,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         try {
             final PdfPTable approvaldetailsTable = new PdfPTable(5);
             approvaldetailsTable.setWidthPercentage(100);
-            approvaldetailsTable.setWidths(new float[]{2f, 1f, 1f, 1.5f, 2f});
+            approvaldetailsTable.setWidths(new float[] { 2f, 1f, 1f, 1.5f, 2f });
             addRow(approvaldetailsTable, true, makePara(8, pdfLabel.get("mbpdf.aprvalstep")),
                     centerPara(8, pdfLabel.get("mbpdf.name")), centerPara(8, pdfLabel.get("mbpdf.designation")),
                     centerPara(8, pdfLabel.get("mbpdf.aprvdon")), centerPara(8, pdfLabel.get("mbpdf.remarks")));
@@ -201,8 +209,14 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                                 Integer.parseInt(positionId.toString()));
                         code = ad.getValue();
-                        final EgwStatus status = (EgwStatus) getPersistenceService().find(
-                                "from EgwStatus where moduletype=? and code=?", "MBHeader", code);
+
+                        final List<EgwStatus> results = entityManager.createQuery(
+                                "from EgwStatus where moduletype = :moduleType and code = :code", EgwStatus.class)
+                                .setParameter("moduleType", "MBHeader")
+                                .setParameter("code", code)
+                                .getResultList();
+                        final EgwStatus status = results.isEmpty() ? null : results.get(0);
+
                         String state = status.getDescription();
                         if (!nextAction.equalsIgnoreCase(""))
                             state = status.getDescription() + " - " + nextAction;
@@ -234,10 +248,10 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         PdfPTable mbTable;
         if (includeRevisionTypeColumn) {
             mbTable = new PdfPTable(12);
-            mbTable.setWidths(new float[]{1f, 1.5f, 4f, 1.4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f});
+            mbTable.setWidths(new float[] { 1f, 1.5f, 4f, 1.4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f });
         } else {
             mbTable = new PdfPTable(11);
-            mbTable.setWidths(new float[]{1f, 1.5f, 4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f});
+            mbTable.setWidths(new float[] { 1f, 1.5f, 4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f });
         }
         // main table
         mbTable.setWidthPercentage(100);
@@ -332,11 +346,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                     mbTable.addCell(makePara(8, ""));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Non Tendered"));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Lump Sum"));
             }
 
@@ -428,10 +442,12 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         return mbTable;
     }
 
+    @SuppressWarnings("rawtypes")
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }

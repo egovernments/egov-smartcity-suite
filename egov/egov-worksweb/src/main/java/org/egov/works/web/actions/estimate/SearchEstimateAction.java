@@ -47,12 +47,30 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -87,20 +105,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = SearchEstimateAction.SUCCESS, location = "searchEstimate.jsp") })
 public class SearchEstimateAction extends SearchFormAction {
@@ -121,7 +126,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
     @Autowired
     private AbstractEstimateService abstractEstimateService;
-    private final List<AbstractEstimate> results = new LinkedList<AbstractEstimate>();
+    private final List<AbstractEstimate> results = new LinkedList<>();
     private AbstractEstimate estimates = new AbstractEstimate();
     private Long estimateCreatedBy;
     private String wpdate;
@@ -167,9 +172,12 @@ public class SearchEstimateAction extends SearchFormAction {
     private String loginUserDeptName = "";
     @Autowired
     private ActionService actionService;
-    private List<Role> roles = new ArrayList<Role>();
+    private List<Role> roles = new ArrayList<>();
     private String milestoneStatus;
     private String status2;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public SearchEstimateAction() {
         addRelatedEntity("category", EgwTypeOfWork.class);
@@ -190,9 +198,9 @@ public class SearchEstimateAction extends SearchFormAction {
     /**
      * @return List of abstract estimates with "positionAndUserName" populated
      */
-    @SuppressWarnings(UNCHECKED)
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void populatePositionAndUserName() {
-        final List<AbstractEstimate> abEstimateList = new LinkedList<AbstractEstimate>();
+        final List<AbstractEstimate> abEstimateList = new LinkedList<>();
 
         final Iterator iter = searchResult.getList().iterator();
         while (iter.hasNext()) {
@@ -212,13 +220,13 @@ public class SearchEstimateAction extends SearchFormAction {
             abEstimateList.add(estimate);
         }
         searchResult.getList().clear();
-        final HashSet<AbstractEstimate> uniqueAbsEstimateList = new HashSet<AbstractEstimate>(abEstimateList);
+        final HashSet<AbstractEstimate> uniqueAbsEstimateList = new HashSet<>(abEstimateList);
         searchResult.getList().addAll(uniqueAbsEstimateList);
     }
 
-    @SuppressWarnings(UNCHECKED)
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void showOwnerName() {
-        final List<WorkOrderEstimate> woeList = new LinkedList<WorkOrderEstimate>();
+        final List<WorkOrderEstimate> woeList = new LinkedList<>();
 
         final Iterator iter = searchResult.getList().iterator();
         while (iter.hasNext()) {
@@ -237,13 +245,13 @@ public class SearchEstimateAction extends SearchFormAction {
             woeList.add(woe);
         }
         searchResult.getList().clear();
-        final HashSet<WorkOrderEstimate> uniqueWOEstimateList = new HashSet<WorkOrderEstimate>(woeList);
+        final HashSet<WorkOrderEstimate> uniqueWOEstimateList = new HashSet<>(woeList);
         searchResult.getList().addAll(uniqueWOEstimateList);
     }
 
-    @SuppressWarnings(UNCHECKED)
+    @SuppressWarnings("rawtypes")
     public void showOwnerNameForViewMilestone() {
-        final List<Object[]> tempList = new LinkedList<Object[]>();
+        final List<Object[]> tempList = new LinkedList<>();
 
         final Iterator iter = searchResult.getList().iterator();
         while (iter.hasNext()) {
@@ -309,16 +317,16 @@ public class SearchEstimateAction extends SearchFormAction {
             addDropdownData(ASSIGNED_USER_LIST2, Collections.EMPTY_LIST);
     }
 
-    @SuppressWarnings(UNCHECKED)
+    @SuppressWarnings("rawtypes")
     public List getEstimateStatuses() {
-        return persistenceService
-                .findAllBy(
-                        "from EgwStatus s where moduletype=? and code not in ('NEW','APPROVED','BUDGETARY_APPR_VALIDATED') order by orderId",
-                        AbstractEstimate.class.getSimpleName());
+        return entityManager.createQuery(new StringBuffer("from EgwStatus s")
+                .append(" where moduletype = :moduleType and code not in ('NEW','APPROVED','BUDGETARY_APPR_VALIDATED')")
+                .append(" order by orderId").toString(), EgwStatus.class)
+                .setParameter("moduleType", AbstractEstimate.class.getSimpleName())
+                .getResultList();
     }
 
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void prepare() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         final AjaxWorkOrderAction ajaxWorkOrderAction = new AjaxWorkOrderAction();
@@ -326,25 +334,29 @@ public class SearchEstimateAction extends SearchFormAction {
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         super.prepare();
         setupDropdownDataExcluding("ward");
-        final List<Department> values = getPersistenceService().findAllBy("from Department dt");
+        final List<Department> values = entityManager.createQuery("from Department dt", Department.class).getResultList();
         addDropdownData("executingDepartmentList", values);
-        final List<NatureOfWork> worktypeList = getPersistenceService().findAllBy("from NatureOfWork dt");
+        final List<NatureOfWork> worktypeList = entityManager.createQuery("from NatureOfWork dt", NatureOfWork.class)
+                .getResultList();
         addDropdownData("typeList", worktypeList);
-        final List<String> milestoneStatusList = new ArrayList<String>();
+        final List<String> milestoneStatusList = new ArrayList<>();
         milestoneStatusList.add("Milestone Created");
         milestoneStatusList.add("Milestone Tracked");
         milestoneStatusList.add("Project/Work Completed");
         addDropdownData("msStatusList", milestoneStatusList);
-        final List<String> statList = persistenceService
-                .findAllBy(
-                        "select s.code from EgwStatus s where s.moduletype=? and s.code in ('NEW','CREATED','APPROVED','CANCELLED')order by s.orderId",
-                        Milestone.class.getSimpleName());
+        final List<String> statList = entityManager.createQuery(new StringBuffer("select s.code ")
+                .append(" from EgwStatus s")
+                .append(" where s.moduletype = :moduleType and s.code in ('NEW','CREATED','APPROVED','CANCELLED')")
+                .append(" order by s.orderId").toString(), String.class)
+                .setParameter("moduleType", Milestone.class.getSimpleName())
+                .getResultList();
         addDropdownData("statusList", statList);
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
         addDropdownData("estimateCreatedByList",
-                abstractEstimateService.findAllBy("select distinct createdBy from AbstractEstimate"));
+                entityManager.createQuery("select distinct createdBy from AbstractEstimate", User.class).getResultList());
         if ("wp".equals(source))
             setStatus(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
 
@@ -373,26 +385,23 @@ public class SearchEstimateAction extends SearchFormAction {
         getLoginUserRoles();
     }
 
-    @SuppressWarnings(UNCHECKED)
     public void perform() {
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         negoCreatedBy = worksService.getWorksConfigValue("TENDER_NEGOTIATION_CREATED_BY_SELECTION");
 
         if (SEARCH_ESTIMATE_FOR_WO.equals(source)) {
-            final List<Department> deptValues = getPersistenceService()
-                    .findAllBy(
-                            "select distinct ae.executingDepartment"
-                                    + " from AbstractEstimate ae where ae.id in ("
-                                    + " ( select tr.tenderEstimate.abstractEstimate.id "
-                                    + " from TenderResponse tr where tr.egwStatus.code=? ) ) or  ae.id in ( "
-                                    + " select wd.estimate.id from WorksPackageDetails wd where wd.worksPackage.id in "
-                                    + " (select tr.tenderEstimate.worksPackage.id from TenderResponse tr "
-                                    + " where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null "
-                                    + " and tr.egwStatus.code=?))"
-                                    + " and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo)",
-                            status,
-                            status);
+            final List<Department> deptValues = entityManager
+                    .createQuery(new StringBuffer("select distinct ae.executingDepartment")
+                            .append(" from AbstractEstimate ae where ae.id in (( select tr.tenderEstimate.abstractEstimate.id ")
+                            .append(" from TenderResponse tr where tr.egwStatus.code = :statusCode )) or ae.id in ( ")
+                            .append(" select wd.estimate.id from WorksPackageDetails wd where wd.worksPackage.id in ")
+                            .append(" (select tr.tenderEstimate.worksPackage.id from TenderResponse tr ")
+                            .append(" where tr.tenderEstimate.abstractEstimate.id = null and tr.tenderEstimate.worksPackage.id != null ")
+                            .append(" and tr.egwStatus.code = :statusCode)) and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo)")
+                            .toString(), Department.class)
+                    .setParameter("statusCode", status)
+                    .getResultList();
             addDropdownData("executingDepartmentList", deptValues);
         } else {
             estimateOrWpSearchReq = worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ");
@@ -404,46 +413,60 @@ public class SearchEstimateAction extends SearchFormAction {
         }
     }
 
-    private Map getEstimateForMilestoneQuery() {
+    private Map<String, Object> getEstimateForMilestoneQuery() {
         final StringBuffer query = new StringBuffer(700);
-        final List<Object> paramList = new ArrayList<Object>();
-        final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
+        final List<Object> paramList = new ArrayList<>();
+        final HashMap<String, Object> queryAndParams = new HashMap<>();
+        int index = 1;
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source)) {
-            query.append("from WorkOrderEstimate  as woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code=? ");
+            query.append("from WorkOrderEstimate  as woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code = ?")
+                    .append(index++);
             paramList.add("APPROVED");
             query.append(
-                    " and woe.id not in (select m.workOrderEstimate.id from Milestone as m where m.egwStatus.code not in (?,?))");
+                    " and woe.id not in (select m.workOrderEstimate.id from Milestone as m where m.egwStatus.code not in (?")
+                    .append(index++)
+                    .append(",?").append(index++).append("))");
             paramList.add("APPROVED");
             paramList.add("CANCELLED");
             query.append(
-                    " and woe.id not in (select tm.milestone.workOrderEstimate.id from TrackMilestone as tm where tm.egwStatus.code not in (?,?) or (tm.isProjectCompleted=? and tm.egwStatus.code<>?))");
+                    " and woe.id not in (select tm.milestone.workOrderEstimate.id from TrackMilestone as tm where tm.egwStatus.code not in (?")
+                    .append(index++)
+                    .append(",?").append(index++)
+                    .append(") or (tm.isProjectCompleted = ?").append(index++)
+                    .append(" and tm.egwStatus.code <> ?").append(index++)
+                    .append("))");
             paramList.add("APPROVED");
             paramList.add("CANCELLED");
             paramList.add(Boolean.TRUE);
             paramList.add("CANCELLED");
-            query.append("and woe.estimate.projectCode.egwStatus.code!=?");
+            query.append("and woe.estimate.projectCode.egwStatus.code != ?").append(index++);
             paramList.add("CLOSED");
         } else if (CANCEL_MILESTONE.equalsIgnoreCase(source)) {
             query.append(
                     "from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone");
-            query.append(" where woe.id in (select workOrderEstimate.id from Milestone m where m.egwStatus.code=?) ");
+            query.append(" where woe.id in (select workOrderEstimate.id from Milestone m where m.egwStatus.code = ?")
+                    .append(index++)
+                    .append(")");
             paramList.add(getStatus().toUpperCase());
         } else {
             query.append(
-                    "from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone where woe.workOrder.egwStatus.code=? ");
+                    "from WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone")
+                    .append(" where woe.workOrder.egwStatus.code = ?").append(index++);
             paramList.add("APPROVED");
             query.append(" and woe.id in (select workOrderEstimate.id from Milestone m1) ");
         }
+
         if (getExecDept() != null && getExecDept() != -1) {
-            query.append(" and woe.estimate.executingDepartment.id=? ");
+            query.append(" and woe.estimate.executingDepartment.id = ?").append(index++);
             paramList.add(getExecDept());
         }
         if (getExpenditureType() != -1) {
-            query.append(" and woe.estimate.natureOfWork.id=? ");
+            query.append(" and woe.estimate.natureOfWork.id = ?").append(index++);
             paramList.add(Long.valueOf(getExpenditureType()));
         }
         if (StringUtils.isNotBlank(getEstimatenumber())) {
-            query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?||'%'");
+            query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(getEstimatenumber()).toUpperCase());
         }
 
@@ -454,23 +477,29 @@ public class SearchEstimateAction extends SearchFormAction {
                     if (StringUtils.isNotBlank(status2) && !status2.equalsIgnoreCase("-1"))
                         if (milestoneStatus.equalsIgnoreCase("Milestone Created")
                                 && !status2.equalsIgnoreCase("CREATED")) {
-                            query.append(
-                                    " and milestone.egwStatus.code = ? and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
+                            query.append(" and milestone.egwStatus.code = ?").append(index++)
+                                    .append(" and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
                             paramList.add(status2);
                         } else if (milestoneStatus.equalsIgnoreCase("Milestone Created")
                                 && status2.equalsIgnoreCase("CREATED"))
-                            query.append(
-                                    " and milestone.egwStatus.code in ('CREATED','REJECTED','RESUBMITTED') and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
+                            query.append(" and milestone.egwStatus.code in ('CREATED','REJECTED','RESUBMITTED')")
+                                    .append(" and milestone.id not in (select tm.milestone.id from TrackMilestone tm ) ");
                         else if (milestoneStatus.equalsIgnoreCase("Milestone Tracked")
                                 && !status2.equalsIgnoreCase("CREATED")) {
-                            query.append(" and trackMilestone.egwStatus.code = ? ");
+                            query.append(" and trackMilestone.egwStatus.code = ?").append(index++);
                             paramList.add(getStatus2());
                         } else if (milestoneStatus.equalsIgnoreCase("Milestone Tracked")
                                 && status2.equalsIgnoreCase("CREATED"))
                             query.append(" and trackMilestone.egwStatus.code in  ('CREATED','REJECTED','RESUBMITTED') ");
                     if (milestoneStatus.equalsIgnoreCase("Milestone Created") && status2.equalsIgnoreCase("-1")) {
-                        query.append(
-                                " and milestone.egwStatus.code in (?,?,?,?,?,?) and milestone.id not in (select tm.milestone.id from TrackMilestone tm )");
+                        query.append(" and milestone.egwStatus.code in (?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(") and milestone.id not in (select tm.milestone.id from TrackMilestone tm )");
                         paramList.add("NEW");
                         paramList.add("CREATED");
                         paramList.add("APPROVED");
@@ -479,8 +508,13 @@ public class SearchEstimateAction extends SearchFormAction {
                         paramList.add("CANCELLED");
                     }
                     if (milestoneStatus.equalsIgnoreCase("Milestone Tracked") && status2.equalsIgnoreCase("-1")) {
-                        query.append(
-                                " and trackMilestone.egwStatus.code in (?,?,?,?,?,?) and trackMilestone.isProjectCompleted!=1  ");
+                        query.append(" and trackMilestone.egwStatus.code in (?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(",?").append(index++)
+                                .append(") and trackMilestone.isProjectCompleted!=1  ");
                         paramList.add("NEW");
                         paramList.add("CREATED");
                         paramList.add("APPROVED");
@@ -489,54 +523,58 @@ public class SearchEstimateAction extends SearchFormAction {
                         paramList.add("CANCELLED");
                     }
                 } else {
-                    query.append(" and trackMilestone.isProjectCompleted = 1 and trackMilestone.egwStatus.code = ?");
+                    query.append(" and trackMilestone.isProjectCompleted = 1 and trackMilestone.egwStatus.code = ?")
+                            .append(index++);
                     paramList.add("APPROVED");
                 }
 
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source) || VIEW_MILESTONE.equalsIgnoreCase(source))
             if (estimateCreatedBy != null && estimateCreatedBy != -1) {
-                query.append(" and woe.estimate.createdBy.id = ?");
+                query.append(" and woe.estimate.createdBy.id = ?").append(index++);
                 paramList.add(estimateCreatedBy);
             }
 
         if (StringUtils.isNotBlank(getProjCode())) {
-            query.append(" and UPPER(woe.estimate.projectCode.code) like '%'||?||'%'");
+            query.append(" and UPPER(woe.estimate.projectCode.code) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(getProjCode()).toUpperCase());
         }
 
         if (StringUtils.isNotBlank(getWorkOrderNo())) {
-            query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?||'%'");
+            query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(getWorkOrderNo()).toUpperCase());
         }
 
         if (engineerIncharge != null && engineerIncharge != -1) {
-            query.append(" and woe.workOrder.engineerIncharge.idPersonalInformation=?");
+            query.append(" and woe.workOrder.engineerIncharge.idPersonalInformation = ?").append(index++);
             paramList.add(engineerIncharge);
         }
 
         if (engineerIncharge2 != null && engineerIncharge2 != -1) {
-            query.append(" and woe.workOrder.engineerIncharge2.idPersonalInformation=?");
+            query.append(" and woe.workOrder.engineerIncharge2.idPersonalInformation = ?").append(index++);
             paramList.add(engineerIncharge2);
         }
 
         if (estimates.getCategory() != null) {
-            query.append(" and woe.estimate.category.id=?");
+            query.append(" and woe.estimate.category.id = ?").append(index++);
             paramList.add(estimates.getCategory().getId());
         }
         if (estimates.getParentCategory() != null) {
-            query.append(" and woe.estimate.parentCategory.id=?");
+            query.append(" and woe.estimate.parentCategory.id = ?").append(index++);
             paramList.add(estimates.getParentCategory().getId());
         }
 
         if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            query.append(" and woe.estimate.estimateDate between ? and ? ");
+            query.append(" and woe.estimate.estimateDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(fromDate);
             paramList.add(toDate);
         }
 
         if (VIEW_MILESTONE.equalsIgnoreCase(source))
             if (estimates.getWard() != null) {
-                query.append(" and woe.estimate.ward.id = ?  ");
+                query.append(" and woe.estimate.ward.id = ?").append(index++);
                 paramList.add(estimates.getWard().getId());
             }
 
@@ -547,11 +585,11 @@ public class SearchEstimateAction extends SearchFormAction {
     }
 
     public List<String> getEstimateActions() {
-        final List<Role> copyEstActionRoles = new ArrayList<Role>();
+        final List<Role> copyEstActionRoles = new ArrayList<>();
         boolean allowCopyEst = false;
         String copyEstActionName;
 
-        final List<String> actionList = new ArrayList<String>();
+        final List<String> actionList = new ArrayList<>();
         actionList.add(0, WorksConstants.ACTION_VIEW);
         actionList.add(1, WorksConstants.ACTION_VIEW_PDF);
         actionList.add(2, WorksConstants.ACTION_WF_HISTORY);
@@ -575,7 +613,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
             // To remove the last element(ie.Copy Estimate) from action list
             if (!allowCopyEst) {
-                final List<String> tempActionList = new ArrayList<String>();
+                final List<String> tempActionList = new ArrayList<>();
                 for (final String action : actionList)
                     if (!action.equals(copyEstActionName))
                         tempActionList.add(action);
@@ -604,16 +642,17 @@ public class SearchEstimateAction extends SearchFormAction {
             return "wpSearch";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         // prepare the query string
-        List<Object> paramList = new ArrayList<Object>();
+        List<Object> paramList = new ArrayList<>();
         String query = null;
         String countQuery = null;
         String baseQuery = null;
         // String OrderBy = null;
         final StringBuilder sb = new StringBuilder(500);
-        Map queryAndParms = null;
+        Map<String, Object> queryAndParms = null;
 
         if (SEARCH_ESTIMATE_FOR_MILESTONE.equalsIgnoreCase(source) || VIEW_MILESTONE.equalsIgnoreCase(source)
                 || CANCEL_MILESTONE.equalsIgnoreCase(source)) {
@@ -632,20 +671,20 @@ public class SearchEstimateAction extends SearchFormAction {
         } else {
             baseQuery = "from AbstractEstimate as ae where ae.parent is null  ";
             boolean isError = false;
+            int index = 1;
             /*
              * OrderBy = "asc"; if (selectedorder) OrderBy = "desc";
              */
             if (SEARCH_ESTIMATE_FOR_WO.equals(source)) {
                 if (StringUtils.isNotBlank(status)) {
                     sb.append(baseQuery);
-                    sb.append(" and ( ae.id in ( "
-                            + " ( select tr.tenderEstimate.abstractEstimate.id "
-                            + " from TenderResponse tr where tr.egwStatus.code=? ) ) or  ae.id in ( "
-                            + " select wd.estimate.id from WorksPackageDetails wd where wd.worksPackage.id in "
-                            + " (select tr.tenderEstimate.worksPackage.id from TenderResponse tr "
-                            + " where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null "
-                            + " and tr.egwStatus.code=? )))"
-                            + " and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo where wo.parent is null)");
+                    sb.append(" and ( ae.id in (( select tr.tenderEstimate.abstractEstimate.id ")
+                            .append(" from TenderResponse tr where tr.egwStatus.code = ?").append(index++)
+                            .append(")) or  ae.id in (select wd.estimate.id from WorksPackageDetails wd where wd.worksPackage.id in ")
+                            .append(" (select tr.tenderEstimate.worksPackage.id from TenderResponse tr ")
+                            .append(" where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null ")
+                            .append(" and tr.egwStatus.code = ?").append(index++)
+                            .append("))) and ae.id not in (select wo.abstractEstimate.id from WorkOrder wo where wo.parent is null)");
                     paramList.add(status);
                     paramList.add(status);
                 }
@@ -653,11 +692,11 @@ public class SearchEstimateAction extends SearchFormAction {
                     && (getStatus().equals(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()) || getStatus()
                             .equals(AbstractEstimate.EstimateStatus.CANCELLED.toString()))) {
                 sb.append(baseQuery);
-                sb.append("and ae.egwStatus.code = ?");
+                sb.append("and ae.egwStatus.code = ?").append(index++);
                 paramList.add(getStatus());
             } else if (StringUtils.isNotBlank(getStatus()) && !getStatus().equals("-1")) {
                 sb.append(baseQuery);
-                sb.append("and ae.egwStatus.code=? ");
+                sb.append("and ae.egwStatus.code = ?").append(index++);
                 paramList.add(getStatus());
             } else if (StringUtils.isNotBlank(getStatus()) && getStatus().equals("-1")) {
                 sb.append(baseQuery);
@@ -665,36 +704,36 @@ public class SearchEstimateAction extends SearchFormAction {
             }
 
             if (getExecDept() != null && getExecDept() != -1) {
-                sb.append(" and ae.executingDepartment.id= ? ");
+                sb.append(" and ae.executingDepartment.id = ?").append(index++);
                 paramList.add(getExecDept());
             }
             if (getExpenditureType() != -1) {
-                sb.append(" and ae.natureOfWork.id= ? ");
+                sb.append(" and ae.natureOfWork.id = ?").append(index++);
                 paramList.add(Long.valueOf(getExpenditureType()));
             }
             if (StringUtils.isNotBlank(getEstimatenumber())) {
-                sb.append(" and ae.estimateNumber like ? ");
+                sb.append(" and ae.estimateNumber like ?").append(index++);
                 paramList.add("%" + getEstimatenumber() + "%");
             }
             if (StringUtils.isNotBlank(projCode)) {
-                sb.append(" and ae.projectCode.code like ? ");
+                sb.append(" and ae.projectCode.code like ?").append(index++);
                 paramList.add("%" + projCode + "%");
             }
 
             if (estimateCreatedBy != null && estimateCreatedBy != -1) {
-                sb.append(" and ae.createdBy.id=? ");
+                sb.append(" and ae.createdBy.id = ?").append(index++);
                 paramList.add(estimateCreatedBy);
             }
             if (estimates.getCategory() != null) {
-                sb.append(" and ae.category.id= ? ");
+                sb.append(" and ae.category.id = ?").append(index++);
                 paramList.add(estimates.getCategory().getId());
             }
             if (estimates.getParentCategory() != null) {
-                sb.append(" and ae.parentCategory.id= ? ");
+                sb.append(" and ae.parentCategory.id = ?").append(index++);
                 paramList.add(estimates.getParentCategory().getId());
             }
             if (estimates.getDescription() != null && StringUtils.isNotBlank(estimates.getDescription())) {
-                sb.append(" and UPPER(ae.description) like ? ");
+                sb.append(" and UPPER(ae.description) like ?").append(index++);
                 paramList.add("%" + estimates.getDescription().toUpperCase() + "%");
             }
 
@@ -708,26 +747,26 @@ public class SearchEstimateAction extends SearchFormAction {
                     logger.error("Date Conversion Error :" + e.getMessage());
                     addFieldError("parse exception", "Date Conversion Error");
                 }
-                sb.append(" and ae.approvedDate <= ? ");
+                sb.append(" and ae.approvedDate <= ?").append(index++);
                 paramList.add(workspacDate);
             }
 
             if ("wp".equals(source) && !isError)
-                sb.append(" and ae.id not in(select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where "
-                        + "tr.egwStatus.code !='CANCELLED' and tr.tenderEstimate.abstractEstimate is not null and ae.id=tr.tenderEstimate.abstractEstimate.id)"
-                        + " and ae.id not in(select wpd.estimate.id from WorksPackageDetails wpd where wpd.estimate.id=ae.id "
-                        + " and wpd.worksPackage.egwStatus.code !='CANCELLED')");
+                sb.append(" and ae.id not in(select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where ")
+                        .append("tr.egwStatus.code !='CANCELLED' and tr.tenderEstimate.abstractEstimate is not null and ae.id=tr.tenderEstimate.abstractEstimate.id)")
+                        .append(" and ae.id not in(select wpd.estimate.id from WorksPackageDetails wpd where wpd.estimate.id=ae.id ")
+                        .append(" and wpd.worksPackage.egwStatus.code !='CANCELLED')");
             if ("createNegotiationNew".equals(source) && !isError)
-                sb.append(" and ae.id not in(select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where "
-                        + "tr.egwStatus.code !='CANCELLED' and tr.tenderEstimate.abstractEstimate is not null and ae.id=tr.tenderEstimate.abstractEstimate.id)"
-                        + " and ae.id not in(select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where "
-                        + "tr.egwStatus.code ='NEW' and tr.tenderEstimate.abstractEstimate.id is not null)"
-                        + " and ae.id not in(select wpd.estimate.id from WorksPackageDetails wpd where wpd.estimate.id=ae.id)");
+                sb.append(" and ae.id not in(select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where ")
+                        .append("tr.egwStatus.code !='CANCELLED' and tr.tenderEstimate.abstractEstimate is not null and ae.id=tr.tenderEstimate.abstractEstimate.id)")
+                        .append(" and ae.id not in (select tr.tenderEstimate.abstractEstimate.id from TenderResponse tr where ")
+                        .append(" tr.egwStatus.code ='NEW' and tr.tenderEstimate.abstractEstimate.id is not null)")
+                        .append(" and ae.id not in(select wpd.estimate.id from WorksPackageDetails wpd where wpd.estimate.id=ae.id)");
             if (SEARCH_ESTIMATE_FOR_WO.equals(source)) {
                 if (fromDate != null && toDate == null)
                     setToDate(new Date());
                 if (toDate != null && fromDate == null) {
-                    sb.append(" and ae.estimateDate <= ? ");
+                    sb.append(" and ae.estimateDate <= ?").append(index++);
                     paramList.add(toDate);
                 }
             } else {
@@ -740,7 +779,8 @@ public class SearchEstimateAction extends SearchFormAction {
             if (!DateUtils.compareDates(getToDate(), getFromDate()))
                 addFieldError("enddate", getText("greaterthan.endDate.fromDate"));
             if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-                sb.append(" and ae.estimateDate between ? and ? ");
+                sb.append(" and ae.estimateDate between ?").append(index++)
+                        .append(" and ?").append(index++);
                 paramList.add(fromDate);
                 paramList.add(toDate);
             }
@@ -761,6 +801,7 @@ public class SearchEstimateAction extends SearchFormAction {
         return INDEX;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @Action(value = "/estimate/searchEstimate-search")
     public String search() {
@@ -799,17 +840,22 @@ public class SearchEstimateAction extends SearchFormAction {
             showOwnerNameForViewMilestone();
         if ((VIEW_MILESTONE.equalsIgnoreCase(source) || CANCEL_MILESTONE.equalsIgnoreCase(source))
                 && searchResult.getFullListSize() != 0) {
-            final List<WorkOrderEstimate> woeList = new ArrayList<WorkOrderEstimate>();
+            final List<WorkOrderEstimate> woeList = new ArrayList<>();
             woeList.addAll(searchResult.getList());
             searchResult.getList().clear();
             searchResult.getList().addAll(woeList);
         }
         if (searchResult.getFullListSize() == 0) {
             WorksPackage wp = null;
-            if ("wp".equals(source) && StringUtils.isNotBlank(getEstimatenumber()))
-                wp = (WorksPackage) persistenceService
-                        .find("from WorksPackage wp where wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber = ? ) and wp.egwStatus.code<>'CANCELLED'",
-                                getEstimatenumber());
+            if ("wp".equals(source) && StringUtils.isNotBlank(getEstimatenumber())) {
+                final List<WorksPackage> results = entityManager.createQuery(new StringBuffer("from WorksPackage wp")
+                        .append(" where wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber = :estimateNumber)")
+                        .append(" and wp.egwStatus.code <> 'CANCELLED'").toString(), WorksPackage.class)
+                        .setParameter("estimateNumber", getEstimatenumber())
+                        .getResultList();
+                wp = results.isEmpty() ? null : results.get(0);
+            }
+
             if (wp != null) {
                 if ("NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
                     final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(wp
@@ -845,12 +891,13 @@ public class SearchEstimateAction extends SearchFormAction {
                     .append(": ").append(employee.getName());
 
         for (final String workOrderIdStr : workOrderEstIdsStr) {
-            final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService().find(
-                    "from WorkOrderEstimate woe where woe.id=?", Long.valueOf(workOrderIdStr));
-            final List<MBHeader> mbHeaderList = getPersistenceService()
-                    .findAllBy(
-                            "from MBHeader where egBillregister is not null and egBillregister.status.code!=? and workOrderEstimate.id = ? ",
-                            ContractorBillRegister.BillStatus.CANCELLED.toString(), woe.getId());
+            final WorkOrderEstimate woe = entityManager.find(WorkOrderEstimate.class, Long.valueOf(workOrderIdStr));
+            final List<MBHeader> mbHeaderList = entityManager.createQuery(new StringBuffer("from MBHeader")
+                    .append(" where egBillregister is not null and egBillregister.status.code != :statusCode")
+                    .append(" and workOrderEstimate.id = :woeId ").toString(), MBHeader.class)
+                    .setParameter("statusCode", ContractorBillRegister.BillStatus.CANCELLED.toString())
+                    .setParameter("woeId", woe.getId())
+                    .getResultList();
             if (mbHeaderList != null && !mbHeaderList.isEmpty()) {
                 String billList = "";
                 for (final MBHeader mbh : mbHeaderList)
@@ -867,22 +914,21 @@ public class SearchEstimateAction extends SearchFormAction {
         }
 
         for (final String workOrderIdStr : workOrderEstIdsStr) {
-            final WorkOrderEstimate woe = (WorkOrderEstimate) getPersistenceService().find(
-                    "from WorkOrderEstimate woe where woe.id=?", Long.valueOf(workOrderIdStr));
+            final WorkOrderEstimate woe = entityManager.find(WorkOrderEstimate.class, Long.valueOf(workOrderIdStr));
 
             for (final Milestone milestone : woe.getMilestone())
                 if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getStatus().getCode())) {
                     milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                             WorksConstants.CANCELLED_STATUS));
-                            // TODO - The setter methods of variables in State.java are
-                            // protected. Need to alternative way to solve this issue.
-                            /*******
-                             * oldEndState = milestone.getCurrentState(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-                             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
-                             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-                             * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-                             * oldEndState.setText1(cancelComments.toString()); milestone.changeState("END", owner, null);
-                             *******/
+                    // TODO - The setter methods of variables in State.java are
+                    // protected. Need to alternative way to solve this issue.
+                    /*******
+                     * oldEndState = milestone.getCurrentState(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+                     * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+                     * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+                     * oldEndState.setValue(WorksConstants.CANCELLED_STATUS); oldEndState.setText1(cancelComments.toString());
+                     * milestone.changeState("END", owner, null);
+                     *******/
 
                     for (final TrackMilestone tms : milestone.getTrackMilestone())
                         if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getStatus().getCode())) {
@@ -904,7 +950,7 @@ public class SearchEstimateAction extends SearchFormAction {
         final String actions = worksService.getWorksConfigValue("MILESTONE_SEARCH_ACTIONS");
         if (actions != null)
             return Arrays.asList(actions.split(","));
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     // Get the login user department

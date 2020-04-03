@@ -47,6 +47,19 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -71,19 +84,10 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-
+@SuppressWarnings("deprecation")
 @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "measurementBookPDF", params = {
         "inputName", "measurementBookPDF", "contentType", "application/pdf", "contentDisposition",
-        "no-cache;filename=MeasurementBook.pdf"})
+        "no-cache;filename=MeasurementBook.pdf" })
 @ParentPackage("egov")
 public class MeasurementBookPDFAction extends BaseFormAction {
 
@@ -98,6 +102,9 @@ public class MeasurementBookPDFAction extends BaseFormAction {
     @Autowired
     private transient EmployeeServiceOld employeeService;
     private transient ReportService reportService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -151,11 +158,11 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                 mbPDF.setWorkDescription(description);
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbPDF.setRevisionType("Non Tendered");
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbPDF.setRevisionType("Lump Sum");
             }
 
@@ -279,8 +286,14 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                                 state.getCreatedDate(), Integer.parseInt(positionId.toString()));
 
                         code = state.getValue();
-                        final EgwStatus status = (EgwStatus) getPersistenceService().find(
-                                "from EgwStatus where moduletype=? and code=?", "MBHeader", code);
+
+                        final List<EgwStatus> results = entityManager.createQuery(
+                                "from EgwStatus where moduletype = :moduleType and code = :code", EgwStatus.class)
+                                .setParameter("moduleType", "MBHeader")
+                                .setParameter("code", code)
+                                .getResultList();
+                        final EgwStatus status = results.isEmpty() ? null : results.get(0);
+
                         String statusDesc = status.getDescription();
                         if (!nextAction.equalsIgnoreCase(""))
                             statusDesc = status.getDescription() + " - " + nextAction;
