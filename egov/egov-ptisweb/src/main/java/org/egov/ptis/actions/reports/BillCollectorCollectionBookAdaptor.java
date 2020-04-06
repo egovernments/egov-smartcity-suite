@@ -88,6 +88,8 @@ public class BillCollectorCollectionBookAdaptor implements DataTableJsonAdapter<
             final JsonObject jsonObject = new JsonObject();
             BigDecimal arrearTotal = BigDecimal.ZERO;
             BigDecimal currentTotal = BigDecimal.ZERO;
+            BigDecimal arrearAmount = BigDecimal.ZERO;
+            BigDecimal currentAmount = BigDecimal.ZERO;
             jsonObject.addProperty("collectionDate",
                     DateUtils.getFormattedDate(collectionIndexInfoObj.getReceiptDate(), DATE_FORMAT_DDMMYYY));
             jsonObject.addProperty("name", collectionIndexInfoObj.getCreatedBy().getName());
@@ -98,10 +100,17 @@ public class BillCollectorCollectionBookAdaptor implements DataTableJsonAdapter<
                 jsonObject.addProperty("toInstallment", collectionIndexInfoObj.getToInstallment() + "[P]");
             else
                 jsonObject.addProperty("toInstallment", collectionIndexInfoObj.getToInstallment());
-            jsonObject.addProperty("arrearPropertyTax", collectionIndexInfoObj.getArrearAmount() == null ? BigDecimal.ZERO
-                    : collectionIndexInfoObj.getArrearAmount());
-            jsonObject.addProperty("currentPropertyTax", collectionIndexInfoObj.getCurrentAmount() == null ? BigDecimal.ZERO
-                    : collectionIndexInfoObj.getCurrentAmount());
+            if (collectionIndexInfoObj.getArrearEduTax() != null)
+                arrearAmount = (collectionIndexInfoObj.getArrearAmount() == null ? BigDecimal.ZERO
+                        : collectionIndexInfoObj.getArrearAmount())
+                                .subtract(collectionIndexInfoObj.getArrearEduTax() == null ? BigDecimal.ZERO
+                                        : collectionIndexInfoObj.getArrearEduTax());
+            jsonObject.addProperty("arrearPropertyTax", arrearAmount);
+            currentAmount = (collectionIndexInfoObj.getCurrentAmount() == null ? BigDecimal.ZERO
+                    : collectionIndexInfoObj.getCurrentAmount())
+                            .subtract(collectionIndexInfoObj.getCurrentEduTax() == null ? BigDecimal.ZERO
+                                    : collectionIndexInfoObj.getCurrentEduTax());
+            jsonObject.addProperty("currentPropertyTax", currentAmount);
             jsonObject.addProperty("arrearEduTax", collectionIndexInfoObj.getArrearEduTax() == null ? BigDecimal.ZERO
                     : collectionIndexInfoObj.getArrearEduTax());
             jsonObject.addProperty("currentEduTax", collectionIndexInfoObj.getCurrentEduTax() == null ? BigDecimal.ZERO
@@ -110,19 +119,15 @@ public class BillCollectorCollectionBookAdaptor implements DataTableJsonAdapter<
                     : collectionIndexInfoObj.getArrearLibCess());
             jsonObject.addProperty("currentLibCess", collectionIndexInfoObj.getCurrentLibCes() == null ? BigDecimal.ZERO
                     : collectionIndexInfoObj.getCurrentLibCes());
-            arrearTotal = (collectionIndexInfoObj.getArrearAmount() == null ? BigDecimal.ZERO
-                    : collectionIndexInfoObj.getArrearAmount())
-                            .add(collectionIndexInfoObj.getArrearEduTax() == null ? BigDecimal.ZERO
-                                    : collectionIndexInfoObj.getArrearEduTax())
-                            .add(collectionIndexInfoObj.getArrearLibCess() == null ? BigDecimal.ZERO
-                                    : collectionIndexInfoObj.getArrearLibCess());
+            arrearTotal = arrearAmount.add(collectionIndexInfoObj.getArrearEduTax() == null ? BigDecimal.ZERO
+                    : collectionIndexInfoObj.getArrearEduTax())
+                    .add(collectionIndexInfoObj.getArrearLibCess() == null ? BigDecimal.ZERO
+                            : collectionIndexInfoObj.getArrearLibCess());
             jsonObject.addProperty("arrearTotal", arrearTotal);
-            currentTotal = (collectionIndexInfoObj.getCurrentAmount() == null ? BigDecimal.ZERO
-                    : collectionIndexInfoObj.getCurrentAmount())
-                            .add(collectionIndexInfoObj.getCurrentEduTax() == null ? BigDecimal.ZERO
-                                    : collectionIndexInfoObj.getCurrentEduTax())
-                            .add(collectionIndexInfoObj.getCurrentLibCes() == null ? BigDecimal.ZERO
-                                    : collectionIndexInfoObj.getCurrentLibCes());
+            currentTotal = currentAmount.add(collectionIndexInfoObj.getCurrentEduTax() == null ? BigDecimal.ZERO
+                    : collectionIndexInfoObj.getCurrentEduTax())
+                    .add(collectionIndexInfoObj.getCurrentLibCes() == null ? BigDecimal.ZERO
+                            : collectionIndexInfoObj.getCurrentLibCes());
             jsonObject.addProperty("currentTotal", currentTotal);
             bcCollectionBookDetails.add(jsonObject);
         });

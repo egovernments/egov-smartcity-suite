@@ -130,11 +130,15 @@ public class BillCollectorBookReportService {
                 .createQuery("from ReceiptHeader where receiptnumber = :receiptNum");
         qry.setParameter("receiptNum", receiptNum);
         final ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
-        for (ReceiptDetail receiptdetatail : receiptHeader.getReceiptDetails())
+        for (ReceiptDetail receiptdetatail : receiptHeader.getReceiptDetails()) {
             if (receiptdetatail.getCramountToBePaid() != null
                     && receiptdetatail.getCramountToBePaid().compareTo(BigDecimal.ZERO) > 0
                     && !receiptdetatail.getDescription().contains(DEMANDRSN_STR_ADVANCE))
-                totalAmountToBePaid = receiptdetatail.getCramountToBePaid().subtract(receiptdetatail.getCramount());
-        return totalAmountToBePaid.compareTo(BigDecimal.ZERO) > 0 ? Boolean.TRUE : Boolean.FALSE;
+                totalAmountToBePaid = totalAmountToBePaid.add(receiptdetatail.getCramountToBePaid());
+        }
+        if (totalAmountToBePaid.compareTo(receiptHeader.getTotalAmount()) > 0)
+            return Boolean.TRUE;
+        else
+            return Boolean.FALSE;
     }
 }

@@ -208,7 +208,8 @@ function changeFromToDates() {
 	$('.datepicker').datepicker('setStartDate', new Date(toValue));
 	toValue.setDate(toValue.getDate() + 364);
 	var toDate = new Date(staringDate);
-	if (todayDate.getFullYear() == new Date(toValue).getFullYear()) {
+	if (todayDate.getFullYear() == new Date(toValue).getFullYear()
+			&& todayDate.getMonth() < 3) {
 		$('#toDate').datepicker("update", new Date()).trigger('changeDate');
 		$('.datepicker').datepicker('setEndDate', new Date());
 	} else {

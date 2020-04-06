@@ -82,6 +82,8 @@ public class BillCollectorCollectionBookSpec {
                     .add(builder.equal(root.get("channel"), "SYSTEM"));
             predicate.getExpressions()
                     .add(builder.notEqual(root.get("paymentMode"), "online"));
+            predicate.getExpressions()
+            .add(builder.notEqual(root.get("billingService"), "PT Mutation Fee"));
             return predicate;
         };
     }
