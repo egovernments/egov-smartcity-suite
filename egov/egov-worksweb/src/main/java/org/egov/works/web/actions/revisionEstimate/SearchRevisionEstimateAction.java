@@ -421,7 +421,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
                                                 Double.class)
                                         .setParameter("activityId", activityId)
                                         .getResultList();
-                                final double originalQuantity = originalQuantities.isEmpty() ? null : originalQuantities.get(0);
+                                final double originalQuantity = originalQuantities.isEmpty() ? 0.0 : originalQuantities.get(0);
 
                                 final List<Object> revEstQuantityObjs = entityManager.createQuery(
                                         new StringBuffer(

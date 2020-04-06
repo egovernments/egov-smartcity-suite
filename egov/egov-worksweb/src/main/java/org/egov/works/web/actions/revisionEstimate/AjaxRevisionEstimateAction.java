@@ -326,7 +326,7 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
                                             .setParameter("id", activityId)
                                             .getResultList();
 
-                                    final double originalQuantity = originalQuantities.isEmpty() ? null
+                                    final double originalQuantity = originalQuantities.isEmpty() ? 0.0
                                             : originalQuantities.get(0);
 
                                     final List<Double> revEstQuantityObjs = entityManager
