@@ -47,6 +47,22 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -58,6 +74,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -90,26 +107,13 @@ import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.TenderResponseService;
-import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = TenderNegotiationAction.NEW, location = "tenderNegotiation-new.jsp")
 public class TenderNegotiationAction extends SearchFormAction {
@@ -126,7 +130,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     private TenderHeader tenderHeader = new TenderHeader();
     private TenderEstimate tenderEstimate = new TenderEstimate();
     private WorkflowService<TenderResponse> workflowService;
-    private WorksPackageService workspackageService;
     private String messageKey;
     private String designation;
     private Long estimateId;
@@ -138,8 +141,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     private UserService userService;
     private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
-    private List<TenderResponseActivity> actionTenderResponseActivities = new LinkedList<TenderResponseActivity>();
-    private List<TenderResponseContractors> actionTenderResponseContractors = new LinkedList<TenderResponseContractors>();
+    private List<TenderResponseActivity> actionTenderResponseActivities = new LinkedList<>();
+    private List<TenderResponseContractors> actionTenderResponseContractors = new LinkedList<>();
     @Autowired
     private DepartmentService departmentService;
     private static final String OBJECT_TYPE = "TenderResponseContractors";
@@ -207,7 +210,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     private Double sorPerDiff;
     private OfflineStatus setStatusObj = new OfflineStatus();
     private final static String TENDER_ACCEPTANCE_NOTE = "acceptanceNote";
-    private PersistenceService<Contractor, Long> contractorService;
     private final static String CONTRACTOR_LIST = "contractorList";
     private List<String> tenderTypeList;
     private PersistenceService<OfflineStatus, Long> worksStatusService;
@@ -217,7 +219,10 @@ public class TenderNegotiationAction extends SearchFormAction {
     private String cancelRemarks;
     private String loggedInUserEmployeeCode;
     private EisUtilService eisService;
-    private Map<String, String> tenderInvitationTypeMap = new LinkedHashMap<String, String>();
+    private Map<String, String> tenderInvitationTypeMap = new LinkedHashMap<>();
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public TenderResponse getTenderResponse() {
         return tenderResponse;
@@ -295,13 +300,12 @@ public class TenderNegotiationAction extends SearchFormAction {
 
         if (SOURCE_INBOX.equals(getSourcepage())) {
             if (tenderResponse.getTenderEstimate().getAbstractEstimate() != null)
-                abstractEstimate = abstractEstimateService.findById(tenderResponse.getTenderEstimate()
-                        .getAbstractEstimate().getId(), false);
+                abstractEstimate = entityManager.find(AbstractEstimate.class, tenderResponse.getTenderEstimate()
+                        .getAbstractEstimate().getId());
             if (tenderResponse.getTenderEstimate().getWorksPackage() != null)
-                worksPackage = workspackageService.findById(tenderResponse.getTenderEstimate().getWorksPackage()
-                        .getId(), false);
-            tenderHeader = tenderHeaderService.findById(tenderResponse.getTenderEstimate().getTenderHeader().getId(),
-                    false);
+                worksPackage = entityManager.find(WorksPackage.class, tenderResponse.getTenderEstimate().getWorksPackage()
+                        .getId());
+            tenderHeader = entityManager.find(TenderHeader.class, tenderResponse.getTenderEstimate().getTenderHeader().getId());
             tenderType = tenderResponse.getTenderEstimate().getTenderType();
         }
         if (getAssignment(tenderResponse.getNegotiationPreparedBy()) != null) {
@@ -309,7 +313,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                     .getName());
             setDeptId(getAssignment(tenderResponse.getNegotiationPreparedBy()).getDepartment().getId());
         }
-        final List<Contractor> contractorList = new ArrayList<Contractor>();
+        final List<Contractor> contractorList = new ArrayList<>();
         for (final TenderResponseContractors tenderResponseContractors : tenderResponse.getTenderResponseContractors())
             contractorList.add(tenderResponseContractors.getContractor());
         addDropdownData(CONTRACTOR_LIST, contractorList);
@@ -345,17 +349,21 @@ public class TenderNegotiationAction extends SearchFormAction {
             setEditableDate(getPastDate());
 
         if (negoNumber != null && StringUtils.isNotBlank(negoNumber)) {
-            tenderResponse = tenderResponseService.find(
-                    "from TenderResponse tr where tr.negotiationNumber =? and tr.egwStatus.code = 'APPROVED'",
-                    negoNumber);
+            final List<TenderResponse> results = entityManager.createQuery(
+                    "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber and tr.egwStatus.code = 'APPROVED'",
+                    TenderResponse.class)
+                    .setParameter("negotiationNumber", negoNumber)
+                    .getResultList();
+            tenderResponse = results.isEmpty() ? null : results.get(0);
+
             id = tenderResponse.getId();
             tenderHeader = tenderResponse.getTenderEstimate().getTenderHeader();
             worksPackageId = tenderResponse.getTenderEstimate().getWorksPackage().getId();
         }
         if (estimateId != null)
-            abstractEstimate = abstractEstimateService.findById(estimateId, false);
+            abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
         if (worksPackageId != null) {
-            worksPackage = workspackageService.findById(worksPackageId, false);
+            worksPackage = entityManager.find(WorksPackage.class, worksPackageId);
             final String status = worksService.getWorksConfigValue("WORKSPACKAGE_STATUS");
             String objType = getTenderSource();
             if (objType != null && objType.equals("package"))
@@ -370,8 +378,8 @@ public class TenderNegotiationAction extends SearchFormAction {
         }
 
         if (id != null) {
-            tenderResponse = tenderResponseService.findById(id, false);
-            tenderHeader = tenderHeaderService.findById(tenderHeader.getId(), false);
+            tenderResponse = entityManager.find(TenderResponse.class, id);
+            tenderHeader = entityManager.find(TenderHeader.class, tenderHeader.getId());
             if (mode != null && (mode.equalsIgnoreCase("view") || mode.equalsIgnoreCase(SOURCE_SEARCH)))
                 tenderType = tenderResponse.getTenderEstimate().getTenderType();
 
@@ -403,7 +411,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 tenderResponse.setNegotiationPreparedBy(getEmployee());
             }
         }
-        final List departmentList = departmentService.getAllDepartments();
+        final List<Department> departmentList = departmentService.getAllDepartments();
         if (sourcepage != null && sourcepage.equalsIgnoreCase(SEARCH_NEGOTIATION_FOR_WO))
             addDropdownData("searchDepartmentList", worksService.getAllDeptmentsForLoggedInUser());
         else
@@ -418,7 +426,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             sorPerDiff = Double.valueOf(worksService.getWorksConfigValue("SOR_PERCENTAGE_DIFF"));
 
         setTenderCretedBy(worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ"));
-        final List<Contractor> contractorList = new ArrayList<Contractor>();
+        final List<Contractor> contractorList = new ArrayList<>();
         for (final TenderResponseContractors tenderResponseContractors : tenderResponseService
                 .getActionTenderResponseContractorsList(actionTenderResponseContractors))
             contractorList.add(tenderResponseContractors.getContractor());
@@ -499,7 +507,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                         || NEW.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode()) || REJECTED
                                 .equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())))
             tenderResponse.getTenderResponseContractors().clear();
-        actionTenderResponseContractors = (List) tenderResponseService
+        actionTenderResponseContractors = (List<TenderResponseContractors>) tenderResponseService
                 .getActionTenderResponseContractorsList(actionTenderResponseContractors);
 
         if (tenderResponse != null
@@ -557,7 +565,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             populateTenderResponseContractors();
             populateTenderResponseActivities();
         }
-        final List<Contractor> contractorList = new ArrayList<Contractor>();
+        final List<Contractor> contractorList = new ArrayList<>();
         for (final TenderResponseContractors tenderResponseContractors : tenderResponse.getTenderResponseContractors())
             contractorList.add(tenderResponseContractors.getContractor());
         addDropdownData(CONTRACTOR_LIST, contractorList);
@@ -582,7 +590,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                     prepare();
                     if (tenderResponse != null)
                         tenderResponse.getTenderResponseContractors().clear();
-                    actionTenderResponseContractors = (List) tenderResponseService
+                    actionTenderResponseContractors = (List<TenderResponseContractors>) tenderResponseService
                             .getActionTenderResponseContractorsList(actionTenderResponseContractors);
                     if (tenderResponse != null) {
                         tenderResponse.getTenderResponseActivities().clear();
@@ -618,7 +626,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public String cancel() {
-        actionTenderResponseContractors = (List) tenderResponseService
+        actionTenderResponseContractors = (List<TenderResponseContractors>) tenderResponseService
                 .getActionTenderResponseContractorsList(actionTenderResponseContractors);
         if (tenderResponse != null
                 && !actionTenderResponseContractors.isEmpty()
@@ -705,11 +713,12 @@ public class TenderNegotiationAction extends SearchFormAction {
             addAllActivities(worksPackage.getAllActivities());
     }
 
+    @SuppressWarnings("unchecked")
     private void addAllActivities(final List<Activity> actList) {
         if (tenderTypeList != null && !tenderTypeList.isEmpty() && tenderType.equals(tenderTypeList.get(0)))
             for (final Activity activity : actList) {
                 final TenderResponseActivity tenderResponseActivity = new TenderResponseActivity();
-                final List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<TenderResponseQuotes>();
+                final List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<>();
                 tenderResponseActivity.setActivity(activity);
                 tenderResponseActivity.setNegotiatedQuantity(activity.getQuantity());
                 if (WorksConstants.BILL.equalsIgnoreCase(worksService.getWorksConfigValue("REBATE_PREMIUM_LEVEL"))) {
@@ -760,16 +769,16 @@ public class TenderNegotiationAction extends SearchFormAction {
         else
             for (final Activity activity : actList) {
                 double negotiatedRate = 0.0;
-                final Map<Long, Object> tenderResponseQuotesMap = new HashMap<Long, Object>();
+                final Map<Long, Object> tenderResponseQuotesMap = new HashMap<>();
                 for (final TenderResponseActivity tenderResponseActivityTemp : actionTenderResponseActivities)
                     if (tenderResponseActivityTemp != null) {
-                        final List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<TenderResponseQuotes>();
+                        final List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<>();
                         for (final TenderResponseQuotes tenderResponseQuotesTemp : tenderResponseActivityTemp
                                 .getTenderResponseQuotesList()) {
                             final TenderResponseQuotes tenderResponseQuotes = new TenderResponseQuotes();
                             tenderResponseQuotes.setQuotedRate(tenderResponseQuotesTemp.getQuotedRate());
-                            final Contractor contractor = contractorService.findById(tenderResponseQuotesTemp
-                                    .getContractor().getId(), false);
+                            final Contractor contractor = entityManager.find(Contractor.class, tenderResponseQuotesTemp
+                                    .getContractor().getId());
                             tenderResponseQuotes.setContractor(contractor);
                             tenderResponseQuotes.setQuotedQuantity(activity.getQuantity());
                             tenderResponseQuotesList.add(tenderResponseQuotes);
@@ -792,7 +801,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 tenderResponseActivity.setNegotiatedQuantity(activity.getQuantity());
                 tenderResponseActivity.setNegotiatedRate(negotiatedRate);
                 tenderResponseActivity.setTenderResponse(tenderResponse);
-                List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<TenderResponseQuotes>();
+                List<TenderResponseQuotes> tenderResponseQuotesList = new ArrayList<>();
 
                 tenderResponseQuotesList = (List<TenderResponseQuotes>) tenderResponseQuotesMap.get(activity.getId());
                 for (final TenderResponseQuotes tenderResponseQuotes : tenderResponseQuotesList) {
@@ -993,11 +1002,11 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public List<EgwStatus> getNegotiationStatusesForWO() {
-        final List<EgwStatus> tnStatusList = new ArrayList<EgwStatus>();
+        final List<EgwStatus> tnStatusList = new ArrayList<>();
         final String wpStatus = worksService.getWorksConfigValue("WP_STATUS_SEARCH");
         final String status = worksService.getWorksConfigValue("TenderResponse.setstatus");
         final String lastStatus = worksService.getWorksConfigValue("TenderResponse.laststatus");
-        final List<String> statList = new ArrayList<String>();
+        final List<String> statList = new ArrayList<>();
         if (StringUtils.isNotBlank(wpStatus))
             statList.add(wpStatus);
         if (StringUtils.isNotBlank(status) && StringUtils.isNotBlank(lastStatus)) {
@@ -1034,7 +1043,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     @Override
     public void validate() {
         if (actionTenderResponseContractors != null) {
-            final List<Contractor> contractorList = new ArrayList<Contractor>();
+            final List<Contractor> contractorList = new ArrayList<>();
             for (final TenderResponseContractors tenderResponseContractors : tenderResponseService
                     .getActionTenderResponseContractorsList(actionTenderResponseContractors))
                 contractorList.add(tenderResponseContractors.getContractor());
@@ -1249,10 +1258,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.worksPackageId = worksPackageId;
     }
 
-    public void setWorkspackageService(final WorksPackageService workspackageService) {
-        this.workspackageService = workspackageService;
-    }
-
     public WorksPackage getWorksPackage() {
         return worksPackage;
     }
@@ -1301,9 +1306,9 @@ public class TenderNegotiationAction extends SearchFormAction {
         return status;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void getPositionAndUser() {
-        final List<TenderResponseContractors> tenderResponseContractorsList = new ArrayList<TenderResponseContractors>();
+        final List<TenderResponseContractors> tenderResponseContractorsList = new ArrayList<>();
         final Map<String, Integer> exceptionaSorMap = worksService.getExceptionSOR();
 
         final Iterator i = searchResult.getList().iterator();
@@ -1386,7 +1391,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         }
 
         if (SEARCH_NEGOTIATION_FOR_WO.equals(sourcepage)) {
-            final List<TenderResponseContractors> tenderResponseContractorsTempList = new ArrayList<TenderResponseContractors>();
+            final List<TenderResponseContractors> tenderResponseContractorsTempList = new ArrayList<>();
             final Iterator k = tenderResponseContractorsList.listIterator();
             while (k.hasNext()) {
                 final TenderResponseContractors tenderResponseCntractrs = (TenderResponseContractors) k.next();
@@ -1514,6 +1519,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.tenderFileNumber = tenderFileNumber;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Contractor> getContractorForApprovedNegotiation() {
         return getPersistenceService().findAllByNamedQuery("getApprovedNegotiationContractors");
     }
@@ -1528,84 +1534,95 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        final List<Object> paramList = new ArrayList<Object>();
-        String negotiationStr = "from TenderResponse as tenderResponse "
-                + " where tenderResponse.createdBy is not null ";
+        int index = 1;
+        final List<Object> paramList = new ArrayList<>();
+        final StringBuffer negotiationStr = new StringBuffer("from TenderResponse as tenderResponse ")
+                .append(" where tenderResponse.createdBy is not null ");
 
         if (getStatus().equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
-            negotiationStr += " and tenderResponse.egwStatus.code= ?  and "
-                    + "  tenderResponse.id  in ( select trc.tenderResponse.id from TenderResponseContractors trc where trc.id not in (select objectId from OfflineStatus where objectType='"
-                    + OBJECT_TYPE + "' ))";
+            negotiationStr.append(" and tenderResponse.egwStatus.code = ?").append(index++)
+                    .append(" and tenderResponse.id in (select trc.tenderResponse.id from TenderResponseContractors trc")
+                    .append(" where trc.id not in (select objectId from OfflineStatus where objectType = ?").append(index++)
+                    .append(" ))");
             paramList.add(status);
+            paramList.add(OBJECT_TYPE);
         } else if (getStatus().equals(TenderResponse.TenderResponseStatus.CANCELLED.toString())) {
-            negotiationStr += " and tenderResponse.egwStatus.code= ? ";
+            negotiationStr.append(" and tenderResponse.egwStatus.code = ?").append(index++);
             paramList.add(status);
         } else if (StringUtils.isNotBlank(getStatus()) && !getStatus().equals("-1")) {
-            negotiationStr += "and tenderResponse.egwStatus.code != 'NEW' and ((tenderResponse.egwStatus.code = ?) or "
-                    + "(tenderResponse.egwStatus.code = 'APPROVED' and tenderResponse.id in (select trc.tenderResponse.id from TenderResponseContractors trc where trc.id in ("
-                    + " select stat.objectId from "
-                    + "OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                    + " max(stat1.id) from OfflineStatus stat1 where trc.id=stat1.objectId and stat1.objectType='"
-                    + OBJECT_TYPE + "') and stat.objectType='" + OBJECT_TYPE + "')))) ";
+            negotiationStr.append(" and tenderResponse.egwStatus.code != 'NEW' and ((tenderResponse.egwStatus.code = ?")
+                    .append(index++)
+                    .append(") or (tenderResponse.egwStatus.code = 'APPROVED' and tenderResponse.id in (select trc.tenderResponse.id")
+                    .append(" from TenderResponseContractors trc where trc.id in (select stat.objectId from ")
+                    .append(" OfflineStatus stat where stat.egwStatus.code = ?").append(index++)
+                    .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1 where trc.id=stat1.objectId")
+                    .append(" and stat1.objectType = ?").append(index++)
+                    .append(") and stat.objectType = ?").append(index++)
+                    .append(")))) ");
             paramList.add(getStatus());
             paramList.add(getStatus());
+            paramList.add(OBJECT_TYPE);
+            paramList.add(OBJECT_TYPE);
             if (sourcepage != null && "cancelTN".equals(sourcepage))
-                negotiationStr += " and tenderResponse.egwStatus.code = 'APPROVED'";
+                negotiationStr.append(" and tenderResponse.egwStatus.code = 'APPROVED'");
         }
 
         if (StringUtils.isNotBlank(negotiationNumber)) {
-            negotiationStr = negotiationStr + " and UPPER(tenderResponse.negotiationNumber) like ?";
+            negotiationStr.append(" and UPPER(tenderResponse.negotiationNumber) like ?").append(index++);
             paramList.add("%" + negotiationNumber.trim().toUpperCase() + "%");
         }
 
         if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            negotiationStr = negotiationStr + " and tenderResponse.negotiationDate between ? and ? ";
+            negotiationStr.append(" and tenderResponse.negotiationDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(fromDate);
             paramList.add(toDate);
         }
 
         if (departmentId != null && departmentId != -1) {
-            negotiationStr = negotiationStr
-                    + " and (tenderResponse.tenderEstimate.abstractEstimate.id in "
-                    + "(select tr1.tenderEstimate.abstractEstimate.id from TenderResponse tr1 "
-                    + " where tr1.tenderEstimate.abstractEstimate.id!=null and  tr1.tenderEstimate.worksPackage.id=null and"
-                    + " tr1.tenderEstimate.abstractEstimate.executingDepartment.id= ?) "
-                    + " or tenderResponse.tenderEstimate.worksPackage.id in "
-                    + "(select tr.tenderEstimate.worksPackage.id from TenderResponse tr "
-                    + " where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null and"
-                    + " tr.tenderEstimate.worksPackage.department.id= ?)) ";
+            negotiationStr.append(" and (tenderResponse.tenderEstimate.abstractEstimate.id in ")
+                    .append("(select tr1.tenderEstimate.abstractEstimate.id from TenderResponse tr1 ")
+                    .append(" where tr1.tenderEstimate.abstractEstimate.id!=null and  tr1.tenderEstimate.worksPackage.id=null and")
+                    .append(" tr1.tenderEstimate.abstractEstimate.executingDepartment.id = ?").append(index++)
+                    .append(") or tenderResponse.tenderEstimate.worksPackage.id in ")
+                    .append(" (select tr.tenderEstimate.worksPackage.id from TenderResponse tr ")
+                    .append(" where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null and")
+                    .append(" tr.tenderEstimate.worksPackage.department.id = ?").append(index++)
+                    .append(")) ");
             paramList.add(departmentId);
             paramList.add(departmentId);
         }
         if (StringUtils.isNotBlank(estimateNumber)) {
-            negotiationStr = negotiationStr
-                    + " and tenderResponse.tenderEstimate.worksPackage.id in "
-                    + "(select wpd.worksPackage.id from WorksPackageDetails wpd where UPPER(wpd.estimate.estimateNumber) like ? )";
+            negotiationStr.append(" and tenderResponse.tenderEstimate.worksPackage.id in ")
+                    .append("(select wpd.worksPackage.id from WorksPackageDetails wpd where UPPER(wpd.estimate.estimateNumber) like ?")
+                    .append(index++)
+                    .append(")");
             paramList.add("%" + estimateNumber.trim().toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(projectCode)) {
-            negotiationStr = negotiationStr
-                    + " and tenderResponse.tenderEstimate.worksPackage.id in "
-                    + "(select wpd.worksPackage.id from WorksPackageDetails wpd where UPPER(wpd.estimate.projectCode.code) like ?)";
+            negotiationStr.append(" and tenderResponse.tenderEstimate.worksPackage.id in ")
+                    .append(" (select wpd.worksPackage.id from WorksPackageDetails wpd where UPPER(wpd.estimate.projectCode.code) like ?")
+                    .append(index++)
+                    .append(")");
             paramList.add("%" + projectCode.trim().toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(wpNumber)) {
-            negotiationStr = negotiationStr + " and UPPER(tenderResponse.tenderEstimate.worksPackage.wpNumber) like ?";
+            negotiationStr.append(" and UPPER(tenderResponse.tenderEstimate.worksPackage.wpNumber) like ?").append(index++);
             paramList.add("%" + wpNumber.trim().toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(tenderFileNumber)) {
-            negotiationStr = negotiationStr
-                    + "  and  UPPER(tenderResponse.tenderEstimate.worksPackage.tenderFileNumber) like ? ";
+            negotiationStr.append(" and  UPPER(tenderResponse.tenderEstimate.worksPackage.tenderFileNumber) like ?")
+                    .append(index++);
             paramList.add("%" + tenderFileNumber.toUpperCase() + "%");
         }
         if (getContractorId() != null && getContractorId() != -1) {
-            negotiationStr = negotiationStr
-                    + "  and tenderResponse.id in ( select trc.tenderResponse.id from TenderResponseContractors trc where trc.contractor.id= ?)";
+            negotiationStr.append("  and tenderResponse.id in ( select trc.tenderResponse.id from TenderResponseContractors trc")
+                    .append(" where trc.contractor.id = ?)").append(index++);
             paramList.add(getContractorId());
         }
 
         final String countQuery = "select count(*) " + negotiationStr;
-        return new SearchQueryHQL(negotiationStr, countQuery, paramList);
+        return new SearchQueryHQL(negotiationStr.toString(), countQuery, paramList);
 
     }
 
@@ -1619,7 +1636,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public String cancelApprovedTN() {
-        final TenderResponse tenderResponse = tenderResponseService.findById(tenderRespId, false);
+        final TenderResponse tenderResponse = entityManager.find(TenderResponse.class, tenderRespId);
         tenderResponse.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("TenderResponse",
                 WorksConstants.CANCELLED_STATUS));
 
@@ -1667,10 +1684,6 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public void setActionTenderResponseContractors(final List<TenderResponseContractors> actionTenderResponseContractors) {
         this.actionTenderResponseContractors = actionTenderResponseContractors;
-    }
-
-    public void setContractorService(final PersistenceService<Contractor, Long> service) {
-        contractorService = service;
     }
 
     public Long getContractorId() {

@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -56,16 +65,10 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
-import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @Results({
         @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "tenderResponsePDF", params = {
                 "inputName", "tenderResponsePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
@@ -78,12 +81,14 @@ public class TenderNegotiationPDFAction extends BaseFormAction {
     private Long tenderResponseId;
     private InputStream tenderResponsePDF;
     private InputStream tenderScrtAbsrtPDF;
-    private TenderResponseService tenderResponseService;
     private ReportService reportService;
     @Autowired
     private EmployeeServiceOld employeeService;
     private WorksService worksService;
     private String fileName;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -114,7 +119,7 @@ public class TenderNegotiationPDFAction extends BaseFormAction {
     }
 
     private TenderResponse getTenderResponse() {
-        return tenderResponseService.findById(tenderResponseId, false);
+        return entityManager.find(TenderResponse.class, tenderResponseId);
     }
 
     protected Boundary getTopLevelBoundary(final Boundary boundary) {
@@ -136,15 +141,11 @@ public class TenderNegotiationPDFAction extends BaseFormAction {
         this.employeeService = employeeService;
     }
 
-    public void setTenderResponseService(final TenderResponseService tenderResponseService) {
-        this.tenderResponseService = tenderResponseService;
-    }
-
     /*
      * Generating label
      */
     public Map<String, String> getPdfReportLabel() {
-        final Map<String, String> pdfLabel = new HashMap<String, String>();
+        final Map<String, String> pdfLabel = new HashMap<>();
         pdfLabel.put("tenderNegotiationpdf.header", "AFTER NEGOTIATION COMPARATIVE STATEMENT");
         pdfLabel.put("tenderNegotiationpdf.zone", "Zone: ");
         pdfLabel.put("tenderNegotiationpdf.ward", "Ward ");

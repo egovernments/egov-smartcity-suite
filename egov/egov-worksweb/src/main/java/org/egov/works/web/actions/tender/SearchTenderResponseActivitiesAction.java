@@ -47,6 +47,14 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -56,11 +64,7 @@ import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.utils.WorksConstants;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class SearchTenderResponseActivitiesAction extends SearchFormAction {
 
     private static final long serialVersionUID = 8616631394931994625L;
@@ -76,6 +80,9 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
     private double assignedQty;
     private String recordId;
     private String selectedactivities;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -93,11 +100,16 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final List<AbstractEstimate> estimateList = new ArrayList<AbstractEstimate>();
+        final List<AbstractEstimate> estimateList = new ArrayList<>();
         TenderEstimate tenderEstimate = null;
-        if (tenderRespId != null)
-            tenderEstimate = (TenderEstimate) getPersistenceService().find(
-                    "select tr.tenderEstimate from TenderResponse tr where tr.id=?", tenderRespId);
+        if (tenderRespId != null) {
+            final List<TenderEstimate> tenderEstimates = entityManager.createQuery(
+                    "select tr.tenderEstimate from TenderResponse tr where tr.id = :id", TenderEstimate.class)
+                    .setParameter("id", tenderRespId)
+                    .getResultList();
+            tenderEstimate = tenderEstimates.isEmpty() ? null : tenderEstimates.get(0);
+        }
+
         if (tenderEstimate != null && tenderEstimate.getAbstractEstimate() == null)
             estimateList.addAll(tenderEstimate.getWorksPackage().getAllEstimates());
         else if (tenderEstimate != null && tenderEstimate.getWorksPackage() == null)
@@ -111,44 +123,40 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         final StringBuilder sb = new StringBuilder(300);
-        final List<Object> paramList = new ArrayList<Object>();
-        int counter = 0;
-        sb.append("from TenderResponseActivity as tra left join tra.activity.schedule schedule"
-                + " left join tra.activity.nonSor nonSor where tra.tenderResponse.id= ?");
+        final List<Object> paramList = new ArrayList<>();
+        int index = 1;
+        sb.append("from TenderResponseActivity as tra left join tra.activity.schedule schedule")
+                .append(" left join tra.activity.nonSor nonSor where tra.tenderResponse.id = ?").append(index++);
         paramList.add(tenderRespId);
-        counter++;
         if (StringUtils.isNotBlank(activityType) && activityType.equalsIgnoreCase("SOR"))
             sb.append(" and schedule is not null");
         if (StringUtils.isNotBlank(activityType) && activityType.equalsIgnoreCase("Non SOR"))
             sb.append(" and nonSor is not null");
         if (StringUtils.isNotBlank(sorCode)) {
-            sb.append(" and UPPER(schedule.code) like ?");
+            sb.append(" and UPPER(schedule.code) like ?").append(index++);
             paramList.add("%" + sorCode.toUpperCase() + "%");
-            counter++;
         }
         if (StringUtils.isNotBlank(activityDesc)) {
-            sb.append(" and ((UPPER(schedule.description) like ?) or " + "(UPPER(nonSor.description) like ? ))");
+            sb.append(" and ((UPPER(schedule.description) like ?").append(index++)
+                    .append(") or (UPPER(nonSor.description) like ?").append(index++)
+                    .append(" ))");
             paramList.add("%" + activityDesc.toUpperCase() + "%");
-            counter++;
             paramList.add("%" + activityDesc.toUpperCase() + "%");
-            counter++;
         }
         if (StringUtils.isNotBlank(estimateName)) {
-            sb.append(" and UPPER(tra.activity.abstractEstimate.name) like ?");
+            sb.append(" and UPPER(tra.activity.abstractEstimate.name) like ?").append(index++);
             paramList.add("%" + estimateName.toUpperCase() + "%");
-            counter++;
         }
 
         if (estimateId != null && estimateId != -1) {
-            sb.append(" and tra.activity.abstractEstimate.id= ?");
+            sb.append(" and tra.activity.abstractEstimate.id= ?").append(index++);
             paramList.add(estimateId);
-            counter++;
         }
 
         if (StringUtils.isNotBlank(selectedactivities)) {
-            sb.append(" and tra.activity.id not in(?").append(counter).append(")");
+            sb.append(" and tra.activity.id not in ?").append(index++);
             final String[] activitiesId = selectedactivities.split(",");
-            final List<Long> activitiesIdList = new ArrayList<Long>();
+            final List<Long> activitiesIdList = new ArrayList<>();
             for (final String element : activitiesId)
                 activitiesIdList.add(Long.valueOf(element));
             paramList.add(activitiesIdList);
@@ -171,8 +179,9 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
         return retVal;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void populateAssignedQunatity() {
-        final List<TenderResponseActivity> tenderResponseActivityList = new LinkedList<TenderResponseActivity>();
+        final List<TenderResponseActivity> tenderResponseActivityList = new LinkedList<>();
 
         final Iterator iter = searchResult.getList().iterator();
         while (iter.hasNext()) {

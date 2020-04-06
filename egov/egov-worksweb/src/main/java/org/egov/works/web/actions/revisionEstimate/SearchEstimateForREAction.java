@@ -47,6 +47,19 @@
  */
 package org.egov.works.web.actions.revisionEstimate;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -70,16 +83,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = SearchEstimateForREAction.SEARCH_WO, location = "searchEstimateForRE-searchWO.jsp")
 public class SearchEstimateForREAction extends SearchFormAction {
@@ -106,6 +110,9 @@ public class SearchEstimateForREAction extends SearchFormAction {
     private Long execDept;
     private AbstractEstimateService abstractEstimateService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public SearchEstimateForREAction() {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
@@ -126,9 +133,10 @@ public class SearchEstimateForREAction extends SearchFormAction {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         addDropdownData("executingDepartmentList", worksService.getAllDeptmentsForLoggedInUser());
-        addDropdownData("typeList", persistenceService.findAllBy("from NatureOfWork "));
+        addDropdownData("typeList", entityManager.createQuery("from NatureOfWork ", NatureOfWork.class).getResultList());
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         addDropdownData("categoryList", Collections.emptyList());
         populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
@@ -142,61 +150,67 @@ public class SearchEstimateForREAction extends SearchFormAction {
         return SEARCH_WO;
     }
 
-    private Map getQuery() {
+    private Map<String, Object> getQuery() {
         final StringBuffer query = new StringBuffer(700);
-        final List<Object> paramList = new ArrayList<Object>();
-        final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append(
-                "from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
-                        + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null");
+        final List<Object> paramList = new ArrayList<>();
+        final Map<String, Object> queryAndParams = new HashMap<>();
+        int index = 1;
+        query.append("from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null")
+                .append(" and woe.workOrder.egwStatus.code <> ?").append(index++)
+                .append(" and woe.workOrder.egwStatus.code = ?").append(index++)
+                .append(" and woe.estimate.parent is null");
         paramList.add("NEW");
         paramList.add("APPROVED");
         if (getDeptId() != null && getDeptId() != -1) {
-            query.append(" and woe.estimate.executingDepartment.id=? ");
+            query.append(" and woe.estimate.executingDepartment.id = ?").append(index++);
             paramList.add(getDeptId());
         }
         if (getTypeId() != -1) {
-            query.append(" and woe.estimate.natureOfWork.id=? ");
+            query.append(" and woe.estimate.natureOfWork.id = ?").append(index++);
             paramList.add(Long.valueOf(getTypeId()));
         }
         if (StringUtils.isNotBlank(getEstimateNumber())) {
-            query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?||'%'");
+            query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(getEstimateNumber()).toUpperCase());
         }
 
         if (StringUtils.isNotBlank(getWorkOrderNumber())) {
-            query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?||'%'");
+            query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?").append(index++)
+                    .append("||'%'");
             paramList.add(StringUtils.trim(getWorkOrderNumber()).toUpperCase());
         }
 
         if (estimates.getCategory() != null) {
-            query.append(" and woe.estimate.category.id=?");
+            query.append(" and woe.estimate.category.id = ?").append(index++);
             paramList.add(estimates.getCategory().getId());
         }
         if (estimates.getParentCategory() != null) {
-            query.append(" and woe.estimate.parentCategory.id=?");
+            query.append(" and woe.estimate.parentCategory.id = ?").append(index++);
             paramList.add(estimates.getParentCategory().getId());
         }
 
         if (getContractorId() != -1) {
-            query.append(" and woe.workOrder.contractor.id=? ");
+            query.append(" and woe.workOrder.contractor.id = ?").append(index++);
             paramList.add(Long.valueOf(getContractorId()));
         }
 
         if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            query.append(" and woe.workOrder.workOrderDate between ? and ? ");
+            query.append(" and woe.workOrder.workOrderDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(fromDate);
             paramList.add(toDate);
         }
-        query.append("and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where"
-                + " mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and"
-                + " mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?) "
-                +
-                // " and woe.workOrder.id not in (select wo1.parent.id from WorkOrder wo1 where wo1.parent is not null and
-                // wo1.egwStatus.code not in ('APPROVED','CANCELLED')) "
-                // +
-                "and woe.estimate.id not in "
-                + "(select ae.parent.id from AbstractEstimate ae where ae.parent is not null and ae.egwStatus.code not in ('APPROVED','CANCELLED'))");
+        query.append("and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where")
+                .append(" mbh.egwStatus.code = ?").append(index++)
+                .append(" and (mbh.egBillregister.billstatus <> ?").append(index++)
+                .append(" and mbh.egBillregister.billtype = ?").append(index++)
+                .append(") and mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED'")
+                .append(" and mbh.workOrderEstimate.estimate.egwStatus.code = ?").append(index++)
+                .append(") and woe.estimate.id not in ")
+                .append(" (select ae.parent.id from AbstractEstimate ae where ae.parent is not null")
+                .append(" and ae.egwStatus.code not in ('APPROVED','CANCELLED'))");
+
         paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
         paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
         paramList.add(getFinalBillTypeConfigValue());
@@ -207,15 +221,14 @@ public class SearchEstimateForREAction extends SearchFormAction {
         return queryAndParams;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
 
         String query = null;
         String countQuery = null;
-        Map queryAndParms = null;
-        List<Object> paramList = new ArrayList<Object>();
-        queryAndParms = getQuery();
-        paramList = (List<Object>) queryAndParms.get("params");
+        Map<String, Object> queryAndParms = getQuery();
+        List<Object> paramList = (List<Object>) queryAndParms.get("params");
         query = (String) queryAndParms.get("query");
         countQuery = "select count(distinct woe.id) " + query;
         query = "select distinct woe " + query;
@@ -257,7 +270,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
     }
 
     public Map<String, Object> getContractorForApprovedWorkOrder() {
-        final Map<String, Object> contractorsWithWOList = new LinkedHashMap<String, Object>();
+        final Map<String, Object> contractorsWithWOList = new LinkedHashMap<>();
         if (workOrderService.getContractorsWithWO() != null)
             for (final Contractor contractor : workOrderService.getContractorsWithWO())
                 contractorsWithWOList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());

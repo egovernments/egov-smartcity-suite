@@ -47,8 +47,14 @@
  */
 package org.egov.works.web.actions.revisionEstimate;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -60,27 +66,21 @@ import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
-import org.hibernate.query.Query;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AjaxRevisionEstimateAction extends BaseFormAction {
 
     private static final long serialVersionUID = -6192212773360994495L;
-    private static final Logger logger = Logger.getLogger(AjaxRevisionEstimateAction.class);
     private static final String ACTIVITY_DETAILS = "activityDetails";
     private String query = "";
-    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
-    private List<AbstractEstimate> estimateNoList = new LinkedList<AbstractEstimate>();
-    private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
+    private List<AbstractEstimate> estimateList = new LinkedList<>();
+    private List<AbstractEstimate> estimateNoList = new LinkedList<>();
+    private List<WorkOrder> workOrderList = new LinkedList<>();
     private WorksService worksService;
     private Long reWOEstId;
     private Long revEstId;
     private static final String CANCEL_REVISIONESTIMATE = "cancelRE";
     private static final String REV_ESTIMATE_LIST = "revisionEstList";
-    private List<MBHeader> approvedMBList = new ArrayList<MBHeader>();
+    private List<MBHeader> approvedMBList = new ArrayList<>();
     private MeasurementBookService measurementBookService;
     private Double prevCulmEntry;
     private WorkOrderActivity workOrderActivity;
@@ -90,29 +90,37 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
     private String errorMessage;
     private static final String VALIDATE_CANCEL = "validateCancel";
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     public Object getModel() {
         return null;
     }
 
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
-                    + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null and woe.estimate.estimateNumber like '%'||?||'%' "
-                    + " and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where"
-                    + " mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and"
-                    + " mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?)";
-            params.add("NEW");
-            params.add("APPROVED");
-            params.add(query.toUpperCase());
-            params.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            params.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
-            params.add(getFinalBillTypeConfigValue());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            strquery.append("select woe.estimate")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and woe.workOrder.egwStatus.code <> :woStatus ")
+                    .append("and woe.workOrder.egwStatus.code = :woeStatus and woe.estimate.parent is null")
+                    .append(" and woe.estimate.estimateNumber like '%'||:estimateNumber||'%' ")
+                    .append(" and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where")
+                    .append(" mbh.egwStatus.code = :mbhStatus and (mbh.egBillregister.billstatus <> :billStatus")
+                    .append(" and mbh.egBillregister.billtype = :billtype) and mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED'")
+                    .append(" and mbh.workOrderEstimate.estimate.egwStatus.code = :estimateStatus)");
 
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("woStatus", "NEW")
+                    .setParameter("woeStatus", "APPROVED")
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("mbhStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
+                    .setParameter("billStatus", MBHeader.MeasurementBookStatus.CANCELLED.toString())
+                    .setParameter("billtype", getFinalBillTypeConfigValue())
+                    .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
+
         }
         return "estimateNoSearchResults";
     }
@@ -120,8 +128,7 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
     public String activityDetails() {
         prevCulmEntry = null;
         try {
-            workOrderActivity = (WorkOrderActivity) persistenceService.find("from WorkOrderActivity where id=?",
-                    woActivityId);
+            workOrderActivity = entityManager.find(WorkOrderActivity.class, woActivityId);
             prevCulmEntry = measurementBookService.prevCumulativeQuantityIncludingCQ(woActivityId, null,
                     workOrderActivity.getActivity().getId(), workOrderActivity.getWorkOrderEstimate().getWorkOrder());
             totalEstQuantity = measurementBookService.totalEstimatedQuantityForRE(woActivityId, null, workOrderActivity
@@ -134,76 +141,88 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
     }
 
     public String searchWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct woe.workOrder from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
-                    + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null and woe.workOrder.workOrderNumber like '%'||?||'%' "
-                    + "and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where"
-                    + " mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and"
-                    + " mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?)";
-            params.add("NEW");
-            params.add("APPROVED");
-            params.add(query.toUpperCase());
-            params.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            params.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
-            params.add(getFinalBillTypeConfigValue());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            strquery.append("select distinct woe.workOrder")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and woe.workOrder.egwStatus.code <> :woStatus ")
+                    .append(" and woe.workOrder.egwStatus.code = :workOrderStatus and woe.estimate.parent is null")
+                    .append(" and woe.workOrder.workOrderNumber like '%'||:workOrderNumber||'%' ")
+                    .append(" and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where")
+                    .append(" mbh.egwStatus.code = :mbhStatus and (mbh.egBillregister.billstatus <> :billStatus")
+                    .append(" and mbh.egBillregister.billtype = :billtype) and mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED'")
+                    .append(" and mbh.workOrderEstimate.estimate.egwStatus.code = :estimateStatus)");
 
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("woStatus", "NEW")
+                    .setParameter("workOrderStatus", "APPROVED")
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .setParameter("mbhStatus", MBHeader.MeasurementBookStatus.APPROVED.toString())
+                    .setParameter("billStatus", MBHeader.MeasurementBookStatus.CANCELLED.toString())
+                    .setParameter("billtype", getFinalBillTypeConfigValue())
+                    .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
+
         }
         return "workOrderNoSearchResults";
     }
 
     public String searchRevisionEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = " from AbstractEstimate ae where ae.parent is not null and ae.egwStatus.code<>? and ae.estimateNumber like '%'||?||'%'";
-            params.add("NEW");
-            params.add(query.toUpperCase());
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is not null and ae.egwStatus.code <> :status")
+                    .append(" and ae.estimateNumber like '%'||:estimateNumber||'%'");
+
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("status", "NEW")
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .getResultList();
         }
         return "estimateNoSearchResults";
     }
 
     public String searchREWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct woe.workOrder.parent from WorkOrderEstimate woe where woe.workOrder.parent is not null and woe.estimate.egwStatus.code<>? "
-                    +
-                    // " woe.workOrder.id in(select wo.parent.id from WorkOrder where woe.workOrder.parent is not null)"
-                    // +
-                    "and woe.workOrder.parent.workOrderNumber like '%'||?||'%' ";
-            params.add("NEW");
-            params.add(query.toUpperCase());
+            strquery.append("select distinct woe.workOrder.parent")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is not null and woe.estimate.egwStatus.code <> :status ")
+                    .append("and woe.workOrder.parent.workOrderNumber like '%'||:workOrderNumber||'%' ");
 
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("status", "NEW")
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return "workOrderNoSearchResults";
     }
 
     public String searchApprovedWONumberForRE() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct woe.workOrder.parent from WorkOrderEstimate woe where woe.workOrder.parent is not null and woe.estimate.egwStatus.code=? "
-                    + "and woe.workOrder.parent.workOrderNumber like '%'||?||'%' ";
-            params.add("APPROVED");
-            params.add(query.toUpperCase());
+            strquery.append("select distinct woe.workOrder.parent")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is not null and woe.estimate.egwStatus.code = :status ")
+                    .append(" and woe.workOrder.parent.workOrderNumber like '%'||:workOrderNumber||'%' ");
 
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("status", "APPROVED")
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return "workOrderNoSearchResults";
     }
 
     public String getMBDetailsForRE() throws Exception {
-        List<MBHeader> mbheaderlist = new ArrayList<MBHeader>();
-        mbheaderlist = measurementBookService.findAllBy(
-                "select distinct mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.id=? "
-                        + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'",
-                reWOEstId);
+        List<MBHeader> mbheaderlist = entityManager.createQuery(new StringBuffer("select distinct mbd.mbHeader")
+                .append(" from MBDetails mbd")
+                .append(" where mbd.workOrderActivity.workOrderEstimate.id = :woeId ")
+                .append(" and mbd.mbHeader.egwStatus.code <> 'CANCELLED'").toString(), MBHeader.class)
+                .setParameter("woeId", reWOEstId)
+                .getResultList();
 
         if (mbheaderlist != null && !mbheaderlist.isEmpty())
             approvedMBList.addAll(mbheaderlist);
@@ -211,30 +230,39 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
         return CANCEL_REVISIONESTIMATE;
     }
 
+    @SuppressWarnings("unchecked")
     public String validateCancellation() {
         errorMessage = "";
         if (reWOEstId != null) {
-            final WorkOrderEstimate revWOEst = (WorkOrderEstimate) persistenceService.find(
-                    " from WorkOrderEstimate where id = ? ", reWOEstId);
+            final WorkOrderEstimate revWOEst = entityManager.find(WorkOrderEstimate.class, reWOEstId);
             final WorkOrder revWorkOrder = revWOEst.getWorkOrder();
             final AbstractEstimate revEstimate = revWOEst.getEstimate();
 
-            final List<WorkOrderActivity> revWoaList = persistenceService.findAllBy(
-                    "from WorkOrderActivity where workOrderEstimate.workOrder.id=?", revWorkOrder.getId());
-            final List<Long> activtityIdList = new ArrayList<Long>();
-            List<MBHeader> mbheaderlist = new ArrayList<MBHeader>();
+            final List<WorkOrderActivity> revWoaList = entityManager.createQuery(
+                    "from WorkOrderActivity where workOrderEstimate.workOrder.id = :woId", WorkOrderActivity.class)
+                    .setParameter("woId", revWorkOrder.getId())
+                    .getResultList();
+
+            final List<Long> activtityIdList = new ArrayList<>();
+            List<MBHeader> mbheaderlist = new ArrayList<>();
             // First check if any non tendered or lumpsum items are present, if
             // yes then dont allow to cancel
             for (final WorkOrderActivity revWoa : revWoaList)
                 if (revWoa.getActivity().getRevisionType() != null
                         && (revWoa.getActivity().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM) || revWoa
                                 .getActivity().getRevisionType().equals(RevisionType.NON_TENDERED_ITEM))) {
-                    mbheaderlist = measurementBookService
-                            .findAllBy(
-                                    "select distinct mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.estimate.id=? and mbd.workOrderActivity.workOrderEstimate.workOrder.id=? and  mbd.workOrderActivity.activity.id=? "
-                                            + "and mbd.mbHeader.egwStatus.code<>'CANCELLED'",
-                                    revEstimate.getId(),
-                                    revWorkOrder.getId(), revWoa.getActivity().getId());
+                    mbheaderlist = entityManager.createQuery(new StringBuffer("select distinct mbd.mbHeader")
+                            .append(" from MBDetails mbd")
+                            .append(" where mbd.workOrderActivity.workOrderEstimate.estimate.id = :estimateId")
+                            .append(" and mbd.workOrderActivity.workOrderEstimate.workOrder.id = :woId")
+                            .append(" and mbd.workOrderActivity.activity.id = :woaId and mbd.mbHeader.egwStatus.code<>'CANCELLED'")
+                            .toString(),
+                            MBHeader.class)
+                            .setParameter("estimateId", revEstimate.getId())
+                            .setParameter("woId", revWorkOrder.getId())
+                            .setParameter("woaId", revWoa.getActivity().getId())
+                            .getResultList();
+
                     if (mbheaderlist != null && !mbheaderlist.isEmpty()) {
                         final StringBuffer mbNos = new StringBuffer();
                         for (final MBHeader mbHdr : mbheaderlist)
@@ -267,12 +295,15 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
                 // for
                 // them
                 if (activtityIdList != null && activtityIdList.size() > 0) {
-                    final Query qry = getPersistenceService()
-                            .getSession()
-                            .createQuery(
-                                    " select workOrderActivity.activity.id, nvl(sum(quantity),0)  from MBDetails where mbHeader.egwStatus.code!='CANCELLED' and workOrderActivity.activity.id in (:activtityIdList) group by workOrderActivity.activity.id ");
-                    qry.setParameterList("activtityIdList", activtityIdList);
-                    final List<Object[]> activityIdQuantityList = qry.list();
+                    final List<Object[]> activityIdQuantityList = entityManager
+                            .createQuery(new StringBuffer("select workOrderActivity.activity.id, nvl(sum(quantity),0)")
+                                    .append(" from MBDetails")
+                                    .append(" where mbHeader.egwStatus.code != 'CANCELLED'")
+                                    .append(" and workOrderActivity.activity.id in :activtityIdList")
+                                    .append(" group by workOrderActivity.activity.id ").toString())
+                            .setParameter("activtityIdList", activtityIdList)
+                            .getResultList();
+
                     if (activityIdQuantityList != null && activityIdQuantityList.size() > 0)
                         for (final WorkOrderActivity revWoa : revWoaList) {
                             if (revWoa.getActivity().getRevisionType() != null
@@ -286,21 +317,52 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
                                         activityId = revWoa.getActivity().getId();
                                     else
                                         activityId = revWoa.getActivity().getParent().getId();
-                                    final double originalQuantity = (Double) persistenceService
-                                            .find("select sum(woa.approvedQuantity) from WorkOrderActivity woa  group by woa,woa.activity having activity.id = ?",
-                                                    activityId);
-                                    final Object revEstQuantityObj = persistenceService
-                                            .find(" select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED'  and woa.activity.abstractEstimate.id != ? group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? )  ",
-                                                    revEstimate.getId(), revWoa.getActivity().getParent().getId());
+
+                                    final List<Double> originalQuantities = entityManager
+                                            .createQuery(new StringBuffer("select sum(woa.approvedQuantity)")
+                                                    .append(" from WorkOrderActivity woa")
+                                                    .append(" group by woa,woa.activity having activity.id = :id").toString(),
+                                                    Double.class)
+                                            .setParameter("id", activityId)
+                                            .getResultList();
+
+                                    final double originalQuantity = originalQuantities.isEmpty() ? null
+                                            : originalQuantities.get(0);
+
+                                    final List<Double> revEstQuantityObjs = entityManager
+                                            .createQuery(new StringBuffer(
+                                                    " select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',")
+                                                            .append("-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1))")
+                                                            .append(" from WorkOrderActivity woa")
+                                                            .append(" where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED'")
+                                                            .append(" and woa.activity.abstractEstimate.id != :estimateId")
+                                                            .append(" group by woa.activity.parent having (woa.activity.parent is not null")
+                                                            .append(" and woa.activity.parent.id = :apId )  ").toString(),
+                                                    Double.class)
+                                            .setParameter("estimateId", revEstimate.getId())
+                                            .setParameter("apId", revWoa.getActivity().getParent().getId())
+                                            .getResultList();
+
+                                    final Double revEstQuantityObj = revEstQuantityObjs.isEmpty() ? null
+                                            : revEstQuantityObjs.get(0);
+
                                     final double revEstQuantity = revEstQuantityObj == null ? 0.0
                                             : (Double) revEstQuantityObj;
                                     if (originalQuantity + revEstQuantity >= Double.parseDouble(activityIdQuantity[1]
                                             .toString()))
                                         continue;
                                     else {
-                                        final MBDetails mbDetails = (MBDetails) persistenceService
-                                                .find(" from MBDetails mbd where mbd.mbHeader.egwStatus.code != 'CANCELLED' and mbd.workOrderActivity.activity.id = ? and (mbdetailsDate is not null or OrderNumber is not null) ",
-                                                        revWoa.getActivity().getParent().getId());
+                                        final List<MBDetails> results = entityManager.createQuery(
+                                                new StringBuffer(" from MBDetails mbd")
+                                                        .append(" where mbd.mbHeader.egwStatus.code != 'CANCELLED'")
+                                                        .append(" and mbd.workOrderActivity.activity.id = :activityId")
+                                                        .append(" and (mbdetailsDate is not null or OrderNumber is not null) ")
+                                                        .toString(),
+                                                MBDetails.class)
+                                                .setParameter("activityId", revWoa.getActivity().getParent().getId())
+                                                .getResultList();
+                                        final MBDetails mbDetails = results.isEmpty() ? null : results.get(0);
+
                                         if (mbDetails != null) {
                                             Double maxPercent = worksService.getConfigval();
                                             if (maxPercent != null)
@@ -330,10 +392,11 @@ public class AjaxRevisionEstimateAction extends BaseFormAction {
     }
 
     public String getListOfREsForParent() throws Exception {
-        estimateNoList = getPersistenceService().findAllBy(
-                "select distinct abs.estimateNumber from AbstractEstimate abs where abs.parent.id=? "
-                        + "and abs.egwStatus.code<>'CANCELLED' order by abs.estimateNumber ",
-                estimateId);
+        estimateNoList = entityManager.createQuery(new StringBuffer("select distinct abs.estimateNumber")
+                .append(" from AbstractEstimate abs")
+                .append(" where abs.parent.id = :id ")
+                .append(" and abs.egwStatus.code<>'CANCELLED' order by abs.estimateNumber ").toString(), AbstractEstimate.class)
+                .setParameter("id", estimateId).getResultList();
 
         return REV_ESTIMATE_LIST;
     }

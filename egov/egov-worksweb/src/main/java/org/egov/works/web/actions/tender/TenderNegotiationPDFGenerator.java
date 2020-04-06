@@ -47,13 +47,22 @@
  */
 package org.egov.works.web.actions.tender;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -79,19 +88,15 @@ import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
+@SuppressWarnings("deprecation")
 public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     public static final String TENDER_PDF_ERROR = "tenderresponse.pdf.error";
     public static final String TENDERNEGOTIATION_AMOUNT = "tenderNegotiationpdf.amount";
@@ -105,6 +110,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private final NumberFormat formatter = new DecimalFormat("#0.00");
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     private final Map<String, String> pdfLabel;
+    @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -120,8 +126,11 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private NumberFormat nf = null;
     private WorksService worksService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public TenderNegotiationPDFGenerator(final TenderResponse tenderResponse, final String cityName,
-                                         final OutputStream out, final Map<String, String> pdfLabel) {
+            final OutputStream out, final Map<String, String> pdfLabel) {
         super(out, "landscape");
         this.pdfLabel = pdfLabel;
         this.tenderResponse = tenderResponse;
@@ -173,7 +182,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                                     + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getName()
                                     + "/"
                                     + tenderResponse.getTenderEstimate().getAbstractEstimate().getWard().getParent()
-                                    .getName(),
+                                            .getName(),
                             Element.ALIGN_LEFT));
             }
             if (YES.equalsIgnoreCase(worksPackgeReq))
@@ -190,7 +199,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             if (tenderResponse != null && tenderResponse.getTenderEstimate() != null
                     && tenderResponse.getTenderEstimate().getWorksPackage() != null)
                 document.add(makePara(pdfLabel.get("tenderFileNo")
-                                + tenderResponse.getTenderEstimate().getWorksPackage().getTenderFileNumber(),
+                        + tenderResponse.getTenderEstimate().getWorksPackage().getTenderFileNumber(),
                         Element.ALIGN_LEFT));
             document.add(spacer());
             String tenderDate = "";
@@ -249,7 +258,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
         try {
             final PdfPTable approvaldetailsTable = new PdfPTable(5);
             approvaldetailsTable.setWidthPercentage(100);
-            approvaldetailsTable.setWidths(new float[]{1f, 1f, 2f, 1.5f, 2f});
+            approvaldetailsTable.setWidths(new float[] { 1f, 1f, 2f, 1.5f, 2f });
             addRow(approvaldetailsTable, true, makePara(pdfLabel.get("tenderNegotiationpdf.aprvalstep")),
                     centerPara(pdfLabel.get("tenderNegotiationpdf.name")),
                     centerPara(pdfLabel.get("tenderNegotiationpdf.designation")),
@@ -264,8 +273,10 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                 for (final StateHistory<Position> ad : history) {
                     if (!ad.getValue().equals("NEW") && !ad.getValue().equals("APPROVAL_PENDING")
                             && !ad.getValue().equals("END") && previous != null) {
-                        final EgwStatus status = (EgwStatus) getPersistenceService().find(
-                                "from EgwStatus where code=?", ad.getValue());
+                        final EgwStatus status = entityManager.createQuery(
+                                "from EgwStatus where code = :code", EgwStatus.class)
+                                .setParameter("code", ad.getValue())
+                                .getSingleResult();
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                                 Integer.parseInt(previous.getOwnerPosition().getId().toString()));
                         addRow(approvaldetailsTable, true, makePara(status.getDescription()),
@@ -296,8 +307,8 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
             throws DocumentException {
         final PdfPTable negotiationTable = new PdfPTable(13);
         negotiationTable.setWidthPercentage(100);
-        negotiationTable.setWidths(new float[]{0.5f, 1f, 3.6f, 1.5f, 1.1f, 0.9f, 1.5f, 1.7f, 1.7f, 1.7f, 1.7f, 1.7f,
-                1.7f});
+        negotiationTable.setWidths(new float[] { 0.5f, 1f, 3.6f, 1.5f, 1.1f, 0.9f, 1.5f, 1.7f, 1.7f, 1.7f, 1.7f, 1.7f,
+                1.7f });
         try {
             negotiationTable.getDefaultCell().setPadding(5);
             negotiationTable.getDefaultCell().setBorderWidth(1);
@@ -312,7 +323,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
              */
 
             final PdfPTable estimateTable = createAsPerEstimateTable(tenderResponse);
-            estimateTable.setWidths(new float[]{0.45f, 0.37f, 0.62f});
+            estimateTable.setWidths(new float[] { 0.45f, 0.37f, 0.62f });
             final PdfPCell estimateCell = new PdfPCell(estimateTable);
             estimateCell.setColspan(3);
             negotiationTable.addCell(estimateCell);
@@ -351,7 +362,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * view workpackage pdf
      */
     public void createNegotiationTableDataForWp(final TenderResponse tenderResponse, final PdfPTable negotiationTable,
-                                                final Contractor contractor) {
+            final Contractor contractor) {
         Date asOnDate = null;
         if (tenderResponse.getNegotiationDate() != null)
             asOnDate = tenderResponse.getNegotiationDate();
@@ -466,7 +477,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
      * view estimate pdf
      */
     public void createNegotiationTableData(final TenderResponse tenderResponse, final PdfPTable negotiationTable,
-                                           final Contractor contractor) {
+            final Contractor contractor) {
 
         Date asOnDate = null;
         if (tenderResponse.getNegotiationDate() != null)
@@ -911,10 +922,12 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     }
 
     // setter and getter
+    @SuppressWarnings("rawtypes")
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
@@ -983,7 +996,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private PdfPTable createContractorTable(final TenderResponse tenderResponse) throws DocumentException {
         final PdfPTable contractorTable = new PdfPTable(3);
         contractorTable.setWidthPercentage(100);
-        contractorTable.setWidths(new float[]{1.6f, 3.6f, 6.6f});
+        contractorTable.setWidths(new float[] { 1.6f, 3.6f, 6.6f });
         try {
             contractorTable.getDefaultCell().setPadding(5);
             contractorTable.getDefaultCell().setBorderWidth(1);

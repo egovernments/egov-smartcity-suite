@@ -47,7 +47,18 @@
  */
 package org.egov.works.web.actions.tender;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -84,14 +95,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @Results({ @Result(name = WorksPackageAction.PRINT, type = "stream", location = "WorkspackagePDF", params = {
         "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition",
@@ -113,7 +117,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private WorksPackageService workspackageService;
     private AbstractEstimateService abstractEstimateService;
-    private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
+    private List<AbstractEstimate> abstractEstimateList = new ArrayList<>();
     private Long id;
     private String messageKey;
     private String nextEmployeeName;
@@ -133,6 +137,9 @@ public class WorksPackageAction extends GenericWorkFlowAction {
     @Qualifier("workflowService")
     private SimpleWorkflowService<AbstractEstimate> worksPackageWorkflowService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public WorksPackageAction() {
         addRelatedEntity("department", Department.class);
     }
@@ -141,17 +148,23 @@ public class WorksPackageAction extends GenericWorkFlowAction {
     public void prepare() {
         super.prepare();
         if (id != null) {
-            worksPackage = workspackageService.findById(id, false);
+            worksPackage = entityManager.find(WorksPackage.class, id);
             worksPackage = workspackageService.merge(worksPackage);
         }
-        if (id == null && packageNumber != null && StringUtils.isNotBlank(packageNumber))
-            worksPackage = workspackageService.find("from WorksPackage where wpNumber=? and egwStatus.code='APPROVED'",
-                    packageNumber);
+        if (id == null && packageNumber != null && StringUtils.isNotBlank(packageNumber)) {
+            final List<WorksPackage> results = entityManager
+                    .createQuery("from WorksPackage where wpNumber = :wpNumber and egwStatus.code='APPROVED'",
+                            WorksPackage.class)
+                    .setParameter("wpNumber", packageNumber)
+                    .getResultList();
+            worksPackage = results.isEmpty() ? null : results.get(0);
+        }
         setupDropdownDataExcluding("department");
 
         if (worksPackage.getId() == null || worksPackage.getId() != null
                 && (worksPackage.getEgwStatus().getCode()
-                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage
+                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString())
+                        || worksPackage
                                 .getEgwStatus().getCode().equalsIgnoreCase("NEW")))
             addDropdownData(DEPARTMENT_LIST, worksService.getAllDeptmentsForLoggedInUser());
         else
@@ -187,6 +200,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         return EDIT;
     }
 
+    @SuppressWarnings("deprecation")
     @Action(value = "/tender/worksPackage-save")
     public String save() {
         if (validTenderFileNo())
@@ -195,7 +209,8 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
         if (worksPackage.getId() != null
                 && (worksPackage.getEgwStatus().getCode()
-                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString()) || worksPackage
+                        .equalsIgnoreCase(WorksPackage.WorkPacakgeStatus.REJECTED.toString())
+                        || worksPackage
                                 .getEgwStatus().getCode().equalsIgnoreCase("NEW")))
             worksPackage.getWorksPackageDetails().clear();
         if (worksPackage.getId() == null
@@ -243,7 +258,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
     private void validateEstimateForUniqueness() {
         WorksPackage wp = null;
-        final Map<String, List<AbstractEstimate>> wpMap = new HashMap<String, List<AbstractEstimate>>();
+        final Map<String, List<AbstractEstimate>> wpMap = new HashMap<>();
         List<AbstractEstimate> estimateList = null;
         for (final AbstractEstimate estimate : abstractEstimateList) {
             wp = workspackageService.getWorksPackageForAbstractEstimate(estimate);
@@ -251,7 +266,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
                 final String wpString = wp.getWpNumber() + "~!"
                         + (wp.getEgwStatus().getDescription() != null ? wp.getEgwStatus().getDescription() : " ");
                 if (wpMap.get(wpString) == null) {
-                    estimateList = new ArrayList<AbstractEstimate>();
+                    estimateList = new ArrayList<>();
                     estimateList.add(estimate);
                     wpMap.put(wpString, estimateList);
                 } else
@@ -259,7 +274,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
             }
         }
         if (!wpMap.isEmpty()) {
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             for (final String wpnumber : wpMap.keySet()) {
                 final List<AbstractEstimate> estList = wpMap.get(wpnumber);
                 StringBuffer estimatesSting = null;
@@ -313,7 +328,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
             }
         } else {
             if (null != approverPositionId && approverPositionId != -1)
-                position = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+                position = entityManager.find(Position.class, approverPositionId);
             if (worksPackage.getState() == null) {
                 final WorkFlowMatrix wfmatrix = worksPackageWorkflowService.getWfMatrix(worksPackage.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
@@ -330,7 +345,8 @@ public class WorksPackageAction extends GenericWorkFlowAction {
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction());
                 else
-                    worksPackage.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
+                    worksPackage.transition().progressWithStateCopy().withSenderName(user.getName())
+                            .withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
                             .withNextAction(wfmatrix.getNextAction());
                 worksPackage
@@ -351,6 +367,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         return wfInitiator;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StateAware getModel() {
         return worksPackage;
@@ -370,6 +387,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         setWPDetails();
     }
 
+    @SuppressWarnings("deprecation")
     private void setWPDetails() {
         if (!abstractEstimateList.isEmpty())
             for (final AbstractEstimate ab : abstractEstimateList) {
@@ -392,7 +410,6 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         if (worksPackage != null && worksPackage.getTenderFileNumber() != null) {
             final AjaxWorksPackageAction ajaxWorksPackageAction = new AjaxWorksPackageAction();
             ajaxWorksPackageAction.setPersistenceService(getPersistenceService());
-            ajaxWorksPackageAction.setWorkspackageService(workspackageService);
             ajaxWorksPackageAction.setTenderFileNumber(worksPackage.getTenderFileNumber());
             ajaxWorksPackageAction.setId(id);
             if (ajaxWorksPackageAction.getTenderFileNumberCheck())
@@ -416,8 +433,8 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         return PRINT;
     }
 
-    private Map createHeaderParams() {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private Map<String, Object> createHeaderParams() {
+        final Map<String, Object> reportParams = new HashMap<>();
         final List<WorksPackageDetails> worksPackageDetails = worksPackage.getWorksPackageDetails();
         final AbstractEstimate estimate = worksPackageDetails.get(0).getEstimate();
         final Boundary b = getTopLevelBoundary(estimate.getWard());

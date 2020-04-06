@@ -47,6 +47,16 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -67,25 +77,18 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
-import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = SearchWorksPackageAction.SUCCESS, location = "searchWorksPackage.jsp") })
 public class SearchWorksPackageAction extends SearchFormAction {
 
     private static final long serialVersionUID = -6268869129605734393L;
     private WorksPackage worksPackage = new WorksPackage();
-    private List<WorksPackage> results = new LinkedList<WorksPackage>();
+    private List<WorksPackage> results = new LinkedList<>();
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
@@ -115,9 +118,11 @@ public class SearchWorksPackageAction extends SearchFormAction {
     private String messageKey;
     private static final String CANCEL_SUCCESS = "cancelSuccessful";
     private String estimateNumber;
-    private WorksPackageService workspackageService;
     private PersistenceService<OfflineStatus, Long> worksStatusService;
     private static final String STATUS_OBJECTID = "getStatusDateByObjectId_Type_Desc";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -140,13 +145,13 @@ public class SearchWorksPackageAction extends SearchFormAction {
     public List<EgwStatus> getAllOfflineStatus() {
         final String status = worksService.getWorksConfigValue(WorksConstants.WP_OFFLINE_STATUS);
 
-        final List<String> statList = new ArrayList<String>();
+        final List<String> statList = new ArrayList<>();
         if (StringUtils.isNotBlank(status)) {
             final List<String> statusList = Arrays.asList(status.split(","));
             for (final String stat : statusList)
                 statList.add(stat);
         }
-        final List<EgwStatus> returnList = new LinkedList<EgwStatus>();
+        final List<EgwStatus> returnList = new LinkedList<>();
         final EgwStatus cancelledStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(OBJECT_TYPE,
                 WorksPackage.WorkPacakgeStatus.CANCELLED.toString());
         if (cancelledStatus != null)
@@ -156,7 +161,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
         return returnList;
     }
 
-    @SuppressWarnings("unchecked")
     public void perform() {
 
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
@@ -175,9 +179,9 @@ public class SearchWorksPackageAction extends SearchFormAction {
         return INDEX;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void getPositionAndUser() {
-        final List<WorksPackage> wpList = new ArrayList<WorksPackage>();
+        final List<WorksPackage> wpList = new ArrayList<>();
 
         final Iterator i = searchResult.getList().iterator();
         final String lastStatusDescription = getLastStatus();
@@ -200,7 +204,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
                 final OfflineStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, wp.getId(),
                         OBJECT_TYPE, lastStatusDescription);
 
-                worksPackageActions = new LinkedList<String>();
+                worksPackageActions = new LinkedList<>();
                 worksPackageActions.add(0, WorksConstants.ACTION_VIEW);
                 worksPackageActions.add(1, WorksConstants.ACTION_VIEW_PDF);
                 worksPackageActions.add(2, WorksConstants.ACTION_WF_HISTORY);
@@ -223,7 +227,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
         searchResult.getList().clear();
         searchResult.getList().addAll(wpList);
         if (worksPackageActions == null)
-            worksPackageActions = new ArrayList<String>();
+            worksPackageActions = new ArrayList<>();
     }
 
     private void setOnlineOrOfflineStatusForWp(final WorksPackage wp) {
@@ -246,7 +250,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public List<EgwStatus> getPackageStatuses() {
-        final List<String> statList = new ArrayList<String>();
+        final List<String> statList = new ArrayList<>();
         for (final WorksPackage.WorkPacakgeStatus stat : Arrays.asList(WorksPackage.WorkPacakgeStatus.values()))
             statList.add(stat.toString());
 
@@ -267,7 +271,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     public List<EgwStatus> getCancelPackageStatuses() {
         final List<EgwStatus> statuses = getPackageStatuses();
-        final List<EgwStatus> resultStatuses = new ArrayList<EgwStatus>();
+        final List<EgwStatus> resultStatuses = new ArrayList<>();
         if (statuses != null && !statuses.isEmpty())
             for (final EgwStatus status : statuses)
                 if (status.getCode().equalsIgnoreCase("CREATED") || status.getCode().equalsIgnoreCase("CHECKED")
@@ -383,14 +387,18 @@ public class SearchWorksPackageAction extends SearchFormAction {
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         final StringBuilder sb = new StringBuilder(300);
-        final List<Object> paramList = new ArrayList<Object>();
+        final List<Object> paramList = new ArrayList<>();
+        int index = 1;
         if ("createNegotiationForWP".equals(source)) {
-            sb.append("from WorksPackage as wp where wp.egwStatus.code=? and wp.id in(select stat.objectId from "
-                    + "OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                    + " max(stat1.id) from OfflineStatus stat1 where stat1.objectType='" + OBJECT_TYPE
-                    + "' and wp.id=stat1.objectId)) ");
+            sb.append("from WorksPackage as wp where wp.egwStatus.code = ?").append(index++)
+                    .append(" and wp.id in(select stat.objectId from OfflineStatus stat where stat.egwStatus.code = ?")
+                    .append(index++)
+                    .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1 where stat1.objectType = ?")
+                    .append(index++)
+                    .append(" and wp.id=stat1.objectId)) ");
             paramList.add(WorksPackage.WorkPacakgeStatus.APPROVED.toString());
             paramList.add(getStatus());
+            paramList.add(OBJECT_TYPE);
 
         } else {
             // final String wpStatus = worksService.getWorksConfigValue("WP_STATUS_SEARCH");
@@ -398,64 +406,81 @@ public class SearchWorksPackageAction extends SearchFormAction {
             if (checkRetenderedWP != null && checkRetenderedWP) {
                 if (StringUtils.isNotBlank(getOfflinestatus())
                         && getOfflinestatus().equals(WorksPackage.WorkPacakgeStatus.CANCELLED.toString())) {
-                    sb.append("from WorksPackage as wp where wp.egwStatus.code= ? ");
+                    sb.append(" from WorksPackage as wp where wp.egwStatus.code = ?").append(index++);
                     paramList.add(getOfflinestatus());
                 } else if (StringUtils.isNotBlank(getOfflinestatus()) && !getOfflinestatus().equals("-1")) {
-                    sb.append(
-                            "from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
-                                    + "OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                                    + " max(stat1.id) from OfflineStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
-                                    + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
+                    sb.append(" from WorksPackage as wp where wp.egwStatus.code = ?").append(index++)
+                            .append(" or (wp.egwStatus.code = ?").append(index++)
+                            .append(" and wp.id in (select stat.objectId from OfflineStatus stat where stat.egwStatus.code = ?")
+                            .append(index++)
+                            .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1 where wp.id=stat1.objectId")
+                            .append(" and stat1.objectType = ?").append(index++)
+                            .append(" ) and stat.objectType = ?").append(index++)
+                            .append(")) ");
                     paramList.add(getOfflinestatus());
                     paramList.add(WorksPackage.WorkPacakgeStatus.APPROVED.toString());
                     paramList.add(getOfflinestatus());
+                    paramList.add(OBJECT_TYPE);
+                    paramList.add(OBJECT_TYPE);
                 } else if (StringUtils.isNotBlank(getOfflinestatus()) && getOfflinestatus().equals("-1"))
-                    sb.append("from WorksPackage as wp where wp.egwStatus.code<>'NEW'");
+                    sb.append(" from WorksPackage as wp where wp.egwStatus.code <> 'NEW'");
                 status = offlinestatus;
             } else if (StringUtils.isNotBlank(getStatus())
                     && getStatus().equals(WorksPackage.WorkPacakgeStatus.APPROVED.toString())) {
-                sb.append("from WorksPackage as wp where wp.egwStatus.code= ? and "
-                        + " wp.id not in (select objectId from OfflineStatus where objectType='" + OBJECT_TYPE + "')");
+                sb.append(" from WorksPackage as wp where wp.egwStatus.code = ?")
+                        .append(index++)
+                        .append(" and wp.id not in (select objectId from OfflineStatus where objectType = ?").append(index++)
+                        .append(")");
                 paramList.add(getStatus());
+                paramList.add(OBJECT_TYPE);
             } else if (StringUtils.isNotBlank(getStatus())
                     && getStatus().equals(WorksPackage.WorkPacakgeStatus.CANCELLED.toString())) {
-                sb.append("from WorksPackage as wp where wp.egwStatus.code= ?  ");
+                sb.append(" from WorksPackage as wp where wp.egwStatus.code = ?").append(index++);
                 paramList.add(getStatus());
             } else if (StringUtils.isNotBlank(getStatus()) && !getStatus().equals("-1")
                     && !getStatus().equals(WorksPackage.WorkPacakgeStatus.APPROVED.toString())
                     && "view".equalsIgnoreCase(setStatus) && statusList.contains(getStatus())) {
-                sb.append("from WorksPackage as wp where wp.egwStatus.code= ? and "
-                        + " wp.id not in (select objectId from OfflineStatus where objectType='" + OBJECT_TYPE + "')");
+                sb.append(" from WorksPackage as wp where wp.egwStatus.code = ?").append(index++)
+                        .append(" and wp.id not in (select objectId from OfflineStatus where objectType = ?").append(index++)
+                        .append(")");
                 paramList.add(getStatus());
+                paramList.add(OBJECT_TYPE);
             } else if (StringUtils.isNotBlank(getStatus()) && !getStatus().equals("-1")) {
                 sb.append(
-                        "from WorksPackage as wp where wp.egwStatus.code= ? or (wp.egwStatus.code= ? and wp.id in(select stat.objectId from "
-                                + "OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select"
-                                + " max(stat1.id) from OfflineStatus stat1 where wp.id=stat1.objectId and stat1.objectType='"
-                                + OBJECT_TYPE + "' ) and stat.objectType='" + OBJECT_TYPE + "')) ");
+                        " from WorksPackage as wp where wp.egwStatus.code = ?").append(index++)
+                        .append(" or (wp.egwStatus.code = ?").append(index++)
+                        .append(" and wp.id in (select stat.objectId from OfflineStatus stat where stat.egwStatus.codev= ?")
+                        .append(index++)
+                        .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1 where wp.id = stat1.objectId")
+                        .append(" and stat1.objectType = ?").append(index++)
+                        .append(" ) and stat.objectType = ?").append(index++)
+                        .append(")) ");
                 paramList.add(getStatus());
                 paramList.add(WorksPackage.WorkPacakgeStatus.APPROVED.toString());
                 paramList.add(getStatus());
+                paramList.add(OBJECT_TYPE);
+                paramList.add(OBJECT_TYPE);
             } else if (StringUtils.isNotBlank(getStatus()) && getStatus().equals("-1"))
-                sb.append("from WorksPackage as wp where wp.egwStatus.code<>'NEW'");
+                sb.append(" from WorksPackage as wp where wp.egwStatus.code<>'NEW'");
 
         }
 
         if (worksPackage.getDepartment() != null && worksPackage.getDepartment().getId() != null) {
-            sb.append(" and wp.department.id= ?");
+            sb.append(" and wp.department.id= ?").append(index++);
             paramList.add(worksPackage.getDepartment().getId());
         }
         if (StringUtils.isNotBlank(worksPackage.getWpNumber())) {
-            sb.append(" and wp.wpNumber like ?");
+            sb.append(" and wp.wpNumber like ?").append(index++);
             paramList.add("%" + worksPackage.getWpNumber() + "%");
         }
         if (StringUtils.isNotBlank(estimateNumber)) {
             sb.append(
-                    " and wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber like ?) ");
+                    " and wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber like ?")
+                    .append(index++).append(") ");
             paramList.add("%" + estimateNumber + "%");
         }
         if (StringUtils.isNotBlank(source) && source.equalsIgnoreCase("cancelWP")) {
-            sb.append(" and wp.egwStatus.code<> ? ");
+            sb.append(" and wp.egwStatus.code<> ?").append(index++);
             paramList.add("CANCELLED");
         }
         if (fromDate != null && toDate == null)
@@ -469,27 +494,30 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
             if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
                 sb.append(
-                        " and wp.id in (select r.worksPackage.id from Retender r where r.worksPackage.id=wp.id and r.retenderDate between ? and ? "
-                                + "  and r.id=(select max(r1.id) from Retender r1 where r1.worksPackage.id=wp.id )  ) ");
+                        " and wp.id in (select r.worksPackage.id from Retender r where r.worksPackage.id=wp.id and r.retenderDate between ?")
+                        .append(index++)
+                        .append(" and ?").append(index++)
+                        .append(" and r.id=(select max(r1.id) from Retender r1 where r1.worksPackage.id=wp.id )  ) ");
                 paramList.add(fromDate);
                 paramList.add(toDate);
             }
         } else if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            sb.append(" and wp.wpDate between ? and ? ");
+            sb.append(" and wp.wpDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(fromDate);
             paramList.add(toDate);
         }
 
         if (StringUtils.isNotBlank(worksPackage.getTenderFileNumber())) {
-            sb.append(" and wp.tenderFileNumber like ?");
+            sb.append(" and wp.tenderFileNumber like ?").append(index++);
             paramList.add("%" + worksPackage.getTenderFileNumber() + "%");
         }
 
         if ("createNegotiationForWP".equals(source))
-            sb.append(" and wp.id not in(select " + "tr.tenderEstimate.worksPackage.id from TenderResponse tr where "
-                    + "tr.egwStatus.code !='CANCELLED' and wp.id=tr.tenderEstimate.worksPackage.id)"
-                    + " and wp.id not in(select " + "tr1.tenderEstimate.worksPackage.id from TenderResponse tr1 where "
-                    + "tr1.egwStatus.code ='NEW' and wp.id=tr1.tenderEstimate.worksPackage.id)");
+            sb.append(" and wp.id not in(select tr.tenderEstimate.worksPackage.id from TenderResponse tr where ")
+                    .append("tr.egwStatus.code !='CANCELLED' and wp.id=tr.tenderEstimate.worksPackage.id)")
+                    .append(" and wp.id not in(select tr1.tenderEstimate.worksPackage.id from TenderResponse tr1 where ")
+                    .append("tr1.egwStatus.code ='NEW' and wp.id=tr1.tenderEstimate.worksPackage.id)");
 
         final String query = sb.toString();
         final String countQuery = "select count(*) " + query;
@@ -497,7 +525,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public String cancelWP() {
-        final WorksPackage worksPackage = workspackageService.findById(wpCancelId, false);
+        final WorksPackage worksPackage = entityManager.find(WorksPackage.class, wpCancelId);
         final Employee employee = employeeService.getEmployeeById(worksService.getCurrentLoggedInUserId());
         worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode("WorksPackage", "CANCELLED"));
         if (cancelRemarks != null && StringUtils.isNotBlank(cancelRemarks))
@@ -567,10 +595,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
-    }
-
-    public void setWorkspackageService(final WorksPackageService workspackageService) {
-        this.workspackageService = workspackageService;
     }
 
     public PersistenceService<OfflineStatus, Long> getWorksStatusService() {

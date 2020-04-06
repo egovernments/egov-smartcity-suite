@@ -47,8 +47,21 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -62,32 +75,18 @@ import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.services.AbstractEstimateService;
-import org.egov.works.services.WorkOrderService;
-import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     private static final long serialVersionUID = -9058467908860158263L;
     private static final String MARKETVALUE = "marketValue";
-    private AbstractEstimateService abstractEstimateService;
     private WorksService worksService;
     private Long estimateId;
     private Long packageId;
     private Date asOnDate;
     private double marketRateAmount = 0;
-    private WorksPackageService workspackageService;
     @Autowired
     private AssignmentService assignmentService;
     private TenderResponse tenderResp = new TenderResponse();
@@ -96,7 +95,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     private static final String DESIGN_FOR_EMP = "designForEmp";
     private Integer executingDepartment;
     private Long empID;
-    private List usersInExecutingDepartment;
+    private List<EmployeeView> usersInExecutingDepartment;
     private Assignment assignment;
     private String tenderNo;
     private Long checkId;
@@ -104,15 +103,17 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     private static final String TENDERNUMBERUNIQUECHECK = "tenderNumberUniqueCheck";
     private PersonalInformationService personalInformationService;
     private static final String GET_WORKORDERS_TN = "getWorkOrdersForTN";
-    private List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
-    private WorkOrderService workOrderService;
+    private List<WorkOrder> workOrderList = new ArrayList<>();
     private String tenderNegotiationNo;
     private String query = "";
-    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
-    private List<ProjectCode> projectCodeList = new LinkedList<ProjectCode>();
-    private List<String> negotiationNumberList = new LinkedList<String>();
-    private List<WorksPackage> wpNumberList = new LinkedList<WorksPackage>();
-    private List<WorksPackage> tenderFileNumberList = new LinkedList<WorksPackage>();
+    private List<AbstractEstimate> estimateList = new LinkedList<>();
+    private List<ProjectCode> projectCodeList = new LinkedList<>();
+    private List<String> negotiationNumberList = new LinkedList<>();
+    private List<WorksPackage> wpNumberList = new LinkedList<>();
+    private List<WorksPackage> tenderFileNumberList = new LinkedList<>();
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public String getMarketValue() {
         if (estimateId != null)
@@ -123,7 +124,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     public double getMarketValueForEstimate(final Long estimateId) {
-        final AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
+        final AbstractEstimate abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
         final Collection<Activity> sorActivities = abstractEstimate.getSORActivities();
         final Map<String, Integer> exceptionaSorMap = worksService.getExceptionSOR();
         for (final Activity activity : sorActivities) {
@@ -151,7 +152,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     public double getMarketValueForPackage(final Long packageId) {
-        final WorksPackage workspackage = workspackageService.findById(packageId, false);
+        final WorksPackage workspackage = entityManager.find(WorksPackage.class, packageId);
         for (final EstimateLineItemsForWP estlineItem : workspackage.getActivitiesForEstimate()) {
             double marketrate = 0;
             double marketrateAmt = 0;
@@ -201,6 +202,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
         return DESIGN_FOR_EMP;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean getTendernoCheck() {
         boolean tenderNoexistsOrNot = false;
         TenderResponse tenderResponseObj = null;
@@ -216,11 +218,11 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public String usersInExecutingDepartment() {
         try {
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            final HashMap<String, Object> criteriaParams = new HashMap<>();
             criteriaParams.put("departmentId", executingDepartment);
             criteriaParams.put("isPrimary", "Y");
             if (executingDepartment == null || executingDepartment == -1)
-                usersInExecutingDepartment = Collections.EMPTY_LIST;
+                usersInExecutingDepartment = Collections.emptyList();
             else
                 usersInExecutingDepartment = personalInformationService.getListOfEmployeeViewBasedOnCriteria(
                         criteriaParams, -1, -1);
@@ -231,11 +233,13 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     public String getWODetailsForTN() throws Exception {
-        List<WorkOrder> woList = new ArrayList<WorkOrder>();
-        woList = workOrderService
-                .findAllBy(
-                        "select distinct wo from WorkOrder wo where wo.egwStatus.code<>'CANCELLED' and wo.negotiationNumber=? ",
-                        tenderNegotiationNo);
+        List<WorkOrder> woList = entityManager.createQuery(new StringBuffer("select distinct wo")
+                .append(" from WorkOrder wo")
+                .append(" where wo.egwStatus.code <> 'CANCELLED'")
+                .append(" and wo.negotiationNumber = :negotiationNumber ").toString(),
+                WorkOrder.class)
+                .setParameter("negotiationNumber", tenderNegotiationNo)
+                .getResultList();
 
         if (woList != null && !woList.isEmpty())
             workOrderList.addAll(woList);
@@ -244,63 +248,88 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     public String searchNegotiationNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = " select distinct tr.negotiationNumber from TenderResponse tr where upper(tr.negotiationNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            negotiationNumberList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(" select distinct tr.negotiationNumber")
+                    .append(" from TenderResponse tr")
+                    .append(" where upper(tr.negotiationNumber) like '%'||:negotiationNumber||'%'")
+                    .append(" and tr.egwStatus.code <> :status ");
+
+            negotiationNumberList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("negotiationNumber", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
+
         }
         return "negotiationNumberSearchResults";
     }
 
     public String searchWorksPackageNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct tr.tenderEstimate.worksPackage from TenderResponse tr where upper(tr.tenderEstimate.worksPackage.wpNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            wpNumberList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct tr.tenderEstimate.worksPackage")
+                    .append(" from TenderResponse tr")
+                    .append(" where upper(tr.tenderEstimate.worksPackage.wpNumber) like '%'||:wpNumber||'%'")
+                    .append(" and tr.egwStatus.code <> :status ");
+
+            wpNumberList = entityManager.createQuery(strquery.toString(), WorksPackage.class)
+                    .setParameter("wpNumber", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
+
         }
         return "worksPackageNumberSearchResults";
     }
 
     public String searchTenderFileNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct tr.tenderEstimate.worksPackage from TenderResponse tr where upper(tr.tenderEstimate.worksPackage.tenderFileNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            tenderFileNumberList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct tr.tenderEstimate.worksPackage")
+                    .append(" from TenderResponse tr")
+                    .append(" where upper(tr.tenderEstimate.worksPackage.tenderFileNumber) like '%'||:tenderFileNumber||'%'")
+                    .append(" and tr.egwStatus.code <> :status ");
+
+            tenderFileNumberList = entityManager.createQuery(strquery.toString(), WorksPackage.class)
+                    .setParameter("tenderFileNumber", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
+
         }
         return "tenderFileNumberSearchResults";
     }
 
     public String searchProjectCode() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct wpd.estimate.projectCode from WorksPackageDetails wpd where upper(wpd.estimate.projectCode.code) like '%'||?||'%' "
-                    + " and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id from TenderResponse tr where tr.egwStatus.code <> ? )";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            projectCodeList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct wpd.estimate.projectCode")
+                    .append(" from WorksPackageDetails wpd")
+                    .append(" where upper(wpd.estimate.projectCode.code) like '%'||:projectCode||'%' ")
+                    .append(" and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id")
+                    .append(" from TenderResponse tr where tr.egwStatus.code <> :status )");
+
+            projectCodeList = entityManager.createQuery(strquery.toString(), ProjectCode.class)
+                    .setParameter("projectCode", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
+
         }
         return "projectCodeSearchResults";
     }
 
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select wpd.estimate from WorksPackageDetails wpd where upper(wpd.estimate.estimateNumber) like '%'||?||'%' "
-                    + " and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id from TenderResponse tr where tr.egwStatus.code <> ? )";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select wpd.estimate")
+                    .append(" from WorksPackageDetails wpd")
+                    .append(" where upper(wpd.estimate.estimateNumber) like '%'||:estimateNumber||'%' ")
+                    .append(" and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id")
+                    .append(" from TenderResponse tr where tr.egwStatus.code <> :status )");
+
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
+
         }
         return "estimateNoSearchResults";
     }
@@ -318,10 +347,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public void setAssignmentService(final AssignmentService assignmentService) {
         this.assignmentService = assignmentService;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public void setEstimateId(final Long estimateId) {
@@ -344,7 +369,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
         this.empID = empID;
     }
 
-    public List getUsersInExecutingDepartment() {
+    public List<EmployeeView> getUsersInExecutingDepartment() {
         return usersInExecutingDepartment;
     }
 
@@ -362,10 +387,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public void setPackageId(final Long packageId) {
         this.packageId = packageId;
-    }
-
-    public void setWorkspackageService(final WorksPackageService workspackageService) {
-        this.workspackageService = workspackageService;
     }
 
     public String getTenderNo() {
@@ -422,10 +443,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public void setTenderNegotiationNo(final String tenderNegotiationNo) {
         this.tenderNegotiationNo = tenderNegotiationNo;
-    }
-
-    public void setWorkOrderService(final WorkOrderService workOrderService) {
-        this.workOrderService = workOrderService;
     }
 
     public List<AbstractEstimate> getEstimateList() {

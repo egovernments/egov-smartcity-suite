@@ -47,6 +47,20 @@
  */
 package org.egov.works.web.actions.revisionEstimate;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -71,6 +85,7 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.NonSor;
+import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrder;
@@ -88,17 +103,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Result(name = RevisionEstimateAction.NEW, location = "revisionEstimate-new.jsp")
 public class RevisionEstimateAction extends GenericWorkFlowAction {
@@ -126,7 +131,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     private EmployeeServiceOld employeeService;
     private Integer approverPositionId;
     private WorkOrderService workOrderService;
-    private List<Activity> originalRevisedActivityList = new LinkedList<Activity>();
+    private List<Activity> originalRevisedActivityList = new LinkedList<>();
     private double originalTotalAmount = 0;
     private double originalTotalTax = 0;
     private double originalWorkValueIncludingTax = 0;
@@ -136,12 +141,12 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     private Long originalWOId;
     private double revisionEstimatesValue = 0;
     private double revisionWOValue = 0;
-    private List<RevisionAbstractEstimate> reList = new LinkedList<RevisionAbstractEstimate>();
+    private List<RevisionAbstractEstimate> reList = new LinkedList<>();
     private AbstractEstimate abstractEstimate = new AbstractEstimate();
     private WorkOrder workOrder = new WorkOrder();
 
-    private List<Activity> sorActivities = new LinkedList<Activity>();
-    private List<Activity> nonSorActivities = new LinkedList<Activity>();
+    private List<Activity> sorActivities = new LinkedList<>();
+    private List<Activity> nonSorActivities = new LinkedList<>();
     private static final String CANCEL_ACTION = "cancel";
     private static final String SAVE_ACTION = "save";
     private static final Object REJECT_ACTION = "reject";
@@ -159,7 +164,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     private String activityDesc;
     private List<WorkOrderActivity> activityList; // for search page
     private String workorderNo;
-    private List<WorkOrderActivity> changeQuantityActivities = new LinkedList<WorkOrderActivity>();
+    private List<WorkOrderActivity> changeQuantityActivities = new LinkedList<>();
     private RevisionEstimateService revisionEstimateService;
     // private PersistenceService<Script, Long> scriptService;
     private boolean isBudgetRejectionNoPresent;
@@ -167,10 +172,14 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     @Autowired
     private ScriptService scriptService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public RevisionEstimateAction() {
         addRelatedEntity("executingDepartment", Department.class);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StateAware getModel() {
         return revisionEstimate;
@@ -195,13 +204,15 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             workOrderDate = workOrder.getWorkOrderDate();
             if (activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()) || activity.getRevisionType()
+                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
+                            || activity.getRevisionType()
                                     .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
                 sorRate = activity.getSORRateForDate(workOrderDate).getValue();
             else if (activity.getAbstractEstimate().getParent() != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || activity
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 if (activity.getParent() != null
                         && activity.getParent().getRevisionType() != null
@@ -230,22 +241,31 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
 
         if (id != null) {
-            revisionEstimate = revisionAbstractEstimateService.findById(id, false);
+            revisionEstimate = entityManager.find(RevisionAbstractEstimate.class, id);
             revisionEstimate = revisionAbstractEstimateService.merge(revisionEstimate);
             originalEstimateId = revisionEstimate.getParent().getId();
 
-            abstractEstimate = (AbstractEstimate) persistenceService.find(" from AbstractEstimate where id=?",
-                    originalEstimateId);
+            abstractEstimate = entityManager.find(AbstractEstimate.class, originalEstimateId);
 
             WorkOrderEstimate revWorkOrderEstimate = null;
-            if ("CANCELLED".equals(revisionEstimate.getEgwStatus().getCode()))
-                revWorkOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                        " from WorkOrderEstimate where estimate.id=? and workOrder.egwStatus.code='CANCELLED'", id);
-            else
-                revWorkOrderEstimate = (WorkOrderEstimate) persistenceService.find(
-                        " from WorkOrderEstimate where estimate.id=? and workOrder.egwStatus.code!='CANCELLED'", id);
+            if ("CANCELLED".equals(revisionEstimate.getEgwStatus().getCode())) {
+                final List<WorkOrderEstimate> revWorkOrderEstimates = entityManager.createQuery(
+                        " from WorkOrderEstimate where estimate.id = :estimateId and workOrder.egwStatus.code='CANCELLED'",
+                        WorkOrderEstimate.class)
+                        .setParameter("estimateId", id)
+                        .getResultList();
+                revWorkOrderEstimate = revWorkOrderEstimates.isEmpty() ? null : revWorkOrderEstimates.get(0);
+
+            } else {
+                final List<WorkOrderEstimate> revWorkOrderEstimates = entityManager.createQuery(
+                        " from WorkOrderEstimate where estimate.id = :estimaateId and workOrder.egwStatus.code!='CANCELLED'",
+                        WorkOrderEstimate.class)
+                        .setParameter("estimateId", id)
+                        .getResultList();
+                revWorkOrderEstimate = revWorkOrderEstimates.isEmpty() ? null : revWorkOrderEstimates.get(0);
+            }
             originalWOId = revWorkOrderEstimate.getWorkOrder().getParent().getId();
-            revisionWorkOrder = revisionWorkOrderService.findById(revWorkOrderEstimate.getWorkOrder().getId(), false);
+            revisionWorkOrder = entityManager.find(RevisionWorkOrder.class, revWorkOrderEstimate.getWorkOrder().getId());
 
             reList = revisionAbstractEstimateService.findAllByNamedQuery("REVISION_ESTIMATES_BY_ESTID_WOID",
                     abstractEstimate.getId(), originalWOId);
@@ -255,13 +275,12 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                     .setWorkOrderActivities(revWorkOrderEstimate.getWorkOrderActivities());
 
         } else {
-            abstractEstimate = (AbstractEstimate) persistenceService.find(" from AbstractEstimate where id=?",
-                    originalEstimateId);
+            abstractEstimate = entityManager.find(AbstractEstimate.class, originalEstimateId);
             reList = revisionAbstractEstimateService.findAllByNamedQuery("REVISION_ESTIMATES_BY_ESTID_WOID",
                     abstractEstimate.getId(), originalWOId);
         }
 
-        workOrder = (WorkOrder) persistenceService.find(" from WorkOrder where id=?", originalWOId);
+        workOrder = entityManager.find(WorkOrder.class, originalWOId);
 
         double amnt = 0;
         if (reList != null && !reList.isEmpty()) {
@@ -277,7 +296,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         revisionEstimatesValue = amnt;
 
         if (abstractEstimate != null) {
-            final List<AbstractEstimate> originalRevisedEstimateList = new LinkedList<AbstractEstimate>();
+            final List<AbstractEstimate> originalRevisedEstimateList = new LinkedList<>();
             originalRevisedEstimateList.add(abstractEstimate);
             originalRevisedEstimateList.addAll(reList);
             for (final AbstractEstimate ae : originalRevisedEstimateList)
@@ -295,13 +314,14 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
 
         super.prepare();
         setupDropdownDataExcluding("");
-        List<UOM> uomList = getPersistenceService().findAllBy("from UOM order by upper(uom)");
+        List<UOM> uomList = entityManager.createQuery("from UOM order by upper(uom)", UOM.class)
+                .getResultList();
         if ("createRE".equals(sourcepage) || !"search".equals(sourcepage) && revisionEstimate.getEgwStatus() != null
                 && revisionEstimate.getEgwStatus().getCode().equals("REJECTED"))
             uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
         addDropdownData("uomList", uomList);
         addDropdownData("scheduleCategoryList",
-                getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
+                entityManager.createQuery("from ScheduleCategory order by upper(code)", ScheduleCategory.class).getResultList());
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             logedInUserDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
     }
@@ -402,8 +422,10 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     }
 
     protected void createRevisionEstimate() {
-        final List<AbstractEstimate> revisionEstimates = abstractEstimateService.findAllBy(
-                "from AbstractEstimate where parent.id=?", originalEstimateId);
+        final List<AbstractEstimate> revisionEstimates = entityManager.createQuery(
+                "from AbstractEstimate where parent.id = :id", AbstractEstimate.class)
+                .setParameter("id", originalEstimateId)
+                .getResultList();
 
         reCount = reCount + revisionEstimates.size();
         if (revisionEstimate.getId() != null)
@@ -441,11 +463,14 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     protected void populateChangeQuantityItems() {
         for (final WorkOrderActivity woa : changeQuantityActivities)
             if (woa != null) {
-                final WorkOrderActivity parentWOA = (WorkOrderActivity) getPersistenceService().find(
-                        "from WorkOrderActivity where id=?", woa.getId());
-                final TenderResponse tenderResponse = (TenderResponse) persistenceService.find(
-                        "from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = ?",
-                        workOrder.getNegotiationNumber());
+                final WorkOrderActivity parentWOA = entityManager.find(WorkOrderActivity.class, woa.getId());
+                final List<TenderResponse> results = entityManager.createQuery(
+                        "from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = :number",
+                        TenderResponse.class)
+                        .setParameter("number", workOrder.getNegotiationNumber())
+                        .getResultList();
+                final TenderResponse tenderResponse = results.isEmpty() ? null : results.get(0);
+
                 woa.getActivity().setAbstractEstimate(revisionEstimate);
                 if ("-".equals(woa.getActivity().getSignValue()))
                     woa.getActivity().setRevisionType(RevisionType.REDUCED_QUANTITY);
@@ -462,12 +487,12 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                             && parentWOA.getActivity().getRevisionType().toString()
                                     .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                         woa.getActivity().setRate(
-                              woa.getActivity().getRate()
+                                woa.getActivity().getRate()
                                         * parentWOA.getActivity()
                                                 .getConversionFactorForRE(workOrder.getWorkOrderDate()));
                     else
                         woa.getActivity().setRate(
-                               woa.getActivity().getRate()
+                                woa.getActivity().getRate()
                                         * parentWOA.getActivity().getConversionFactor());
                 } else
                     woa.getActivity().setRate(woa.getActivity().getRate());
@@ -482,7 +507,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     }
 
     public String searchActivitiesForRE() {
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
         if (originalWOId != null)
             criteriaMap.put(WorkOrderServiceImpl.WORKORDER_ID, originalWOId);
         if (originalEstimateId != null)
@@ -494,12 +519,13 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
 
         final List<WorkOrderActivity> tempActivityList = workOrderService
                 .searchWOActivitiesForChangeQuantity(criteriaMap);
-        activityList = new ArrayList<WorkOrderActivity>();
+        activityList = new ArrayList<>();
         for (final WorkOrderActivity woa : tempActivityList)
             if (woa.getActivity() != null
                     && woa.getActivity().getRevisionType() != null
                     && (woa.getActivity().getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || woa.getActivity()
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || woa.getActivity()
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 ; // In search result, don't show the change quantity work order
             // activities
@@ -549,9 +575,13 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             final RevisionWorkOrder revisionWO) {
         double woTotalAmount = 0;
         double approvedAmount = 0;
-        final TenderResponse tenderResponse = (TenderResponse) persistenceService.find(
-                "from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = ?", revisionWO
-                        .getParent().getNegotiationNumber());
+        final List<TenderResponse> results = entityManager.createQuery(
+                "from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = :number",
+                TenderResponse.class)
+                .setParameter("number", revisionWO.getParent().getNegotiationNumber())
+                .getResultList();
+        final TenderResponse tenderResponse = results.isEmpty() ? null : results.get(0);
+
         for (final Activity activity : revisionEstimate.getActivities()) {
             final WorkOrderActivity workOrderActivity = new WorkOrderActivity();
             workOrderActivity.setActivity(activity);
@@ -559,22 +589,30 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             if (activity != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()) || activity.getRevisionType()
+                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
+                            || activity.getRevisionType()
                                     .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
                 workOrderActivity.setApprovedRate(activity.getRate()
                         / activity.getConversionFactorForRE(workOrder.getWorkOrderDate()));
             else if (activity != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || activity
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 if (tenderResponse.getTenderEstimate().getTenderType().equalsIgnoreCase(WorksConstants.PERC_TENDER))
                     workOrderActivity.setApprovedRate(activity.getRate()
                             / activity.getConversionFactorForRE(revisionEstimate.getParent().getEstimateDate()));
                 else {
-                    final WorkOrderActivity parentWOA = (WorkOrderActivity) persistenceService
-                            .find("from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.egwStatus.code = ? and woa.activity.id = ? ",
-                                    WorksConstants.APPROVED, activity.getParent().getId());
+                    final List<WorkOrderActivity> woaResults = entityManager.createQuery(
+                            "from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.egwStatus.code = :status and woa.activity.id = :id ",
+                            WorkOrderActivity.class)
+                            .setParameter("status", WorksConstants.APPROVED)
+                            .setParameter("id", activity.getParent().getId())
+                            .getResultList();
+
+                    final WorkOrderActivity parentWOA = woaResults.isEmpty() ? null : woaResults.get(0);
+
                     workOrderActivity.setApprovedRate(parentWOA.getApprovedRate());
                 }
             workOrderActivity.setApprovedQuantity(activity.getQuantity());
@@ -592,7 +630,8 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
             if (activity != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || activity
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 if (tenderResponse.getTenderEstimate().getTenderType().equalsIgnoreCase(WorksConstants.PERC_TENDER))
                     approvedAmount = approvedAmount + approvedAmount * tenderResponse.getPercNegotiatedAmountRate()
@@ -613,8 +652,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     protected void populateSorActivities(final AbstractEstimate abstractEstimate) {
         for (final Activity activity : sorActivities)
             if (validSorActivity(activity)) {
-                activity.setSchedule((ScheduleOfRate) getPersistenceService().find("from ScheduleOfRate where id = ?",
-                        activity.getSchedule().getId()));
+                activity.setSchedule(entityManager.find(ScheduleOfRate.class, activity.getSchedule().getId()));
                 activity.setUom(activity.getSchedule().getUom());
                 abstractEstimate.addActivity(activity);
             }
@@ -633,8 +671,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 activity.setUom(activity.getNonSor().getUom());
                 if (activity.getNonSor().getId() != null && activity.getNonSor().getId() != 0
                         && activity.getNonSor().getId() != 1) {
-                    final NonSor nonsor = (NonSor) getPersistenceService().find("from NonSor where id = ?",
-                            activity.getNonSor().getId());
+                    final NonSor nonsor = entityManager.find(NonSor.class, activity.getNonSor().getId());
                     if (nonsor == null) {// In case of error on save of
                         // estimate, the nonsor is not yet
                         // persisted .
@@ -687,8 +724,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         final Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
         for (final Activity activity : nonSorActivities)
             if (activity != null && activity.getNonSor().getUom() != null) {
-                final UOM nonSorUom = (UOM) getPersistenceService().find("from UOM where id = ?",
-                        activity.getNonSor().getUom().getId());
+                final UOM nonSorUom = entityManager.find(UOM.class, activity.getNonSor().getUom().getId());
                 if (nonSorUom != null && exceptionSor.contains(nonSorUom.getUom()))
                     throw new ValidationException(Arrays.asList(new ValidationError("validate.nonSor.uom",
                             "validate.nonSor.uom")));

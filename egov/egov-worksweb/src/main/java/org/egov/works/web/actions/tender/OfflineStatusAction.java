@@ -47,6 +47,18 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,18 +76,9 @@ import org.egov.works.models.tender.Retender;
 import org.egov.works.models.tender.RetenderHistory;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.WorksService;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = OfflineStatusAction.EDIT, location = "offlineStatus-edit.jsp"),
         @Result(name = OfflineStatusAction.RETENDER, location = "offlineStatus-retender.jsp"),
@@ -108,13 +111,16 @@ public class OfflineStatusAction extends BaseFormAction {
     private String[][] statusInfo;
     private Integer statusTableXValue;
     private Integer statusTableYValue;
-    private List<RetenderHistory> retenderHistoryList = new LinkedList<RetenderHistory>();
-    private List<Retender> retenderInfoList = new LinkedList<Retender>();
+    private List<RetenderHistory> retenderHistoryList = new LinkedList<>();
+    private List<Retender> retenderInfoList = new LinkedList<>();
     private Boolean retenderingIsAllowed;
     private Boolean retenderingIsSelected;
     private Boolean viewMode = false;
     private Integer iterationCount;
     private String setStatus;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -146,7 +152,7 @@ public class OfflineStatusAction extends BaseFormAction {
                         && retenderDetails.get(i).getIterationNumber() > maxIterations)
                     maxIterations = retenderDetails.get(i).getIterationNumber();
         if (retenderHistoryDetails != null && retenderHistoryDetails.size() > 0) {
-            final Map<Integer, Integer> statusesInDb = new LinkedHashMap<Integer, Integer>();
+            final Map<Integer, Integer> statusesInDb = new LinkedHashMap<>();
             Integer count = 0;
             for (final RetenderHistory rh : retenderHistoryDetails) {
                 count = statusesInDb.get(rh.getEgwStatus().getId());
@@ -196,7 +202,7 @@ public class OfflineStatusAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/tender/offlineStatus-retenderEdit")
     public String retenderEdit() {
-        worksPackage = (WorksPackage) persistenceService.find(" from WorksPackage where id =? ", objId);
+        worksPackage = entityManager.find(WorksPackage.class, objId);
         if (worksPackage.getRetenderDetails() == null || worksPackage.getRetenderDetails().size() == 0)
             iterationCount = 0;
         else
@@ -257,10 +263,13 @@ public class OfflineStatusAction extends BaseFormAction {
                     if (!retenderingIsSelected) {
                         int index = 0;
                         final List<EgwStatus> statusList = getAllStatus();
-                        final List<OfflineStatus> alreadyPersistedStatusForWP = persistenceService.findAllBy(
-                                " from OfflineStatus  " + "  where objectId=? and objectType='" + WORKSPACKAGE
-                                        + "' order by id ",
-                                worksPackage.getId());
+                        final List<OfflineStatus> alreadyPersistedStatusForWP = entityManager.createQuery(
+                                " from OfflineStatus where objectId = :objectId and objectType = :objectType order by id ",
+                                OfflineStatus.class)
+                                .setParameter("objectId", worksPackage.getId())
+                                .setParameter("objectType", WORKSPACKAGE)
+                                .getResultList();
+
                         for (final OfflineStatus st : alreadyPersistedStatusForWP) {
                             if (rh.getEgwStatus().getId().intValue() == st.getEgwStatus().getId().intValue())
                                 addFieldError(getText("wp.retender.both.status.duplicate"),
@@ -331,7 +340,7 @@ public class OfflineStatusAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/tender/offlineStatus-retenderSave")
     public String retenderSave() {
-        worksPackage = (WorksPackage) persistenceService.find(" from WorksPackage where id =? ", objId);
+        worksPackage = entityManager.find(WorksPackage.class, objId);
         validateRetendering();
         if (!getFieldErrors().isEmpty())
             return retenderEdit();
@@ -356,7 +365,7 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     private void saveWhenRetenderingWasNotPreviouslyDone() {
-        final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
+        final List<RetenderHistory> retHistList = new LinkedList<>();
         for (final RetenderHistory rh : retenderHistoryList) {
             if (rh == null)
                 continue;
@@ -378,7 +387,7 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     private void saveWhenRetenderingPreviouslyDoneAndRetenderingIsNotSelected() {
-        final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
+        final List<RetenderHistory> retHistList = new LinkedList<>();
 
         // Info will be added in status of WP and list in retender
         for (final RetenderHistory rh : retenderHistoryList) {
@@ -409,8 +418,8 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     private void saveWhenRetenderingIsSelected() {
-        final List<RetenderHistory> retHistList = new LinkedList<RetenderHistory>();
-        final List<Retender> retList = new LinkedList<Retender>();
+        final List<RetenderHistory> retHistList = new LinkedList<>();
+        final List<Retender> retList = new LinkedList<>();
         for (final Retender ret : retenderInfoList) {
             ret.setWorksPackage(worksPackage);
             if (worksPackage.getRetenderDetails() == null || worksPackage.getRetenderDetails().size() == 0)
@@ -433,11 +442,13 @@ public class OfflineStatusAction extends BaseFormAction {
         retList.get(0).setRetenderHistoryDetails(retHistList);
 
         worksPackage.getRetenderHistoryDetails().addAll(retHistList);
+
         // Delete old offline statuses and add new offline statuses
-        final Query qry1 = getPersistenceService().getSession().createQuery(
-                "delete from OfflineStatus where objectId=:object_id and objectType='WorksPackage' ");
-        qry1.setLong("object_id", worksPackage.getId());
-        qry1.executeUpdate();
+        entityManager.createQuery(
+                "delete from OfflineStatus where objectId = :objectId and objectType = 'WorksPackage' ")
+                .setParameter("objectId", worksPackage.getId())
+                .executeUpdate();
+
         OfflineStatus ss = null;
         for (final RetenderHistory rh : retHistList) {
             ss = new OfflineStatus();
@@ -477,7 +488,7 @@ public class OfflineStatusAction extends BaseFormAction {
             lastStatus = worksService.getWorksConfigValue(objectType + LAST_STATUS);
         }
 
-        final List<String> statList = new ArrayList<String>();
+        final List<String> statList = new ArrayList<>();
         if (StringUtils.isNotBlank(status) && StringUtils.isNotBlank(lastStatus)) {
             final List<String> statusList = Arrays.asList(status.split(","));
             for (final String stat : statusList)
@@ -493,7 +504,7 @@ public class OfflineStatusAction extends BaseFormAction {
             else
                 return egwStatusHibernateDAO.getStatusListByModuleAndCodeList(objectType, statList);
         } else
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
     }
 
     private EgwStatus getDescriptionByCode(final String statName) {
@@ -641,7 +652,7 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     public List<Integer> getRowloop() {
-        final List<Integer> list = new LinkedList<Integer>();
+        final List<Integer> list = new LinkedList<>();
         if (statusTableXValue != null && statusTableXValue >= 0)
             for (Integer i = 0; i <= statusTableXValue; i++)
                 list.add(i);
@@ -649,7 +660,7 @@ public class OfflineStatusAction extends BaseFormAction {
     }
 
     public List<Integer> getColumnloop() {
-        final List<Integer> list = new LinkedList<Integer>();
+        final List<Integer> list = new LinkedList<>();
         if (statusTableYValue != null && statusTableYValue >= 0)
             for (Integer i = 0; i <= statusTableYValue; i++)
                 list.add(i);

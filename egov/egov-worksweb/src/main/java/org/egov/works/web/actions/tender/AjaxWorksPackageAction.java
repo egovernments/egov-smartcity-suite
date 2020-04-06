@@ -47,6 +47,14 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -58,11 +66,6 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
-import org.egov.works.services.WorksPackageService;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -77,7 +80,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
 
     private static final long serialVersionUID = -5753205367102548473L;
     public static final String ESTIMATE_LIST = "estList";
-    private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
+    private List<AbstractEstimate> abstractEstimateList = new ArrayList<>();
     private AbstractEstimateService abstractEstimateService;
     private Money worktotalValue;
     private String estId;
@@ -88,17 +91,19 @@ public class AjaxWorksPackageAction extends BaseFormAction {
     public static final String TENDERFILENUMBERUNIQUECHECK = "tenderFileNumberUniqueCheck";
     private Long id;
     private String tenderFileNumber;
-    private WorksPackageService workspackageService;
     public static final String TENDER_RESPONSE_CHECK = "tenderResponseCheck";
     private boolean tenderResponseCheck;
     private String tenderNegotiationNo;
     private String query = "";
-    private List<WorksPackage> wpList = new LinkedList<WorksPackage>();
+    private List<WorksPackage> wpList = new LinkedList<>();
     public static final String WP_NUMBER_SEARCH_RESULTS = "wpNoSearchResults";
     public static final String TENDER_FILE_NUMBER_SEARCH_RESULTS = "tenderFileNoSearchResults";
     private String mode;
-    private List<String> estimateNumberSearchList = new LinkedList<String>();
+    private List<String> estimateNumberSearchList = new LinkedList<>();
     public static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Action(value = "/tender/ajaxWorksPackage-estimateList")
     public String estimateList() {
@@ -114,6 +119,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         return TENDERFILENUMBERUNIQUECHECK;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean getTenderFileNumberCheck() {
         boolean tenderFileNoexistsOrNot = false;
         Long wpId = null;
@@ -125,7 +131,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
                     tenderFileNumber, id);
 
         if (wpId != null)
-            worksPackage = workspackageService.findById(wpId, false);
+            worksPackage = entityManager.find(WorksPackage.class, wpId);
 
         if (worksPackage != null && worksPackage.getId() != null)
             tenderFileNoexistsOrNot = true;
@@ -138,10 +144,13 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         tenderResponseCheck = false;
         tenderNegotiationNo = "";
         if (!StringUtils.isEmpty(wpId)) {
-            final String query = "from TenderResponse tr where tr.tenderEstimate.worksPackage.id=? and tr.egwStatus.code!='CANCELLED'";
-            final List<Object> paramList = new ArrayList<Object>();
-            paramList.add(Long.valueOf(wpId));
-            final List<TenderResponse> trList = getPersistenceService().findAllBy(query, paramList.toArray());
+            final StringBuffer query = new StringBuffer("from TenderResponse tr")
+                    .append(" where tr.tenderEstimate.worksPackage.id = :wpId and tr.egwStatus.code != 'CANCELLED'");
+
+            final List<TenderResponse> trList = entityManager.createQuery(query.toString(), TenderResponse.class)
+                    .setParameter("wpId", Long.valueOf(wpId))
+                    .getResultList();
+
             if (trList != null && trList.size() > 0) {
                 tenderResponseCheck = true;
                 tenderNegotiationNo = trList.get(0).getNegotiationNumber();
@@ -152,46 +161,57 @@ public class AjaxWorksPackageAction extends BaseFormAction {
 
     @Action(value = "/tender/ajaxWorksPackage-searchWorksPackageNumber")
     public String searchWorksPackageNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
+            TypedQuery<WorksPackage> qry = null;
             if (mode != null && mode.equalsIgnoreCase("cancelWP")) {
-                strquery = "from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code=? ";
-                params.add(query.toUpperCase());
-                params.add("APPROVED");
+                strquery.append(
+                        "from WorksPackage as wp where wp.wpNumber like '%'||:wpNumber||'%' and wp.egwStatus.code = :status ");
+
+                qry = entityManager.createQuery(strquery.toString(), WorksPackage.class)
+                        .setParameter("wpNumber", query.toUpperCase())
+                        .setParameter("status", "APPROVED");
             } else {
-                strquery = "from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code<>? ";
-                params.add(query.toUpperCase());
-                params.add("NEW");
+                strquery.append(
+                        "from WorksPackage as wp where wp.wpNumber like '%'||:wpNumber||'%' and wp.egwStatus.code <> :status ");
+
+                qry = entityManager.createQuery(strquery.toString(), WorksPackage.class)
+                        .setParameter("wpNumber", query.toUpperCase())
+                        .setParameter("status", "NEW");
             }
 
-            wpList = getPersistenceService().findAllBy(strquery, params.toArray());
+            wpList = qry.getResultList();
         }
         return WP_NUMBER_SEARCH_RESULTS;
     }
 
     @Action(value = "/tender/ajaxWorksPackage-searchTenderFileNumber")
     public String searchTenderFileNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "from WorksPackage as wp where wp.tenderFileNumber like '%'||?||'%' and wp.egwStatus.code<>?";
-            params.add(query.toUpperCase());
-            params.add("NEW");
-            wpList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(
+                    "from WorksPackage as wp where wp.tenderFileNumber like '%'||:tenderFileNumber||'%' and wp.egwStatus.code <> :status");
+            wpList = entityManager.createQuery(strquery.toString(), WorksPackage.class)
+                    .setParameter("tenderFileNumber", query.toUpperCase())
+                    .setParameter("status", "NEW")
+                    .getResultList();
         }
         return TENDER_FILE_NUMBER_SEARCH_RESULTS;
     }
 
     @Action(value = "/tender/ajaxWorksPackage-searchEstimateNumber")
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(wpd.estimate.estimateNumber) from WorksPackageDetails wpd where wpd.worksPackage.egwStatus.code<>? and wpd.estimate.estimateNumber like '%'||?||'%' ";
-            params.add("NEW");
-            params.add(query.toUpperCase());
-            estimateNumberSearchList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select distinct(wpd.estimate.estimateNumber)")
+                    .append(" from WorksPackageDetails wpd")
+                    .append(" where wpd.worksPackage.egwStatus.code <> :status and wpd.estimate.estimateNumber like '%'||:estimateNumber||'%' ");
+
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("status", "NEW")
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .getResultList();
+
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -251,10 +271,6 @@ public class AjaxWorksPackageAction extends BaseFormAction {
 
     public void setTenderFileNumber(final String tenderFileNumber) {
         this.tenderFileNumber = tenderFileNumber;
-    }
-
-    public void setWorkspackageService(final WorksPackageService workspackageService) {
-        this.workspackageService = workspackageService;
     }
 
     public void setWpId(final String wpId) {
