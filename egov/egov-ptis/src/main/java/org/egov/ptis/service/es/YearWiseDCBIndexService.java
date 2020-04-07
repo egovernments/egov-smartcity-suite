@@ -135,7 +135,7 @@ public class YearWiseDCBIndexService {
     public List<CFinancialYear> getFinancialYears() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.YEAR, -1);
+        cal.add(Calendar.YEAR, 0);
         return financialYearDAO
                 .getFinancialYearsAfterFromDate(
                         DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(getDCBStartDateFromAppConfig()).toDate(),cal.getTime());
