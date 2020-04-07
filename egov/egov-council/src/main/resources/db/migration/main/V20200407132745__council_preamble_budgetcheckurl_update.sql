@@ -1,0 +1,1 @@
+update eg_appconfig_values set value = '/EGF/budget/budgetSearch.action' where key_id = (select id from eg_appconfig where key_name = 'budgetcheckurl' and module = (select id from eg_module where name = 'Council Management' and parentmodule is null));
