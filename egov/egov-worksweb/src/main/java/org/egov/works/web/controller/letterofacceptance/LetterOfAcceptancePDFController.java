@@ -47,6 +47,14 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -67,13 +75,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class LetterOfAcceptancePDFController {
@@ -91,9 +92,8 @@ public class LetterOfAcceptancePDFController {
     private CityService cityService;
 
     @RequestMapping(value = "/letterOfAcceptancePDF/{letterOfAcceptanceId}", method = RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
-                                                   @PathVariable("letterOfAcceptanceId") final Long id) {
+    public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
+            @PathVariable("letterOfAcceptanceId") final Long id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         return generateReport(workOrder, request);
     }
@@ -120,13 +120,15 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("contractorName",
                     workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
             reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
-                    ? workOrder.getContractor().getCorrespondenceAddress() : "");
+                    ? workOrder.getContractor().getCorrespondenceAddress()
+                    : "");
             reportParams.put("panNo",
                     workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
             reportParams.put("bank",
                     workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
             reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
-                    ? workOrder.getContractor().getBankaccount() : "");
+                    ? workOrder.getContractor().getBankaccount()
+                    : "");
             reportParams.put("subject", lineEstimateDetails.getNameOfWork());
             reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment());
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));

@@ -47,7 +47,21 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.Scheme;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -60,7 +74,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -90,16 +103,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class CreateLineEstimateController extends GenericWorkFlowController {
@@ -111,9 +114,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private SchemeService schemeService;
 
     @Autowired
     private FileStoreService fileStoreService;
@@ -152,13 +152,17 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
         model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
         model.addAttribute("workdetailsadd",
                 WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
-                        ? Boolean.TRUE : Boolean.FALSE);
+                        ? Boolean.TRUE
+                        : Boolean.FALSE);
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
 
@@ -182,7 +186,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
-        validateLineEstimate(lineEstimate,errors);
+        validateLineEstimate(lineEstimate, errors);
         validateBudgetHead(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
@@ -195,7 +199,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
             model.addAttribute("workdetailsadd",
                     WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
-                            ? Boolean.TRUE : Boolean.FALSE);
+                            ? Boolean.TRUE
+                            : Boolean.FALSE);
             return "newLineEstimate-form";
         } else {
 
@@ -226,7 +231,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
             for (final CChartOfAccountDetail detail : accountDetails)
                 if (detail.getDetailTypeId() != null
@@ -241,7 +246,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("schemes", entityManager.createQuery("from Scheme", Scheme.class).getResultList());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -299,7 +304,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     private LineEstimate getEstimateDocuments(final LineEstimate lineEstimate) {
-        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        List<DocumentDetails> documentDetailsList = new ArrayList<>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(),
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         lineEstimate.setDocumentDetails(documentDetailsList);
@@ -341,7 +346,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                 && !BudgetControlType.BudgetCheckOption.NONE.toString()
                         .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
-            final List<String> basMessages = new ArrayList<String>();
+            final List<String> basMessages = new ArrayList<>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
@@ -390,15 +395,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     new String[] { lineEstimate.getLineEstimateNumber() }, null);
 
         return message;
-    }
-
-    private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        Integer index = 0;
-        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            if (led.getQuantity() <= 0)
-                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
-            index++;
-        }
     }
 
     private void validateLineEstimate(LineEstimate lineEstimate, BindingResult errors) {

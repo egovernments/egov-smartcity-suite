@@ -47,6 +47,27 @@
  */
 package org.egov.works.web.actions.workorder;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -110,32 +131,15 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = WorkOrderAction.PRINT, type = "stream", location = "WorkOrderPDF", params = {
-                "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache"}),
+                "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
         @Result(name = WorkOrderAction.WORKORDERNOTICEPDF, type = "stream", location = "WorkOrderPDF", params = {
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition",
-                "no-cache;filename=WorkOrderNotice.pdf"}),
-        @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp")})
+                "no-cache;filename=WorkOrderNotice.pdf" }),
+        @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp") })
 public class WorkOrderAction extends BaseFormAction {
 
     public static final String APPROVED = "APPROVED";
@@ -167,7 +171,6 @@ public class WorkOrderAction extends BaseFormAction {
     private transient WorkOrderService workOrderService;
     private transient WorksService worksService;
     private transient TenderResponseService tenderResponseService;
-    private transient AbstractEstimateService abstractEstimateService;
     private transient PersistenceService<OfflineStatus, Long> worksStatusService;
     @Autowired
     private transient EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -214,12 +217,10 @@ public class WorkOrderAction extends BaseFormAction {
     private transient PersonalInformationService personalInformationService;
     private Long tenderRespContrId;
     private transient TenderResponseContractors tenderResponseContractor;
-    private transient PersistenceService<TenderResponseContractors, Long> tenderResponseContractorsService;
     private Double securityDepositConfValue;
     private Double labourWelfareFundConfValue;
     private transient List<WorkOrderActivity> actionWorkOrderActivities = new LinkedList<>();
     private transient List<WorkOrderActivity> woActivities = new LinkedList<>();
-    private transient PersistenceService<Activity, Long> activityService;
     private Integer page = 1;
     private Integer pageSize = 30;
     private transient EgovPaginatedList pagedResults;
@@ -235,6 +236,9 @@ public class WorkOrderAction extends BaseFormAction {
     private Boolean isWorkCommenced;
     private Integer reportId = -1;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public WorkOrderAction() {
         addRelatedEntity("contractor", Contractor.class);
         addRelatedEntity("engineerIncharge", PersonalInformation.class);
@@ -242,10 +246,11 @@ public class WorkOrderAction extends BaseFormAction {
         addRelatedEntity("workOrderPreparedBy", PersonalInformation.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
         if (estimateId != null)
-            abstractEstimate = abstractEstimateService.findById(estimateId, false);
+            abstractEstimate = entityManager.find(AbstractEstimate.class, estimateId);
 
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         final AjaxWorkOrderAction ajaxWorkOrderAction = new AjaxWorkOrderAction();
@@ -255,16 +260,16 @@ public class WorkOrderAction extends BaseFormAction {
         ajaxEstimateAction.setAssignmentService(assignmentService);
         ajaxEstimateAction.setEisService(eisService);
         addDropdownData("executingDepartmentList",
-                getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)"));
+                entityManager.createQuery("from DepartmentImpl order by upper(deptName)", Department.class).getResultList());
         if (worksService != null) {
             final List<String> tenderTypeList = worksService.getTendertypeList();
             if (tenderTypeList != null && !tenderTypeList.isEmpty())
                 percTenderType = tenderTypeList.get(0);
         }
         if (tenderRespId != null) {
-            tenderResponse = tenderResponseService.findById(tenderRespId, false);
+            tenderResponse = entityManager.find(TenderResponse.class, tenderRespId);
             if (tenderRespContrId != null)
-                tenderResponseContractor = tenderResponseContractorsService.findById(tenderRespContrId, false);
+                tenderResponseContractor = entityManager.find(TenderResponseContractors.class, tenderRespContrId);
             if (tenderResponse.getTenderResponseContractors().size() > 1)
                 workOrder.setWorkOrderAmount(0.0D);
             else
@@ -272,13 +277,14 @@ public class WorkOrderAction extends BaseFormAction {
             tenderResponse.setActivitiesForWorkorder(workOrderService.getActivitiesForWorkorder(tenderResponse));
         }
         if (id != null) {
-            workOrder = workOrderService.findById(id, false);
+            workOrder = entityManager.find(WorkOrder.class, id);
             final Object woNoticeFlag = workOrderService.getWorkCommencedDateByWOId(id);
             isWorkCommenced = woNoticeFlag == null ? false : true;
 
             if (workOrder.getEgwStatus().getCode().equalsIgnoreCase("cancelled"))
                 tenderResponse = tenderResponseService.findByNamedQuery("getTenderFortenderIdCanceledWO", workOrder
-                                .getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(), workOrder
+                        .getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(),
+                        workOrder
                                 .getContractor().getId(),
                         workOrder.getPackageNumber());
             else
@@ -286,10 +292,13 @@ public class WorkOrderAction extends BaseFormAction {
                         workOrder.getTenderNumber());
             tenderRespId = tenderResponse.getId();
             tenderResponse.setWorkOrderAmount(getWorkOrderAmount());
-            tenderResponseContractor = tenderResponseContractorsService.find(
-                    "from TenderResponseContractors where contractor.id=? and tenderResponse.id=?", workOrder
-                            .getContractor().getId(),
-                    tenderResponse.getId());
+            final List<TenderResponseContractors> results = entityManager.createQuery(
+                    "from TenderResponseContractors where contractor.id = :cId and tenderResponse.id = :trId",
+                    TenderResponseContractors.class)
+                    .setParameter("cId", workOrder.getContractor().getId())
+                    .setParameter("trId", tenderResponse.getId())
+                    .getResultList();
+            tenderResponseContractor = results.isEmpty() ? null : results.get(0);
             tenderRespContrId = tenderResponseContractor.getId();
             setWorkOrderActivities(workOrder);
         }
@@ -345,6 +354,7 @@ public class WorkOrderAction extends BaseFormAction {
 
     }
 
+    @SuppressWarnings("rawtypes")
     private List getUsersInDepartment() {
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
@@ -456,17 +466,17 @@ public class WorkOrderAction extends BaseFormAction {
                 && workOrder.getWorkOrderDate() != null
                 && tenderResponse.getEgwStatus() != null
                 && TenderResponse.TenderResponseStatus.APPROVED.toString().equals(
-                tenderResponse.getEgwStatus().getCode())
+                        tenderResponse.getEgwStatus().getCode())
                 && DateConversionUtil.isBeforeByDate(workOrder.getWorkOrderDate(), tenderResponse.getState()
-                .getCreatedDate()))
+                        .getCreatedDate()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "workorder.workorderDate.lessthan.approvedDate", "workorder.workorderDate.lessthan.approvedDate")));
         else if (getWorkOrderCreationDate() != null && workOrder.getWorkOrderDate() != null
                 && DateConversionUtil.isBeforeByDate(workOrder.getWorkOrderDate(), getWorkOrderCreationDate()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "workorder.workorderDate.lessthan.statusDate", getText(
-                    "workorder.workorderDate.lessthan.statusDate", new String[]{setStatusObj.getEgwStatus()
-                            .getDescription()}))));
+                            "workorder.workorderDate.lessthan.statusDate", new String[] { setStatusObj.getEgwStatus()
+                                    .getDescription() }))));
     }
 
     @SkipValidation
@@ -651,14 +661,14 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void addTenderResponseActivities(final WorkOrderEstimate workOrderEstimate,
-                                             final TenderResponseActivity tenderResponseActivity) {
+            final TenderResponseActivity tenderResponseActivity) {
         final WorkOrderActivity workOrderActivity = new WorkOrderActivity();
         workOrderActivity.setActivity(tenderResponseActivity.getActivity());
         workOrderActivity.setApprovedRate(tenderResponseActivity.getNegotiatedRate());
         workOrderActivity.setApprovedQuantity(tenderResponseActivity.getNegotiatedQuantity());
         workOrderActivity.setApprovedAmount(new Money(workOrderActivity.getApprovedRate()
                 * workOrderActivity.getApprovedQuantity() * tenderResponseActivity.getActivity().getConversionFactor())
-                .getValue());
+                        .getValue());
         workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
         workOrderEstimate.addWorkOrderActivity(workOrderActivity);
     }
@@ -710,6 +720,7 @@ public class WorkOrderAction extends BaseFormAction {
         return totalAmt;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @ValidationErrorPage(value = SEARCH_WO)
     public String searchWorkOrderDetails() {
         final Map<String, Object> criteriaMap = new HashMap<>();
@@ -779,7 +790,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     protected List<WorkOrder> getPositionAndUser(final List<WorkOrder> results) {
-        final List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
+        final List<WorkOrder> workOrderList = new ArrayList<>();
         for (final WorkOrder workOrder : results) {
             if (workOrder.getCurrentState() != null)
                 if (!workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
@@ -876,7 +887,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-                                        final boolean executingDeptPopulated) {
+            final boolean executingDeptPopulated) {
         if (executingDeptPopulated) {
             ajaxEstimateAction.setExecutingDepartment(deptId);
             ajaxEstimateAction.usersInExecutingDepartment();
@@ -886,7 +897,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void populateWorkOrderAssignedToList(final AjaxWorkOrderAction ajaxWorkOrderAction,
-                                                 final boolean executingDeptPopulated) {
+            final boolean executingDeptPopulated) {
         if (executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDepartmentName(departmentService.getDepartmentById(Long.valueOf(deptId)).getName());
             ajaxWorkOrderAction.getDesignationByDeptId();
@@ -896,7 +907,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void populateWorkOrderUsersList1(final AjaxWorkOrderAction ajaxWorkOrderAction, final boolean desgId,
-                                             final boolean executingDeptPopulated) {
+            final boolean executingDeptPopulated) {
         if (desgId && executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDesgId(getAssignedTo1());
             ajaxWorkOrderAction.setExecutingDepartment(deptId);
@@ -907,7 +918,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void populateWorkOrderUsersList2(final AjaxWorkOrderAction ajaxWorkOrderAction, final boolean desgId,
-                                             final boolean executingDeptPopulated) {
+            final boolean executingDeptPopulated) {
         if (desgId && executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDesgId(getAssignedTo2());
             ajaxWorkOrderAction.setExecutingDepartment(deptId);
@@ -1050,7 +1061,6 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public String getEditableDate() {
@@ -1307,7 +1317,6 @@ public class WorkOrderAction extends BaseFormAction {
 
     public void setTenderResponseContractorsService(
             final PersistenceService<TenderResponseContractors, Long> tenderResponseContractorsService) {
-        this.tenderResponseContractorsService = tenderResponseContractorsService;
     }
 
     public List<WorkOrderActivity> getActionWorkOrderActivities() {
@@ -1319,14 +1328,13 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     public void setActivityService(final PersistenceService<Activity, Long> activityService) {
-        this.activityService = activityService;
     }
 
     public Collection<WorkOrderActivity> getActionWorkOrderActivityList() {
         final Collection<WorkOrderActivity> woActivityList = workOrderService
                 .getActionWorkOrderActivitiesList(actionWorkOrderActivities);
         for (final WorkOrderActivity workOrderActivity : woActivityList) {
-            workOrderActivity.setActivity(activityService.findById(workOrderActivity.getActivity().getId(), false));
+            workOrderActivity.setActivity(entityManager.find(Activity.class, workOrderActivity.getActivity().getId()));
             workOrderActivity.setUnAssignedQuantity(workOrderActivity.getActivity().getQuantity()
                     - getAssignedQuantity(workOrderActivity.getActivity().getId(), workOrder.getNegotiationNumber()));
         }
@@ -1348,7 +1356,7 @@ public class WorkOrderAction extends BaseFormAction {
                 for (final WorkOrderActivity workOrderActivity : workOrderEstimate.getWorkOrderActivities()) {
                     workOrderActivity.setUnAssignedQuantity(workOrderActivity.getActivity().getQuantity()
                             - getAssignedQuantity(workOrderActivity.getActivity().getId(), workOrderActivity
-                            .getWorkOrderEstimate().getWorkOrder().getNegotiationNumber()));
+                                    .getWorkOrderEstimate().getWorkOrder().getNegotiationNumber()));
                     woActivities.add(workOrderActivity);
                 }
     }
@@ -1372,12 +1380,13 @@ public class WorkOrderAction extends BaseFormAction {
                 }
                 if (workOrder.getEgwStatus() != null
                         && (workOrder.getEgwStatus().getCode().equalsIgnoreCase("NEW") || workOrder.getEgwStatus()
-                        .getCode().equalsIgnoreCase("REJECTED"))
+                                .getCode().equalsIgnoreCase("REJECTED"))
                         && id != null) {
                     validateMandatoryFields();
                     if (contractPeriodCutOffDate != null) {
-                        final Date createdDate = workOrder.getCreatedDate() == null ? new Date() : workOrder
-                                .getCreatedDate();
+                        final Date createdDate = workOrder.getCreatedDate() == null ? new Date()
+                                : workOrder
+                                        .getCreatedDate();
                         if (createdDate.after(contractPeriodCutOffDate))
                             validateContractPeriod(contractPrd);
                     }
@@ -1417,9 +1426,12 @@ public class WorkOrderAction extends BaseFormAction {
 
     private void singleContractorValidation() {
         if (id == null) {
-            final WorkOrder woObj = (WorkOrder) persistenceService.find(
-                    "from WorkOrder wo where wo.negotiationNumber = ? and wo.egwStatus.code!='CANCELLED' ",
-                    workOrder.getNegotiationNumber());
+            final List<WorkOrder> results = entityManager.createQuery(
+                    "from WorkOrder wo where wo.negotiationNumber = :negotiationNumber and wo.egwStatus.code!='CANCELLED' ",
+                    WorkOrder.class)
+                    .setParameter("negotiationNumber", workOrder.getNegotiationNumber())
+                    .getResultList();
+            final WorkOrder woObj = results.isEmpty() ? null : results.get(0);
             if (woObj != null)
                 addActionError(getText("workOrder.tenderNegotiation.uniqueCheck.message"));
         }
@@ -1427,10 +1439,20 @@ public class WorkOrderAction extends BaseFormAction {
 
     private void multipleContractorsValidation() {
         if (id == null) {
-            final String woaQuery = "select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? and woa.workOrderEstimate.workOrder.egwStatus.code !='CANCELLED' ";
-            final Double countWoaIds = (Double) persistenceService.find(woaQuery, workOrder.getNegotiationNumber());
-            final String traQuery = "select sum(tra.negotiatedQuantity) from TenderResponseActivity tra where tra.tenderResponse.negotiationNumber = ? and tra.tenderResponse.egwStatus.code != 'CANCELLED'";
-            final Double countTraIds = (Double) persistenceService.find(traQuery, workOrder.getNegotiationNumber());
+            final StringBuffer woaQuery = new StringBuffer("select sum(woa.approvedQuantity)")
+                    .append(" from WorkOrderActivity woa")
+                    .append(" where woa.workOrderEstimate.workOrder.negotiationNumber = :negotiationNumber")
+                    .append(" and woa.workOrderEstimate.workOrder.egwStatus.code !='CANCELLED' ");
+            final Double countWoaIds = entityManager.createQuery(woaQuery.toString(), Double.class)
+                    .setParameter("negotiationNumber", workOrder.getNegotiationNumber())
+                    .getSingleResult();
+            final StringBuffer traQuery = new StringBuffer("select sum(tra.negotiatedQuantity)")
+                    .append(" from TenderResponseActivity tra")
+                    .append(" where tra.tenderResponse.negotiationNumber = :negotiationNumber")
+                    .append(" and tra.tenderResponse.egwStatus.code != 'CANCELLED'");
+            final Double countTraIds = entityManager.createQuery(traQuery.toString(), Double.class)
+                    .setParameter("negotiationNumber", workOrder.getNegotiationNumber())
+                    .getSingleResult();
 
             if (countWoaIds != null && countTraIds != null && countTraIds != 0 && countWoaIds != 0
                     && countWoaIds >= countTraIds)
@@ -1444,7 +1466,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private double getAssignedQuantity(final Long activityId, final String negotiationNumber) {
-        final Object[] params = new Object[]{negotiationNumber, WorksConstants.CANCELLED_STATUS, activityId};
+        final Object[] params = new Object[] { negotiationNumber, WorksConstants.CANCELLED_STATUS, activityId };
         final Double assignedQty = (Double) getPersistenceService().findByNamedQuery("getAssignedQuantityForActivity",
                 params);
 
@@ -1521,7 +1543,7 @@ public class WorkOrderAction extends BaseFormAction {
             }
         if (!arfNo.equals(""))
             throw new ValidationException(Arrays.asList(new ValidationError("cancelWO.arf.created.message", getText(
-                    "cancelWO.arf.created.message", new String[]{arfNo, estimateNo}))));
+                    "cancelWO.arf.created.message", new String[] { arfNo, estimateNo }))));
     }
 
     public void setUserService(final UserService userService) {

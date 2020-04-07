@@ -48,11 +48,10 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
@@ -61,9 +60,11 @@ import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {

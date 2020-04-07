@@ -47,9 +47,25 @@
  */
 package org.egov.works.web.actions.workorder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -72,18 +88,7 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 public class AjaxWorkOrderAction extends BaseFormAction {
 
     private static final long serialVersionUID = 6775725729956509634L;
@@ -92,19 +97,18 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     private static final String WORKORDER_DESIG_LIST = "workOrderDesignations";
     private static final String WORKORDER_USER_LIST = "workOrderUsers";
     private static final String WORKORDER_ASSIGNED_LIST = "workOrderAssignedUsers";
-    private List<Designation> workOrderDesigList = new ArrayList<Designation>();
+    private List<Designation> workOrderDesigList = new ArrayList<>();
     private String traIds;
-    private List<TenderResponseActivity> tenderResponseActivitylist = new ArrayList<TenderResponseActivity>();
+    private List<TenderResponseActivity> tenderResponseActivitylist = new ArrayList<>();
     private PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService;
     private Long executingDepartment;
     private PersonalInformationService personalInformationService;
-    private List userList;
-    private MeasurementBookService measurementBookService;
-    List<MBHeader> approvedMBList = new ArrayList<MBHeader>();;
+    private List<EmployeeView> userList;
+    List<MBHeader> approvedMBList = new ArrayList<>();;
     private Long workOrderId;
     private String query = "";
-    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
-    private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
+    private List<AbstractEstimate> estimateList = new LinkedList<>();
+    private List<WorkOrder> workOrderList = new LinkedList<>();
     private String trackMlsCheck;
     private String yearEndApprCheck;
     @Autowired
@@ -122,11 +126,15 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     @Autowired
     private ScriptService scriptService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     public Object getModel() {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public String getDesignationByDeptId() {
         // List<Script> scriptList =
         // persistenceService.findAllByNamedQuery(Script.BY_NAME,"workOrder.Designation.ByDepartment");
@@ -144,11 +152,11 @@ public class AjaxWorkOrderAction extends BaseFormAction {
 
     public String getUsersForDesg() {
         try {
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            final HashMap<String, Object> criteriaParams = new HashMap<>();
             criteriaParams.put("designationId", desgId.intValue());
             criteriaParams.put("departmentId", executingDepartment);
             if (executingDepartment == null || executingDepartment == -1)
-                userList = Collections.EMPTY_LIST;
+                userList = Collections.emptyList();
             else
                 userList = personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
         } catch (final Exception e) {
@@ -160,12 +168,15 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     public String getWOAssignedTo1ForDepartment() {
         try {
             if (executingDepartment == null || executingDepartment == -1)
-                userList = Collections.EMPTY_LIST;
+                userList = Collections.emptyList();
             else
-                userList = persistenceService
-                        .findAllBy(
-                                "select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
-                                executingDepartment);
+                userList = entityManager.createQuery(
+                        new StringBuffer("select distinct woe.workOrder.engineerIncharge")
+                                .append(" from  WorkOrderEstimate woe")
+                                .append(" where woe.estimate.executingDepartment.id = :deptId").toString(),
+                        EmployeeView.class)
+                        .setParameter("deptId", executingDepartment)
+                        .getResultList();
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -175,12 +186,15 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     public String getWOAssignedTo2ForDepartment() {
         try {
             if (executingDepartment == null || executingDepartment == -1)
-                userList = Collections.EMPTY_LIST;
+                userList = Collections.emptyList();
             else
-                userList = persistenceService
-                        .findAllBy(
-                                "select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
-                                executingDepartment);
+                userList = entityManager.createQuery(
+                        new StringBuffer("select distinct woe.workOrder.engineerIncharge2")
+                                .append(" from  WorkOrderEstimate woe")
+                                .append(" where woe.estimate.executingDepartment.id = :deptId").toString(),
+                        EmployeeView.class)
+                        .setParameter("deptId", executingDepartment)
+                        .getResultList();
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("user.find.error", e);
         }
@@ -189,8 +203,8 @@ public class AjaxWorkOrderAction extends BaseFormAction {
 
     public String getTenderResponseActivityList() {
         if (StringUtils.isNotBlank(traIds)) {
-            final Set<Long> traIdentifierSet = new HashSet<Long>();
-            final Map<Long, Double> traMap = new HashMap<Long, Double>();
+            final Set<Long> traIdentifierSet = new HashSet<>();
+            final Map<Long, Double> traMap = new HashMap<>();
             final String[] values = traIds.split("\\^");// To split the data
                                                         // (For
             // Eg:1^2)
@@ -209,7 +223,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
                     j++;
                 }
             traIdentifierSet.addAll(Arrays.asList(traIdLong));
-            List<TenderResponseActivity> tempList = new ArrayList<TenderResponseActivity>();
+            List<TenderResponseActivity> tempList = new ArrayList<>();
             tempList = tenderResponseActivityService.findAllByNamedQuery("getTenderResponseActivityByIds",
                     traIdentifierSet);
             for (final TenderResponseActivity tenderResponseActivity : tempList) {
@@ -240,15 +254,19 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     }
 
     public String getApprovedMBsForWorkOrder() {
-        approvedMBList = measurementBookService.findAllBy(
-                " from MBHeader where workOrder.id=? and egwStatus.code<>'CANCELLED'", workOrderId);
+        approvedMBList = entityManager.createQuery(
+                " from MBHeader where workOrder.id = :woId and egwStatus.code <>'CANCELLED'", MBHeader.class)
+                .setParameter("woId", workOrderId)
+                .getResultList();
         return "approvedMBs";
     }
 
     public String advanceRequisitionInWorkflowCheck() {
         arfInWorkFlowCheck = VALID;
-        final List<WorkOrderEstimate> woeList = persistenceService.findAllBy(
-                " from WorkOrderEstimate woe where woe.workOrder.id = ? ", workOrderId);
+        final List<WorkOrderEstimate> woeList = entityManager.createQuery(
+                " from WorkOrderEstimate woe where woe.workOrder.id = :woId ", WorkOrderEstimate.class)
+                .setParameter("woId", workOrderId)
+                .getResultList();
         if (woeList.size() == 1) {
             final ContractorAdvanceRequisition arf = contractorAdvanceService.getContractorARFInWorkflowByWOEId(woeList
                     .get(0).getId());
@@ -266,10 +284,14 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     }
 
     public String trackMilestoneForBillCreationCheck() {
-        final List<TrackMilestone> tm = persistenceService
-                .findAllBy(
-                        " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = ? and trmls.total>0 ",
-                        workOrderId);
+        final List<TrackMilestone> tm = entityManager.createQuery(
+                new StringBuffer(" select trmls")
+                        .append(" from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls")
+                        .append(" where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = :woId and trmls.total>0 ")
+                        .toString(),
+                TrackMilestone.class)
+                .setParameter("woId", workOrderId)
+                .getResultList();
         trackMlsCheck = "invalid";
         if (tm != null && !tm.isEmpty() && tm.get(0) != null)
             trackMlsCheck = "valid";
@@ -277,8 +299,10 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     }
 
     public String yearEndApprForBillCreationCheck() {
-        final List<WorkOrderEstimate> woeList = persistenceService.findAllBy(
-                " from WorkOrderEstimate woe where woe.workOrder.id = ? ", workOrderId);
+        final List<WorkOrderEstimate> woeList = entityManager.createQuery(
+                " from WorkOrderEstimate woe where woe.workOrder.id = :woId ", WorkOrderEstimate.class)
+                .setParameter("woId", workOrderId)
+                .getResultList();
         yearEndApprCheck = VALID;
         Long currentFinYearId = 0l;
         if (woeList.size() == 1) {
@@ -309,27 +333,33 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     }
 
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and UPPER(woe.estimate.estimateNumber) like '%'||?||'%' "
-                    + " and woe.workOrder.egwStatus.code = ? )";
-            params.add(query.toUpperCase());
-            params.add("APPROVED");
-            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append("select woe.estimate")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where woe.workOrder.parent is null and UPPER(woe.estimate.estimateNumber) like '%'||:estimateNumber||'%' ")
+                    .append(" and woe.workOrder.egwStatus.code = :status )");
+
+            estimateList = entityManager.createQuery(strquery.toString(), AbstractEstimate.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("status", "APPROVED")
+                    .getResultList();
+
         }
         return "estimateNoSearchResults";
     }
 
     public String searchWorkOrderNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = " from WorkOrder wo where wo.parent is null and UPPER(wo.workOrderNumber) like '%'||?||'%' "
-                    + "and wo.egwStatus.code = ? ";
-            params.add(query.toUpperCase());
-            params.add("APPROVED");
-            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+            strquery.append(
+                    " from WorkOrder wo where wo.parent is null and UPPER(wo.workOrderNumber) like '%'||:workOrderNumber||'%' ")
+                    .append(" and wo.egwStatus.code = :status ");
+
+            workOrderList = entityManager.createQuery(strquery.toString(), WorkOrder.class)
+                    .setParameter("workOrderNumber", query.toUpperCase())
+                    .setParameter("status", "APPROVED")
+                    .getResultList();
         }
         return "workOrderNoSearchResults";
     }
@@ -387,16 +417,15 @@ public class AjaxWorkOrderAction extends BaseFormAction {
         this.personalInformationService = personalInformationService;
     }
 
-    public List getUserList() {
+    public List<EmployeeView> getUserList() {
         return userList;
     }
 
-    public void setUserList(final List userList) {
+    public void setUserList(final List<EmployeeView> userList) {
         this.userList = userList;
     }
 
     public void setMeasurementBookService(final MeasurementBookService measurementBookService) {
-        this.measurementBookService = measurementBookService;
     }
 
     public List<MBHeader> getApprovedMBList() {

@@ -47,8 +47,9 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -76,8 +77,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -90,22 +91,22 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchLetterOfAcceptanceJsonAdaptor searchLetterOfAcceptanceJsonAdaptor;
-    
+
     @Autowired
     private SearchContractorJsonAdaptor searchContractorJsonAdaptor;
 
     @Autowired
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
-    
+
     @Autowired
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
-    
+
     @Autowired
     private TrackMilestoneService trackMilestoneService;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
@@ -187,9 +188,9 @@ public class AjaxLetterOfAcceptanceController {
         WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrderId);
         TrackMilestone trackMileStone = trackMilestoneService
                 .getMinimumPercentageToCreateContractorBill(workOrderEstimate.getId());
-        if (trackMileStone == null) {
+        if (trackMileStone == null)
             message = messageSource.getMessage("error.contractorbil.milestone.percentage", null, null);
-        } else {
+        else {
             Boolean nonApprovedBills = letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
             if (!nonApprovedBills)
                 message = messageSource.getMessage("error.contractorbill.nonapprovedbills",
@@ -197,7 +198,7 @@ public class AjaxLetterOfAcceptanceController {
         }
         return message;
     }
-    
+
     @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCode(@RequestParam final String name) {
         return contractorService.getContractorsByCode(name);
@@ -206,36 +207,37 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajax-contractorsforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxContractorSearch(final Model model,
             @ModelAttribute final SearchRequestContractor searchRequestContractor) {
-        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService.searchContractorDetails(searchRequestContractor);
-        final List<Contractor> contractors = new ArrayList<Contractor>();
-        for(ContractorDetail cd : contractorDetails) {
-            if(!contractors.contains(cd.getContractor()))
+        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService
+                .searchContractorDetails(searchRequestContractor);
+        final List<Contractor> contractors = new ArrayList<>();
+        for (ContractorDetail cd : contractorDetails)
+            if (!contractors.contains(cd.getContractor()))
                 contractors.add(cd.getContractor());
-        }
         final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchContractorJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, searchContractorJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxloanumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbersForMilestone(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.findLoaWorkOrderNumberForMilestone(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String code) {
         return letterOfAcceptanceService.findWorkIdentificationNumbersToCreateMilestone(code);
     }
 
     @RequestMapping(value = "/ajaxsearch-loaformilestone", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchLoaToCreateMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+    public @ResponseBody String showSearchLoaToCreateMilestone(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrder> workOrder = letterOfAcceptanceService
                 .getLoaForCreateMilestone(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillJson(workOrder))
@@ -249,16 +251,17 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxsearch-loatomodify", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLoaToModify(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> searchLoaList = letterOfAcceptanceService.searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
+        final List<WorkOrder> searchLoaList = letterOfAcceptanceService
+                .searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
                 .append("}").toString();
         return result;
     }
-    
+
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchLOAsToCancel(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
@@ -277,32 +280,32 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumbers-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkIdNumbersToCancelLOA(@RequestParam final String code) {
         return letterOfAcceptanceService.findWorkIdentificationNumbersToSearchLOAToCancel(code);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsToCancelLOA(@RequestParam final String code) {
         return letterOfAcceptanceService.findContractorsToSearchLOAToCancel(code);
     }
-    
+
     @RequestMapping(value = "/ajax-checkifbillscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
         final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
         String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
-        if(billNumbers.equals(""))
+        if (billNumbers.equals(""))
             return "";
-        
+
         return message;
     }
-    
+
     @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);

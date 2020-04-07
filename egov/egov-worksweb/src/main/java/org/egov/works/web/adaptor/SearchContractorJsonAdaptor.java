@@ -47,17 +47,19 @@
  */
 package org.egov.works.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.works.models.masters.Contractor;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.works.models.masters.Contractor;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
 
 @Component
 public class SearchContractorJsonAdaptor implements JsonSerializer<Contractor> {
+    @SuppressWarnings("deprecation")
     @Override
     public JsonElement serialize(final Contractor contractor, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();

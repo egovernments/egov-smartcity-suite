@@ -48,6 +48,11 @@
 
 package org.egov.works.web.controller.lineestimate;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -70,11 +75,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -114,7 +114,8 @@ public class LineEstimatePDFController {
             reportParams.put("ref", lineEstimate.getReference());
             reportParams.put("dated",
                     lineEstimate.getAdminSanctionDate() != null
-                            ? DateUtils.getFormattedDate(lineEstimate.getAdminSanctionDate(), "dd/MM/yyyy") : "");
+                            ? DateUtils.getFormattedDate(lineEstimate.getAdminSanctionDate(), "dd/MM/yyyy")
+                            : "");
             reportParams.put("scheme", lineEstimate.getScheme() != null ? lineEstimate.getScheme().getName() : "");
             reportParams.put("function", lineEstimate.getFunction() != null ? lineEstimate.getFunction().getName() : "");
             reportParams.put("account", lineEstimate.getBudgetHead() != null ? lineEstimate.getBudgetHead().getName() : "");

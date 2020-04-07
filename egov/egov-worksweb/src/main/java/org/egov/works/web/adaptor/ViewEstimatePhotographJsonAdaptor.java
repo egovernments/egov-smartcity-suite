@@ -48,10 +48,8 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.service.TrackMilestoneService;
@@ -60,23 +58,28 @@ import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class ViewEstimatePhotographJsonAdaptor implements JsonSerializer<LineEstimateDetails> {
-	
-	@Autowired
-	private WorkOrderEstimateService workOrderEstimateService;
-	
-	@Autowired
-	private TrackMilestoneService trackMilestoneService; 
-	
+
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
+
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+
+    @SuppressWarnings("deprecation")
     @Override
     public JsonElement serialize(final LineEstimateDetails lineEstimateDetails, final Type type,
             final JsonSerializationContext jsc) {
-    	
-    	final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByEstimateNumber(lineEstimateDetails.getEstimateNumber());
-    	
+
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByEstimateNumber(lineEstimateDetails.getEstimateNumber());
+
         final JsonObject jsonObject = new JsonObject();
         if (lineEstimateDetails != null) {
             if (lineEstimateDetails.getProjectCode() != null)
@@ -91,25 +94,25 @@ public class ViewEstimatePhotographJsonAdaptor implements JsonSerializer<LineEst
                 jsonObject.addProperty("estimateAmount", lineEstimateDetails.getEstimateAmount());
             else
                 jsonObject.addProperty("estimateAmount", "");
-            if(workOrderEstimate != null){
-            	jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
-            	jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
-            	
-            } else{
-            	jsonObject.addProperty("workOrderNumber", "NA");
-            	jsonObject.addProperty("contractorName", "NA");
-            	jsonObject.addProperty("workCompletion", "NA");
+            if (workOrderEstimate != null) {
+                jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
+                jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
+
+            } else {
+                jsonObject.addProperty("workOrderNumber", "NA");
+                jsonObject.addProperty("contractorName", "NA");
+                jsonObject.addProperty("workCompletion", "NA");
             }
-            if(workOrderEstimate != null){
-            	final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
-            	if(trackMilestone != null)
-            		jsonObject.addProperty("workCompletion", trackMilestone.getTotalPercentage());
-            	else
-            		jsonObject.addProperty("workCompletion", "NA");
-            		
+            if (workOrderEstimate != null) {
+                final TrackMilestone trackMilestone = trackMilestoneService
+                        .getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
+                if (trackMilestone != null)
+                    jsonObject.addProperty("workCompletion", trackMilestone.getTotalPercentage());
+                else
+                    jsonObject.addProperty("workCompletion", "NA");
+
             }
-        		
-            	
+
             jsonObject.addProperty("lineEstimateDetailsId", lineEstimateDetails.getId());
         }
         return jsonObject;

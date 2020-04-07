@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -80,14 +89,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class UpdateContractorBillController extends GenericWorkFlowController {
@@ -105,7 +106,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
-    
+
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
@@ -361,7 +362,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     }
 
     private ContractorBillRegister getContractorBillDocuments(final ContractorBillRegister contractorBillRegister) {
-        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        List<DocumentDetails> documentDetailsList = new ArrayList<>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(contractorBillRegister.getId(),
                 WorksConstants.CONTRACTORBILL);
         contractorBillRegister.setDocumentDetails(documentDetailsList);

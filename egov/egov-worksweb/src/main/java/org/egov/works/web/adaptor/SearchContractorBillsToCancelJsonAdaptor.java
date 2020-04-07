@@ -47,27 +47,24 @@
  */
 package org.egov.works.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.utils.WorksUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
 
 @Component
 public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<ContractorBillRegister> {
 
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Override
     public JsonElement serialize(final ContractorBillRegister contractorBillRegister, final Type type,
@@ -88,8 +85,7 @@ public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<
                 jsonObject.addProperty("estimateNumber", led.getEstimateNumber());
                 final String workIdentificationNumber = led.getProjectCode().getCode();
                 jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
-            }
-            else {
+            } else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
             }

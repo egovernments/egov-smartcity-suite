@@ -47,6 +47,16 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.budget.model.BudgetControlType;
@@ -54,7 +64,6 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
@@ -84,15 +93,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -410,7 +410,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String cutoffDateString = worksApplicationProperties.getContractorBillCutOffDate();
             final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             try {
-                if (StringUtils.isNotBlank(cutoffDateString)) {
+                if (org.apache.commons.lang.StringUtils.isNotBlank(cutoffDateString)) {
                     final Date cutOffdate = df.parse(cutoffDateString);
                     if (contractorBillRegister.getBilldate().before(cutOffdate))
                         resultBinder.rejectValue(BILLDATE, "error.billdate.cutoff");

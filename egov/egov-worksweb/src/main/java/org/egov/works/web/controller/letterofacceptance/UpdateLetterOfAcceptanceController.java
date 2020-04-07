@@ -47,6 +47,14 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.exception.ApplicationException;
@@ -70,13 +78,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -125,11 +126,11 @@ public class UpdateLetterOfAcceptanceController {
     public String modify(@ModelAttribute("workOrder") final WorkOrder workOrder, final Model model,
             final BindingResult resultBinder,
             final HttpServletRequest request) throws ApplicationException {
-        final List<String> workOrderNumbers = letterOfAcceptanceService.getApprovedWorkOrdersForCreateContractorBill(workOrder.getWorkOrderNumber());
-        if(workOrderNumbers.isEmpty()) {
+        final List<String> workOrderNumbers = letterOfAcceptanceService
+                .getApprovedWorkOrdersForCreateContractorBill(workOrder.getWorkOrderNumber());
+        if (workOrderNumbers.isEmpty())
             resultBinder.rejectValue("", "error.modify.loa.finalbill.exists");
-        }
-        
+
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
 
         final Double revisedWorkOrderAmount = Double.valueOf(request.getParameter("revisedWorkOrderAmount"));
@@ -144,15 +145,15 @@ public class UpdateLetterOfAcceptanceController {
         final BigDecimal ledGrossBillAmount = lineEstimateDetails.getGrossAmountBilled();
         if (revisedWorkOrderAmount >= 0 && "-".equals(workOrder.getPercentageSign())) {
             if (lineEstimateDetails.getLineEstimate().isSpillOverFlag())
-                balanceAmount = ledGrossBillAmount != null  ? workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
+                balanceAmount = ledGrossBillAmount != null ? workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
                         - ledGrossBillAmount.doubleValue() : workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
-            
+
             else
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             if (balanceAmount < 0) {
-                if(lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+                if (lineEstimateDetails.getLineEstimate().isSpillOverFlag())
                     grossBillAmount += lineEstimateDetails.getGrossAmountBilled().doubleValue();
-                
+
                 resultBinder.rejectValue("", "error.modify.loa.appropriation.amount",
                         new String[] { df.format(grossBillAmount), df.format(revisedWorkOrderAmount) },
                         null);
@@ -206,7 +207,7 @@ public class UpdateLetterOfAcceptanceController {
     }
 
     private WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
-        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        List<DocumentDetails> documentDetailsList = new ArrayList<>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(),
                 WorksConstants.WORKORDER);
         workOrder.setDocumentDetails(documentDetailsList);

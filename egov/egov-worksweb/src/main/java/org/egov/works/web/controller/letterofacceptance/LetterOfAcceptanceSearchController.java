@@ -47,6 +47,8 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.List;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
@@ -63,8 +65,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/searchletterofacceptance")
 public class LetterOfAcceptanceSearchController {
@@ -80,7 +80,7 @@ public class LetterOfAcceptanceSearchController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
@@ -124,7 +124,7 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }
-    
+
     @RequestMapping(value = "/searchmodifyform", method = RequestMethod.GET)
     public String showSearchLOAModifyForm(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,

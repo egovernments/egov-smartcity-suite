@@ -48,10 +48,8 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -59,7 +57,10 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonSerializer<WorkOrder> {
@@ -85,8 +86,7 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
             if (workOrder.getContractor() != null) {
                 jsonObject.addProperty("contractor", workOrder.getContractor().getName());
                 jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("contractor", "");
                 jsonObject.addProperty("contractorcode", "");
             }

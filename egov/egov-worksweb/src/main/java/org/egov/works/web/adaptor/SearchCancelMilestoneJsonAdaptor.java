@@ -47,28 +47,25 @@
  */
 package org.egov.works.web.adaptor;
 
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.milestone.entity.Milestone;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.milestone.entity.Milestone;
-import org.egov.works.utils.WorksUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
 @Component
 public class SearchCancelMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Override
     public JsonElement serialize(final Milestone milestone, final Type type,
@@ -81,27 +78,25 @@ public class SearchCancelMilestoneJsonAdaptor implements JsonSerializer<Mileston
                         .getWorkOrder()
                         .getEstimateNumber());
                 jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
-            }
-            else {
+            } else
                 jsonObject.addProperty("workIdentificationNumber", "");
-            }
             if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
                 jsonObject.addProperty("agreementAmount", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
                 jsonObject.addProperty("workOrderNumber", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
-                jsonObject.addProperty("workOrderDate", sdf.format(milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()));
+                jsonObject.addProperty("workOrderDate",
+                        sdf.format(milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()));
                 jsonObject.addProperty("workOrderId", milestone.getWorkOrderEstimate().getWorkOrder().getId());
                 jsonObject.addProperty("contractor", milestone.getWorkOrderEstimate().getWorkOrder().getContractor().getCode()
                         + " - " + milestone.getWorkOrderEstimate().getWorkOrder().getContractor().getName());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("agreementAmount", "");
                 jsonObject.addProperty("workOrderNumber", "");
                 jsonObject.addProperty("workOrderDate", "");
                 jsonObject.addProperty("workOrderId", "");
                 jsonObject.addProperty("contractor", "");
             }
-            
-            if(milestone.getTrackMilestone().size() > 0)
+
+            if (milestone.getTrackMilestone().size() > 0)
                 jsonObject.addProperty("trackMilestone", true);
             else
                 jsonObject.addProperty("trackMilestone", false);

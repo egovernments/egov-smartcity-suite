@@ -80,7 +80,7 @@ public class EgwTypeOfWorkHibernateDAO {
         return (EgwTypeOfWork) qry.uniqueResult();
     }
 
-    public List getSubTypeOfWorkByParentId(final Long id) {
+    public List<EgwTypeOfWork> getSubTypeOfWorkByParentId(final Long id) {
         final Query query = getCurrentSession().createQuery(
                 "from EgwTypeOfWork typeOfWork where typeOfWork.parentid =:id and egPartytype.description='Contractor' order by upper(description)");
         query.setLong("id", id);

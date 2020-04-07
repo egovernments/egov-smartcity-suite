@@ -47,10 +47,14 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.io.IOException;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
@@ -69,10 +73,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Date;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -100,8 +100,9 @@ public class CreateLetterOfAcceptanceController {
         final String estimateNumber = request.getParameter("estimateNumber");
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         setDropDownValues(model, lineEstimateDetails);
-        if(!(lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated()))
-        	workOrder.setWorkOrderDate(new Date());
+        if (!(lineEstimateDetails.getLineEstimate().isSpillOverFlag()
+                && lineEstimateDetails.getLineEstimate().isWorkOrderCreated()))
+            workOrder.setWorkOrderDate(new Date());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
@@ -164,8 +165,9 @@ public class CreateLetterOfAcceptanceController {
         return "letterofacceptance-success";
     }
 
+    @SuppressWarnings("deprecation")
     private void validateInput(final WorkOrder workOrder, final BindingResult resultBinder) {
-        if (StringUtils.isBlank(workOrder.getFileNumber()))
+        if (org.apache.commons.lang.StringUtils.isBlank(workOrder.getFileNumber()))
             resultBinder.rejectValue("fileNumber", "error.fileno.required");
         if (workOrder.getFileDate() == null)
             resultBinder.rejectValue("fileDate", "error.filedate.required");
@@ -184,7 +186,7 @@ public class CreateLetterOfAcceptanceController {
 
     private void validateSpillOverInput(final WorkOrder workOrder, final BindingResult resultBinder,
             final LineEstimateDetails lineEstimateDetails) {
-        if (StringUtils.isBlank(workOrder.getWorkOrderNumber()))
+        if (org.apache.commons.lang.StringUtils.isBlank(workOrder.getWorkOrderNumber()))
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
         final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
         if (wo != null)

@@ -47,9 +47,21 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.Scheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -65,7 +77,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -92,14 +103,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class UpdateLineEstimateController extends GenericWorkFlowController {
@@ -111,9 +114,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private SchemeService schemeService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -149,6 +149,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
         final LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(Long.parseLong(lineEstimateId));
@@ -161,7 +164,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
         model.addAttribute("workdetailsadd",
                 WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
-                        ? Boolean.TRUE : Boolean.FALSE);
+                        ? Boolean.TRUE
+                        : Boolean.FALSE);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
@@ -246,7 +250,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                             approvalComment, null, workFlowAction, mode, null, removedLineEstimateDetailsIds, files,
                             financialYear);
                 } catch (final ValidationException e) {
-                    final List<Long> budgetheadid = new ArrayList<Long>();
+                    final List<Long> budgetheadid = new ArrayList<>();
                     budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
                     final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
@@ -280,7 +284,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
             for (final CChartOfAccountDetail detail : accountDetails)
                 if (detail.getDetailTypeId() != null
@@ -295,7 +299,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
 
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
         try {
@@ -314,7 +318,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
-
             if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
                     && budgetAvailable.compareTo(totalEstimateAmount) == -1)
@@ -329,8 +332,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             for (final ValidationError error : e.getErrors())
                 throw new ApplicationRuntimeException(error.getKey());
             /*
-             * for (final ValidationError error : e.getErrors())
-             * errors.reject(error.getMessage());
+             * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
              */
         }
     }
@@ -369,7 +371,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("schemes", entityManager.createQuery("from Scheme", Scheme.class).getResultList());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
@@ -410,7 +412,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private LineEstimate getEstimateDocuments(final LineEstimate lineEstimate) {
-        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        List<DocumentDetails> documentDetailsList = new ArrayList<>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(lineEstimate.getId(),
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         lineEstimate.setDocumentDetails(documentDetailsList);

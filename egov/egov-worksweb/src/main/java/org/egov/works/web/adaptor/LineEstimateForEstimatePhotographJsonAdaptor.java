@@ -48,15 +48,16 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+
 import org.egov.infra.utils.DateUtils;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class LineEstimateForEstimatePhotographJsonAdaptor implements JsonSerializer<LineEstimateDetails> {
@@ -78,7 +79,8 @@ public class LineEstimateForEstimatePhotographJsonAdaptor implements JsonSeriali
             else
                 jsonObject.addProperty("nameOfWork", "");
             if (lineEstimateDetails.getLineEstimate().getCreatedDate() != null)
-                jsonObject.addProperty("estimateDate", DateUtils.getFormattedDate(lineEstimateDetails.getLineEstimate().getCreatedDate(),"dd/MM/yyyy"));
+                jsonObject.addProperty("estimateDate",
+                        DateUtils.getFormattedDate(lineEstimateDetails.getLineEstimate().getCreatedDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("estimateDate", "");
             if (lineEstimateDetails.getLineEstimate().getNatureOfWork() != null)

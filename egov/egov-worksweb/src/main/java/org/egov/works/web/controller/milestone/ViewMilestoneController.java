@@ -47,6 +47,10 @@
  */
 package org.egov.works.web.controller.milestone;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.master.service.MilestoneTemplateActivityService;
 import org.egov.works.master.service.MilestoneTemplateService;
@@ -64,9 +68,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/milestone")
 public class ViewMilestoneController {
@@ -76,17 +77,17 @@ public class ViewMilestoneController {
 
     @Autowired
     private MilestoneTemplateActivityService milestoneTemplateActivityService;
-    
+
     @Autowired
     private TrackMilestoneService trackMilestoneService;
-    
+
     @Autowired
-    private MilestoneService milestoneService; 
+    private MilestoneService milestoneService;
 
     @RequestMapping(value = "/viewmilestonetemplate/{id}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final MilestoneTemplate milestoneTemplate = milestoneTemplateService.getMilestoneTemplateById(Long.parseLong(id));
         model.addAttribute("milestoneTemplate", milestoneTemplate);
         model.addAttribute("mode", "view");
@@ -97,25 +98,25 @@ public class ViewMilestoneController {
     public @ResponseBody List<MilestoneTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
             final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final List<MilestoneTemplateActivity> milestoneTemplateActivities = milestoneTemplateActivityService
                 .getMilestoneTemplateActivityByMilestoneTemplate(Long.parseLong(id));
         return milestoneTemplateActivities;
     }
-    
+
     @RequestMapping(value = "/viewmilestone/{id}", method = RequestMethod.GET)
     public String viewMilestone(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final Milestone milestone = milestoneService.getMilestoneById(Long.parseLong(id));
         model.addAttribute("milestone", milestone);
         return "milestone-view";
     }
-    
+
     @RequestMapping(value = "/viewtrackmilestone/{id}", method = RequestMethod.GET)
     public String viewTrackMilestone(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneByMilestoneId(Long.parseLong(id));
         model.addAttribute("trackMilestone", trackMilestone);
         return "trackmilestone-view";

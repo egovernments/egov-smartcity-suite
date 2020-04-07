@@ -47,9 +47,12 @@
  */
 package org.egov.works.web.controller.milestone;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.milestone.entity.Milestone;
@@ -72,10 +75,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @RestController
 @RequestMapping(value = "/milestone")
@@ -183,6 +185,7 @@ public class TrackMilestoneController {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
         try {
             final Writer httpResponseWriter = response.getWriter();

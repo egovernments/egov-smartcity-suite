@@ -47,6 +47,8 @@
  */
 package org.egov.works.web.controller.estimatephotograph;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -63,32 +65,30 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/estimatephotograph")
 public class SearchEstimatePhotographController {
-	
-	@Autowired
+
+    @Autowired
     private LineEstimateService lineEstimateService;
-	
-	@Autowired
+
+    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
-    @Autowired
-    private EstimateService estimateService; 
 
-	@RequestMapping(value = "/viewestimatephotograph", method = RequestMethod.GET)
+    @Autowired
+    private EstimateService estimateService;
+
+    @RequestMapping(value = "/viewestimatephotograph", method = RequestMethod.GET)
     public String searchEstmatePhotographs(@ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final Model model) throws ApplicationException {
-		model.addAttribute("departments", departmentService.getAllDepartments());
-		model.addAttribute("natureOfWork", natureOfWorkService.findAll());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         final List<User> aeCreatedByUsers = estimateService.getCreatedByForEstimatePhotograph();
         model.addAttribute("departments", departments);

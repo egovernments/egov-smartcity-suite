@@ -47,6 +47,12 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.commons.Scheme;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -55,7 +61,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
@@ -67,8 +72,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -87,9 +90,6 @@ public class SearchLineEstimateController {
     private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
-    private SchemeService schemeService;
-
-    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
@@ -97,7 +97,10 @@ public class SearchLineEstimateController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
@@ -122,13 +125,14 @@ public class SearchLineEstimateController {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("schemes", entityManager.createQuery("from Scheme", Scheme.class).getResultList());
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
     }
-    
+
     @RequestMapping(value = "/searchlineestimateform", method = RequestMethod.GET)
-    public String searchLineEstimateToUploadEstmatePhotographs(@ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+    public String searchLineEstimateToUploadEstmatePhotographs(
+            @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());

@@ -47,8 +47,9 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -66,8 +67,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -145,9 +146,11 @@ public class AjaxContractorBillController {
     public @ResponseBody List<String> findBillNumbersToCancelContractorBill(@RequestParam final String billNumber) {
         return contractorBillRegisterService.findBillNumbersToSearchContractorBillToCancel(billNumber);
     }
-    
+
     @RequestMapping(value = "/gettotalcreditanddebitamount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Object findRundedAndWithHeldAmountForWorkOrderByAccountCode(@RequestParam final Long workOrderEstimateId,@RequestParam final BigDecimal glCodeId,@RequestParam final Long contractorBillId) {
-       return contractorBillRegisterService.getTotalDebitAndCreditAmountByAccountCode(workOrderEstimateId,glCodeId,contractorBillId);
+    public @ResponseBody Object findRundedAndWithHeldAmountForWorkOrderByAccountCode(@RequestParam final Long workOrderEstimateId,
+            @RequestParam final BigDecimal glCodeId, @RequestParam final Long contractorBillId) {
+        return contractorBillRegisterService.getTotalDebitAndCreditAmountByAccountCode(workOrderEstimateId, glCodeId,
+                contractorBillId);
     }
 }

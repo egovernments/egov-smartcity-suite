@@ -47,6 +47,15 @@
  */
 package org.egov.works.web.actions.workflow;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Functionary;
 import org.egov.eis.entity.EmployeeView;
@@ -59,12 +68,6 @@ import org.egov.works.models.workflow.WorkFlow;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 public class AjaxWorkflowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1212117794224094188L;
@@ -73,13 +76,16 @@ public class AjaxWorkflowAction extends BaseFormAction {
     private static final String WORKFLOW_DESIG_LIST = "workflowDesignations";
     private Long objectId;
     private String scriptName;
-    private List<Designation> workflowDesigList = new ArrayList<Designation>();
+    private List<Designation> workflowDesigList = new ArrayList<>();
     private EisUtilService eisService;
     private WorksService worksService;
     @Autowired
     private ScriptService scriptService;
     @Autowired
     private DepartmentService departmentService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -100,11 +106,11 @@ public class AjaxWorkflowAction extends BaseFormAction {
     }
 
     public List<EmployeeView> getApproverUserList() {
-        List roleList;
+        List<String> roleList;
         Integer funcId;
         if (workflow.getWorkflowDepartmentId() != null && workflow.getWorkflowDepartmentId() != -1
                 && workflow.getWorkflowDesignationId() != null && workflow.getWorkflowDesignationId() != -1) {
-            final HashMap<String, Object> paramMap = new HashMap<String, Object>();
+            final HashMap<String, Object> paramMap = new HashMap<>();
             if (workflow.getWorkflowWardId() != null && workflow.getWorkflowWardId() != -1)
                 paramMap.put("boundaryId", workflow.getWorkflowWardId().toString());
             paramMap.put("designationId", workflow.getWorkflowDesignationId().toString());
@@ -116,8 +122,7 @@ public class AjaxWorkflowAction extends BaseFormAction {
                 paramMap.put("functionaryId", workflow.getWorkflowFunctionaryId().toString());
             if (paramMap.get("functionaryId") != null) {
                 funcId = Integer.parseInt((String) paramMap.get("functionaryId"));
-                final Functionary func = (Functionary) persistenceService.find(" from  Functionary where id = ?",
-                        funcId);
+                final Functionary func = entityManager.find(Functionary.class, funcId);
                 if (func != null && func.getName().equalsIgnoreCase("UAC")) {
                     roleList = worksService.getWorksRoles();
                     roleList.add("ContractorBill Approver");
@@ -132,6 +137,7 @@ public class AjaxWorkflowAction extends BaseFormAction {
         return Collections.emptyList();
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public String getDesgByDeptAndType() {
         String departmentName = "";
         if (workflow.getWorkflowDepartmentId() != null && workflow.getWorkflowDepartmentId() != -1)
@@ -146,7 +152,7 @@ public class AjaxWorkflowAction extends BaseFormAction {
          * if(!scriptList.isEmpty()){ List<String> desglist = (List<String>) scriptList.get(0).eval(Script.createContext
          * ("department",departmentName, "objectId",objectId,"genericService",getPersistenceService()));
          */
-        final List<String> desgListUpper = new ArrayList<String>();
+        final List<String> desgListUpper = new ArrayList<>();
         for (final String desgNames : desglist)
             desgListUpper.add(desgNames.toUpperCase());
         workflowDesigList.addAll(getPersistenceService().findAllByNamedQuery("getDesignationForListOfDesgNames",
