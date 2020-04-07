@@ -59,6 +59,7 @@
 	<div class="panel-heading"></div>
 	<div class="panel-body custom-form">
 <form:hidden path="connectionType" value="${waterRatesConnecionType}" id="connectionType" name="waterRatesConnecionType"/>
+<input type="hidden" name="currentId" id="currentId" value="${waterRatesHeader.id}"/>
 <div class="form-group">
      <label class="col-sm-3 control-label text-right"><spring:message code="lbl.watersourcetype" />:<span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
