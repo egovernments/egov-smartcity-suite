@@ -57,10 +57,10 @@ import java.util.stream.IntStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.web.support.ui.DataTable;
+import org.egov.ptis.actions.reports.BuidingAgeWiseReportHelperAdaptor;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.egov.ptis.report.bean.BuidingAgeWiseReportHelperAdaptor;
 import org.egov.ptis.report.bean.BuidingAgeWiseReportResult;
 import org.egov.ptis.service.BuildingAgeWiseAssessmentReport.BuildingAgeWiseAssessmentReportService;
 import org.springframework.beans.factory.annotation.Autowired;

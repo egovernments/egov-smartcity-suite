@@ -46,34 +46,57 @@
  *
  */
 
-package org.egov.ptis.report.bean;
+package org.egov.ptis.actions.reports;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.egov.commons.Installment;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.view.FloorDetailsInfo;
 import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
+@Component
 public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<PropertyMVInfo> {
+
+    private static PropertyTaxUtil propertyTaxUtil;
+
+    public BuidingAgeWiseReportHelperAdaptor() {
+    }
+
+    @Autowired
+    public BuidingAgeWiseReportHelperAdaptor(final PropertyTaxUtil propertyTaxUtil) {
+        BuidingAgeWiseReportHelperAdaptor.propertyTaxUtil = propertyTaxUtil;
+    }
 
     @Override
     public JsonElement serialize(DataTable<PropertyMVInfo> buildingAgeWiseResponse, Type typeOfSrc,
             JsonSerializationContext context) {
+
         final List<PropertyMVInfo> buildingAgeWiseInfo = buildingAgeWiseResponse.getData();
         final JsonArray buildingAgeWiseDetails = new JsonArray();
         buildingAgeWiseInfo.forEach(buildingAgeWiseInfoObj -> {
             final JsonObject jsonObject = new JsonObject();
-            boolean duplicateConstrDate = validateConstructiveDate(buildingAgeWiseInfoObj.getFloorDetails().stream().collect(Collectors.toList()));
+            boolean duplicateConstrDate = validateConstructiveDate(
+                    buildingAgeWiseInfoObj.getFloorDetails().stream().collect(Collectors.toList()));
             if (duplicateConstrDate)
                 jsonObject.addProperty("assessmentNo", buildingAgeWiseInfoObj.getPropertyId());
             else
@@ -84,22 +107,39 @@ public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<P
             jsonObject.addProperty("ward", buildingAgeWiseInfoObj.getWard().getName());
             jsonObject.addProperty("block", buildingAgeWiseInfoObj.getBlock().getName());
             jsonObject.addProperty("locality", buildingAgeWiseInfoObj.getLocality().getName());
-            for (InstDmdCollInfo demand : buildingAgeWiseInfoObj.getInstDmdColl()) {
-                jsonObject.addProperty("propertyTax",
-                        demand.getGeneralTax().add(demand.getLightTax()).add(demand.getVacantLandTax())
-                                .add(demand.getDrainageTax()).add(demand.getWaterTax()).add(demand.getScavengeTax()));
-                jsonObject.addProperty("eduTax", demand.getEduCessTax());
-                jsonObject.addProperty("libCess", demand.getLibCessTax());
-                jsonObject.addProperty("ucPenalty", demand.getUnauthPenaltyTax());
-                jsonObject.addProperty("total", demand.getGeneralTax().add(demand.getLibCessTax()).add(demand.getEduCessTax())
-                        .add(demand.getUnauthPenaltyTax()));
-
-            }
+            final List<InstDmdCollInfo> instDemandCollList = new LinkedList<>(buildingAgeWiseInfoObj.getInstDmdColl());
+            final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+            for (final InstDmdCollInfo demand : instDemandCollList)
+                if (demand.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF).getId())) {
+                    jsonObject.addProperty("propertyTax",
+                            demand.getGeneralTax() == null ? BigDecimal.ZERO : demand.getGeneralTax());
+                    jsonObject.addProperty("eduTax", demand.getEduCessTax() == null ? BigDecimal.ZERO : demand.getEduCessTax());
+                    jsonObject.addProperty("libCess", demand.getLibCessTax() == null ? BigDecimal.ZERO : demand.getLibCessTax());
+                    jsonObject.addProperty("ucPenalty",
+                            demand.getUnauthPenaltyTax() == null ? BigDecimal.ZERO : demand.getUnauthPenaltyTax());
+                    jsonObject.addProperty("total",
+                            (demand.getGeneralTax() == null ? BigDecimal.ZERO : demand.getGeneralTax())
+                                    .add(demand.getLibCessTax() == null ? BigDecimal.ZERO : demand.getLibCessTax())
+                                    .add(demand.getEduCessTax() == null ? BigDecimal.ZERO : demand.getEduCessTax())
+                                    .add(demand.getUnauthPenaltyTax() == null ? BigDecimal.ZERO : demand.getUnauthPenaltyTax()));
+                } else if (demand.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getId())) {
+                    jsonObject.addProperty("propertyTax",
+                            demand.getGeneralTax() == null ? BigDecimal.ZERO : demand.getGeneralTax());
+                    jsonObject.addProperty("eduTax", demand.getEduCessTax() == null ? BigDecimal.ZERO : demand.getEduCessTax());
+                    jsonObject.addProperty("libCess", demand.getLibCessTax() == null ? BigDecimal.ZERO : demand.getLibCessTax());
+                    jsonObject.addProperty("ucPenalty",
+                            demand.getUnauthPenaltyTax() == null ? BigDecimal.ZERO : demand.getUnauthPenaltyTax());
+                    jsonObject.addProperty("total",
+                            (demand.getGeneralTax() == null ? BigDecimal.ZERO : demand.getGeneralTax())
+                                    .add(demand.getLibCessTax() == null ? BigDecimal.ZERO : demand.getLibCessTax())
+                                    .add(demand.getEduCessTax() == null ? BigDecimal.ZERO : demand.getEduCessTax())
+                                    .add(demand.getUnauthPenaltyTax() == null ? BigDecimal.ZERO : demand.getUnauthPenaltyTax()));
+                }
             buildingAgeWiseDetails.add(jsonObject);
         });
         return enhance(buildingAgeWiseDetails, buildingAgeWiseResponse);
     }
-    
+
     public Boolean validateConstructiveDate(List<FloorDetailsInfo> floorList) {
         Date firstFloorconstructionDate = floorList.get(0).getConstructionDate();
         return floorList.stream()
@@ -107,4 +147,5 @@ public class BuidingAgeWiseReportHelperAdaptor implements DataTableJsonAdapter<P
                 .filter(floor -> floor.getConstructionDate() != null)
                 .allMatch(floor -> floor.getConstructionDate().equals(firstFloorconstructionDate));
     }
+
 }
