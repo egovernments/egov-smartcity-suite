@@ -48,13 +48,14 @@
 
 package org.egov.works.master.service;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.ScheduleCategory;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.List;
+
+import org.egov.infstr.services.PersistenceService;
+import org.egov.works.models.masters.ScheduleCategory;
+import org.egov.works.models.masters.ScheduleOfRate;
 
 @SuppressWarnings("deprecation")
 public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
@@ -75,28 +76,27 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
                 scheduleCategoryId);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ScheduleCategory> getAllScheduleCategories() {
-        return entityManager.createQuery("from ScheduleCategory sc").getResultList();
+        return entityManager.createQuery("from ScheduleCategory sc", ScheduleCategory.class).getResultList();
     }
 
-    @SuppressWarnings("rawtypes")
     public boolean checkForSOR(final Long id) {
-        final Query query = entityManager.createQuery(new StringBuffer(" from ScheduleOfRate rate")
-                .append(" where sor_category_id  = (select id from ScheduleCategory  where id = :id)").toString());
-        query.setParameter("id", Long.valueOf(id));
-        final List retList = query.getResultList();
+        final List<ScheduleOfRate> retList = entityManager.createQuery(new StringBuffer(" from ScheduleOfRate rate")
+                .append(" where sor_category_id  = (select id from ScheduleCategory  where id = :id)")
+                .toString(), ScheduleOfRate.class)
+                .setParameter("id", Long.valueOf(id))
+                .getResultList();
         if (retList != null && !retList.isEmpty())
             return false;
         else
             return true;
     }
 
-    @SuppressWarnings("rawtypes")
     public boolean checkForScheduleCategory(final String code) {
-        final Query query = entityManager.createQuery(" from ScheduleCategory  where code = :code");
-        query.setParameter("code", code);
-        final List retList = query.getResultList();
+        final List<ScheduleCategory> retList = entityManager
+                .createQuery(" from ScheduleCategory  where code = :code", ScheduleCategory.class)
+                .setParameter("code", code)
+                .getResultList();
         if (retList != null && !retList.isEmpty())
             return true;
         else

@@ -53,6 +53,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
+@SuppressWarnings("deprecation")
 public class StatutoryDeductionsForBill extends BaseModel {
 
     private static final long serialVersionUID = 8699958489217979541L;

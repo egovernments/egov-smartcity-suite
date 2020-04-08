@@ -47,16 +47,31 @@
  */
 package org.egov.works.milestone.entity;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE")

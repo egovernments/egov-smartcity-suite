@@ -47,17 +47,6 @@
  */
 package org.egov.works.models.tender;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.models.workflow.WorkFlow;
-
-import javax.validation.Valid;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +57,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.validation.Valid;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.pims.model.PersonalInformation;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.models.workflow.WorkFlow;
 
 public class TenderResponse extends WorkFlow {
 
@@ -112,10 +113,10 @@ public class TenderResponse extends WorkFlow {
     private double workOrderAmount;
 
     @Valid
-    private List<TenderResponseActivity> tenderResponseActivities = new LinkedList<TenderResponseActivity>();
+    private List<TenderResponseActivity> tenderResponseActivities = new LinkedList<>();
 
     @Valid
-    private List<TenderResponseContractors> tenderResponseContractors = new LinkedList<TenderResponseContractors>();
+    private List<TenderResponseContractors> tenderResponseContractors = new LinkedList<>();
 
     // added by prashanth on jan 9th 2010
     // @Required(message = "tenderResponse.negotiationPreparedBy.null")
@@ -133,11 +134,11 @@ public class TenderResponse extends WorkFlow {
 
     private Date approvedDate;
 
-    private List<String> tenderNegotiationsActions = new ArrayList<String>();
+    private List<String> tenderNegotiationsActions = new ArrayList<>();
 
-    private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
+    private List<WorksPackageDetails> worksPackageDetails = new LinkedList<>();
 
-    private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
+    private Set<OfflineStatus> offlineStatuses = new HashSet<>();
 
     public PersonalInformation getNegotiationPreparedBy() {
         return negotiationPreparedBy;
@@ -215,8 +216,9 @@ public class TenderResponse extends WorkFlow {
         return totalAmount;
     }
 
+    @SuppressWarnings("deprecation")
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (!tenderResponseContractors.isEmpty()
                 && (tenderResponseContractors.get(0) != null
                         && tenderResponseContractors.get(0).getContractor() != null
@@ -321,8 +323,9 @@ public class TenderResponse extends WorkFlow {
         return totalNegotiatedQuantity;
     }
 
+    @SuppressWarnings("deprecation")
     public Collection<EstimateLineItemsForTR> getNegotiationDetails() {
-        final Map<Long, EstimateLineItemsForTR> resultMap = new HashMap<Long, EstimateLineItemsForTR>();
+        final Map<Long, EstimateLineItemsForTR> resultMap = new HashMap<>();
         for (final TenderResponseActivity tra : getTenderResponseActivities()) {
             final EstimateLineItemsForTR estlineItem = new EstimateLineItemsForTR();
             if (tra.getActivity().getSchedule() != null)
@@ -396,7 +399,7 @@ public class TenderResponse extends WorkFlow {
 
     private Collection<EstimateLineItemsForTR> getEstLineItemsWithSrlNo(final Collection<EstimateLineItemsForTR> actList) {
         int i = 1;
-        final Collection<EstimateLineItemsForTR> latestEstLineItemList = new ArrayList<EstimateLineItemsForTR>();
+        final Collection<EstimateLineItemsForTR> latestEstLineItemList = new ArrayList<>();
         for (final EstimateLineItemsForTR act : actList) {
             act.setSrlNo(i);
             latestEstLineItemList.add(act);

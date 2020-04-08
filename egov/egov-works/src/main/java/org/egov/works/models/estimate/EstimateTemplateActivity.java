@@ -47,6 +47,11 @@
  */
 package org.egov.works.models.estimate;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.validation.exception.ValidationError;
@@ -54,10 +59,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.NonSor;
 import org.egov.works.models.masters.ScheduleOfRate;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class EstimateTemplateActivity extends BaseModel {
 
     private static final long serialVersionUID = 7697746931463590763L;
@@ -115,7 +117,7 @@ public class EstimateTemplateActivity extends BaseModel {
 
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         /*
          * if (rate.getValue() <= 0.0) { validationErrors.add(new ValidationError("estimateTemplateActivity.rate.not.null",
          * "estimateTemplateActivity.rate.not.null")); }

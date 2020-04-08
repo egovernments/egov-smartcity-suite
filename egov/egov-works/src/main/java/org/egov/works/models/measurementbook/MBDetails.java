@@ -47,19 +47,20 @@
  */
 package org.egov.works.models.measurementbook;
 
-import org.egov.infra.persistence.validator.annotation.GreaterThan;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.constants.ValidationRegex;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.workorder.WorkOrderActivity;
-import org.hibernate.validator.constraints.Length;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.persistence.validator.annotation.GreaterThan;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.validation.constants.ValidationRegex;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infstr.models.BaseModel;
+import org.egov.works.models.workorder.WorkOrderActivity;
+import org.hibernate.validator.constraints.Length;
+
+@SuppressWarnings("deprecation")
 public class MBDetails extends BaseModel {
 
     private static final long serialVersionUID = -5088074625605584344L;
@@ -87,7 +88,7 @@ public class MBDetails extends BaseModel {
 
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (mbHeader != null && (mbHeader.getId() == null || mbHeader.getId() == 0 || mbHeader.getId() == -1))
             validationErrors.add(new ValidationError("mbHeader", "mbdetails.mbheader.null"));
         if (workOrderActivity != null

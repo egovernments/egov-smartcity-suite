@@ -47,7 +47,13 @@
  */
 package org.egov.works.models.masters;
 
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
@@ -55,12 +61,9 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 
+@SuppressWarnings("deprecation")
 @Unique(fields = "code", id = "id", tableName = "EGW_SCHEDULECATEGORY", columnName = "CODE", message = "scheduleCategory.code.isunique")
 public class ScheduleCategory extends BaseModel {
 
@@ -117,7 +120,7 @@ public class ScheduleCategory extends BaseModel {
 
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
 
         if (code == null && description == null)
             return Arrays.asList(new ValidationError("code", "scheduleCategory.code.not.empty"));

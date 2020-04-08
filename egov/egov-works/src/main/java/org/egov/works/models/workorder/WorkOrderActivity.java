@@ -47,14 +47,15 @@
  */
 package org.egov.works.models.workorder;
 
+import java.util.Date;
+
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 
-import java.util.Date;
-
+@SuppressWarnings("deprecation")
 public class WorkOrderActivity extends BaseModel {
 
     private static final long serialVersionUID = -5986495021099638251L;
@@ -175,13 +176,15 @@ public class WorkOrderActivity extends BaseModel {
             workOrderDate = getWorkOrderEstimate().getWorkOrder().getParent().getWorkOrderDate();
             if (activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()) || activity.getRevisionType()
+                            .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
+                            || activity.getRevisionType()
                                     .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
                 sorRate = getActivity().getSORRateForDate(workOrderDate).getValue();
             else if (getActivity().getAbstractEstimate().getParent() != null
                     && activity.getRevisionType() != null
                     && (activity.getRevisionType().toString()
-                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || activity
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 sorRate = getActivity()
                         .getSORRateForDate(workOrderEstimate.getEstimate().getParent().getEstimateDate()).getValue();

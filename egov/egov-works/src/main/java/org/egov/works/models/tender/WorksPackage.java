@@ -47,6 +47,19 @@
  */
 package org.egov.works.models.tender;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
@@ -64,18 +77,7 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 public class WorksPackage extends StateAware<Position> implements Auditable {
 
     private static final long serialVersionUID = -4874817415037202881L;
@@ -322,7 +324,7 @@ public class WorksPackage extends StateAware<Position> implements Auditable {
     }
 
     public void setTotalAmount(final double totalAmount) {
-        //Not set ?
+        // Not set ?
     }
 
     public double getMarketRateTotalAmount() {
@@ -379,7 +381,7 @@ public class WorksPackage extends StateAware<Position> implements Auditable {
     }
 
     public Set<OfflineStatus> getOfflineStatuses() {
-        //FIXME - Commented out for time being since it is giving issue on forward for already saved object
+        // FIXME - Commented out for time being since it is giving issue on forward for already saved object
         /*
          * final Set<SetStatus> returnList = new HashSet<SetStatus>(); // Get only statuses which are of WorksPackage if
          * (setStatuses != null && setStatuses.size() > 0) for (final SetStatus ss : setStatuses) if (ss.getObjectType() != null

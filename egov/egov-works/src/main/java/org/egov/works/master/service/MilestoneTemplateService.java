@@ -47,6 +47,11 @@
  */
 package org.egov.works.master.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.works.master.repository.MilestoneTemplateRepository;
 import org.egov.works.milestone.entity.SearchRequestMilestoneTemplate;
 import org.egov.works.models.masters.MilestoneTemplate;
@@ -58,10 +63,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

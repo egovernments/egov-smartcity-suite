@@ -47,14 +47,6 @@
  */
 package org.egov.works.models.workorder;
 
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.milestone.entity.Milestone;
-import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.measurementbook.MBHeader;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -63,6 +55,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infstr.models.BaseModel;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
+import org.egov.works.models.measurementbook.MBHeader;
+
+@SuppressWarnings("deprecation")
 public class WorkOrderEstimate extends BaseModel {
 
     private static final long serialVersionUID = 2083096871794612166L;
@@ -71,15 +73,15 @@ public class WorkOrderEstimate extends BaseModel {
     private Date workCompletionDate;
     private double estimateWOAmount;
 
-    private List<WorkOrderActivity> workOrderActivities = new LinkedList<WorkOrderActivity>();
+    private List<WorkOrderActivity> workOrderActivities = new LinkedList<>();
     @Valid
-    private List<AssetsForWorkOrder> assetValues = new LinkedList<AssetsForWorkOrder>();
+    private List<AssetsForWorkOrder> assetValues = new LinkedList<>();
 
-    private Set<Milestone> milestone = new HashSet<Milestone>();
+    private Set<Milestone> milestone = new HashSet<>();
 
     private Milestone latestMilestone;
 
-    private Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions = new HashSet<ContractorAdvanceRequisition>();
+    private Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions = new HashSet<>();
 
     public WorkOrder getWorkOrder() {
         return workOrder;
@@ -116,7 +118,7 @@ public class WorkOrderEstimate extends BaseModel {
         return new Money(amt);
     }
 
-    private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
+    private Set<MBHeader> mbHeaders = new HashSet<>();
 
     public Set<MBHeader> getMbHeaders() {
         return mbHeaders;
@@ -154,8 +156,9 @@ public class WorkOrderEstimate extends BaseModel {
         this.milestone = milestone;
     }
 
+    @SuppressWarnings("unchecked")
     public Milestone getLatestMilestone() {
-        final List<Milestone> milestoneList = new ArrayList<Milestone>();
+        final List<Milestone> milestoneList = new ArrayList<>();
         milestoneList.addAll(getMilestone());
         if (!milestoneList.isEmpty()) {
             Collections.sort(milestoneList, Milestone.milestoneComparator);

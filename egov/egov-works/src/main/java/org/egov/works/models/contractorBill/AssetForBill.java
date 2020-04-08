@@ -47,14 +47,15 @@
  */
 package org.egov.works.models.contractorBill;
 
+import java.math.BigDecimal;
+
 import org.egov.assets.model.Asset;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 
-import java.math.BigDecimal;
-
+@SuppressWarnings("deprecation")
 public class AssetForBill extends BaseModel {
 
     private static final long serialVersionUID = 843200459454395328L;

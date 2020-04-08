@@ -47,11 +47,11 @@
  */
 package org.egov.works.reports.entity;
 
-import org.egov.infra.admin.master.entity.Department;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Department;
 
 public class EstimateAbstractReport {
     private Long financialYear;
@@ -84,7 +84,7 @@ public class EstimateAbstractReport {
     private String typeOfWorkName;
     private String subTypeOfWorkName;
     private Set<Department> departments = new HashSet<>();
-    
+
     public Long getFinancialYear() {
         return financialYear;
     }
@@ -316,6 +316,5 @@ public class EstimateAbstractReport {
     public void setSubTypeOfWorkName(String subTypeOfWorkName) {
         this.subTypeOfWorkName = subTypeOfWorkName;
     }
-
 
 }

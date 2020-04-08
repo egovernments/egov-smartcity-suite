@@ -47,6 +47,8 @@
  */
 package org.egov.works.models.workorder;
 
+import javax.script.ScriptContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
 import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
@@ -57,8 +59,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-
+@SuppressWarnings("deprecation")
 public class WorkOrderNumberGenerator {
 
     @Autowired
@@ -68,6 +69,7 @@ public class WorkOrderNumberGenerator {
     @Autowired
     private ScriptService scriptService;
 
+    @SuppressWarnings("rawtypes")
     public String getWorkOrderNumberGenerator(final AbstractEstimate abstractEstimate,
             final CFinancialYear financialYear, final WorksPackage worksPackage, final WorkOrder workOrder,
             final PersistenceService persistenceService) {

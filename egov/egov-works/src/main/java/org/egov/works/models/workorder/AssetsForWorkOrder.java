@@ -50,6 +50,7 @@ package org.egov.works.models.workorder;
 import org.egov.assets.model.Asset;
 import org.egov.infstr.models.BaseModel;
 
+@SuppressWarnings("deprecation")
 public class AssetsForWorkOrder extends BaseModel {
 
     private static final long serialVersionUID = 1921548931869645727L;

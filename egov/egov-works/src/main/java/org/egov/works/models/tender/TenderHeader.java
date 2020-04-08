@@ -47,6 +47,13 @@
  */
 package org.egov.works.models.tender;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -56,12 +63,7 @@ import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class TenderHeader extends BaseModel {
 
     private static final long serialVersionUID = 6208133912780798895L;
@@ -76,7 +78,7 @@ public class TenderHeader extends BaseModel {
     private Date tenderDate;
 
     @Valid
-    private List<TenderEstimate> tenderEstimates = new LinkedList<TenderEstimate>();
+    private List<TenderEstimate> tenderEstimates = new LinkedList<>();
 
     public String getTenderNo() {
         return tenderNo;
@@ -108,7 +110,7 @@ public class TenderHeader extends BaseModel {
 
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         for (final TenderEstimate tenderEstimate : tenderEstimates)
             if (tenderDate != null)
                 if (tenderEstimate.getAbstractEstimate() != null

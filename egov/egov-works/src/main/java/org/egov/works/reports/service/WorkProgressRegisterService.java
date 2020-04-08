@@ -47,6 +47,15 @@
  */
 package org.egov.works.reports.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -54,23 +63,13 @@ import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class WorkProgressRegisterService {
@@ -89,6 +88,7 @@ public class WorkProgressRegisterService {
         return workIdNumbers;
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     @Transactional
     public List<WorkProgressRegister> searchWorkProgressRegister(
             final WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest) {
@@ -120,81 +120,59 @@ public class WorkProgressRegisterService {
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
         } else
-            return new ArrayList<WorkProgressRegister>();
+            return new ArrayList<>();
     }
 
     public Date getReportSchedulerRunDate() {
-        Query query = null;
-        query = entityManager.unwrap(Session.class).createQuery(
-                "from WorkProgressRegister ");
-        List<WorkProgressRegister> obj = query.setMaxResults(1).list();
+        List<WorkProgressRegister> obj = entityManager.createQuery("from WorkProgressRegister ", WorkProgressRegister.class)
+                .setMaxResults(1).getResultList();
         Date runDate = null;
-        if (obj != null) {
+        if (obj != null)
             runDate = obj.get(0).getCreatedDate();
-        }
         return runDate;
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional
     public List<EstimateAbstractReport> searchEstimateAbstractReportByDepartmentWise(
             final EstimateAbstractReport estimateAbstractReport) {
 
-        Query query = null;
-        query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
-                .addScalar("departmentName", StringType.INSTANCE)
-                .addScalar("lineEstimates", LongType.INSTANCE)
-                .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
-                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                .addScalar("loaCreated", LongType.INSTANCE)
-                .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                .addScalar("workInProgress", LongType.INSTANCE)
-                .addScalar("workCompleted", LongType.INSTANCE)
-                .addScalar("billsCreated", LongType.INSTANCE)
-                .addScalar("billValueInCrores", StringType.INSTANCE)
-                .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+        Query query = entityManager
+                .createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport), EstimateAbstractReport.class);
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
-        return query.list();
+        return query.getResultList();
 
     }
 
-    private Query setParameterForDepartmentWiseReport(EstimateAbstractReport estimateAbstractReport, Query query) {
+    private Query setParameterForDepartmentWiseReport(EstimateAbstractReport estimateAbstractReport,
+            Query query) {
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.isSpillOverFlag()) {
-                query.setBoolean("spilloverflag", true);
-            }
-            if (estimateAbstractReport.getDepartment() != null) {
-                query.setLong("department", estimateAbstractReport.getDepartment());
-            }
+            if (estimateAbstractReport.isSpillOverFlag())
+                query.setParameter("spilloverflag", true);
+            if (estimateAbstractReport.getDepartment() != null)
+                query.setParameter("department", estimateAbstractReport.getDepartment());
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
-                query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
-            }
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
+                query.setParameter("fromDate", estimateAbstractReport.getAdminSanctionFromDate(), TemporalType.DATE);
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
-                query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-            }
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
+                query.setParameter("toDate", estimateAbstractReport.getAdminSanctionToDate(), TemporalType.DATE);
 
-            if (estimateAbstractReport.getScheme() != null) {
-                query.setLong("scheme", estimateAbstractReport.getScheme());
-            }
+            if (estimateAbstractReport.getScheme() != null)
+                query.setParameter("scheme", estimateAbstractReport.getScheme());
 
-            if (estimateAbstractReport.getSubScheme() != null) {
-                query.setLong("subScheme", estimateAbstractReport.getSubScheme());
-            }
+            if (estimateAbstractReport.getSubScheme() != null)
+                query.setParameter("subScheme", estimateAbstractReport.getSubScheme());
 
-            if (estimateAbstractReport.getWorkCategory() != null) {
-                    query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-            }
-            
-            if (estimateAbstractReport.getBeneficiary() != null) {
-                query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-            }
+            if (estimateAbstractReport.getWorkCategory() != null)
+                query.setParameter("workcategory", estimateAbstractReport.getWorkCategory());
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
-                query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
-            }
+            if (estimateAbstractReport.getBeneficiary() != null)
+                query.setParameter("beneficiary", estimateAbstractReport.getBeneficiary());
+
+            if (estimateAbstractReport.getNatureOfWork() != null)
+                query.setParameter("natureofwork", estimateAbstractReport.getNatureOfWork());
 
         }
         return query;
@@ -203,59 +181,48 @@ public class WorkProgressRegisterService {
     private Query setParameterForTypeOfWorkWiseReport(EstimateAbstractReport estimateAbstractReport, Query query) {
 
         if (estimateAbstractReport != null) {
-            if (estimateAbstractReport.isSpillOverFlag()) {
-                query.setBoolean("spilloverflag", true);
+            if (estimateAbstractReport.isSpillOverFlag())
+                query.setParameter("spilloverflag", true);
 
-            }
+            if (estimateAbstractReport.getTypeOfWork() != null)
+                query.setParameter("typeofwork", estimateAbstractReport.getTypeOfWork());
 
-            if (estimateAbstractReport.getTypeOfWork() != null) {
-                query.setLong("typeofwork", estimateAbstractReport.getTypeOfWork());
-            }
-
-            if (estimateAbstractReport.getSubTypeOfWork() != null) {
-                query.setLong("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
-            }
+            if (estimateAbstractReport.getSubTypeOfWork() != null)
+                query.setParameter("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
 
             if (estimateAbstractReport.getDepartments() != null
                     && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-                List<Long> departmentIds = new ArrayList<Long>();
-                for (Department dept : estimateAbstractReport.getDepartments()) {
+                List<Long> departmentIds = new ArrayList<>();
+                for (Department dept : estimateAbstractReport.getDepartments())
                     departmentIds.add(dept.getId());
-                }
-                query.setParameterList("departmentIds", departmentIds);
+                query.setParameter("departmentIds", departmentIds);
 
             }
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
-                query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
-            }
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
+                query.setParameter("fromDate", estimateAbstractReport.getAdminSanctionFromDate(), TemporalType.DATE);
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
-                query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-            }
-            if (estimateAbstractReport.getScheme() != null) {
-                query.setLong("scheme", estimateAbstractReport.getScheme());
-            }
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
+                query.setParameter("toDate", estimateAbstractReport.getAdminSanctionToDate(), TemporalType.DATE);
+            if (estimateAbstractReport.getScheme() != null)
+                query.setParameter("scheme", estimateAbstractReport.getScheme());
 
-            if (estimateAbstractReport.getSubScheme() != null) {
-                query.setLong("subScheme", estimateAbstractReport.getSubScheme());
-            }
+            if (estimateAbstractReport.getSubScheme() != null)
+                query.setParameter("subScheme", estimateAbstractReport.getSubScheme());
 
-            if (estimateAbstractReport.getWorkCategory() != null ) {
-                    query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-            }
+            if (estimateAbstractReport.getWorkCategory() != null)
+                query.setParameter("workcategory", estimateAbstractReport.getWorkCategory());
 
-            if (estimateAbstractReport.getBeneficiary() != null) {
-                query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-            }
+            if (estimateAbstractReport.getBeneficiary() != null)
+                query.setParameter("beneficiary", estimateAbstractReport.getBeneficiary());
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
-                query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
-            }
+            if (estimateAbstractReport.getNatureOfWork() != null)
+                query.setParameter("natureofwork", estimateAbstractReport.getNatureOfWork());
 
         }
         return query;
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional
     public List<EstimateAbstractReport> searchEstimateAbstractReportByTypeOfWorkWise(
             final EstimateAbstractReport estimateAbstractReport) {
@@ -263,41 +230,16 @@ public class WorkProgressRegisterService {
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-            query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
-                    .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("departmentName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
-                    .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport),
+                    EstimateAbstractReport.class);
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
         } else {
-            query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
-                    .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
-                    .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport),
+                    EstimateAbstractReport.class);
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
         }
-        return query.list();
+        return query.getResultList();
 
     }
 
@@ -307,36 +249,28 @@ public class WorkProgressRegisterService {
 
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.getDepartment() != null) {
+            if (estimateAbstractReport.getDepartment() != null)
                 filterConditions.append(" AND details.department =:department ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-            }
 
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 filterConditions.append(" AND details.scheme =:scheme ");
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 filterConditions.append(" AND details.subScheme =:subScheme ");
-            }
 
-            if (estimateAbstractReport.getWorkCategory() != null) {
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-            }
-            if (estimateAbstractReport.getBeneficiary() != null) {
+            if (estimateAbstractReport.getWorkCategory() != null)
+                filterConditions.append(" AND details.workcategory =:workcategory ");
+            if (estimateAbstractReport.getBeneficiary() != null)
                 filterConditions.append(" AND details.beneficiary =:beneficiary ");
-            }
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
-            }
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
 
@@ -549,41 +483,32 @@ public class WorkProgressRegisterService {
 
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.getTypeOfWork() != null) {
+            if (estimateAbstractReport.getTypeOfWork() != null)
                 filterConditions.append(" AND details.typeofwork =:typeofwork ");
-            }
 
-            if (estimateAbstractReport.getSubTypeOfWork() != null) {
+            if (estimateAbstractReport.getSubTypeOfWork() != null)
                 filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-            }
 
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 filterConditions.append(" AND details.scheme =:scheme ");
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 filterConditions.append(" AND details.subScheme =:subScheme ");
-            }
 
-            if (estimateAbstractReport.getWorkCategory() != null) {
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-            }
-            
-            if (estimateAbstractReport.getBeneficiary() != null) {
+            if (estimateAbstractReport.getWorkCategory() != null)
+                filterConditions.append(" AND details.workcategory =:workcategory ");
+
+            if (estimateAbstractReport.getBeneficiary() != null)
                 filterConditions.append(" AND details.beneficiary =:beneficiary ");
-            }
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
-            }
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
 

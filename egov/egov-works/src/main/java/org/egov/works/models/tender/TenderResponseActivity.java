@@ -47,15 +47,17 @@
  */
 package org.egov.works.models.tender;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.Activity;
-
-import javax.validation.Valid;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.egov.infstr.models.BaseModel;
+import org.egov.works.abstractestimate.entity.Activity;
+
+@SuppressWarnings("deprecation")
 public class TenderResponseActivity extends BaseModel {
 
     private static final long serialVersionUID = -8405385609284605838L;
@@ -78,7 +80,7 @@ public class TenderResponseActivity extends BaseModel {
     private double estimatedQty;
 
     @Valid
-    private List<TenderResponseQuotes> tenderResponseQuotes = new LinkedList<TenderResponseQuotes>();
+    private List<TenderResponseQuotes> tenderResponseQuotes = new LinkedList<>();
 
     public TenderResponse getTenderResponse() {
         return tenderResponse;
@@ -124,6 +126,7 @@ public class TenderResponseActivity extends BaseModel {
         return tenderResponseQuotes;
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<TenderResponseQuotes> getTenderResponseQuotesList() {
         return CollectionUtils.select(tenderResponseQuotes,
                 tenderReponseQuote -> (TenderResponseQuotes) tenderReponseQuote != null);

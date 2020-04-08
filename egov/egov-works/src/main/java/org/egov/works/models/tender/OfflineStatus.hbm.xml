@@ -78,7 +78,7 @@
 	</class>
 	<query name="getStatusByObjectId">
 		<![CDATA[
-     	from OfflineStatus st where st.objectId=1 and st.objectType=?2 order by id
+     	from OfflineStatus st where st.objectId=?1 and st.objectType=?2 order by id
     ]]>	
     </query>
     

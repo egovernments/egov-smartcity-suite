@@ -50,6 +50,7 @@ package org.egov.works.models.tender;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
+@SuppressWarnings("deprecation")
 public class WorksPackageDetails extends BaseModel {
 
     private static final long serialVersionUID = -2537296952139684525L;

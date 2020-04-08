@@ -47,9 +47,9 @@
  */
 package org.egov.works.models.tender;
 
-import org.egov.works.abstractestimate.entity.Activity;
-
 import java.util.Date;
+
+import org.egov.works.abstractestimate.entity.Activity;
 
 public class EstimateLineItemsForWP {
 

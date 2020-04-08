@@ -56,6 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -102,15 +105,22 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public ContractorService() {
         super(Contractor.class);
     }
 
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
-        return findAllBy(new StringBuffer("select distinct contractorDet.contractor from ContractorDetail contractorDet ")
-                .append("where contractorDet.status.description=?1 and contractorDet.status.moduletype=?2").toString(),
-                "Active", "Contractor");
+        return entityManager.createQuery(new StringBuffer("select distinct contractorDet.contractor")
+                .append(" from ContractorDetail contractorDet ")
+                .append(" where contractorDet.status.description = :description and contractorDet.status.moduletype = :moduletype")
+                .toString(), Contractor.class)
+                .setParameter("description", "Active")
+                .setParameter("moduletype", "Contractor")
+                .getResultList();
     }
 
     public static final Map<String, String> exemptionForm = new LinkedHashMap<String, String>() {
@@ -131,9 +141,10 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
             final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final StringBuffer qry = new StringBuffer("select distinct cont from Contractor cont, ContractorDetail contractorDet ")
-                .append("where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1")
-                .append(" and contractorDet.status.moduletype=?2 and (upper(cont.code) like ?3 ")
+        final StringBuffer qry = new StringBuffer("select distinct cont")
+                .append(" from Contractor cont, ContractorDetail contractorDet ")
+                .append(" where cont.id = contractorDet.contractor.id and contractorDet.status.description = ?1")
+                .append(" and contractorDet.status.moduletype = ?2 and (upper(cont.code) like ?3 ")
                 .append(" or upper(cont.name) like ?4) order by cont.code,cont.name");
         return findPageBy(qry.toString(), 0, pageSize, "Active", "Contractor", param, param).getList();
     }
@@ -144,30 +155,28 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         return null;
     }
 
-    @SuppressWarnings({ "unchecked" })
     @Override
     public List<Contractor> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
-        return getSession()
-                .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )")
-                .setParameterList("IDS", idsList)
-                .list();
+        return entityManager
+                .createQuery(" from Contractor where panNumber is null or bank is null and id in :ids", Contractor.class)
+                .setParameter("ids", idsList)
+                .getResultList();
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Contractor> getEntitiesById(final List<Long> idsList) throws ValidationException {
-        return getSession().createQuery(" from Contractor where id in ( :IDS )").setParameterList("IDS", idsList).list();
+        return entityManager.createQuery(" from Contractor where id in :ids", Contractor.class)
+                .setParameter("ids", idsList).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Contractor> getAllContractors() {
-        return getSession().createQuery(" from Contractor con order by code asc").list();
+        return entityManager.createQuery(" from Contractor con order by code asc", Contractor.class).getResultList();
     }
 
     public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
         List<Contractor> contractorList = null;
-        StringBuilder contractorStr = new StringBuilder();
+        final StringBuilder contractorStr = new StringBuilder();
         final List<Object> paramList = new ArrayList<>();
         int index = 1;
         Object[] params;
@@ -387,7 +396,12 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     }
 
     public Contractor getContractorByCode(final String code) {
-        return find(new StringBuilder("from Contractor as cont where upper(cont.code) = ?1").toString(), code.toUpperCase());
+        final List<Contractor> contractors = entityManager
+                .createQuery(new StringBuilder("from Contractor as cont where upper(cont.code) = :code").toString(),
+                        Contractor.class)
+                .setParameter("code", code.toUpperCase())
+                .getResultList();
+        return contractors.isEmpty() ? null : contractors.get(0);
     }
 
     @Transactional

@@ -54,7 +54,9 @@ public class ExpenditureType implements java.io.Serializable {
     private static final long serialVersionUID = 1572305670247580068L;
     private String value;
 
+    @SuppressWarnings("unused")
     private ExpenditureType() {
+
     }
 
     public ExpenditureType(final String value) {

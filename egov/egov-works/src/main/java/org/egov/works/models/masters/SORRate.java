@@ -47,15 +47,17 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class SORRate extends BaseModel {
 
     private static final long serialVersionUID = 4057715980589711248L;
@@ -100,7 +102,7 @@ public class SORRate extends BaseModel {
     @Override
     public List<ValidationError> validate() {
 
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (rate == null || rate.getValue() == 0.0 || rate != null && rate.getValue() == 0.0)
             validationErrors.add(new ValidationError("rate", "sor.rate.lessthan.0"));
 

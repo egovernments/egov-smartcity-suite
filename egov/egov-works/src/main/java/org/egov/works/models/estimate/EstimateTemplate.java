@@ -47,6 +47,13 @@
  */
 package org.egov.works.models.estimate;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
@@ -55,12 +62,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_ESTIMATE_TEMPLATE", columnName = {
         "CODE" }, message = "estimateTemplate.code.isunique")
 public class EstimateTemplate extends BaseModel {
@@ -79,7 +81,7 @@ public class EstimateTemplate extends BaseModel {
     private EgwTypeOfWork subType;
 
     @Valid
-    private List<EstimateTemplateActivity> estimateTemplateActivities = new LinkedList<EstimateTemplateActivity>();
+    private List<EstimateTemplateActivity> estimateTemplateActivities = new LinkedList<>();
 
     public String getCode() {
         return code;
@@ -141,18 +143,20 @@ public class EstimateTemplate extends BaseModel {
         estimateTemplateActivities.add(estimateTemplateActivity);
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<EstimateTemplateActivity> getSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,
                 activity -> ((EstimateTemplateActivity) activity).getSchedule() != null);
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<EstimateTemplateActivity> getNonSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,
                 activity -> ((EstimateTemplateActivity) activity).getNonSor() != null);
     }
 
     public List<ValidationError> validateActivities() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         for (final EstimateTemplateActivity estimateTemplateActivity : estimateTemplateActivities)
             validationErrors.addAll(estimateTemplateActivity.validate());
         return validationErrors;
@@ -160,7 +164,7 @@ public class EstimateTemplate extends BaseModel {
 
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         validationErrors.addAll(validateActivities());
         return validationErrors;
     }

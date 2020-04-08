@@ -59,7 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WorkOrderEstimateService {
 
     private final WorkOrderEstimateRepository workOrderEstimateRepository;
-    
+
     @Autowired
     public WorkOrderEstimateService(final WorkOrderEstimateRepository workOrderEstimateRepository) {
         this.workOrderEstimateRepository = workOrderEstimateRepository;
@@ -69,15 +69,15 @@ public class WorkOrderEstimateService {
         return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
                 WorksConstants.APPROVED);
     }
-    
+
     public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
         return workOrderEstimateRepository.findOne(id);
     }
-    
+
     public WorkOrderEstimate getWorkOrderEstimateByEstimateNumber(final String estimateNumber) {
-        return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber,WorksConstants.APPROVED);
+        return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber, WorksConstants.APPROVED);
     }
-    
+
     public WorkOrderEstimate getWorkOrderEstimateByWorkOrderId(final Long workOrderId) {
         return workOrderEstimateRepository.findByWorkOrder_Id(workOrderId);
     }

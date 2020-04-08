@@ -79,9 +79,8 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
         return entityManager.find(ScheduleOfRate.class, scheduleOfRateId);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ScheduleOfRate> getAllScheduleOfRates() {
-        return entityManager.createQuery("from ScheduleOfRate sor order by code asc").getResultList();
+        return entityManager.createQuery("from ScheduleOfRate sor order by code asc", ScheduleOfRate.class).getResultList();
     }
 
     public List<AbstractEstimate> getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
@@ -107,7 +106,7 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
 
     public SearchQuery prepareSearchQuery(final Long scheduleCategoryId, final String code, final String description) {
         final StringBuffer scheduleOfRateSql = new StringBuffer(100);
-        final List<Object> paramList = new ArrayList<Object>();
+        final List<Object> paramList = new ArrayList<>();
         int index = 1;
         scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?").append(index++);
         paramList.add(scheduleCategoryId);

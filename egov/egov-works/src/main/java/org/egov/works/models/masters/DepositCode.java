@@ -64,6 +64,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
+@SuppressWarnings("deprecation")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_DEPOSITCODE", columnName = { "CODE" }, message = "depositCode.isUnique")
 public class DepositCode extends BaseModel implements EntityType {
 

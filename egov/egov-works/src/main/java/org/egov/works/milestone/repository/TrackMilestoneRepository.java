@@ -47,29 +47,35 @@
  */
 package org.egov.works.milestone.repository;
 
+import java.util.List;
+
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, Long> {
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where led.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber)")
     List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code);
-    
+
     TrackMilestone findByMilestone_Id(final Long id);
-    
+
     @Query("select distinct(tms) FROM WorkOrderEstimate as woe,Milestone as ms ,TrackMilestone as tms WHERE ms.workOrderEstimate.id =:workOrderEstimateId and woe.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and ms.status.code =:milestoneStatus")
-    TrackMilestone findTrackMilestoneTotalPercentage(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
-    
+    TrackMilestone findTrackMilestoneTotalPercentage(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
+            @Param("milestoneStatus") String milestoneStatus);
+
     @Query("select distinct(tms) from TrackMilestone tms where tms.milestone.workOrderEstimate.id =:workOrderEstimateId and tms.milestone.workOrderEstimate.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and tms.status.code =:milestoneStatus and tms.totalPercentage >= 1 ")
-    TrackMilestone findMinimunPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
-    
+    TrackMilestone findMinimunPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
+            @Param("milestoneStatus") String milestoneStatus);
+
     @Query("select distinct(tms) from TrackMilestone tms where tms.milestone.workOrderEstimate.id =:workOrderEstimateId and tms.milestone.workOrderEstimate.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and tms.status.code =:milestoneStatus and tms.totalPercentage = 100 ")
-    TrackMilestone findCompletionPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
+    TrackMilestone findCompletionPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
+            @Param("milestoneStatus") String milestoneStatus);
 
 }

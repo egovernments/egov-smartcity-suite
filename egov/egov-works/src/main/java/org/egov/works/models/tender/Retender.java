@@ -47,17 +47,18 @@
  */
 package org.egov.works.models.tender;
 
-import org.egov.infstr.models.BaseModel;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.egov.infstr.models.BaseModel;
+
+@SuppressWarnings("deprecation")
 public class Retender extends BaseModel {
 
     private static final long serialVersionUID = -8004618443430435287L;
     private WorksPackage worksPackage;
-    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
+    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<>();
     private String reason;
     private Date retenderDate;
     private Integer iterationNumber;

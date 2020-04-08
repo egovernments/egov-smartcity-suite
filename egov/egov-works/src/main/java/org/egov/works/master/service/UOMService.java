@@ -74,8 +74,7 @@ public class UOMService extends PersistenceService<UOM, Long> {
         return uom;
     }
 
-    @SuppressWarnings("unchecked")
     public List<UOM> getAllUOMs() {
-        return entityManager.createQuery("from UOM  order by upper(uom)").getResultList();
+        return entityManager.createQuery("from UOM  order by upper(uom)", UOM.class).getResultList();
     }
 }

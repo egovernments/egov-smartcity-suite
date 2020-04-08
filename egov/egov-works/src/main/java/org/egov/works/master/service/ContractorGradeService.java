@@ -48,18 +48,19 @@
 
 package org.egov.works.master.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.ContractorGrade;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.utils.WorksConstants;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class ContractorGradeService extends PersistenceService<ContractorGrade, Long> {
@@ -79,15 +80,14 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         return entityManager.find(ContractorGrade.class, contractorGradeId);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ContractorGrade> getAllContractorGrades() {
-        return entityManager.createQuery("from ContractorGrade order by upper(grade)").getResultList();
+        return entityManager.createQuery("from ContractorGrade order by upper(grade)", ContractorGrade.class).getResultList();
     }
 
     public SearchQuery prepareSearchQuery(final Map<String, Object> criteriaMap) {
         final StringBuffer contractorGradeSql = new StringBuffer(100);
         String contractorGradeStr = "";
-        final List<Object> paramList = new ArrayList<Object>();
+        final List<Object> paramList = new ArrayList<>();
         contractorGradeSql.append(" from ContractorGrade cg");
         final String grade = (String) criteriaMap.get(WorksConstants.GRADE);
         final Double minAmount = (Double) criteriaMap.get(WorksConstants.MIN_AMOUNT);
@@ -117,8 +117,11 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
     }
 
     public ContractorGrade findByContractorClass(final String contractorClass) {
-        final String query = "from ContractorGrade as cg where upper(cg.grade) = ?1";
-        return find(query, contractorClass.toUpperCase());
+        final List<ContractorGrade> contractorGrades = entityManager
+                .createQuery("from ContractorGrade as cg where upper(cg.grade) = :grade", ContractorGrade.class)
+                .setParameter("grade", contractorClass.toUpperCase())
+                .getResultList();
+        return contractorGrades.isEmpty() ? null : contractorGrades.get(0);
     }
 
 }

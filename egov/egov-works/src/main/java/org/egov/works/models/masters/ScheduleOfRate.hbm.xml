@@ -85,7 +85,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 </class>
 <query name="SCHEDULEOFRATES_BY_IDS">
 		<![CDATA[
-     	from ScheduleOfRate where id in(:param_0)   
+     	from ScheduleOfRate where id in (:param_1)   
     ]]>
 </query>
 

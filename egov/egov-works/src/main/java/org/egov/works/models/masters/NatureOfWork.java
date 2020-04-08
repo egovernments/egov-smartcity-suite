@@ -47,11 +47,12 @@
  */
 package org.egov.works.models.masters;
 
+import javax.validation.constraints.NotNull;
+
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
-
+@SuppressWarnings("deprecation")
 public class NatureOfWork extends BaseModel {
 
     private static final long serialVersionUID = -8350958038107099411L;

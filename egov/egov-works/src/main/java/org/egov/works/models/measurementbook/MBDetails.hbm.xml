@@ -182,7 +182,7 @@
             select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and 
             woa.activity.abstractEstimate.id != ?1 and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and
             (woa.workOrderEstimate.workOrder = ?2 or (woa.activity.parent is null and woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?3))
-            group by woa,woa.activity having (id = ?3 or activity.id = ?4)
+            group by woa,woa.activity having (id = ?4 or activity.id = ?5)
    		]]>  
 	</query>
 	<query name="totalEstimatedQuantityForREinRE">

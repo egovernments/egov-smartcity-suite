@@ -50,6 +50,7 @@ package org.egov.works.models.measurementbook;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
+@SuppressWarnings("deprecation")
 public class MBForCancelledBill extends BaseModel {
 
     private static final long serialVersionUID = -6540546979562987332L;

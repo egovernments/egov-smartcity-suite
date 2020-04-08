@@ -47,6 +47,14 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
@@ -56,13 +64,7 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Unique(fields = "name", id = "id", tableName = "EGW_OVERHEAD", columnName = "NAME", message = "overhead.name.isunique")
 public class Overhead extends BaseModel {
 
@@ -76,7 +78,7 @@ public class Overhead extends BaseModel {
 
     private ExpenditureType expenditureType;
 
-    private List<OverheadRate> overheadRates = new LinkedList<OverheadRate>();
+    private List<OverheadRate> overheadRates = new LinkedList<>();
 
     public Overhead() {
     }
@@ -164,7 +166,7 @@ public class Overhead extends BaseModel {
     }
 
     private List<ValidationError> validateDateRanges() {
-        final List<Period> validDates = new ArrayList<Period>();
+        final List<Period> validDates = new ArrayList<>();
         // check for date range over lap
         validDates.add(0, overheadRates.get(0).getValidity());
         Date existingStartDate = null;
@@ -205,7 +207,7 @@ public class Overhead extends BaseModel {
      * This method removes any empty over head rate from the list of over head rates.
      */
     private void removeEmptyRates() {
-        final List<OverheadRate> emptyRateObjs = new LinkedList<OverheadRate>();
+        final List<OverheadRate> emptyRateObjs = new LinkedList<>();
 
         for (final OverheadRate overheadRate : overheadRates)
             if (overheadRate.getPercentage() == 0.0
@@ -222,7 +224,7 @@ public class Overhead extends BaseModel {
      */
     @Override
     public List<ValidationError> validate() {
-        List<ValidationError> errorList = new ArrayList<ValidationError>();
+        List<ValidationError> errorList = new ArrayList<>();
 
         removeEmptyRates();
         if ((errorList = checkForNoRatesPresent()) != null)

@@ -47,12 +47,13 @@
  */
 package org.egov.works.models.tender;
 
+import javax.validation.Valid;
+
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.masters.Contractor;
 
-import javax.validation.Valid;
-
+@SuppressWarnings("deprecation")
 public class TenderResponseContractors extends BaseModel {
 
     private static final long serialVersionUID = -1945464312468501940L;

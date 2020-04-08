@@ -47,9 +47,8 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.commons.EgwTypeOfWork;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -63,8 +62,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "EGW_MILESTONE_TEMPLATE")
@@ -98,7 +99,7 @@ public class MilestoneTemplate extends AbstractAuditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "milestoneTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MilestoneTemplateActivity.class)
-    private final List<MilestoneTemplateActivity> milestoneTemplateActivities = new ArrayList<MilestoneTemplateActivity>(0);
+    private final List<MilestoneTemplateActivity> milestoneTemplateActivities = new ArrayList<>(0);
 
     @Override
     public Long getId() {

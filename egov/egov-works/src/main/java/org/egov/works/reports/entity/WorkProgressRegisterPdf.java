@@ -96,13 +96,13 @@ public class WorkProgressRegisterPdf {
     private String billtype;
 
     private String billamount;
-    
+
     private String totalBillAmount;
 
     private String totalBillPaidSoFar;
 
     private String balanceValueOfWorkToBill;
-    
+
     private String milestonePercentageCompleted;
 
     public String getWard() {

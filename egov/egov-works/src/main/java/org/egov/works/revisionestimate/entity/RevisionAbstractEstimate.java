@@ -47,25 +47,25 @@
  */
 package org.egov.works.revisionestimate.entity;
 
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.entity.Activity;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 
 @Entity
 @Table(name = "EGW_REVISION_ESTIMATE")
 public class RevisionAbstractEstimate extends AbstractEstimate {
 
-    
     private static final long serialVersionUID = 4389815027807161766L;
 
     @Transient
-    private List<String> revisionEstActions = new ArrayList<String>();
+    private List<String> revisionEstActions = new ArrayList<>();
 
     @Transient
     private String additionalRule;

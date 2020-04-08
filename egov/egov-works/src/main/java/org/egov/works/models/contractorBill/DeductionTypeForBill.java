@@ -47,14 +47,15 @@
  */
 package org.egov.works.models.contractorBill;
 
+import java.math.BigDecimal;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 
-import java.math.BigDecimal;
-
+@SuppressWarnings("deprecation")
 public class DeductionTypeForBill extends BaseModel {
 
     private static final long serialVersionUID = 2230319773656392789L;

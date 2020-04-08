@@ -47,6 +47,8 @@
  */
 package org.egov.works.models.contractoradvance;
 
+import javax.script.ScriptContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
 import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
@@ -54,8 +56,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-
+@SuppressWarnings("deprecation")
 public class ContractorAdvanceRequisitionNumberGenerator {
     public static final String SEQUENCE_TYPE = "CONTRACTOR_ARF";
     @Autowired

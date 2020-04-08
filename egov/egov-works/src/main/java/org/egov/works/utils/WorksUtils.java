@@ -47,6 +47,14 @@
  */
 package org.egov.works.utils;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -70,14 +78,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,13 +128,13 @@ public class WorksUtils {
         }
 
         if (files != null && files.length > 0)
-            for (int i = 0; i < files.length; i++)
-                if (!files[i].isEmpty()) {
+            for (MultipartFile file : files)
+                if (!file.isEmpty()) {
                     final DocumentDetails documentDetails = new DocumentDetails();
                     documentDetails.setObjectId(id);
                     documentDetails.setObjectType(objectType);
-                    documentDetails.setFileStore(fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
+                    documentDetails.setFileStore(fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), WorksConstants.FILESTORE_MODULECODE));
                     documentDetailsList.add(documentDetails);
                 }
         return documentDetailsList;
@@ -144,6 +144,7 @@ public class WorksUtils {
         return documentDetailsRepository.findByObjectIdAndObjectType(objectId, objectType);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Long getApproverPosition(final String designationName, final State state, final Long createdById) {
         final Set<StateHistory> stateHistoryList = state.getHistory();
         Long approverPosition = 0l;
@@ -228,7 +229,8 @@ public class WorksUtils {
     }
 
     public String getUserDesignation(final User user) {
-        List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null, new Date());
+        List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null,
+                new Date());
         if (!assignmentList.isEmpty())
             return assignmentList.get(0).getDesignation().getName();
         return null;

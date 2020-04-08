@@ -47,6 +47,11 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.commons.ContractorGrade;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
@@ -57,10 +62,7 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class ContractorDetail extends BaseModel {
 
     /**
@@ -83,7 +85,7 @@ public class ContractorDetail extends BaseModel {
     private List<ValidationError> errorList;
     @Valid
     private Period validity;
-    
+
     private String category;
 
     public Contractor getContractor() {
@@ -138,14 +140,13 @@ public class ContractorDetail extends BaseModel {
         if (errorList != null)
             return errorList;
         else
-            return new ArrayList<ValidationError>();
+            return new ArrayList<>();
     }
 
     public void setErrorList(final List<ValidationError> errorList) {
         this.errorList = errorList;
     }
-    
-    
+
     public String getCategory() {
         return category;
     }
@@ -165,7 +166,7 @@ public class ContractorDetail extends BaseModel {
             validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
         else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
-        
+
         if (validationErrors.isEmpty())
             return null;
         else

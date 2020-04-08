@@ -47,17 +47,19 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class OverheadRate extends BaseModel {
 
     private static final long serialVersionUID = 5980950787039146268L;
@@ -138,7 +140,7 @@ public class OverheadRate extends BaseModel {
      */
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
 
         if (percentage < 0.0 || percentage > 100)
             validationErrors.add(new ValidationError("percentage", "estimate.overhead.percentage.lessthan.100"));

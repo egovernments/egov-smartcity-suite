@@ -47,21 +47,22 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.constants.ValidationRegex;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
         "CODE" }, message = "contractor.code.isunique")
 public class Contractor extends BaseModel implements EntityType {
@@ -121,7 +122,7 @@ public class Contractor extends BaseModel implements EntityType {
 
     private ExemptionForm exemptionForm;
 
-    private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
+    private List<ContractorDetail> contractorDetails = new LinkedList<>();
 
     @Length(max = 10)
     @OptionalPattern(regex = ValidationRegex.MOBILE_NUMBER, message = "depositworks.roadcut.invalid.mobileno")

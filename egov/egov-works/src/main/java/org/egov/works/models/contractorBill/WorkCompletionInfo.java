@@ -47,12 +47,12 @@
  */
 package org.egov.works.models.contractorBill;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.works.models.workorder.WorkOrderEstimate;
-
-import java.util.Date;
-import java.util.List;
 
 public class WorkCompletionInfo {
 
@@ -121,9 +121,11 @@ public class WorkCompletionInfo {
      * @return budgetheader
      */
     public String getBudgetHeader() {
-        return workOrderEstimate.getEstimate().getFinancialDetails() == null ? null : workOrderEstimate.getEstimate()
-                .getFinancialDetails().get(0).getBudgetGroup() == null ? null : workOrderEstimate.getEstimate()
-                .getFinancialDetails().get(0).getBudgetGroup().getName();
+        return workOrderEstimate.getEstimate().getFinancialDetails() == null ? null
+                : workOrderEstimate.getEstimate()
+                        .getFinancialDetails().get(0).getBudgetGroup() == null ? null
+                                : workOrderEstimate.getEstimate()
+                                        .getFinancialDetails().get(0).getBudgetGroup().getName();
     }
 
     /**
@@ -138,8 +140,9 @@ public class WorkCompletionInfo {
      * @return project code
      */
     public String getProjectCode() {
-        return workOrderEstimate.getEstimate().getProjectCode() == null ? null : workOrderEstimate.getEstimate()
-                .getProjectCode().getCode();
+        return workOrderEstimate.getEstimate().getProjectCode() == null ? null
+                : workOrderEstimate.getEstimate()
+                        .getProjectCode().getCode();
     }
 
     /**

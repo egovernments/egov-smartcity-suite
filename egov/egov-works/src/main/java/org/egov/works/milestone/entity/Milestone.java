@@ -47,17 +47,33 @@
  */
 package org.egov.works.milestone.entity;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-import org.egov.works.models.workorder.WorkOrderEstimate;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.egov.works.models.workorder.WorkOrderEstimate;
+
+@SuppressWarnings("rawtypes")
 @Entity
 @Table(name = "EGW_MILESTONE")
 @SequenceGenerator(name = Milestone.SEQ_EGW_MILESTONE, sequenceName = Milestone.SEQ_EGW_MILESTONE, allocationSize = 1)

@@ -47,14 +47,16 @@
  */
 package org.egov.works.models.tender;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
-import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 public class TenderEstimate extends BaseModel {
 
     private static final long serialVersionUID = 4132380393698713291L;
@@ -66,7 +68,7 @@ public class TenderEstimate extends BaseModel {
 
     private WorksPackage worksPackage;
 
-    private Set<TenderResponse> tenderResponseSet = new HashSet<TenderResponse>();
+    private Set<TenderResponse> tenderResponseSet = new HashSet<>();
 
     @Required(message = "tenderEstimate.tenderType.null")
     private String tenderType;

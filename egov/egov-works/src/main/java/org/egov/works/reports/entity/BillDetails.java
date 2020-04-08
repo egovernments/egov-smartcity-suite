@@ -47,11 +47,8 @@
  */
 package org.egov.works.reports.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.models.workorder.WorkOrder;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,8 +59,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.models.workorder.WorkOrder;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGW_MV_BILLDETAILS")
@@ -100,10 +101,12 @@ public class BillDetails extends AbstractAuditable {
     @Length(max = 100)
     private String billtype;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

@@ -47,6 +47,14 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
@@ -60,13 +68,7 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_SCHEDULEOFRATE", columnName = {
         "CODE" }, message = "sor.code.isunique")
 public class ScheduleOfRate extends BaseModel {
@@ -92,8 +94,8 @@ public class ScheduleOfRate extends BaseModel {
         this.description = description;
     }
 
-    private List<SORRate> sorRates = new LinkedList<SORRate>();
-    private List<MarketRate> marketRates = new LinkedList<MarketRate>();
+    private List<SORRate> sorRates = new LinkedList<>();
+    private List<MarketRate> marketRates = new LinkedList<>();
 
     public String getCode() {
         return code;
@@ -216,7 +218,7 @@ public class ScheduleOfRate extends BaseModel {
     }
 
     private void removeEmptyRates() {
-        final List<SORRate> emptyRateObjs = new LinkedList<SORRate>();
+        final List<SORRate> emptyRateObjs = new LinkedList<>();
         for (final SORRate rat : sorRates)
             if ((rat.getRate() == null || rat.getRate().getValue() == 0.0)
                     && (rat.getValidity() == null || rat.getValidity().getStartDate() == null
@@ -252,7 +254,7 @@ public class ScheduleOfRate extends BaseModel {
     }
 
     private List<ValidationError> validateDateRanges() {
-        final List<Period> validDates = new ArrayList<Period>();
+        final List<Period> validDates = new ArrayList<>();
         validDates.add(0, sorRates.get(0).getValidity());
         Date existingStartDate = null;
         Date existingEndDate = null;
@@ -330,7 +332,7 @@ public class ScheduleOfRate extends BaseModel {
     }
 
     private void removeEmptyMarketRates() {
-        final List<MarketRate> emptyMarketRateObjs = new LinkedList<MarketRate>();
+        final List<MarketRate> emptyMarketRateObjs = new LinkedList<>();
         for (final MarketRate marketRate : marketRates)
             if ((marketRate.getMarketRate() == null || marketRate.getMarketRate().getValue() == 0.0)
                     && (marketRate.getValidity() == null || marketRate.getValidity().getStartDate() == null
@@ -366,7 +368,7 @@ public class ScheduleOfRate extends BaseModel {
     }
 
     private List<ValidationError> validateDateRangesForMarketRate() {
-        final List<Period> validDates = new ArrayList<Period>();
+        final List<Period> validDates = new ArrayList<>();
         validDates.add(0, marketRates.get(0).getValidity());
         Date existingStartDate = null;
         Date existingEndDate = null;
