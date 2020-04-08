@@ -47,9 +47,8 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.egov.commons.Fundsource;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.exception.ValidationError;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,8 +61,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.commons.Fundsource;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_FINANCINGSOURCE")
@@ -130,7 +131,7 @@ public class FinancingSource extends AbstractAuditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
 
         if (fundSource == null || fundSource.getCode() == null)
             validationErrors.add(new ValidationError("invalidpercentage", "financingsource.fundsource.null"));

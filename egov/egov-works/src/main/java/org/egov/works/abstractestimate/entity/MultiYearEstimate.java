@@ -47,9 +47,9 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.exception.ValidationError;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,9 +62,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
 
 @Entity
 @Table(name = "EGW_MULTIYEAR_ESTIMATE")
@@ -137,6 +138,6 @@ public class MultiYearEstimate extends AbstractAuditable {
         if (percentage > 100.0)
             return Arrays.asList(new ValidationError("percentage",
                     "multiYeareEstimate.percentage.percentage_less_than_100"));
-        return new ArrayList<ValidationError>();
+        return new ArrayList<>();
     }
 }

@@ -47,14 +47,14 @@
  */
 package org.egov.works.lineestimate.repository;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimateDetails, Long> {
@@ -94,17 +94,20 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<String> findWorkIdentificationNumbersToSearchWorkProgressRegister(@Param("code") String code,
             @Param("adminSanctionstatus") String adminSanctionstatus,
             @Param("technicalSanctionstatus") String technicalSanctionstatus);
-    
+
     @Query("select distinct(led.lineEstimate.createdBy) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :department and led.lineEstimate.status.code = :lineEstimateStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) = :workOrderStatus)")
-    List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,@Param("lineEstimateStatus") String lineEstimateStatus,@Param("workOrderStatus") String workOrderStatus);
+    List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,
+            @Param("lineEstimateStatus") String lineEstimateStatus, @Param("workOrderStatus") String workOrderStatus);
 
     LineEstimateDetails findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(String workIdentificationNumber, String status);
-    
-    @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where upper(led.estimateNumber) like upper(:estimateNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
-    List<String> findEstimateNumbersForEstimatePhotograph(@Param("estimateNumber") String estimateNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
-    
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led where upper(led.projectCode.code) like upper(:workIdentificationNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
-    List<String> findWorkIdentificationNumberForEstimatePhotograph(@Param("workIdentificationNumber") String workIdentificationNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
 
+    @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where upper(led.estimateNumber) like upper(:estimateNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findEstimateNumbersForEstimatePhotograph(@Param("estimateNumber") String estimateNumber,
+            @Param("lineEstimateStatus") String lineEstimateStatus);
+
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led where upper(led.projectCode.code) like upper(:workIdentificationNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findWorkIdentificationNumberForEstimatePhotograph(
+            @Param("workIdentificationNumber") String workIdentificationNumber,
+            @Param("lineEstimateStatus") String lineEstimateStatus);
 
 }

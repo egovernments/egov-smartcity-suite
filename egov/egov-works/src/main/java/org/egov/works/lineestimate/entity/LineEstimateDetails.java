@@ -47,12 +47,9 @@
  */
 package org.egov.works.lineestimate.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.works.abstractestimate.entity.EstimatePhotographs;
-import org.egov.works.models.estimate.ProjectCode;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -67,14 +64,18 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.abstractestimate.entity.EstimatePhotographs;
+import org.egov.works.models.estimate.ProjectCode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
-@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = {"estimatenumber"}, fields = {
-        "estimateNumber"}, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
+        "estimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
@@ -119,11 +120,11 @@ public class LineEstimateDetails extends AbstractAuditable {
     private ProjectCode projectCode;
 
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
-    private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
+    private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
-    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);
+    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<>(0);
 
     public List<EstimatePhotographs> getEstimatePhotographsList() {
         return estimatePhotographsList;

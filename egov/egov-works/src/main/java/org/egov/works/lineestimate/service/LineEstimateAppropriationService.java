@@ -47,6 +47,8 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.util.List;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -59,8 +61,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -75,8 +75,8 @@ public class LineEstimateAppropriationService {
     private LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
 
     @Autowired
-    private AutonumberServiceBeanResolver beanResolver; 
-    
+    private AutonumberServiceBeanResolver beanResolver;
+
     @Autowired
     public LineEstimateAppropriationService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;

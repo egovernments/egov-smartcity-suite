@@ -47,6 +47,27 @@
  */
 package org.egov.works.abstractestimate.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -62,26 +83,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,7 +108,7 @@ public class EstimatePhotographService {
 
     public List<EstimatePhotographs> getEstimatePhotographs(final MultipartFile[] files, final Object object)
             throws IOException {
-        final List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
+        final List<EstimatePhotographs> estimatePhotographsList = new ArrayList<>();
         Method method = null;
         try {
             method = object.getClass().getMethod("getId", null);
@@ -169,7 +170,8 @@ public class EstimatePhotographService {
         final StringBuilder queryStr = new StringBuilder(500);
 
         buildWhereClause(estimatePhotographSearchRequest, queryStr);
-        final Query query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
+        final TypedQuery<LineEstimateDetails> query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest,
+                queryStr);
         final List<LineEstimateDetails> estimatePhotographsList = query.getResultList();
         return estimatePhotographsList;
     }
@@ -177,31 +179,35 @@ public class EstimatePhotographService {
     private void buildWhereClause(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final StringBuilder queryStr) {
 
-        queryStr.append(
-                "select distinct(ep.lineEstimateDetails) from EstimatePhotographs as ep where ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus and ep.workProgress is not null");
+        queryStr.append("select distinct(ep.lineEstimateDetails)")
+                .append(" from EstimatePhotographs as ep")
+                .append(" where ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus and ep.workProgress is not null");
 
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
-            queryStr.append(
-                    " and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
+            queryStr.append(" and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
 
         // if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
         // queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) = :estimateNumber");
 
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber()))
-            queryStr.append(
-                    " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.workOrderNumber) =:workOrderNumber) ");
+            queryStr.append(" and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id)")
+                    .append(" from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus")
+                    .append(" and upper(woe.workOrder.workOrderNumber) =:workOrderNumber) ");
         if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null)
-            queryStr.append(
-                    " and ep.lineEstimateDetails.id in (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.egwStatus.code =:abstractEstimateStatus and ae.createdBy.id =:aeCreatedById) ");
+            queryStr.append(" and ep.lineEstimateDetails.id in (select distinct(ae.lineEstimateDetails.id)")
+                    .append(" from AbstractEstimate as ae where ae.egwStatus.code = :abstractEstimateStatus")
+                    .append(" and ae.createdBy.id =:aeCreatedById) ");
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName()))
-            queryStr.append(
-                    " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.contractor.name) =:contractorName or upper(woe.workOrder.contractor.code) =:contractorName) ");
+            queryStr.append(" and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id)")
+                    .append(" from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus")
+                    .append(" and upper(woe.workOrder.contractor.name) =:contractorName or upper(woe.workOrder.contractor.code) =:contractorName) ");
 
     }
 
-    private Query setParameterForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+    private TypedQuery<LineEstimateDetails> setParameterForEstimatePhotograph(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final StringBuilder queryStr) {
-        final Query qry = entityManager.createQuery(queryStr.toString());
+        final TypedQuery<LineEstimateDetails> qry = entityManager.createQuery(queryStr.toString(), LineEstimateDetails.class);
 
         qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
 

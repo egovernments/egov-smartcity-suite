@@ -53,7 +53,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface BudgetAppropriationNumberGenerator {
-    
+
     public String getNextNumber(final LineEstimateDetails lineEstimateDetails);
 
     public String generateCancelledBudgetAppropriationNumber(final String appropriationNumber);

@@ -47,6 +47,21 @@
  */
 package org.egov.works.contractorbill.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -97,20 +112,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.script.ScriptContext;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -273,10 +274,10 @@ public class ContractorBillRegisterService {
 
     public Set<EgBilldetails> removeDeletedBillDetails(final Set<EgBilldetails> set,
             final String removedBillDetailsIds) {
-        final Set<EgBilldetails> details = new HashSet<EgBilldetails>();
+        final Set<EgBilldetails> details = new HashSet<>();
         if (null != removedBillDetailsIds) {
             final String[] ids = removedBillDetailsIds.split(",");
-            final List<String> strList = new ArrayList<String>();
+            final List<String> strList = new ArrayList<>();
             for (final String str : ids)
                 strList.add(str);
             for (final EgBilldetails line : set)
@@ -372,7 +373,8 @@ public class ContractorBillRegisterService {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
-                contractorBillRegister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                contractorBillRegister.transition().progressWithStateCopy()
+                        .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction("")
@@ -380,7 +382,8 @@ public class ContractorBillRegisterService {
             } else {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
-                contractorBillRegister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                contractorBillRegister.transition().progressWithStateCopy()
+                        .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction())
@@ -417,6 +420,7 @@ public class ContractorBillRegisterService {
 
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<ContractorBillRegister> searchContractorBill(final SearchRequestContractorBill searchRequestContractorBill) {
         // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
@@ -518,6 +522,7 @@ public class ContractorBillRegisterService {
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<ContractorBillRegister> searchContractorBillsToCancel(
             final SearchRequestContractorBill searchRequestContractorBill) {
         // TODO Need TO handle in single query
@@ -596,10 +601,11 @@ public class ContractorBillRegisterService {
         return egBillPaydetail;
     }
 
+    @SuppressWarnings("deprecation")
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
             final Model model) {
-        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> billDetails = new HashMap<String, Object>();
+        final List<Map<String, Object>> billDetailsList = new ArrayList<>();
+        Map<String, Object> billDetails = new HashMap<>();
 
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
@@ -609,7 +615,7 @@ public class ContractorBillRegisterService {
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO
                     .findById(egBilldetails.getGlcodeid().longValue(), false);
             if (egBilldetails.getDebitamount() != null) {
-                billDetails = new HashMap<String, Object>();
+                billDetails = new HashMap<>();
                 billDetails.put("id", egBilldetails.getId());
                 billDetails.put("glcodeId", coa.getId());
                 billDetails.put("glcode", coa.getGlcode());
@@ -629,7 +635,7 @@ public class ContractorBillRegisterService {
                     billDetails.put("isRefund", false);
 
             } else if (egBilldetails.getCreditamount() != null) {
-                billDetails = new HashMap<String, Object>();
+                billDetails = new HashMap<>();
                 billDetails.put("id", egBilldetails.getId());
                 billDetails.put("glcodeId", coa.getId());
                 billDetails.put("glcode", coa.getGlcode());
@@ -652,7 +658,7 @@ public class ContractorBillRegisterService {
     }
 
     public boolean checkForDuplicateAccountCodes(final ContractorBillRegister contractorBillRegister) {
-        final Set<Long> glCodeIdSet = new HashSet<Long>();
+        final Set<Long> glCodeIdSet = new HashSet<>();
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
             if (egBilldetails.getGlcodeid() != null && !contractorBillRegister.getRefundBillDetails().contains(egBilldetails)) {
                 if (glCodeIdSet.contains(egBilldetails.getGlcodeid().longValue()))
@@ -663,7 +669,7 @@ public class ContractorBillRegisterService {
     }
 
     public boolean validateDuplicateRefundAccountCodes(final ContractorBillRegister contractorBillRegister) {
-        final Set<Long> glCodeIdSet = new HashSet<Long>();
+        final Set<Long> glCodeIdSet = new HashSet<>();
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
             if (egBilldetails.getGlcodeid() != null && egBilldetails.getDebitamount() != null) {
                 if (glCodeIdSet.contains(egBilldetails.getGlcodeid().longValue()))
@@ -690,6 +696,7 @@ public class ContractorBillRegisterService {
                     "error.total.debitamount.creditamount.notequal");
     }
 
+    @SuppressWarnings("deprecation")
     public void validateRefundAmount(final ContractorBillRegister contractorBillRegister, final BindingResult resultBinder) {
         int index = 0;
         for (final EgBilldetails egBillDetail : contractorBillRegister.getRefundBillDetails()) {
@@ -732,6 +739,7 @@ public class ContractorBillRegisterService {
 
     }
 
+    @SuppressWarnings("deprecation")
     public EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
             final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder,
             final HttpServletRequest request) {
@@ -801,6 +809,7 @@ public class ContractorBillRegisterService {
                 ContractorBillRegister.BillStatus.APPROVED.toString(), contractorBillId);
     }
 
+    @SuppressWarnings("deprecation")
     public void validateMileStonePercentage(final ContractorBillRegister contractorBillRegister,
             final BindingResult resultBinder) {
         TrackMilestone trackMileStone = null;

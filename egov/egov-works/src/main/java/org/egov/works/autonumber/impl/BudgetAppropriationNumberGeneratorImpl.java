@@ -66,6 +66,7 @@ public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriati
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
+    @Override
     @Transactional
     public String getNextNumber(final LineEstimateDetails lineEstimateDetails) {
         CFinancialYear cFinancialYear = financialYearHibernateDAO
@@ -74,6 +75,7 @@ public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriati
                 cFinancialYear.getFinYearRange());
     }
 
+    @Override
     @Transactional
     public String generateCancelledBudgetAppropriationNumber(final String appropriationNumber) {
         final String original = appropriationNumber.split("/")[0];

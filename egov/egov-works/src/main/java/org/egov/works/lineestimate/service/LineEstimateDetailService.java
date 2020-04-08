@@ -47,6 +47,8 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.util.List;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
@@ -64,8 +66,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -123,6 +123,7 @@ public class LineEstimateDetailService {
         return lineEstimateDetailsRepository.findOne(id);
     }
 
+    @SuppressWarnings("deprecation")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setProjectCode(final LineEstimateDetails lineEstimateDetails) {
         ProjectCode projectCode = null;
@@ -144,6 +145,7 @@ public class LineEstimateDetailService {
         createAccountDetailKey(projectCode);
     }
 
+    @SuppressWarnings("deprecation")
     protected void createAccountDetailKey(final ProjectCode proj) {
         final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName("PROJECTCODE");
         final Accountdetailkey adk = new Accountdetailkey();
@@ -182,18 +184,23 @@ public class LineEstimateDetailService {
                 Integer.valueOf(11),
                 lineEstimateDetails.getEstimateNumber(),
                 Integer.parseInt(lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
-                lineEstimateDetails.getLineEstimate().getFunction() == null ? null : lineEstimateDetails.getLineEstimate()
-                        .getFunction().getId(),
+                lineEstimateDetails.getLineEstimate().getFunction() == null ? null
+                        : lineEstimateDetails.getLineEstimate()
+                                .getFunction().getId(),
                 null,
-                lineEstimateDetails.getLineEstimate().getScheme() == null ? null : lineEstimateDetails.getLineEstimate()
-                        .getScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null : lineEstimateDetails.getLineEstimate()
-                        .getSubScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateDetails
-                        .getLineEstimate().getWard().getId().toString()),
+                lineEstimateDetails.getLineEstimate().getScheme() == null ? null
+                        : lineEstimateDetails.getLineEstimate()
+                                .getScheme().getId(),
+                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
+                        : lineEstimateDetails.getLineEstimate()
+                                .getSubScheme().getId(),
+                lineEstimateDetails.getLineEstimate().getWard() == null ? null
+                        : Integer.parseInt(lineEstimateDetails
+                                .getLineEstimate().getWard().getId().toString()),
                 budgetheadid,
-                lineEstimateDetails.getLineEstimate().getFund() == null ? null : lineEstimateDetails.getLineEstimate().getFund()
-                        .getId(),
+                lineEstimateDetails.getLineEstimate().getFund() == null ? null
+                        : lineEstimateDetails.getLineEstimate().getFund()
+                                .getId(),
                 budgApprAmnt);
 
         if (budgetUsage != null)
@@ -203,7 +210,7 @@ public class LineEstimateDetailService {
 
         return flag;
     }
-    
+
     public LineEstimateDetails getLineEstimateDetailsByProjectCode(final String workIdentificationNumber) {
         return lineEstimateDetailsRepository.findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(workIdentificationNumber,
                 WorksConstants.CANCELLED_STATUS);
@@ -213,5 +220,5 @@ public class LineEstimateDetailService {
         return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeNot(estimateNumber,
                 WorksConstants.CANCELLED_STATUS);
     }
-    
+
 }

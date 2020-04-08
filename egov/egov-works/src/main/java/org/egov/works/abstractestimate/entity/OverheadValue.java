@@ -47,12 +47,9 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.masters.Overhead;
-import org.egov.works.models.masters.OverheadRate;
-import org.joda.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -64,9 +61,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.component.Period;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.works.models.masters.Overhead;
+import org.egov.works.models.masters.OverheadRate;
+import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_OVERHEADS")
@@ -151,7 +152,7 @@ public class OverheadValue extends AbstractAuditable {
     }
 
     public List<ValidationError> validate() {
-        return new ArrayList<ValidationError>();
+        return new ArrayList<>();
     }
 
 }

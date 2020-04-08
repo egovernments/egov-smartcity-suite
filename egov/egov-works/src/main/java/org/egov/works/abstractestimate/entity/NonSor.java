@@ -47,14 +47,6 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.egov.common.entity.UOM;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.StringUtils;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -66,6 +58,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.egov.common.entity.UOM;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.StringUtils;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "EGW_NONSOR")
 @SequenceGenerator(name = NonSor.SEQ_EGW_NONSOR, sequenceName = NonSor.SEQ_EGW_NONSOR, allocationSize = 1)

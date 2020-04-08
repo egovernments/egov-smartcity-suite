@@ -47,6 +47,20 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -104,19 +118,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -181,8 +182,8 @@ public class LineEstimateService {
 
     @Autowired
     public LineEstimateService(final LineEstimateRepository lineEstimateRepository,
-                               final LineEstimateDetailsRepository lineEstimateDetailsRepository,
-                               final LineEstimateAppropriationRepository lineEstimateAppropriationRepository) {
+            final LineEstimateDetailsRepository lineEstimateDetailsRepository,
+            final LineEstimateAppropriationRepository lineEstimateAppropriationRepository) {
         this.lineEstimateRepository = lineEstimateRepository;
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
         this.lineEstimateAppropriationRepository = lineEstimateAppropriationRepository;
@@ -198,8 +199,8 @@ public class LineEstimateService {
 
     @Transactional
     public LineEstimate create(final LineEstimate lineEstimate, final MultipartFile[] files,
-                               final Long approvalPosition, final String approvalComent, final String additionalRule,
-                               final String workFlowAction) throws IOException {
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
@@ -236,7 +237,7 @@ public class LineEstimateService {
     }
 
     private LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
-                                final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
+            final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
         mergeLineEstimateDetails(lineEstimate);
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
@@ -265,7 +266,7 @@ public class LineEstimateService {
     }
 
     public List<LineEstimateDetails> removeDeletedLineEstimateDetails(final List<LineEstimateDetails> list,
-                                                                      final String removedLineEstimateDetailsIds) {
+            final String removedLineEstimateDetailsIds) {
         final List<LineEstimateDetails> details = new ArrayList<>();
         if (null != removedLineEstimateDetailsIds) {
             final String[] ids = removedLineEstimateDetailsIds.split(",");
@@ -283,6 +284,7 @@ public class LineEstimateService {
         return details;
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<LineEstimate> searchLineEstimates(final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
@@ -316,6 +318,7 @@ public class LineEstimateService {
         return criteria.list();
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<LineEstimateDetails> searchLineEstimatesForLoa(
             final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
 
@@ -440,13 +443,15 @@ public class LineEstimateService {
                 if (null != user) {
                     workflowHistory.put("user", user.getUsername() + "::" + user.getName());
                     workflowHistory.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                            ? eisCommonService.getDepartmentForUser(user.getId()).getName()
+                            : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     workflowHistory.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     workflowHistory.put("department", null != owner.getDeptDesig().getDepartment()
-                            ? owner.getDeptDesig().getDepartment().getName() : "");
+                            ? owner.getDeptDesig().getDepartment().getName()
+                            : "");
                 }
                 historyTable.add(workflowHistory);
             }
@@ -459,12 +464,14 @@ public class LineEstimateService {
             if (null != user) {
                 map.put("user", user.getUsername() + "::" + user.getName());
                 map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                        ? eisCommonService.getDepartmentForUser(user.getId()).getName()
+                        : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                 map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
-                        ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
+                        ? ownerPosition.getDeptDesig().getDepartment().getName()
+                        : "");
             }
             historyTable.add(map);
         }
@@ -472,7 +479,7 @@ public class LineEstimateService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final LineEstimate lineEstimate, Long approvalPosition,
-                                                       final String additionalRule, final String mode, final String workFlowAction) {
+            final String additionalRule, final String mode, final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
                 additionalRule, lineEstimate.getCurrentState().getValue(), null);
         if (lineEstimate.getStatus() != null && lineEstimate.getStatus().getCode() != null)
@@ -495,9 +502,9 @@ public class LineEstimateService {
 
     @Transactional
     public LineEstimate updateLineEstimateDetails(final LineEstimate lineEstimate, final Long approvalPosition,
-                                                  final String approvalComent, final String additionalRule, final String workFlowAction, final String mode,
-                                                  final ReportOutput reportOutput, final String removedLineEstimateDetailsIds, final MultipartFile[] files,
-                                                  final CFinancialYear financialYear) throws IOException {
+            final String approvalComent, final String additionalRule, final String workFlowAction, final String mode,
+            final ReportOutput reportOutput, final String removedLineEstimateDetailsIds, final MultipartFile[] files,
+            final CFinancialYear financialYear) throws IOException {
         LineEstimate updatedLineEstimate = null;
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
@@ -594,7 +601,7 @@ public class LineEstimateService {
     }
 
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
-                                         final String mode) {
+            final String mode) {
         if (null != lineEstimate && null != lineEstimate.getStatus() && null != lineEstimate.getStatus().getCode())
             if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
                     && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
@@ -630,6 +637,7 @@ public class LineEstimateService {
         return lineEstimateRepository.getLineEstimateCreatedByUsers(LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
     }
 
+    @SuppressWarnings("rawtypes")
     public List<Department> getUserDepartments(final User currentUser) {
         final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(),
                 new Date());
@@ -651,7 +659,7 @@ public class LineEstimateService {
     }
 
     public void createLineEstimateWorkflowTransition(final LineEstimate lineEstimate, final Long approvalPosition,
-                                                     final String approvalComent, final String additionalRule, final String workFlowAction) {
+            final String approvalComent, final String additionalRule, final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -713,7 +721,7 @@ public class LineEstimateService {
     }
 
     public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails, Double budgApprAmnt,
-                                         String appropriationnumber) {
+            String appropriationnumber) {
 
         final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
                 .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
@@ -740,16 +748,16 @@ public class LineEstimateService {
                                 .getExecutingDepartment().getId().toString()),
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null
                                 : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction()
-                                .getId(),
+                                        .getId(),
                         null,
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null
                                 : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null
                                 : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme()
-                                .getId(),
+                                        .getId(),
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null
                                 : Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate()
-                                .getWard().getId().toString()),
+                                        .getWard().getId().toString()),
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null
                                 : budgetheadid,
                         lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
@@ -766,7 +774,7 @@ public class LineEstimateService {
     }
 
     private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails,
-                                             final BudgetUsage budgetUsage) {
+            final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
         lineEstimateAppropriation = lineEstimateAppropriationRepository
                 .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
@@ -833,6 +841,7 @@ public class LineEstimateService {
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.APPROVED);
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<LineEstimate> searchLineEstimatesToCancel(final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
                 .createAlias("lineEstimateDetails", "led").createAlias("executingDepartment", "ed")
@@ -913,8 +922,9 @@ public class LineEstimateService {
         final StringBuilder queryStr = new StringBuilder(500);
 
         buildWhereClauseForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
-        final Query query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
-        return (List<LineEstimateDetails>) query.getResultList();
+        final TypedQuery<LineEstimateDetails> query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest,
+                queryStr);
+        return query.getResultList();
     }
 
     private void buildWhereClauseForEstimatePhotograph(
@@ -923,9 +933,12 @@ public class LineEstimateService {
         queryStr.append(
                 "select distinct led from LineEstimateDetails as led where led.lineEstimate.status.code != :lineEstimateStatus ");
 
-        //TODO : remove this comment when search result need to restrict after create contractor bill
-        /*queryStr.append(
-                "and not exists(select distinct(cbr.workOrderEstimate.estimate.lineEstimateDetails) from ContractorBillRegister as cbr where cbr.workOrderEstimate.estimate.lineEstimateDetails.id = led.id and upper(cbr.billstatus) != :billstatus and cbr.billtype = :billtype)");*/
+        // TODO : remove this comment when search result need to restrict after create contractor bill
+        /*
+         * queryStr.append(
+         * "and not exists(select distinct(cbr.workOrderEstimate.estimate.lineEstimateDetails) from ContractorBillRegister as cbr where cbr.workOrderEstimate.estimate.lineEstimateDetails.id = led.id and upper(cbr.billstatus) != :billstatus and cbr.billtype = :billtype)"
+         * );
+         */
 
         if (estimatePhotographSearchRequest.getExecutingDepartment() != null)
             queryStr.append(" and led.lineEstimate.executingDepartment.id = :executingDepartment");
@@ -947,17 +960,16 @@ public class LineEstimateService {
 
     }
 
-    private Query setParameterForEstimatePhotograph(
+    private TypedQuery<LineEstimateDetails> setParameterForEstimatePhotograph(
             final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
-        final Query qry = entityManager.createQuery(queryStr.toString());
+        final TypedQuery<LineEstimateDetails> qry = entityManager.createQuery(queryStr.toString(), LineEstimateDetails.class);
 
         qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
         // TODO : remove this comment when search result need to restrict after
         // create contractor bill
         /*
-         * qry.setParameter("billstatus",
-         * ContractorBillRegister.BillStatus.CANCELLED.toString());
-         * qry.setParameter("billtype", BillTypes.Final_Bill.toString());
+         * qry.setParameter("billstatus", ContractorBillRegister.BillStatus.CANCELLED.toString()); qry.setParameter("billtype",
+         * BillTypes.Final_Bill.toString());
          */
 
         if (estimatePhotographSearchRequest != null) {
@@ -991,7 +1003,7 @@ public class LineEstimateService {
     }
 
     public void updateLineEstimateDetailsValues(final LineEstimateDetails oldDetails,
-                                                final LineEstimateDetails details) {
+            final LineEstimateDetails details) {
         oldDetails.setNameOfWork(details.getNameOfWork());
         oldDetails.setUom(details.getUom());
         oldDetails.setEstimateAmount(details.getEstimateAmount());
@@ -999,6 +1011,7 @@ public class LineEstimateService {
         oldDetails.setQuantity(details.getQuantity());
     }
 
+    @SuppressWarnings("rawtypes")
     public List getLineEstimateHiddenFields() {
         return Arrays.asList(worksApplicationProperties.lineEstimateHideFields());
     }

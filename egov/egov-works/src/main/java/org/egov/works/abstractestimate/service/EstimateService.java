@@ -47,6 +47,11 @@
  */
 package org.egov.works.abstractestimate.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
@@ -61,10 +66,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -114,7 +115,7 @@ public class EstimateService {
         abstractEstimate.setDescription(lineEstimateDetails.getNameOfWork());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
         abstractEstimate.setNatureOfWork(lineEstimateDetails.getLineEstimate().getNatureOfWork());
-        if(lineEstimateDetails.getLineEstimate().getLocation() != null)
+        if (lineEstimateDetails.getLineEstimate().getLocation() != null)
             abstractEstimate.setLocation(lineEstimateDetails.getLineEstimate().getLocation().getName());
         abstractEstimate.setParentCategory(lineEstimateDetails.getLineEstimate().getTypeOfWork());
         abstractEstimate.setCategory(lineEstimateDetails.getLineEstimate().getSubTypeOfWork());
@@ -178,7 +179,7 @@ public class EstimateService {
         return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(estimateNumber,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
-    
+
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
         return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());

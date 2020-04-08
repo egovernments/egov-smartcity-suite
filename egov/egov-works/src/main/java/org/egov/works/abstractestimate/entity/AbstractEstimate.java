@@ -47,6 +47,35 @@
  */
 package org.egov.works.abstractestimate.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.CFinancialYear;
@@ -70,22 +99,13 @@ import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 @Entity
 @Table(name = "EGW_ABSTRACTESTIMATE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
-        @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in(:param_0)"),
-        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=?1 and ae.egwStatus.code='APPROVED' order by ae.id"),
-        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID_WOID, query = "from AbstractEstimate ae where ae.parent.id=?1 and ae.egwStatus.code='APPROVED' order by ae.id")})
+        @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in (:param_1)"),
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id = ?1 and ae.egwStatus.code='APPROVED' order by ae.id"),
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID_WOID, query = "from AbstractEstimate ae where ae.parent.id = ?1 and ae.egwStatus.code='APPROVED' order by ae.id") })
 @SequenceGenerator(name = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, sequenceName = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, allocationSize = 1)
 public class AbstractEstimate extends StateAware<Position> implements Auditable {
 
@@ -195,41 +215,34 @@ public class AbstractEstimate extends StateAware<Position> implements Auditable 
 
     @Valid
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = OverheadValue.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadValue.class)
     private List<OverheadValue> overheadValues = new ArrayList<>();
 
     @Valid
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = AssetsForEstimate.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssetsForEstimate.class)
     private List<AssetsForEstimate> assetValues = new ArrayList<>();
 
     @Valid
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = Activity.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Activity.class)
     private List<Activity> activities = new ArrayList<>();
 
     @Valid
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = MultiYearEstimate.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MultiYearEstimate.class)
     private List<MultiYearEstimate> multiYearEstimates = new ArrayList<>();
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
     private List<AbstractEstimateAppropriation> abstractEstimateAppropriations = new ArrayList<>();
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = FinancialDetail.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancialDetail.class)
     private List<FinancialDetail> financialDetails = new ArrayList<>();
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<>();
 
     @Override
@@ -410,7 +423,7 @@ public class AbstractEstimate extends StateAware<Position> implements Auditable 
     }
 
     public void setTotalAmount(final Money totalAmount) {
-        //not implemented ?
+        // not implemented ?
     }
 
     public List<Activity> getActivities() {
@@ -429,10 +442,12 @@ public class AbstractEstimate extends StateAware<Position> implements Auditable 
         this.projectCode = projectCode;
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<Activity> getSORActivities() {
         return CollectionUtils.select(activities, activity -> ((Activity) activity).getSchedule() != null);
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<Activity> getNonSORActivities() {
         return CollectionUtils.select(activities, activity -> ((Activity) activity).getNonSor() != null);
     }
@@ -676,8 +691,7 @@ public class AbstractEstimate extends StateAware<Position> implements Auditable 
     }
 
     public enum EstimateStatus {
-        CREATED, TECH_SANCTION_CHECKED, TECH_SANCTIONED, BUDGETARY_APPR_CHECKED, BUDGETARY_APPROPRIATION_DONE,
-        ADMIN_CHECKED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
+        CREATED, TECH_SANCTION_CHECKED, TECH_SANCTIONED, BUDGETARY_APPR_CHECKED, BUDGETARY_APPROPRIATION_DONE, ADMIN_CHECKED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
     }
 
     public enum Actions {

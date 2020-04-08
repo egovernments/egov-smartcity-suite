@@ -47,12 +47,7 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -69,7 +64,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_PHOTOGRAPHS")
@@ -79,15 +80,15 @@ public class EstimatePhotographs extends AbstractAuditable {
     private static final long serialVersionUID = -4760202350886149567L;
 
     public static final String SEQ_EGW_ESTIMATEPHOTOGRAPHS = "SEQ_EGW_ESTIMATE_PHOTOGRAPHS";
-    
+
     public enum WorkProgress {
-        BEFORE,DURING,AFTER;
-        
+        BEFORE, DURING, AFTER;
+
         @Override
         public String toString() {
             return StringUtils.replace(name(), "_", " ");
         }
-        
+
     }
 
     @Id
@@ -113,7 +114,7 @@ public class EstimatePhotographs extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestore", nullable = false)
     private FileStoreMapper fileStore;
-    
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private WorkProgress workProgress;

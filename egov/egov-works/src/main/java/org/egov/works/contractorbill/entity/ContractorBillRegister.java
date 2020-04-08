@@ -47,16 +47,10 @@
  */
 package org.egov.works.contractorbill.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.DeductionTypeForBill;
-import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -68,10 +62,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.model.bills.EgBilldetails;
+import org.egov.model.bills.EgBillregister;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.models.contractorBill.AssetForBill;
+import org.egov.works.models.contractorBill.DeductionTypeForBill;
+import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
+import org.egov.works.models.measurementbook.MBHeader;
+import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
@@ -93,13 +94,13 @@ public class ContractorBillRegister extends EgBillregister {
     private Date approvedDate;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = AssetForBill.class)
-    private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
+    private List<AssetForBill> assetDetailsList = new LinkedList<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = DeductionTypeForBill.class)
-    private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
+    private List<DeductionTypeForBill> deductionTypeList = new LinkedList<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillReg", targetEntity = StatutoryDeductionsForBill.class)
-    private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
+    private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approvedBy")
@@ -109,15 +110,15 @@ public class ContractorBillRegister extends EgBillregister {
     private String owner;
 
     @Transient
-    private List<String> billActions = new ArrayList<String>();
+    private List<String> billActions = new ArrayList<>();
 
-    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<>(0);
 
     @Transient
-    private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
-    
+    private List<EgBilldetails> billDetailes = new ArrayList<>(0);
+
     @Transient
-    private List<EgBilldetails> refundBillDetails = new ArrayList<EgBilldetails>(0);
+    private List<EgBilldetails> refundBillDetails = new ArrayList<>(0);
 
     @Transient
     private Long approvalDepartment;
@@ -235,18 +236,22 @@ public class ContractorBillRegister extends EgBillregister {
         this.billDetailes = billDetailes;
     }
 
+    @Override
     public Long getApprovalDepartment() {
         return approvalDepartment;
     }
 
+    @Override
     public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
+    @Override
     public String getApprovalComent() {
         return approvalComent;
     }
 
+    @Override
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
@@ -298,5 +303,5 @@ public class ContractorBillRegister extends EgBillregister {
     public void setRefundBillDetails(final List<EgBilldetails> refundBillDetails) {
         this.refundBillDetails = refundBillDetails;
     }
-    
+
 }

@@ -47,15 +47,8 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.model.budget.BudgetGroup;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -73,8 +66,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.model.budget.BudgetGroup;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_FINANCIALDETAIL")
@@ -131,7 +132,7 @@ public class FinancialDetail extends AbstractAuditable {
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "financialDetail", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancingSource.class)
-    private List<FinancingSource> financingSources = new ArrayList<FinancingSource>(0);
+    private List<FinancingSource> financingSources = new ArrayList<>(0);
 
     public FinancialDetail() {
     }
@@ -216,7 +217,7 @@ public class FinancialDetail extends AbstractAuditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
 
         double total = 0;
         boolean finSourceError = false;

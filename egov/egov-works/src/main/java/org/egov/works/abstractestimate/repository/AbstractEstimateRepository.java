@@ -64,13 +64,13 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
 
     AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
-    
-    AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
-    
+
+    AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber,
+            final String statusCode);
+
     AbstractEstimate findByLineEstimateDetails_IdAndEgwStatus_codeEquals(final Long id, final String statusCode);
-    
+
     @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.egwStatus.code = :abstractEstimateStatus ")
     List<User> findCreatedByForEstimatePhotograph(@Param("abstractEstimateStatus") String abstractEstimateStatus);
 
-    
 }

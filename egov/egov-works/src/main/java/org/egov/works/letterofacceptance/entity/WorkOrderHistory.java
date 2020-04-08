@@ -47,9 +47,6 @@
  */
 package org.egov.works.letterofacceptance.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.models.workorder.WorkOrder;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -62,35 +59,40 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.models.workorder.WorkOrder;
+
 @Entity
 @Table(name = "EGW_WORKORDER_HISTORY")
 @SequenceGenerator(name = WorkOrderHistory.SEQ_EGW_WORKORDER_HISTORY, sequenceName = WorkOrderHistory.SEQ_EGW_WORKORDER_HISTORY, allocationSize = 1)
 public class WorkOrderHistory extends AbstractAuditable {
-    
+
     private static final long serialVersionUID = -3932916779507334036L;
-    
+
     public static final String SEQ_EGW_WORKORDER_HISTORY = "SEQ_EGW_WORKORDER_HISTORY";
 
     @Id
-    @GeneratedValue(generator=SEQ_EGW_WORKORDER_HISTORY, strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGW_WORKORDER_HISTORY, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workOrder", nullable = false)
     private WorkOrder workOrder;
-    
+
     @NotNull
     @Min(value = 1)
     private double workOrderAmount;
-    
+
     @NotNull
     @Min(value = 1)
     private double revisedWorkOrderAmount;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

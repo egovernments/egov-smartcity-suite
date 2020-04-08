@@ -285,7 +285,7 @@ public class Activity extends AbstractAuditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (rate <= 0.0)
             validationErrors.add(new ValidationError("activity.rate.not.null", "activity.rate.not.null"));
         if (nonSor != null && (nonSor.getUom() == null || nonSor.getUom().getId() == null || nonSor.getUom().getId() == 0))

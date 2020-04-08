@@ -47,8 +47,9 @@
  */
 package org.egov.works.autonumber.impl;
 
+import java.io.Serializable;
+
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.infra.utils.StringUtils;
 import org.egov.works.autonumber.ContractorCodeGenerator;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
@@ -56,8 +57,6 @@ import org.egov.works.models.masters.ContractorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
 
 @Service
 public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {
@@ -74,32 +73,35 @@ public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {
         final ContractorDetail contractorDetail = contractor.getContractorDetails().get(0);
         final Serializable sequenceNumber = genericSequenceNumberGenerator
                 .getNextSequence(CONTRACTOR_CODE_SEQ_PREFIX);
-        if (validateGrade(contractorDetail) && !StringUtils.isBlank(contractorDetail.getCategory())
-                && !StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4) {
+        if (validateGrade(contractorDetail) && !org.apache.commons.lang.StringUtils.isBlank(contractorDetail.getCategory())
+                && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4) {
             final String contractorClass = contractorService
                     .getContractorClassShortName(contractorDetail.getGrade().getGrade());
 
-            return String.format("%s%s%s%04d", !StringUtils.isBlank(contractorClass) ? contractorClass : "",
+            return String.format("%s%s%s%04d",
+                    !org.apache.commons.lang.StringUtils.isBlank(contractorClass) ? contractorClass : "",
                     contractorDetail.getCategory().substring(0, 1), contractor.getName().substring(0, 4),
                     sequenceNumber);
-        } else if (!StringUtils.isBlank(contractorDetail.getCategory()) && !StringUtils.isBlank(contractor.getName())
+        } else if (!org.apache.commons.lang.StringUtils.isBlank(contractorDetail.getCategory())
+                && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName())
                 && contractor.getName().length() >= 4)
             return String.format("%s%s%04d", contractorDetail.getCategory().substring(0, 1),
                     contractor.getName().substring(0, 4), sequenceNumber);
-        else if (validateGrade(contractorDetail) && !StringUtils.isBlank(contractor.getName())
+        else if (validateGrade(contractorDetail) && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName())
                 && contractor.getName().length() >= 4) {
             final String contractorClass = contractorService
                     .getContractorClassShortName(contractorDetail.getGrade().getGrade());
-            return String.format("%s%s%04d", !StringUtils.isBlank(contractorClass) ? contractorClass : "",
+            return String.format("%s%s%04d", !org.apache.commons.lang.StringUtils.isBlank(contractorClass) ? contractorClass : "",
                     contractor.getName().substring(0, 4), sequenceNumber);
-        } else if (!StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4)
+        } else if (!org.apache.commons.lang.StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4)
             return String.format("%s%04d", contractor.getName().substring(0, 4), sequenceNumber);
         else
             return null;
     }
 
     private boolean validateGrade(final ContractorDetail contractorDetail) {
-        return contractorDetail.getGrade() != null && !StringUtils.isBlank(contractorDetail.getGrade().getGrade());
+        return contractorDetail.getGrade() != null
+                && !org.apache.commons.lang.StringUtils.isBlank(contractorDetail.getGrade().getGrade());
     }
 
 }

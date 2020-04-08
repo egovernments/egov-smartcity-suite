@@ -57,7 +57,8 @@ import org.springframework.stereotype.Repository;
 public interface LineEstimateAppropriationRepository extends JpaRepository<LineEstimateAppropriation, Long> {
     LineEstimateAppropriation findById(final Long id);
 
-    @Query("from LineEstimateAppropriation lep where lep.budgetUsage.id=(select max(budgetUsage.id) from LineEstimateAppropriation lep1 " +
+    @Query("from LineEstimateAppropriation lep where lep.budgetUsage.id=(select max(budgetUsage.id) from LineEstimateAppropriation lep1 "
+            +
             "where lep1.lineEstimateDetails.estimateNumber=:estimateNumber)")
     LineEstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(@Param("estimateNumber") String estimateNumber);
 }

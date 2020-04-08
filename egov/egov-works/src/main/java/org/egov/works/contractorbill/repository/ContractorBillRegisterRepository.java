@@ -47,15 +47,15 @@
  */
 package org.egov.works.contractorbill.repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Repository
 public interface ContractorBillRegisterRepository extends JpaRepository<ContractorBillRegister, Long> {
@@ -94,9 +94,11 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select distinct(cbr.billnumber) from ContractorBillRegister as cbr where upper(cbr.billnumber) like upper(:billnumber) and billstatus = :status")
     List<String> findBillNumberToSearchContractorBillToCancel(@Param("billnumber") String billNumber,
             @Param("status") String status);
-    
+
     List<ContractorBillRegister> findByWorkOrderAndBillstatusNot(final WorkOrder workOrder, final String billstatus);
-    
+
     @Query("select COALESCE(sum(billdetail.creditamount),0) as creditAmount,COALESCE(sum(billdetail.debitamount),0) as debitAmount from EgBilldetails billdetail where billdetail.egBillregister.billstatus =:status and  billdetail.glcodeid =:glCodeId and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:workOrderEstimateId and cbr.billstatus = :status) and (billdetail.egBillregister.createdDate < (select createdDate from ContractorBillRegister where id = :contractorBillId) or (select count(*) from ContractorBillRegister where id = :contractorBillId) = 0 )")
-    String findSumOfDebitByAccountCodeForWorkOrder(@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("glCodeId") final BigDecimal glCodeId,@Param("status") final String status,@Param("contractorBillId") final Long contractorBillId);
+    String findSumOfDebitByAccountCodeForWorkOrder(@Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("glCodeId") final BigDecimal glCodeId, @Param("status") final String status,
+            @Param("contractorBillId") final Long contractorBillId);
 }
