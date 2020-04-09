@@ -73,6 +73,8 @@ import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
@@ -107,6 +109,8 @@ public class ContractorBillRegister extends EgBillregister {
     private User approvedBy;
 
     @Transient
+    @SafeHtml
+    @Length(max = 256)
     private String owner;
 
     @Transient
@@ -124,13 +128,19 @@ public class ContractorBillRegister extends EgBillregister {
     private Long approvalDepartment;
 
     @Transient
+    @SafeHtml
+    @Length(max = 256)
     private String approvalComent;
 
     @Transient
     private MBHeader mbHeader;
 
+    @SafeHtml
+    @Length(max = 50)
     private String cancellationReason;
 
+    @SafeHtml
+    @Length(max= 256)
     private String cancellationRemarks;
 
     @ManyToOne(fetch = FetchType.LAZY)

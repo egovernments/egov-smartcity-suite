@@ -62,10 +62,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_MILESTONE_TEMPLATE")
@@ -81,10 +84,18 @@ public class MilestoneTemplate extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGW_MILESTONE_TEMPLATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
+    @Length(max=100)
+    @NotNull
     private String code;
 
+    @SafeHtml
+    @Length(max=256)
+    @NotNull
     private String name;
 
+    @SafeHtml
+    @Length(max=1024)
     private String description;
 
     private Integer status;

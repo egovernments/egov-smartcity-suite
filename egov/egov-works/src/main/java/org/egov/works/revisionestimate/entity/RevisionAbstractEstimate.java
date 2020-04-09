@@ -57,6 +57,7 @@ import javax.persistence.Transient;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_REVISION_ESTIMATE")
@@ -68,6 +69,7 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     private List<String> revisionEstActions = new ArrayList<>();
 
     @Transient
+    @SafeHtml
     private String additionalRule;
 
     @Transient
