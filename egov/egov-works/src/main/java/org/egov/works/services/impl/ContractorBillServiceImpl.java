@@ -61,6 +61,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -102,9 +107,9 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("deprecation")
 public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
         ContractorBillService {
     private static final Logger LOGGER = Logger.getLogger(ContractorBillServiceImpl.class);
@@ -126,18 +131,18 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     private static final String RETENTION_MONEY_PURPOSE = "RETENTION_MONEY_PURPOSE";
     private WorksService worksService;
     @Autowired
-    private PersistenceService<EgChecklists, Long> checklistService;
-    @Autowired
     private AutonumberServiceBeanResolver beanResolver;
     @Autowired
     private EgovCommon egovCommon;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private TenderResponseService tenderResponseService;
     private ContractorAdvanceService contractorAdvanceService;
 
     @Autowired
     private EgBilldetailsHibernateDAO egBilldetailsHibernateDAO;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public ContractorBillServiceImpl(final PersistenceService<ContractorBillRegister, Long> persistenceService) {
         super(persistenceService);
@@ -150,10 +155,10 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @return
      */
     @Override
-    public List getBillType() {
+    public List<String> getBillType() {
 
         final String configVal = worksService.getWorksConfigValue("BILLTYPE");
-        final List billTypeList = new LinkedList();
+        final List<String> billTypeList = new LinkedList<>();
 
         if (StringUtils.isNotBlank(configVal)) {
             final String[] configVals = configVal.split(",");
@@ -227,6 +232,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     public BigDecimal getTotalAdvanceAdjustedForWOE(final Date billDate, final Long workOrderEstimateId,
             final Long advanceGlCodeId, final Long billId) {
         BigDecimal advanceAdjustment = BigDecimal.ZERO;
@@ -252,28 +258,37 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     public List<Long> getBillIdListUptoBillDate(final Date billDate, final Long workOrderEstimateId, final Long billId) {
         final List<Long> billIdList = new ArrayList<>();
-        final ArrayList<Object> params = new ArrayList<>();
-        String whereClause = "";
-        params.add(workOrderEstimateId);
-        params.add(billDate);
+        final Map<String, Object> params = new HashMap<>();
+        final StringBuffer whereClause = new StringBuffer();
 
         if (billId != null) {
-            final EgBillregister egbr = (EgBillregister) genericService.find(
-                    "from EgBillregister egbr where egbr.id = ? ", billId);
+            final EgBillregister egbr = entityManager.find(EgBillregister.class, billId);
             if (egbr.getBillstatus().equalsIgnoreCase("CANCELLED")) {
-                whereClause = " mbh.egBillregister.billdate <= ? and  mbh.egBillregister.id<? )";
-                params.add(billId);
+                whereClause.append(" mbh.egBillregister.billdate <= :billDate and mbh.egBillregister.id < :billId )");
+                params.put("billDate", billDate);
+                params.put("billId", billId);
             } else {
-                whereClause = " mbh.egBillregister.billdate <= ? and mbh.egBillregister.billstatus!='CANCELLED' and mbh.egBillregister.id<? )";
-                params.add(billId);
+                whereClause.append(" mbh.egBillregister.billdate <= :billDate and mbh.egBillregister.billstatus!='CANCELLED'")
+                        .append(" and mbh.egBillregister.id < :billId )");
+                params.put("billDate", billDate);
+                params.put("billId", billId);
             }
         } else
-            whereClause = " mbh.egBillregister.billdate <= ? and mbh.egBillregister.billstatus!='CANCELLED')";
+            whereClause.append(" mbh.egBillregister.billdate <= :billDate and mbh.egBillregister.billstatus!='CANCELLED')");
 
-        final List<EgBillregister> egBillregisterList = genericService.findAllBy(
-                "select distinct mbh.egBillregister from MBHeader mbh where mbh.workOrderEstimate.id = ? " + " and "
-                        + whereClause,
-                params.toArray());
+        final TypedQuery<EgBillregister> query = entityManager.createQuery(
+                new StringBuffer("select distinct mbh.egBillregister")
+                        .append(" from MBHeader mbh")
+                        .append(" where mbh.workOrderEstimate.id = :woeId and ")
+                        .append(whereClause).toString(),
+                EgBillregister.class);
+
+        params.put("woeId", workOrderEstimateId);
+
+        params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+
+        final List<EgBillregister> egBillregisterList = query.getResultList();
+
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 billIdList.add(egBillregister.getId());
@@ -326,6 +341,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @param workOrderId
      * @return
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getApprovedMBAmount(final Long workOrderId, final Long workOrderEstimateId, final Date asOnDate) {
         BigDecimal result = BigDecimal.ZERO;
@@ -410,6 +426,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @param workOrderId
      * @return
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getApprovedMBAmountOfTenderedItems(final Long workOrderId, final Long workOrderEstimateId,
             final Date asOnDate) {
@@ -525,11 +542,17 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public BigDecimal getTotalValueWoForUptoBillDate(final Date billDate, final Long workOrderId,
             final Long workOrderEstimateId) {
         BigDecimal totalWorkValue = BigDecimal.ZERO;
-        final List<EgBillregister> egBillregisterList = genericService
-                .findAllBy(
-                        "select distinct mbh.egBillregister from MBHeader mbh where mbh.egBillregister.id in (select egBillRegister.id from org.egov.model.bills.EgBillregister egBillRegister "
-                                + " where egBillRegister.billdate <= ? and egBillRegister.billstatus <>'CANCELLED') and mbh.workOrder.id = ? and mbh.workOrderEstimate.id=?",
-                        billDate, workOrderId, workOrderEstimateId);
+        final List<EgBillregister> egBillregisterList = entityManager.createQuery(
+                new StringBuffer("select distinct mbh.egBillregister")
+                        .append(" from MBHeader mbh")
+                        .append(" where mbh.egBillregister.id in (select egBillRegister.id from org.egov.model.bills.EgBillregister egBillRegister ")
+                        .append(" where egBillRegister.billdate <= :billDate and egBillRegister.billstatus <>'CANCELLED')")
+                        .append(" and mbh.workOrder.id = :woId and mbh.workOrderEstimate.id = :woeId").toString(),
+                EgBillregister.class)
+                .setParameter("billDate", billDate)
+                .setParameter("woId", workOrderId)
+                .setParameter("woeId", workOrderEstimateId)
+                .getResultList();
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 totalWorkValue = totalWorkValue.add(egBillregister.getBillamount());
@@ -585,10 +608,11 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     @Override
     public List<StatutoryDeductionsForBill> getStatutoryListForBill(final Long billId) {
-        return genericService.findAllBy(
-                "from StatutoryDeductionsForBill epd where epd.egBillPayeeDtls.egBilldetailsId.egBillregister.id=? "
-                        + "and epd.egBillPayeeDtls.recovery.id is not null",
-                billId);
+        return entityManager.createQuery(new StringBuffer("from StatutoryDeductionsForBill epd")
+                .append(" where epd.egBillPayeeDtls.egBilldetailsId.egBillregister.id = :billId ")
+                .append(" and epd.egBillPayeeDtls.recovery.id is not null").toString(), StatutoryDeductionsForBill.class)
+                .setParameter("billId", billId)
+                .getResultList();
     }
 
     /*
@@ -597,12 +621,18 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     @Override
     public List<DeductionTypeForBill> getStandardDeductionForBill(final Long billId) {
-        return genericService.findAllBy("from DeductionTypeForBill dtb where dtb.egbill.id=?", billId);
+        return entityManager
+                .createQuery("from DeductionTypeForBill dtb where dtb.egbill.id = :billId", DeductionTypeForBill.class)
+                .setParameter("billId", billId)
+                .getResultList();
     }
 
     @Override
     public List<AssetForBill> getAssetForBill(final Long billId) {
-        return genericService.findAllBy("from AssetForBill assetForBill where assetForBill.egbill.id=?", billId);
+        return entityManager
+                .createQuery("from AssetForBill assetForBill where assetForBill.egbill.id = :billId", AssetForBill.class)
+                .setParameter("billId", billId)
+                .getResultList();
     }
 
     /**
@@ -617,10 +647,13 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         final CChartOfAccounts advanceCOA = contractorAdvanceService
                 .getContractorAdvanceAccountcodeForWOE(workOrderEstimateId);
         if (advanceCOA != null) {
-            final EgBilldetails egBilldetails = (EgBilldetails) genericService.find(
-                    "from EgBilldetails ebd where ebd.glcodeid=? and " + "ebd.egBillregister.id=?", new BigDecimal(
-                            advanceCOA.getId()),
-                    billId);
+            final List<EgBilldetails> results = entityManager.createQuery(
+                    "from EgBilldetails ebd where ebd.glcodeid = :glcodeId and ebd.egBillregister.id = :billId",
+                    EgBilldetails.class)
+                    .setParameter("glcodeId", new BigDecimal(advanceCOA.getId()))
+                    .setParameter("billId", billId)
+                    .getResultList();
+            final EgBilldetails egBilldetails = results.isEmpty() ? null : results.get(0);
             if (egBilldetails != null && egBilldetails.getCreditamount() != null)
                 advanceAdjustment = egBilldetails.getCreditamount();
         }
@@ -632,15 +665,18 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     @Override
     public List<EgBilldetails> getCustomDeductionListforglcodes(final List<BigDecimal> glcodeIdList, final Long billId) {
         return genericService.findAllByNamedQuery("CustomDeductionList", billId, glcodeIdList);
     }
 
+    @SuppressWarnings("unchecked")
     public List<EgBilldetails> getRetentionMoneyListforglcodes(final List<BigDecimal> glcodeIdList, final Long billId) {
         return genericService.findAllByNamedQuery("RetentionMoneyDeductionList", billId, glcodeIdList);
     }
 
+    @SuppressWarnings("unchecked")
     public List<EgBilldetails> getAccountDetailsList(final List<BigDecimal> glcodeIdList, final Long billId) {
         return genericService.findAllByNamedQuery("AccountDetailsList", billId, glcodeIdList);
     }
@@ -659,9 +695,12 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 .valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
 
         for (final CChartOfAccounts coa : coaPayableList) {
-            final List<EgBilldetails> egBillDetails = genericService.findAllBy(
-                    "from EgBilldetails ebd where ebd.glcodeid=? and ebd.egBillregister.id=?",
-                    new BigDecimal(coa.getId()), billId);
+            final List<EgBilldetails> egBillDetails = entityManager.createQuery(
+                    "from EgBilldetails ebd where ebd.glcodeid = :glcodeId and ebd.egBillregister.id = :billId",
+                    EgBilldetails.class)
+                    .setParameter("glcodeId", new BigDecimal(coa.getId()))
+                    .setParameter("billId", billId)
+                    .getResultList();
             if (!egBillDetails.isEmpty())
                 netPayableAmount = egBillDetails.get(0).getCreditamount();
         }
@@ -691,6 +730,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     public BigDecimal getAdvanceAdjustmentDeductionTotAmount(final Date billDate, final Long workOrderId,
             final Long advanceCOAId, final Long workOrderEstimateId) {
         BigDecimal advanceAdjustment = BigDecimal.ZERO;
@@ -714,6 +754,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     @Override
     public BigDecimal getTotAmtForStatutory(final Date billDate, final Long workOrderId,
             final StatutoryDeductionsForBill statDeductionBilldetail, final Long workOrderEstimateId) {
@@ -738,6 +779,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     @Override
     public BigDecimal getTotAmtForStandard(final Date billDate, final Long workOrderId,
             final DeductionTypeForBill deductionTypeForBill1, final Long workOrderEstimateId) {
@@ -762,6 +804,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      *
      * @return BigDecimal
      */
+    @SuppressWarnings("unchecked")
     @Override
     public BigDecimal getTotAmtForCustom(final Date billDate, final Long workOrderId,
             final EgBilldetails egBilldetails1, final Long workOrderEstimateId) {
@@ -790,11 +833,17 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         final List<Long> billIdList = new ArrayList<>();
         LOGGER.debug("---inside getBillIdListForWoUptoBillDate----");
 
-        final List<EgBillregister> egBillregisterList = genericService
-                .findAllBy(
-                        "select distinct mbh.egBillregister from MBHeader mbh "
-                                + "where mbh.egBillregister.billdate <=? and mbh.egBillregister.billstatus<>'CANCELLED' and mbh.workOrder.id=? and mbh.workOrderEstimate.id=?",
-                        billDate, workOrderId, workOrderEstimateId);
+        final List<EgBillregister> egBillregisterList = entityManager.createQuery(
+                new StringBuffer("select distinct mbh.egBillregister")
+                        .append(" from MBHeader mbh ")
+                        .append(" where mbh.egBillregister.billdate <= :billDate and mbh.egBillregister.billstatus<>'CANCELLED'")
+                        .append(" and mbh.workOrder.id = :woId and mbh.workOrderEstimate.id = :woeId").toString(),
+                EgBillregister.class)
+                .setParameter("billDate", billDate)
+                .setParameter("woId", workOrderId)
+                .setParameter("woeId", workOrderEstimateId)
+                .getResultList();
+
         if (!egBillregisterList.isEmpty())
             for (final EgBillregister egBillregister : egBillregisterList)
                 billIdList.add(egBillregister.getId());
@@ -886,7 +935,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
         queryMap.put("selectQuery", dynQuery + commonQry);
         queryMap.put("countQuery", countQry + commonQry);
-        
+
         return queryMap;
     }
 
@@ -1018,16 +1067,21 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
     @Override
     public List<MBHeader> getMbListForBillAndWorkordrId(final Long workOrderId, final Long billId) {
-        return genericService.findAllBy(
-                "from MBHeader mbHeader where mbHeader.workOrder.id=? and mbHeader.egBillregister.id=?", workOrderId,
-                billId);
+        return entityManager.createQuery(
+                "from MBHeader mbHeader where mbHeader.workOrder.id = :woId and mbHeader.egBillregister.id = :billId",
+                MBHeader.class)
+                .setParameter("woId", workOrderId)
+                .setParameter("billId", billId)
+                .getResultList();
 
     }
 
     @Override
     public List<MBForCancelledBill> getMbListForCancelBill(final Long billId) {
-        return genericService.findAllBy(
-                "from MBForCancelledBill mbcb where  mbcb.egBillregister.id=?", billId);
+        return entityManager.createQuery(
+                "from MBForCancelledBill mbcb where  mbcb.egBillregister.id = :billId", MBForCancelledBill.class)
+                .setParameter("billId", billId)
+                .getResultList();
     }
 
     @Override
@@ -1070,9 +1124,13 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
     @Override
     public List<EgChecklists> getEgcheckList(final Long billId) throws ApplicationException {
-        return checklistService.findAllBy("from EgChecklists egChecklists  where egChecklists.objectid=?", billId);
+        return entityManager
+                .createQuery("from EgChecklists egChecklists  where egChecklists.objectid = :billId", EgChecklists.class)
+                .setParameter("billId", billId)
+                .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public WorkCompletionInfo setWorkCompletionInfoFromBill(final ContractorBillRegister contractorBillRegister,
             final WorkOrderEstimate workOrderEstimate) {
@@ -1111,19 +1169,21 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         return workCompletionInfo;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<WorkCompletionDetailInfo> setWorkCompletionDetailInfoList(final WorkOrderEstimate workOrderEstimate) {
         final List<WorkCompletionDetailInfo> workCompletionDetailInfoList = new ArrayList<>();
-        final TenderResponse tenderResponse = tenderResponseService.find(
-                "from TenderResponse tr where tr.negotiationNumber=?", workOrderEstimate.getWorkOrder()
-                        .getNegotiationNumber());
+        final List<TenderResponse> results = entityManager.createQuery(
+                "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber", TenderResponse.class)
+                .setParameter("negotiationNumber", workOrderEstimate.getWorkOrder().getNegotiationNumber())
+                .getResultList();
+        final TenderResponse tenderResponse = results.isEmpty() ? null : results.get(0);
         final String rebatePremLevel = worksService.getWorksConfigValue("REBATE_PREMIUM_LEVEL");
 
         final List<Object[]> workOrderActivityIdList = genericService.findAllByNamedQuery(
                 WorksConstants.QUERY_GETALLWORKORDERACTIVITYWITHMB, workOrderEstimate.getId(), WorksConstants.APPROVED);
         for (final Object[] object : workOrderActivityIdList) {
-            final WorkOrderActivity woa = (WorkOrderActivity) genericService.find(
-                    "from WorkOrderActivity woa where woa.id=?", Long.parseLong(object[0].toString()));
+            final WorkOrderActivity woa = entityManager.find(WorkOrderActivity.class, Long.parseLong(object[0].toString()));
             final WorkCompletionDetailInfo workCompletionDetailInfo = new WorkCompletionDetailInfo(woa,
                     Double.parseDouble(object[1].toString()));
             double executionRate;
@@ -1181,6 +1241,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @param workOrderId
      * @return
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getApprovedMBAmountforBill(final ContractorBillRegister contractorBillRegister) {
         BigDecimal result = BigDecimal.ZERO;
@@ -1243,6 +1304,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @param workOrderId
      * @return
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getApprovedMBAmountOfTenderedItemsForBill(final ContractorBillRegister contractorBillRegister) {
         BigDecimal result = BigDecimal.ZERO;
@@ -1310,7 +1372,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     public void setChecklistService(final PersistenceService<EgChecklists, Long> checklistService) {
-        this.checklistService = checklistService;
     }
 
     public String getFinalBillTypeConfigValue() {
@@ -1318,7 +1379,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     public void setTenderResponseService(final TenderResponseService tenderResponseService) {
-        this.tenderResponseService = tenderResponseService;
     }
 
     @Override
@@ -1354,7 +1414,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<EgBillregister> getListOfApprovedBillforEstimate(final AbstractEstimate estimate, final Date date) {
         List<EgBillregister> egBillRegisterList = null;
-        Query query = null;
         if (estimate == null || date == null)
             throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         else
@@ -1362,25 +1421,24 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                     + estimate.getEstimateNumber() + "||date=" + date);
         if (estimate.getDepositCode() != null) {
             LOGGER.debug("Estimate is of DEPOSIT WORKS|| estimate Number " + estimate.getEstimateNumber());
-            query = persistenceService
-                    .getSession()
-                    .createQuery(
-                            "select distinct egbr from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis where mbh.workOrderEstimate.estimate.id=:estimateId and egbr.status.code=:code and trunc(egbr.billdate)<=trunc(:date) ");
-            query.setLong("estimateId", estimate.getId());
-            query.setDate("date", date);
-            query.setString("code", "APPROVED");
-            egBillRegisterList = query.list();
+            egBillRegisterList = entityManager.createQuery(new StringBuffer("select distinct egbr")
+                    .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis")
+                    .append(" where mbh.workOrderEstimate.estimate.id = :estimateId and egbr.status.code = :code")
+                    .append(" and trunc(egbr.billdate) <= trunc(:date) ").toString(), EgBillregister.class)
+                    .setParameter("estimateId", estimate.getId())
+                    .setParameter("date", date, TemporalType.DATE)
+                    .setParameter("code", "APPROVED")
+                    .getResultList();
         } else {
             LOGGER.debug("Estimate is of CAPITAL WORKS|| estimate Number " + estimate.getEstimateNumber());
-            query = persistenceService
-                    .getSession()
-                    .createQuery(
-                            "select distinct egbr from MBHeader as mbh left outer join mbh.egBillregister egbr where mbh.workOrderEstimate.estimate.id=:estimateId "
-                                    + "and egbr.status.code=:code and trunc(egbr.billdate)<=trunc(:date) ");
-            query.setLong("estimateId", estimate.getId());
-            query.setDate("date", date);
-            query.setString("code", "APPROVED");
-            egBillRegisterList = query.list();
+            egBillRegisterList = entityManager.createQuery(new StringBuffer("select distinct egbr")
+                    .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr")
+                    .append(" where mbh.workOrderEstimate.estimate.id = :estimateId and egbr.status.code = :code")
+                    .append(" and trunc(egbr.billdate) <= trunc(:date) ").toString(), EgBillregister.class)
+                    .setParameter("estimateId", estimate.getId())
+                    .setParameter("date", date, TemporalType.DATE)
+                    .setParameter("code", "APPROVED")
+                    .getResultList();
         }
         if (egBillRegisterList == null)
             egBillRegisterList = Collections.emptyList();
@@ -1413,19 +1471,21 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 totalVoucherAmount = totalVoucherAmount.add(BigDecimal.valueOf(Double.parseDouble(voucher.get("Amount"))));
             }
         LOGGER.debug("Total amount of vouchers(Contractor bills including overheads) | " + totalVoucherAmount);
-        String queryString = "select sum(egbr.billamount) from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis where mbh.workOrderEstimate.estimate.id=:estimateId "
-                + "and trunc(egbr.billdate)<=trunc(:date) and egbr.status.code=:code";
+        final StringBuffer queryString = new StringBuffer("select sum(egbr.billamount)")
+                .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis")
+                .append(" where mbh.workOrderEstimate.estimate.id = :estimateId and trunc(egbr.billdate) <= trunc(:date)")
+                .append(" and egbr.status.code = :code");
         if (!voucherNumbers.isEmpty())
-            queryString = queryString + " and egbrmis.voucherHeader.voucherNumber not in (:voucherNumbers)";
-        queryString = queryString + " group by mbh.workOrderEstimate.estimate.id";
+            queryString.append(" and egbrmis.voucherHeader.voucherNumber not in :voucherNumbers");
+        queryString.append(" group by mbh.workOrderEstimate.estimate.id");
 
-        final Query query = persistenceService.getSession().createQuery(queryString);
-        query.setLong("estimateId", estimate.getId());
-        query.setDate("date", new Date());
-        query.setString("code", "APPROVED");
+        final TypedQuery<BigDecimal> query = entityManager.createQuery(queryString.toString(), BigDecimal.class)
+                .setParameter("estimateId", estimate.getId())
+                .setParameter("date", new Date(), TemporalType.DATE)
+                .setParameter("code", "APPROVED");
         if (!voucherNumbers.isEmpty())
-            query.setParameterList("voucherNumbers", voucherNumbers);
-        BigDecimal totalBillAmount = (BigDecimal) query.uniqueResult();
+            query.setParameter("voucherNumbers", voucherNumbers);
+        BigDecimal totalBillAmount = query.getSingleResult();
 
         LOGGER.debug("Total amount of contractor bills (Vouchers amount not included in this contractor bill amount) | "
                 + totalBillAmount);
@@ -1457,20 +1517,23 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 totalVoucherAmount = totalVoucherAmount.add(BigDecimal.valueOf(Double.parseDouble(voucher.get("Amount"))));
             }
         LOGGER.debug("Total amount of vouchers(Contractor bills including overheads) | " + totalVoucherAmount);
-        String queryString = "select sum(egbr.billamount) from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis where mbh.workOrderEstimate.estimate.id=:estimateId "
-                + "and EXISTS (select 'true' from CFinancialYear cfinancialyear where trunc(cfinancialyear.startingDate)<=trunc(:date) and trunc(cfinancialyear.endingDate)>=trunc(:date) "
-                + "and cfinancialyear.id=egbrmis.financialyear.id) and egbr.status.code=:code";
+        final StringBuffer queryString = new StringBuffer("select sum(egbr.billamount)")
+                .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis")
+                .append(" where mbh.workOrderEstimate.estimate.id = :estimateId ")
+                .append(" and EXISTS (select 'true' from CFinancialYear cfinancialyear")
+                .append(" where trunc(cfinancialyear.startingDate) <= trunc(:date) and trunc(cfinancialyear.endingDate) >= trunc(:date) ")
+                .append(" and cfinancialyear.id=egbrmis.financialyear.id) and egbr.status.code = :code");
         if (!voucherNumbers.isEmpty())
-            queryString = queryString + " and egbrmis.voucherHeader.voucherNumber not in (:voucherNumbers)";
-        queryString = queryString + " group by mbh.workOrderEstimate.estimate.id";
+            queryString.append(" and egbrmis.voucherHeader.voucherNumber not in :voucherNumbers");
+        queryString.append(" group by mbh.workOrderEstimate.estimate.id");
 
-        final Query query = persistenceService.getSession().createQuery(queryString);
-        query.setLong("estimateId", estimate.getId());
-        query.setDate("date", new Date());
-        query.setString("code", "APPROVED");
+        final TypedQuery<BigDecimal> query = entityManager.createQuery(queryString.toString(), BigDecimal.class)
+                .setParameter("estimateId", estimate.getId())
+                .setParameter("date", new Date())
+                .setParameter("code", "APPROVED");
         if (!voucherNumbers.isEmpty())
-            query.setParameterList("voucherNumbers", voucherNumbers);
-        BigDecimal totalBillAmount = (BigDecimal) query.uniqueResult();
+            query.setParameter("voucherNumbers", voucherNumbers);
+        BigDecimal totalBillAmount = query.getSingleResult();
 
         LOGGER.debug("Total amount of contractor bills (Vouchers amount not included in this contractor bill amount) | "
                 + totalBillAmount);
@@ -1487,7 +1550,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<EgBillregister> getListOfNonCancelledBillsforEstimate(final AbstractEstimate estimate, final Date date) {
         List<EgBillregister> egBillRegisterList = null;
-        Query query = null;
         if (estimate == null || date == null)
             throw new ApplicationRuntimeException("Invalid Arguments passed to getApprovedBillAmountforEstimate()");
         else
@@ -1495,25 +1557,25 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                     + estimate.getEstimateNumber() + "||date=" + date);
         if (estimate.getDepositCode() != null) {
             LOGGER.debug("Estimate is of DEPOSIT WORKS|| estimate Number " + estimate.getEstimateNumber());
-            query = persistenceService
-                    .getSession()
-                    .createQuery(
-                            "select egbr from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis where mbh.workOrderEstimate.estimate.id=:estimateId and egbr.status.code!=:code and trunc(egbr.billdate)<=trunc(:date) ");
-            query.setLong("estimateId", estimate.getId());
-            query.setDate("date", date);
-            query.setString("code", "CANCELLED");
-            egBillRegisterList = query.list();
+            egBillRegisterList = entityManager.createQuery(new StringBuffer("select egbr")
+                    .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr left outer join egbr.egBillregistermis egbrmis")
+                    .append(" where mbh.workOrderEstimate.estimate.id = :estimateId and egbr.status.code != :code")
+                    .append(" and trunc(egbr.billdate) <= trunc(:date) ").toString(), EgBillregister.class)
+                    .setParameter("estimateId", estimate.getId())
+                    .setParameter("date", date)
+                    .setParameter("code", "CANCELLED")
+                    .getResultList();
         } else {
             LOGGER.debug("Estimate is of CAPITAL WORKS|| estimate Number " + estimate.getEstimateNumber());
-            query = persistenceService
-                    .getSession()
-                    .createQuery(
-                            "select egbr from MBHeader as mbh left outer join mbh.egBillregister egbr where mbh.workOrderEstimate.estimate.id=:estimateId "
-                                    + "and egbr.status.code!=:code and trunc(egbr.billdate)<=trunc(:date) ");
-            query.setLong("estimateId", estimate.getId());
-            query.setDate("date", date);
-            query.setString("code", "CANCELLED");
-            egBillRegisterList = query.list();
+            egBillRegisterList = entityManager.createQuery(new StringBuffer("select egbr")
+                    .append(" from MBHeader as mbh left outer join mbh.egBillregister egbr")
+                    .append(" where mbh.workOrderEstimate.estimate.id = :estimateId ")
+                    .append(" and egbr.status.code != :code and trunc(egbr.billdate) <= trunc(:date) ").toString(),
+                    EgBillregister.class)
+                    .setParameter("estimateId", estimate.getId())
+                    .setParameter("date", date)
+                    .setParameter("code", "CANCELLED")
+                    .getResultList();
         }
         if (egBillRegisterList == null)
             egBillRegisterList = Collections.emptyList();
@@ -1526,10 +1588,10 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     private List<WorkOrderActivity> getWorkOrderActivityListForIds(final List<Long> woaIds) {
-        final Query createQuery = persistenceService.getSession().createQuery(
-                " from WorkOrderActivity woa where woa.id in (:woActivityIds) ");
-        createQuery.setParameterList("woActivityIds", woaIds);
-        return createQuery.list();
+        return entityManager.createQuery(
+                " from WorkOrderActivity woa where woa.id in :woActivityIds ", WorkOrderActivity.class)
+                .setParameter("woActivityIds", woaIds)
+                .getResultList();
     }
 
     public void setContractorAdvanceService(final ContractorAdvanceService contractorAdvanceService) {
@@ -1537,8 +1599,11 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     }
 
     public String getBudgetHeadFromMappingObject(final String depositCOA) {
-        return (String) genericService.find(
-                "select workDoneBudgetGroup from DepositCOABudgetHead where depositCOA = ?", depositCOA);
+        final List<String> results = entityManager
+                .createQuery("select workDoneBudgetGroup from DepositCOABudgetHead where depositCOA = :depositCOA", String.class)
+                .setParameter("depositCOA", depositCOA)
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
@@ -1578,11 +1643,15 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<Integer> getProjCodeIdsListForDepositCode(final Integer fundId, final Long coaId,
             final Long depositCodeId) {
-        final List<Long> pcIds = genericService
-                .findAllBy(
-                        "select distinct fd.abstractEstimate.projectCode.id from FinancialDetail fd where fd.abstractEstimate.egwStatus.code = ?"
-                                + " and fd.abstractEstimate.depositCode.id = ? and fd.fund.id = ? and fd.coa.id = ?",
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(), depositCodeId, fundId, coaId);
+        final List<Long> pcIds = entityManager.createQuery(new StringBuffer("select distinct fd.abstractEstimate.projectCode.id")
+                .append(" from FinancialDetail fd")
+                .append(" where fd.abstractEstimate.egwStatus.code = :status and fd.abstractEstimate.depositCode.id = :depositCode")
+                .append(" and fd.fund.id = :fundId and fd.coa.id = :coaId").toString(), Long.class)
+                .setParameter("status", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                .setParameter("depositCode", depositCodeId)
+                .setParameter("fundId", fundId)
+                .setParameter("coaId", coaId)
+                .getResultList();
         final List<Integer> projCodeIds = new ArrayList<>();
         if (pcIds != null && !pcIds.isEmpty())
             for (final Long id : pcIds)
@@ -1598,8 +1667,12 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
     @Override
     public BigDecimal getTotalExpenditure(final List<Integer> projectCodeIdsList, final String accDetailType) {
-        final Integer accDetailTypeId = (Integer) genericService.find("select id from Accountdetailtype where name=?",
-                accDetailType);
+        final List<Integer> results = entityManager
+                .createQuery("select id from Accountdetailtype where name = :name", Integer.class)
+                .setParameter("name", accDetailType)
+                .getResultList();
+        final Integer accDetailTypeId = results.isEmpty() ? null : results.get(0);
+
         final BigDecimal totalBillAmt = getTotalBillAmount(new Date(), projectCodeIdsList);
         final BigDecimal voucherExpdAmount = egovCommon.getVoucherExpenditureByEntities(accDetailTypeId,
                 projectCodeIdsList);
@@ -1614,22 +1687,24 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @return - returns sum of bill amount
      * @description -This method calculates the sum of bill amount for bills where voucher is not present
      */
+    @SuppressWarnings("unchecked")
     public BigDecimal getTotalBillAmount(final Date asOnDate, final List<Integer> projectCodeIdsList) {
-        List billAmountResult;
         BigDecimal totalBillAmount = BigDecimal.ZERO;
 
-        final String payQuery = " SELECT coalesce(sum(br.BILLAMOUNT),0) AS \"Total Bill Amount\" FROM EG_BILLPAYEEDETAILS bpd, EG_BILLDETAILS bd, EG_BILLREGISTER br, EG_BILLREGISTERMIS mis "
-                + " WHERE bpd.BILLDETAILID = bd.ID AND bd.BILLID = br.ID AND br.ID = mis.BILLID AND br.BILLSTATUS != '"
-                + WorksConstants.CANCELLED_STATUS
-                + "' "
-                + "AND bpd.ACCOUNTDETAILTYPEID=(SELECT ID FROM ACCOUNTDETAILTYPE WHERE NAME='PROJECTCODE') AND bpd.ACCOUNTDETAILKEYID IN (:projCodeIds) AND br.BILLDATE <=:date "
-                + "AND ((mis.VOUCHERHEADERID   IS NULL) OR (mis.VOUCHERHEADERID IS NOT NULL AND EXISTS (SELECT id FROM voucherheader WHERE id=mis.VOUCHERHEADERID AND status="
-                + FinancialConstants.CANCELLEDVOUCHERSTATUS + ")))";
+        final StringBuffer payQuery = new StringBuffer(" SELECT coalesce(sum(br.BILLAMOUNT),0) AS \"Total Bill Amount\"")
+                .append(" FROM EG_BILLPAYEEDETAILS bpd, EG_BILLDETAILS bd, EG_BILLREGISTER br, EG_BILLREGISTERMIS mis ")
+                .append(" WHERE bpd.BILLDETAILID = bd.ID AND bd.BILLID = br.ID AND br.ID = mis.BILLID AND br.BILLSTATUS != :billStatus")
+                .append(" AND bpd.ACCOUNTDETAILTYPEID=(SELECT ID FROM ACCOUNTDETAILTYPE WHERE NAME='PROJECTCODE')")
+                .append(" AND bpd.ACCOUNTDETAILKEYID IN :projCodeIds AND br.BILLDATE <= :date AND ((mis.VOUCHERHEADERID IS NULL)")
+                .append(" OR (mis.VOUCHERHEADERID IS NOT NULL AND EXISTS (SELECT id FROM voucherheader WHERE id=mis.VOUCHERHEADERID")
+                .append(" AND status = :status)))");
 
-        final Query query = persistenceService.getSession().createNativeQuery(payQuery);
-        query.setParameterList("projCodeIds", projectCodeIdsList);
-        query.setDate("date", asOnDate);
-        billAmountResult = query.list();
+        List<BigDecimal> billAmountResult = entityManager.createNativeQuery(payQuery.toString(), BigDecimal.class)
+                .setParameter("projCodeIds", projectCodeIdsList)
+                .setParameter("date", asOnDate, TemporalType.DATE)
+                .setParameter("billStatus", WorksConstants.CANCELLED_STATUS)
+                .setParameter("status", FinancialConstants.CANCELLEDVOUCHERSTATUS)
+                .getResultList();
 
         for (final Object obj : billAmountResult)
             totalBillAmount = BigDecimal.valueOf(Double.valueOf(obj.toString()));
@@ -1638,17 +1713,19 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
     @Override
     public Object[] getLatestMBCreatedDateAndRefNo(final Long woId, final Long estId) {
-        return (Object[]) persistenceService
-                .getSession()
-                .createQuery(
-                        "select mbRefNo,mbDate from MBHeader where id = "
-                                + "(select max(mbh.id) from MBHeader mbh where mbh.egwStatus.code = ? and "
-                                + "mbh.workOrder.id= ? and mbh.workOrderEstimate.estimate.id=? and "
-                                + "mbh.workOrderEstimate.estimate.egwStatus.code= ? )")
-                .setParameter(0, WorksConstants.APPROVED).setParameter(1, woId).setParameter(2, estId)
-                .setParameter(3, WorksConstants.ADMIN_SANCTIONED_STATUS).uniqueResult();
+        return (Object[]) entityManager.createQuery(new StringBuffer("select mbRefNo,mbDate")
+                .append(" from MBHeader")
+                .append(" where id = (select max(mbh.id) from MBHeader mbh where mbh.egwStatus.code = :mbhStatus")
+                .append(" and mbh.workOrder.id = :woId and mbh.workOrderEstimate.estimate.id = :estimateId")
+                .append(" and mbh.workOrderEstimate.estimate.egwStatus.code = :woeStatus)").toString())
+                .setParameter("mbhStatus", WorksConstants.APPROVED)
+                .setParameter("woId", woId)
+                .setParameter("estimateId", estId)
+                .setParameter("woeStatus", WorksConstants.ADMIN_SANCTIONED_STATUS)
+                .getSingleResult();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<StatutoryDeductionsForBill> getStatutoryDeductions(
             final List<StatutoryDeductionsForBill> actionStatutorydetails) {
@@ -1656,21 +1733,25 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 statutoryDeductionsForBill -> (StatutoryDeductionsForBill) statutoryDeductionsForBill != null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<EgBilldetails> getCustomDeductionTypes(final List<EgBilldetails> customDeductions) {
         return CollectionUtils.select(customDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<EgBilldetails> getRetentionMoneyTypes(final List<EgBilldetails> retentionMoneyDeductions) {
         return CollectionUtils.select(retentionMoneyDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<AssetForBill> getAssetAndAccountDetails(final List<AssetForBill> accountDetailsForBill) {
         return CollectionUtils.select(accountDetailsForBill, assetForBill -> (AssetForBill) assetForBill != null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<DeductionTypeForBill> getStandardDeductionTypes(final List<DeductionTypeForBill> standardDeductions) {
         return CollectionUtils.select(standardDeductions,

@@ -133,7 +133,9 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;
         try {
             advanceAlreadyPaid = entityManager.createQuery(
-                    "select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where status.code<>'CANCELLED' and workOrderEstimate.id = :woeId",
+                    new StringBuffer("select sum(advanceRequisitionAmount)")
+                            .append(" from ContractorAdvanceRequisition")
+                            .append(" where status.code<>'CANCELLED' and workOrderEstimate.id = :woeId").toString(),
                     BigDecimal.class)
                     .setParameter("woeId", workOrderEstimateId)
                     .getSingleResult();
@@ -441,7 +443,6 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         return totalEstimateValue;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Integer getFunctionaryForWorkflow(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
         Integer workflowFunctionaryId = null;
@@ -537,7 +538,6 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                 .getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ContractorAdvanceRequisition getContractorARFInWorkflowByWOEId(final Long workOrderEstimateId) {
         final List<ContractorAdvanceRequisition> results = entityManager

@@ -47,20 +47,22 @@
  */
 package org.egov.works.services.impl;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.services.BaseService;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<T, ID> {
 
     protected PersistenceService<T, ID> persistenceService;
+    @SuppressWarnings("rawtypes")
     protected PersistenceService genericService;
 
     /**

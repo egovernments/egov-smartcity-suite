@@ -52,7 +52,7 @@ import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 
 @SuppressWarnings("deprecation")
 public class ContractorAdvanceWFService extends PersistenceService<ContractorAdvanceRequisition, Long> {
-    
+
     public ContractorAdvanceWFService() {
         super(ContractorAdvanceRequisition.class);
     }
