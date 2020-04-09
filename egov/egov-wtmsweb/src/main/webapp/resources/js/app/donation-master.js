@@ -167,6 +167,10 @@ $(document).ready(function(){
 			window.open("/wtms/masters/donationMaster/", "_self");
 			});
 
+	  var mode = $('#mode').val();
+	  if(mode == 'modify'){
+		  $('#donationAmount').attr('readonly', 'readonly');
+	  }
      });
 
 function validRange(start, end) {

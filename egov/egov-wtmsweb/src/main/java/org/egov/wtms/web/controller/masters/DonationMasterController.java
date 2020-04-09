@@ -184,6 +184,7 @@ public class DonationMasterController {
         model.addAttribute("maxPipeSizeList", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("minPipeSizeList", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("reqAttr", "true");
+        model.addAttribute("mode", "modify");
         return "donation-master";
 
     }
