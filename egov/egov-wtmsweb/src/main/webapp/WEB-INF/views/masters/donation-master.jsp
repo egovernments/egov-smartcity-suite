@@ -55,6 +55,8 @@
 
  <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform"
 			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<input type="hidden" name="currentId" id="currentId" value="${donationDetails.donationHeader.id}"/>
+			
 <div class="panel panel-primary" data-collapsed="0">
 <div class="panel-heading"></div>
 	<div class="panel-body custom-form">

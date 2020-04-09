@@ -245,7 +245,8 @@ function donationheadercombination()
         	minPipeSize :$('#minpipeSize').val(),
         	fromDate : $('#effectiveDate').val(),
         	toDate : $('#toDate').val(),
-        	activeid : activeid
+        	activeid : activeid,
+        	id : $('#currentId').val()
         },
         dataType : 'json',
         success: function (response) {

@@ -224,7 +224,7 @@ public class AjaxConnectionController {
     public String getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
             @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize,
-            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid) {
+            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid, @RequestParam Long id) {
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
         final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
@@ -234,10 +234,12 @@ public class AjaxConnectionController {
         DonationDetails donationDetails = null;
         if (!donationHeaderTempList.isEmpty())
             for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
-                donationDetails = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp,
-                        fromDate, toDate);
-                if (donationDetails != null)
-                    break;
+				if (!donationHeaderTemp.getId().equals(id)) {
+					donationDetails = donationDetailsService
+							.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp, fromDate, toDate);
+					if (donationDetails != null)
+						break;
+				}
             }
         if (donationDetails != null && donationDetails.getDonationHeader().isActive() == activeid) {
             final JsonObject jsonObj = new JsonObject();

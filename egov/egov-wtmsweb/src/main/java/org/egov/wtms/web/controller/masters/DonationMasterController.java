@@ -48,6 +48,11 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.Calendar;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
@@ -66,10 +71,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.Calendar;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -205,19 +206,28 @@ public class DonationMasterController {
                         donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
         Calendar.getInstance();
         DonationDetails donationDetailsTemp = null;
-        if (!donationHeaderTempList.isEmpty()) {
-            for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
-                donationDetailsTemp = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(
-                        donationHeaderTemp, donationDetails.getFromDate(), donationDetails.getToDate());
-                if (donationDetailsTemp != null)
-                    break;
-            }
-            if (donationDetailsTemp == null) {
-                donationDetails.getDonationHeader().setActive(true);
-                donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
-                donationDetailsService.persistDonationDetails(donationDetails);
-            }
-        }
+		if (!donationHeaderTempList.isEmpty()) {
+			for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
+				donationDetailsTemp = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(
+						donationHeaderTemp, donationDetails.getFromDate(), donationDetails.getToDate());
+				if (donationDetailsTemp != null && donationdetails.getId().equals(donationDetailsTemp.getId())) {
+					if (donationDetailsTemp.getToDate().compareTo(donationDetails.getToDate()) != 0) {
+						donationDetailsTemp.setToDate(donationDetails.getToDate());
+						donationDetailsService.persistDonationDetails(donationDetailsTemp);
+						redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
+			            model.addAttribute("message", "Donation Master Data updated successfully.");
+			            return "donation-master-success";
+					} else
+						break;
+				}
+			}
+			if (donationDetailsTemp == null) {
+				donationDetails.getDonationHeader().setActive(true);
+				donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
+				donationDetailsService.persistDonationDetails(donationDetails);
+			}
+		}
+        
         if (donationHeaderTempList.isEmpty() || !donationDetails.getDonationHeader().isActive()) {
             donationHeader.setActive(donationheader.isActive());
             donationHeader.setCategory(donationheader.getCategory());
