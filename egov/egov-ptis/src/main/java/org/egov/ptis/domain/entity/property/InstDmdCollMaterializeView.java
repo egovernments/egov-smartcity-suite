@@ -79,6 +79,8 @@ public class InstDmdCollMaterializeView implements Serializable {
     private BigDecimal vacantLandTaxColl;
     private BigDecimal pubSerChrgTaxColl;
     private Date createdDate;
+    private BigDecimal instWriteOffAmount;
+    private BigDecimal instCourtVerdictAmount;
 
     public PropertyMaterlizeView getPropMatView() {
         return propMatView;
@@ -230,5 +232,21 @@ public class InstDmdCollMaterializeView implements Serializable {
 
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public BigDecimal getInstWriteOffAmount() {
+        return instWriteOffAmount;
+    }
+
+    public void setInstWriteOffAmount(BigDecimal instWriteOffAmount) {
+        this.instWriteOffAmount = instWriteOffAmount;
+    }
+
+    public BigDecimal getInstCourtVerdictAmount() {
+        return instCourtVerdictAmount;
+    }
+
+    public void setInstCourtVerdictAmount(BigDecimal instCourtVerdictAmount) {
+        this.instCourtVerdictAmount = instCourtVerdictAmount;
     }
 }

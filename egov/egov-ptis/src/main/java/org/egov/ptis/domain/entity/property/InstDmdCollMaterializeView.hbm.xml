@@ -79,6 +79,8 @@
 		<property name="pubSerChrgTaxColl" column="pubSerChrgTaxColl"/>
 		
 		<property name="createdDate" column="CREATEDDATE"/>
+		<property name="instWriteOffAmount" column="writeoff_amt"/>
+		<property name="instCourtVerdictAmount" column="courtverdict_amt"/>
 	</class>
 
 </hibernate-mapping>

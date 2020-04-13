@@ -95,6 +95,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     private transient BoundaryService boundaryService;
     @Autowired
     private transient ReportService reportService;
+    
     private transient List<PropertyWiseArrearInfo> propertyWiseInfoList;
 
     @Override
@@ -282,6 +283,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         propertyWiseInfoTotal.setArrearPenalty(propertyWiseInfoTotal.getArrearPenalty().add(propertyInfo.getArrearPenalty()));
         propertyWiseInfoTotal.setArrearEducationCess(propertyWiseInfoTotal.getArrearEducationCess().add(propertyInfo.getArrearEducationCess()));
         propertyWiseInfoTotal.setTotalArrearTax(propertyWiseInfoTotal.getTotalArrearTax().add(propertyInfo.getTotalArrearTax()));
+        propertyWiseInfoTotal.setVariationAmount(propertyWiseInfoTotal.getVariationAmount().add(propertyInfo.getVariationAmount()));
         return propertyWiseInfoTotal;
     }
 
@@ -304,6 +306,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         propertyWiseInfo.setArrearPenalty(currInstDmdColMatView.getPenaltyFinesTax());
         propertyWiseInfo.setArrearEducationCess(currInstDmdColMatView.getEduCessTax());
         propertyWiseInfo.setArrearVacantLandTax(currInstDmdColMatView.getVacantLandTax());
+        propertyWiseInfo.setVariationAmount(currInstDmdColMatView.getInstCourtVerdictAmount().add(currInstDmdColMatView.getInstWriteOffAmount()));
         /*
          * Total of Arrear Librarycess tax,general tax and penalty tax
          */

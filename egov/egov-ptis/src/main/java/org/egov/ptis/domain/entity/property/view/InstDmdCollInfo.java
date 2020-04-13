@@ -123,6 +123,12 @@ public class InstDmdCollInfo implements Serializable {
     private BigDecimal waterTax;
 
     private Date createdDate;
+    
+    @Column(name = "writeoff_amt")
+    private BigDecimal instWriteOffAmount;
+
+    @Column(name = "courtverdict_amt")
+    private BigDecimal instCourtVerdictAmount;
 
     public PropertyMVInfo getPropMatView() {
         return propMatView;
@@ -306,6 +312,22 @@ public class InstDmdCollInfo implements Serializable {
 
     public void setWaterTax(BigDecimal waterTax) {
         this.waterTax = waterTax;
+    }
+
+    public BigDecimal getInstWriteOffAmount() {
+        return instWriteOffAmount;
+    }
+
+    public void setInstWriteOffAmount(BigDecimal instWriteOffAmount) {
+        this.instWriteOffAmount = instWriteOffAmount;
+    }
+
+    public BigDecimal getInstCourtVerdictAmount() {
+        return instCourtVerdictAmount;
+    }
+
+    public void setInstCourtVerdictAmount(BigDecimal instCourtVerdictAmount) {
+        this.instCourtVerdictAmount = instCourtVerdictAmount;
     }
 
 }
