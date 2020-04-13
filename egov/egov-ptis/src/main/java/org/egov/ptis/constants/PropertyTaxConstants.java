@@ -1261,7 +1261,13 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_ADVANCE_LIMIT_EXCEEDED = "PTIS-REST-49";
     public static final String THIRD_PARTY_ERR_MSG_ADVANCE_LIMIT_EXCEEDED = "Payment is rejected because Advance amount is beyond 10 installments.";
-
+    
+    public static final String THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_CODE = "PTIS-REST-50";
+    public static final String THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_MSG = "Application number is incorrect.";
+    
+    public static final String THIRD_PARTY_VALID_APPLICATION_NO_CODE = "PTIS-REST-51";
+    public static final String THIRD_PARTY_VALID_APPLICATION_NO_MSG = "Please enter valid Application number.";
+    
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
