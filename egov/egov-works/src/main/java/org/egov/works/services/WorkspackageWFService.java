@@ -50,6 +50,7 @@ package org.egov.works.services;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.tender.WorksPackage;
 
+@SuppressWarnings("deprecation")
 public class WorkspackageWFService extends PersistenceService<WorksPackage, Long> {
 
     public WorkspackageWFService() {

@@ -47,6 +47,20 @@
  */
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -61,16 +75,7 @@ import org.egov.works.models.estimate.DepositWorksUsage;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.DepositWorksUsageService;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUsage, Long> implements
         DepositWorksUsageService {
     private static final Logger LOGGER = Logger.getLogger(DepositWorksUsageServiceImpl.class);
@@ -78,6 +83,9 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     public static final String dateFormat = "dd-MMM-yyyy";
     private ContractorBillService contractorBillService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public DepositWorksUsageServiceImpl(final PersistenceService<DepositWorksUsage, Long> persistenceService) {
         super(persistenceService);
@@ -92,39 +100,38 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
                 accountdetailtype.getId(), depositCode.intValue());
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Map<String, List> getDepositFolioDetails(final AbstractEstimate abstractEstimate, final Fund fund,
             final CChartOfAccounts coa, final Accountdetailtype accountdetailtype, final Long depositCode,
             final Date appropriationDate) {
-        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
-        final List<Object> paramList = new ArrayList<Object>();
-        Object[] params;
-        paramList.add(appropriationDate);
-        paramList.add(fund.getId());
-        paramList.add(depositCode);
-        paramList.add(coa.getId());
-        params = new Object[paramList.size()];
-        params = paramList.toArray(params);
+        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<>();
 
         // Getting deposit works usage list across the financial year
-        final List<DepositWorksUsage> depositWorksUsageList = persistenceService
-                .findAllBy(
-                        "from DepositWorksUsage dwu where trunc(dwu.appropriationDate)<=trunc(?) and  dwu.depositCode.fund.id=?  and  dwu.depositCode.id=?  and  dwu.coa.id=?   order by dwu.id asc",
-                        params);
+        final List<DepositWorksUsage> depositWorksUsageList = entityManager
+                .createQuery(new StringBuffer("from DepositWorksUsage dwu")
+                        .append(" where trunc(dwu.appropriationDate) <= trunc(:appropriationDate) and dwu.depositCode.fund.id = :fundId")
+                        .append(" and dwu.depositCode.id = :depositCode and dwu.coa.id = coaId order by dwu.id asc").toString(),
+                        DepositWorksUsage.class)
+                .setParameter("appropriationDate", appropriationDate, TemporalType.DATE)
+                .setParameter("fundId", fund.getId())
+                .setParameter("depositCode", depositCode)
+                .getResultList();
 
         if (depositWorksUsageList != null && !depositWorksUsageList.isEmpty())
             return addApprovedEstimateResultList(approvedBudgetFolioResultList, depositWorksUsageList,
                     appropriationDate);
-        return new HashMap<String, List>();
+        return new HashMap<>();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map<String, List> addApprovedEstimateResultList(final List<BudgetFolioDetail> depositFolioResultList,
             final List<DepositWorksUsage> depositWorksUsageList, final Date appropriationDate) {
         int srlNo = 1;
         Double cumulativeTotal = 0.00D;
         BigDecimal totalDeposit = BigDecimal.ZERO;
         double cumulativeExpensesIncurred = 0.0;
-        final Map<String, List> budgetFolioMap = new HashMap<String, List>();
+        final Map<String, List> budgetFolioMap = new HashMap<>();
         for (final DepositWorksUsage depositWorksUsage : depositWorksUsageList) {
             final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
             budgetFolioDetail.setSrlNo(srlNo++);
@@ -188,7 +195,8 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
     @Override
     public BigDecimal getTotalUtilizedAmountForDepositWorks(final FinancialDetail financialDetail) {
         return (BigDecimal) genericService.findByNamedQuery("getDepositWorksUsageAmount", financialDetail
-                .getAbstractEstimate().getDepositCode().getId(), financialDetail.getFund().getId(), financialDetail
+                .getAbstractEstimate().getDepositCode().getId(), financialDetail.getFund().getId(),
+                financialDetail
                         .getCoa().getId());
     }
 
@@ -197,12 +205,20 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
         BigDecimal totalUtilizedAmount = BigDecimal.ZERO;
         // NOTE: utilizedAmountForRunningProject holds sum of all appropriation
         // amount for estimates which are not closed
-        BigDecimal utilizedAmountForRunningProject = (BigDecimal) genericService
-                .find("select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where dwu.createdDate<=? and EXISTS (select 'true' from FinancialDetail fd where fd.abstractEstimate.id=dwu.abstractEstimate.id and fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?) "
-                        + "and (dwu.abstractEstimate.projectCode.id is null or dwu.abstractEstimate.projectCode.id not in (select proj.id from ProjectCode proj where proj.egwStatus.code='CLOSED'))",
-                        appDate, financialDetail.getFund().getId(), financialDetail.getAbstractEstimate()
-                                .getDepositCode().getId(),
-                        financialDetail.getCoa().getId());
+        BigDecimal utilizedAmountForRunningProject = entityManager
+                .createQuery(new StringBuffer("select sum(dwu.consumedAmount-dwu.releasedAmount)")
+                        .append(" from DepositWorksUsage dwu")
+                        .append(" where dwu.createdDate <= :createdDate and EXISTS (select 'true' from FinancialDetail fd")
+                        .append(" where fd.abstractEstimate.id=dwu.abstractEstimate.id and fd.fund.id = :fundId")
+                        .append(" and fd.abstractEstimate.depositCode.id = :depositCode and fd.coa.id = :coaId) ")
+                        .append(" and (dwu.abstractEstimate.projectCode.id is null or dwu.abstractEstimate.projectCode.id not in")
+                        .append(" (select proj.id from ProjectCode proj where proj.egwStatus.code='CLOSED'))").toString(),
+                        BigDecimal.class)
+                .setParameter("createdDate", appDate, TemporalType.DATE)
+                .setParameter("fundId", financialDetail.getFund().getId())
+                .setParameter("depositCode", financialDetail.getAbstractEstimate().getDepositCode().getId())
+                .setParameter("coaId", financialDetail.getCoa().getId())
+                .getSingleResult();
         if (utilizedAmountForRunningProject == null)
             utilizedAmountForRunningProject = BigDecimal.ZERO;
         LOGGER.debug("Total Utilized amount for deposit works (Running projects) >>>>Depositcodeid="
@@ -210,11 +226,19 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
                 + "||utilizedAmount=" + utilizedAmountForRunningProject);
         // NOTE: utilizedAmountForClosedProject holds sum of all appropriation
         // amount for estimates which are closed
-        Double utilizedAmountForClosedProject = (Double) genericService
-                .find("select sum(fd.abstractEstimate.projectCode.projectValue) from FinancialDetail fd where trunc(fd.abstractEstimate.projectCode.completionDate)<=trunc(?) and fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=? and fd.abstractEstimate.projectCode.egwStatus.code='CLOSED'",
-                        appDate, financialDetail.getFund().getId(), financialDetail.getAbstractEstimate()
-                                .getDepositCode().getId(),
-                        financialDetail.getCoa().getId());
+        Double utilizedAmountForClosedProject = entityManager.createQuery(
+                new StringBuffer("select sum(fd.abstractEstimate.projectCode.projectValue)")
+                        .append(" from FinancialDetail fd")
+                        .append(" where trunc(fd.abstractEstimate.projectCode.completionDate) <= trunc(:completionDate)")
+                        .append(" and fd.fund.id =:fundId and fd.abstractEstimate.depositCode.id = :depositCode and fd.coa.id = :coaId")
+                        .append(" and fd.abstractEstimate.projectCode.egwStatus.code = 'CLOSED'").toString(),
+                Double.class)
+                .setParameter("completionDate", appDate, TemporalType.DATE)
+                .setParameter("fundId", financialDetail.getFund().getId())
+                .setParameter("depositCode", financialDetail.getAbstractEstimate().getDepositCode().getId())
+                .setParameter("coaId", financialDetail.getCoa().getId())
+                .getSingleResult();
+
         if (utilizedAmountForClosedProject == null)
             utilizedAmountForClosedProject = 0.0;
         totalUtilizedAmount = utilizedAmountForRunningProject.add(new BigDecimal(utilizedAmountForClosedProject
@@ -236,10 +260,14 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
 
     @Override
     public DepositWorksUsage getDepositWorksUsage(final AbstractEstimate estimate, final String appropriationNumber) {
-        final DepositWorksUsage depositWorksUsage = persistenceService.find(
-                "from DepositWorksUsage dwu where dwu.abstractEstimate=? and dwu.appropriationNumber=?", estimate,
-                appropriationNumber);
-        return depositWorksUsage;
+        final List<DepositWorksUsage> results = entityManager.createQuery(
+                "from DepositWorksUsage dwu where dwu.abstractEstimate = :estimate and dwu.appropriationNumber = :appropriationNumber",
+                DepositWorksUsage.class)
+                .setParameter("estimate", estimate)
+                .setParameter("appropriationNumber", appropriationNumber)
+                .getResultList();
+
+        return results.isEmpty() ? null : results.get(0);
     }
 
     public void setContractorBillService(final ContractorBillService contractorBillService) {
@@ -257,8 +285,13 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
 
         final String rejectedApprNumber = "BC/" + apprNumber;
 
-        final DepositWorksUsage depositWorksUsage = persistenceService.find(
-                "from DepositWorksUsage dwu where dwu.appropriationNumber=?", rejectedApprNumber);
+        final List<DepositWorksUsage> results = entityManager.createQuery(
+                "from DepositWorksUsage dwu where dwu.appropriationNumber = :appropriationNumber", DepositWorksUsage.class)
+                .setParameter("appropriationNumber", rejectedApprNumber)
+                .getResultList();
+
+        final DepositWorksUsage depositWorksUsage = results.isEmpty() ? null : results.get(0);
+
         if (depositWorksUsage != null)
             return true;
 

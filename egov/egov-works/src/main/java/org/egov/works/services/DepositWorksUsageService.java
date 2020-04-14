@@ -47,6 +47,11 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
@@ -54,16 +59,12 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.models.estimate.DepositWorksUsage;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 /**
  * This class will have all business logic related to DepositWorksUsage.
  */
 public interface DepositWorksUsageService extends BaseService<DepositWorksUsage, Long> {
 
+    @SuppressWarnings("rawtypes")
     public Map<String, List> getDepositFolioDetails(AbstractEstimate abstractEstimate, Fund fund, CChartOfAccounts coa,
             Accountdetailtype accountdetailtype, Long depositCode, Date appropriationDate);
 

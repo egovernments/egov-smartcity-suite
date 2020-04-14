@@ -48,6 +48,12 @@
 
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -68,15 +74,10 @@ import org.egov.works.services.RevisionEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 /**
  * This class will expose all Revision Estimate related operations.
  */
+@SuppressWarnings("deprecation")
 public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long> implements
         RevisionEstimateService {
 
@@ -132,7 +133,8 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         if (estimateAppropriation == null)
             return flag;
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
-                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
+                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(),
+                financialDetail
                         .getAbstractEstimate().getDepositCode().getId().intValue());
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();
         DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
@@ -169,7 +171,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
             final String appropriationNumber) {
         boolean flag = false;
         final Long finYearId = finHibernateDao.getFinYearByDate(new Date()).getId();
-        final List<Long> budgetHeadId = new ArrayList<Long>();
+        final List<Long> budgetHeadId = new ArrayList<>();
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
@@ -182,8 +184,9 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
                 financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
                 financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                 financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getAbstractEstimate().getWard() == null ? null
+                        : Integer.parseInt(financialDetail
+                                .getAbstractEstimate().getWard().getId().toString()),
                 financialDetail.getBudgetGroup() == null ? null : budgetHeadId,
                 financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), revisionEstimate
                         .getTotalAmount().getValue());
@@ -219,7 +222,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 
     private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate,
             final String appropriationNumber)
-                    throws ValidationException {
+            throws ValidationException {
         boolean flag = false;
         final Date appDate = new Date();
         double depApprAmnt = 0.0;
@@ -228,7 +231,8 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
-                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
+                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(),
+                financialDetail
                         .getAbstractEstimate().getDepositCode().getId().intValue());
 
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
@@ -299,7 +303,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         // No budget appropriation was done for this revision estimate
         if (estimateAppropriation == null)
             return flag;
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());
         BudgetUsage budgetUsage = null;
 
@@ -313,8 +317,9 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
                 financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
                 financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                 financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getAbstractEstimate().getWard() == null ? null
+                        : Integer.parseInt(financialDetail
+                                .getAbstractEstimate().getWard().getId().toString()),
                 financialDetail.getBudgetGroup() == null ? null : budgetheadid,
                 financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
                         .getBudgetUsage().getConsumedAmount());

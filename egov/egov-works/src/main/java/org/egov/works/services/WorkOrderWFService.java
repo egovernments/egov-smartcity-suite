@@ -50,6 +50,7 @@ package org.egov.works.services;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.workorder.WorkOrder;
 
+@SuppressWarnings("deprecation")
 public class WorkOrderWFService extends PersistenceService<WorkOrder, Long> {
 
     public WorkOrderWFService() {

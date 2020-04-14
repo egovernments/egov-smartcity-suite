@@ -47,38 +47,35 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.model.budget.BudgetGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
 public class WorkProgressAbstractReportService {
-    private static final Logger logger = Logger.getLogger(WorkProgressAbstractReportService.class);
-
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     public void setBudgetHeadsFromString(final String budgetHeadsStr, final List<String> budgetHeads,
             final List<Long> budgetHeadIds) {
-        final List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
-        final List<CChartOfAccounts> coaList = new ArrayList<CChartOfAccounts>();
+        final List<BudgetGroup> budgetHeadList = new ArrayList<>();
+        final List<CChartOfAccounts> coaList = new ArrayList<>();
         if (StringUtils.isNotBlank(budgetHeadsStr)) {
             final String[] budgetHeadsFromString = budgetHeadsStr.split(",");
             for (final String element : budgetHeadsFromString)
                 // Split and obtain only the glcode
                 coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(element.split("-")[0]));
             budgetHeadList.addAll(budgetDetailsDAO.getBudgetHeadForGlcodeList(coaList));
-            final List<Long> budgetHeadIdsLong = new ArrayList<Long>();
-            final List<String> budgetHeadIdStr = new ArrayList<String>();
+            final List<Long> budgetHeadIdsLong = new ArrayList<>();
+            final List<String> budgetHeadIdStr = new ArrayList<>();
             if (budgetHeadList != null && budgetHeadList.size() > 0)
                 for (final BudgetGroup bdgtGrp : budgetHeadList) {
                     budgetHeadIdStr.add(bdgtGrp.getId().toString());
@@ -101,12 +98,12 @@ public class WorkProgressAbstractReportService {
     }
 
     public void setDepositCodesFromString(final String depositCodesStr, final List<Long> depositCodeIds) {
-        final List<CChartOfAccounts> coaList = new ArrayList<CChartOfAccounts>();
+        final List<CChartOfAccounts> coaList = new ArrayList<>();
         if (StringUtils.isNotBlank(depositCodesStr)) {
             final String[] depositCodesFromStr = depositCodesStr.split(",");
             for (final String element : depositCodesFromStr)
                 coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(element.split("-")[0]));
-            final List<Long> depositCodeIdsLong = new ArrayList<Long>();
+            final List<Long> depositCodeIdsLong = new ArrayList<>();
             if (coaList != null && coaList.size() > 0)
                 for (final CChartOfAccounts coa : coaList)
                     depositCodeIdsLong.add(coa.getId());

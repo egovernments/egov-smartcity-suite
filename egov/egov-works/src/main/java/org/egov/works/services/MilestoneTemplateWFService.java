@@ -54,6 +54,7 @@ import org.egov.works.models.masters.MilestoneTemplate;
  * @author vikas
  */
 
+@SuppressWarnings("deprecation")
 public class MilestoneTemplateWFService extends PersistenceService<MilestoneTemplate, Long> {
 
     public MilestoneTemplateWFService() {

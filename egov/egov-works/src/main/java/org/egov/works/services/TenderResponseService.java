@@ -47,8 +47,17 @@
  */
 package org.egov.works.services;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.service.PersonalInformationService;
@@ -58,15 +67,12 @@ import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.models.tender.TenderResponseContractors;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class TenderResponseService extends PersistenceService<TenderResponse, Long> {
     private static final Logger logger = Logger.getLogger(TenderResponseService.class);
     private PersonalInformationService personalInformationService;
-    private PersistenceService persistenceService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public TenderResponseService() {
         super(TenderResponse.class);
@@ -76,11 +82,11 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
         super(type);
     }
 
-    public List getApprovedByList(final Integer deptId) {
-        List approvedByList = null;
+    public List<EmployeeView> getApprovedByList(final Integer deptId) {
+        List<EmployeeView> approvedByList = null;
         try {
             // approvedByList = eisManager.searchEmployee(deptId, 0, null, null, 0);
-            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            final HashMap<String, Object> criteriaParams = new HashMap<>();
             criteriaParams.put("departmentId", deptId);
             criteriaParams.put("isPrimary", "Y");
             approvedByList = personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
@@ -90,11 +96,11 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
         return approvedByList;
     }
 
-    public List populateNegotiationPreparedByList(final AbstractEstimate abstractEstimate) {
-        List negotiationPreparedByList = null;
+    public List<EmployeeView> populateNegotiationPreparedByList(final AbstractEstimate abstractEstimate) {
+        List<EmployeeView> negotiationPreparedByList = null;
         if (abstractEstimate != null && abstractEstimate.getExecutingDepartment() != null)
             try {
-                final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+                final HashMap<String, Object> criteriaParams = new HashMap<>();
                 criteriaParams.put("departmentId", abstractEstimate.getExecutingDepartment().getId());
                 criteriaParams.put("isPrimary", "Y");
                 // negotiationPreparedByList = eisManager.searchEmployee(abstractEstimate.getExecutingDepartment().getId(),
@@ -123,6 +129,7 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
      * (Exception e) { logger.debug("exception " + e); } return personalInformation; }
      */
 
+    @SuppressWarnings("unchecked")
     public Collection<TenderResponseActivity> getTenderResponseActivityList(
             final List<TenderResponseActivity> actionTenderResponseActivities) {
         return CollectionUtils.select(
@@ -132,14 +139,14 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
                     if (tra == null)
                         return false;
                     else {
-                        tra.setActivity((Activity) persistenceService.find("from Activity where id=?",
-                                tra.getActivity().getId()));
+                        tra.setActivity(entityManager.find(Activity.class, tra.getActivity().getId()));
                         return true;
                     }
 
                 });
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<TenderResponseContractors> getActionTenderResponseContractorsList(
             final List<TenderResponseContractors> actionTenderResponseContractors) {
         return CollectionUtils.select(actionTenderResponseContractors,
@@ -151,8 +158,8 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
         this.personalInformationService = personalInformationService;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
     }
 
 }

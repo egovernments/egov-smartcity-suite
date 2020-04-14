@@ -50,6 +50,7 @@ package org.egov.works.services;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 
+@SuppressWarnings("deprecation")
 public class RevisionEstimateWFService extends PersistenceService<RevisionAbstractEstimate, Long> {
 
     private AbstractEstimateService abstractEstimateService;

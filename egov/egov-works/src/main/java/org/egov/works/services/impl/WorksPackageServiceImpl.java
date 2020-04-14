@@ -47,6 +47,16 @@
  */
 package org.egov.works.services.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -59,14 +69,12 @@ import org.egov.works.models.tender.WorksPackageNumberGenerator;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.utils.WorksConstants;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long> implements WorksPackageService {
     private WorksPackageNumberGenerator workspackageGenerator;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public WorksPackageServiceImpl(final PersistenceService<WorksPackage, Long> persistenceService) {
         super(persistenceService);
@@ -80,7 +88,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
 
     @Override
     public List<AbstractEstimate> getAbStractEstimateListByWorksPackage(final WorksPackage entity) {
-        final List<AbstractEstimate> abList = new ArrayList<AbstractEstimate>();
+        final List<AbstractEstimate> abList = new ArrayList<>();
         if (entity != null && !entity.getWorksPackageDetails().isEmpty())
             for (final WorksPackageDetails wpd : entity.getWorksPackageDetails())
                 abList.add(wpd.getEstimate());
@@ -93,7 +101,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
 
     @Override
     public Collection<EstimateLineItemsForWP> getActivitiesForEstimate(final WorksPackage wpObj) {
-        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<>();
         final List<AbstractEstimate> abList = getAbStractEstimateListByWorksPackage(wpObj);
         for (final Activity act : getAllActivities(abList)) {
             final EstimateLineItemsForWP estlineItem = new EstimateLineItemsForWP();
@@ -136,7 +144,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
     }
 
     private List<Activity> getAllActivities(final List<AbstractEstimate> abList) {
-        final List<Activity> actList = new ArrayList<Activity>();
+        final List<Activity> actList = new ArrayList<>();
         for (final AbstractEstimate ab : abList)
             actList.addAll(ab.getActivities());
         return actList;
@@ -152,7 +160,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
 
     private Collection<EstimateLineItemsForWP> getEstLineItemsWithSrlNo(final Collection<EstimateLineItemsForWP> actList) {
         int i = 1;
-        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<EstimateLineItemsForWP>();
+        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<>();
         for (final EstimateLineItemsForWP act : actList) {
             act.setSrlNo(i);
             latestEstLineItemList.add(act);
@@ -163,19 +171,28 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
 
     @Override
     public WorksPackage getWorksPackageForAbstractEstimate(final AbstractEstimate estimate) {
-        final WorksPackage wp = persistenceService
-                .find("select wpd.worksPackage from WorksPackageDetails wpd where wpd.estimate.estimateNumber = ? and wpd.worksPackage.egwStatus.code<>'CANCELLED'",
-                        estimate.getEstimateNumber());
-        return wp;
+        final List<WorksPackage> results = entityManager.createQuery(
+                new StringBuffer("select wpd.worksPackage")
+                        .append(" from WorksPackageDetails wpd")
+                        .append(" where wpd.estimate.estimateNumber = :estimateNumber")
+                        .append(" and wpd.worksPackage.egwStatus.code<>'CANCELLED'").toString(),
+                WorksPackage.class)
+                .setParameter("estimateNumber", estimate.getEstimateNumber())
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public List<Object> getWorksPackageDetails(final Long estimateId) {
-        final List<Object> wpDetails = genericService.findAllBy(
-                "select wpd.worksPackage.id, wpd.worksPackage.wpNumber from WorksPackageDetails wpd "
-                        + " where wpd.estimate.id= ? and  wpd.worksPackage.egwStatus.code not in (?,?) ",
-                estimateId,
-                WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
+        final List<Object> wpDetails = entityManager.createQuery(
+                new StringBuffer("select wpd.worksPackage.id, wpd.worksPackage.wpNumber")
+                        .append(" from WorksPackageDetails wpd ")
+                        .append(" where wpd.estimate.id = :estimateId")
+                        .append(" and r.worksPackage.egwStatus.code not in :wpStatus ").toString(),
+                Object.class)
+                .setParameter("estimateId", estimateId)
+                .setParameter("wpStatus", Arrays.asList(WorksConstants.NEW, WorksConstants.CANCELLED_STATUS))
+                .getResultList();
         return wpDetails;
     }
 }

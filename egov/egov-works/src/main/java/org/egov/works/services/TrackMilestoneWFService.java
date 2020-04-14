@@ -54,6 +54,7 @@ import org.egov.works.milestone.entity.TrackMilestone;
  * @author vikas
  */
 
+@SuppressWarnings("deprecation")
 public class TrackMilestoneWFService extends PersistenceService<TrackMilestone, Long> {
 
     public TrackMilestoneWFService() {

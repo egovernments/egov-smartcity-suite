@@ -47,6 +47,21 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
@@ -83,18 +98,7 @@ import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 public class AbstractEstimateService extends PersistenceService<AbstractEstimate, Long> {
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
 
@@ -132,6 +136,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {
         this.budgetDetailsDAO = budgetDetailsDAO;
@@ -189,7 +195,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public void setEstimateNumber(final AbstractEstimate entity) {
         final CFinancialYear financialYear = getCurrentFinancialYear(entity.getEstimateDate());
         if (entity.getEstimateNumber() == null || entity.getEstimateNumber() != null
-                && estimateNumberChangeRequired(entity, financialYear)){
+                && estimateNumberChangeRequired(entity, financialYear)) {
             EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getEstimateNumber(entity, financialYear);
             entity.setEstimateNumber(estimateNumber);
@@ -261,7 +267,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         // CFinancialYear
         // estimateDate_finYear=financialYearHibernateDAO.getFinYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
         final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(budgetAppDate);
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());
         boolean flag = false;
 
@@ -293,8 +299,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
                 financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
                 financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                 financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getAbstractEstimate().getWard() == null ? null
+                        : Integer.parseInt(financialDetail
+                                .getAbstractEstimate().getWard().getId().toString()),
                 financialDetail.getBudgetGroup() == null ? null : budgetheadid,
                 financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), budgApprAmnt);
 
@@ -310,7 +317,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", financialDetail.getAbstractEstimate().getId());
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());
         BudgetUsage budgetUsage = null;
         final boolean flag = false;
@@ -326,8 +333,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
                 financialDetail.getFunctionary() == null ? null : financialDetail.getFunctionary().getId(),
                 financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                 financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(),
-                financialDetail.getAbstractEstimate().getWard() == null ? null : Integer.parseInt(financialDetail
-                        .getAbstractEstimate().getWard().getId().toString()),
+                financialDetail.getAbstractEstimate().getWard() == null ? null
+                        : Integer.parseInt(financialDetail
+                                .getAbstractEstimate().getWard().getId().toString()),
                 financialDetail.getBudgetGroup() == null ? null : budgetheadid,
                 financialDetail.getFund() == null ? null : financialDetail.getFund().getId(), estimateAppropriation
                         .getBudgetUsage().getConsumedAmount());
@@ -347,7 +355,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public BigDecimal getTotalGrantForYear(final FinancialDetail fd) throws ValidationException {
         BigDecimal val = BigDecimal.ZERO;
-        final Map<String, Object> searchMap = new HashMap<String, Object>();
+        final Map<String, Object> searchMap = new HashMap<>();
         CFinancialYear finYear = null;
 
         if (fd != null) {
@@ -356,7 +364,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         }
 
         if (fd != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(fd.getBudgetGroup());
             if (fd.getFunction() != null && fd.getFunction().getId() != null)
                 searchMap.put("functionid", fd.getFunction().getId());
@@ -395,12 +403,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public BigDecimal getTotalGrantForYear(final FinancialDetail fd, final Long financialyearid)
             throws ValidationException {
         BigDecimal val = BigDecimal.ZERO;
-        final Map<String, Object> searchMap = new HashMap<String, Object>();
+        final Map<String, Object> searchMap = new HashMap<>();
 
         searchMap.put("financialyearid", financialyearid);
 
         if (fd != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(fd.getBudgetGroup());
             if (fd.getFunction() != null && fd.getFunction().getId() != null)
                 searchMap.put("functionid", fd.getFunction().getId());
@@ -439,12 +447,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public BigDecimal getTotalGrantForYear(final FinancialDetail fd, final Long financialyearid, final Integer deptid)
             throws ValidationException {
         BigDecimal val = BigDecimal.ZERO;
-        final Map<String, Object> searchMap = new HashMap<String, Object>();
+        final Map<String, Object> searchMap = new HashMap<>();
 
         searchMap.put("financialyearid", financialyearid);
         searchMap.put("deptid", deptid);
         if (fd != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(fd.getBudgetGroup());
             if (fd.getFunction() != null && fd.getFunction().getId() != null)
                 searchMap.put("functionid", fd.getFunction().getId());
@@ -482,12 +490,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public BigDecimal getTotalGrantForYearAsOnDate(final FinancialDetail fd, final Long financialyearid,
             final Integer deptid, final Date asOnDate) throws ValidationException {
         BigDecimal val = BigDecimal.ZERO;
-        final Map<String, Object> searchMap = new HashMap<String, Object>();
+        final Map<String, Object> searchMap = new HashMap<>();
 
         searchMap.put("financialyearid", financialyearid);
         searchMap.put("deptid", deptid);
         if (fd != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(fd.getBudgetGroup());
             if (fd.getFunction() != null && fd.getFunction().getId() != null)
                 searchMap.put("functionid", fd.getFunction().getId());
@@ -524,12 +532,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public BigDecimal getPlanningBudgetPercentage(final FinancialDetail fd, final Long financialyearid,
             final Integer deptid) throws ValidationException {
         BigDecimal val = BigDecimal.ZERO;
-        final Map<String, Object> searchMap = new HashMap<String, Object>();
+        final Map<String, Object> searchMap = new HashMap<>();
 
         searchMap.put("financialyearid", financialyearid);
         searchMap.put("deptid", deptid);
         if (fd != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
             budgetheadid.add(fd.getBudgetGroup());
             if (fd.getFunction() != null && fd.getFunction().getId() != null)
                 searchMap.put("functionid", fd.getFunction().getId());
@@ -561,12 +569,13 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      *
      * @param
      */
+    @SuppressWarnings("rawtypes")
     public Map<String, List> getApprovedAppropriationDetailsForBugetHead(final AbstractEstimate viewEstimate,
             final BigDecimal totalGrantPerc) {
         if (logger.isDebugEnabled())
             logger.debug("1---inside getApprovedAppropriationDetailsForBugetHead------");
-        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
-        final Map<String, Object> queryParamMap = new HashMap<String, Object>();
+        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<>();
+        final Map<String, Object> queryParamMap = new HashMap<>();
         FinancialDetail fd = null;
         Long deptId = null;
         Long functionId = null;
@@ -616,9 +625,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         return budgetFolioMap;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map<String, List> getApprovedAppropriationDetailsForBugetHead(final Map<String, Object> queryParamMap) {
-        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
-        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<>();
+        final Map<String, Object> paramMap = new HashMap<>();
         if (queryParamMap.get("budgetheadid") != null) {
             final List<BudgetGroup> budgetheadid = (List) queryParamMap.get("budgetheadid");
             final BudgetGroup bg = budgetheadid.get(0);
@@ -642,7 +652,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         if (budgetUsageList != null && !budgetUsageList.isEmpty())
             return addApprovedEstimateResultList(approvedBudgetFolioResultList, budgetUsageList, new BigDecimal(
                     queryParamMap.get("totalGrantPerc").toString()));
-        return new HashMap<String, List>();
+        return new HashMap<>();
     }
 
     public void addFinancialYearToQuery(final FinancialDetail fd, final Map<String, Object> queryParamMap) {
@@ -651,18 +661,25 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         queryParamMap.put(TO_DATE, new Date());
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map<String, List> addApprovedEstimateResultList(final List<BudgetFolioDetail> budgetFolioResultList,
             final List<BudgetUsage> budgetUsageList, final BigDecimal totalGrantPerc) {
         int srlNo = 1;
         Double cumulativeTotal = 0.00D;
         BigDecimal balanceAvailable = BigDecimal.ZERO;
-        final Map<String, List> budgetFolioMap = new HashMap<String, List>();
+        final Map<String, List> budgetFolioMap = new HashMap<>();
         for (final BudgetUsage budgetUsage : budgetUsageList) {
             final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
             budgetFolioDetail.setSrlNo(srlNo++);
 
-            final AbstractEstimate estimate = find("from AbstractEstimate ae where ae.estimateNumber=?",
-                    budgetUsage.getReferenceNumber());
+            final List<AbstractEstimate> estimates = entityManager
+                    .createQuery("from AbstractEstimate ae where ae.estimateNumber = :estimateNumber",
+                            AbstractEstimate.class)
+                    .setParameter("estimateNumber", budgetUsage.getReferenceNumber())
+                    .getResultList();
+
+            final AbstractEstimate estimate = estimates.isEmpty() ? null : estimates.get(0);
+
             if (estimate != null) {
                 budgetFolioDetail.setEstimateNo(estimate.getEstimateNumber());
                 budgetFolioDetail.setNameOfWork(estimate.getName());
@@ -697,7 +714,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public Map<String, Object> createBudgetFolioHeaderJasperObject(final AbstractEstimate ae,
             final BigDecimal totalGrant, final BigDecimal totalGrantPer) {
-        final HashMap<String, Object> budgetFolioMapObject = new HashMap<String, Object>();
+        final HashMap<String, Object> budgetFolioMapObject = new HashMap<>();
         String departmentName = "";
         String functionCenter = "";
         String budgetHead = "";
@@ -730,10 +747,15 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public String getApporpriationType(final long budgetUsageId) {
         String appType = "Regular";
         if (estimateAppropriationService != null) {
-            final List allReadyAppropriatedBudgetUsageList = estimateAppropriationService
-                    .findAllBy(
-                            "from AbstractEstimateAppropriation where abstractEstimate.id=(select max(abstractEstimate.id) from AbstractEstimateAppropriation where budgetUsage.id=?) and budgetUsage.id<?",
-                            budgetUsageId, budgetUsageId);
+            final List<AbstractEstimateAppropriation> allReadyAppropriatedBudgetUsageList = entityManager.createQuery(
+                    new StringBuffer("from AbstractEstimateAppropriation")
+                            .append(" where abstractEstimate.id = (select max(abstractEstimate.id)")
+                            .append(" from AbstractEstimateAppropriation where budgetUsage.id = :budgetUsageId)")
+                            .append(" and budgetUsage.id < :budgetUsageId")
+                            .toString(),
+                    AbstractEstimateAppropriation.class)
+                    .setParameter("budgetUsageId", budgetUsageId)
+                    .getResultList();
             if (allReadyAppropriatedBudgetUsageList.size() != 0)
                 appType = "Re-Appropriation";
         }
@@ -786,7 +808,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public BigDecimal getBudgetAvailable(final AbstractEstimate estimate, final Date date) throws ValidationException {
         final BigDecimal budgetAvailable = BigDecimal.ZERO;
         Long finYearId = null;
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         if (date == null)
             finYearId = financialYearHibernateDAO.getFinYearByDate(new Date()).getId();
         else
@@ -795,8 +817,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             final FinancialDetail financialDetail = estimate.getFinancialDetails().get(0);
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
             return budgetDetailsDAO.getPlanningBudgetAvailable(finYearId, Integer.parseInt(estimate.getUserDepartment()
-                    .getId().toString()), financialDetail.getFunction() == null ? null : financialDetail.getFunction()
-                    .getId(),
+                    .getId().toString()), financialDetail.getFunction() == null ? null
+                            : financialDetail.getFunction()
+                                    .getId(),
                     null, financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                     financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(), Integer
                             .parseInt(estimate.getWard().getId().toString()),
@@ -821,7 +844,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             logger.debug(
                     "Start of getBudgetAvailable(Long functionId,Integer fundId,Long budgetGroupId,Long finYearId) : functionId="
                             + functionId + "fundId:" + fundId + "budgetGroupId=" + budgetGroupId + "finYearId=" + finYearId);
-        final List<Long> budgetheadid = new ArrayList<Long>();
+        final List<Long> budgetheadid = new ArrayList<>();
         if (functionId == null || fundId == null || budgetGroupId == null || finYearId == null || departmentId == null)
             throw new ApplicationRuntimeException(
                     "Error:Invalid Argument passed to getBudgetAvailable(Integer departmentId,Long functionId,Integer fundId,Long budgetGroupId,Long finYearId)");
@@ -834,7 +857,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public List<AbstractEstimate> getAbEstimateListById(final String estId) {
         final String[] estValues = estId.split("`~`");
         final Long[] estIdLong = new Long[estValues.length];
-        final Set<Long> abIdentifierSet = new HashSet<Long>();
+        final Set<Long> abIdentifierSet = new HashSet<>();
         int j = 0;
         for (final String estValue : estValues)
             if (StringUtils.isNotBlank(estValue)) {
@@ -874,8 +897,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             depApprAmnt = financialDetail.getAbstractEstimate().getTotalAmount().getValue();
 
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
-                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(),
+                financialDetail
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
                 appDate);
         BigDecimal balance = BigDecimal.ZERO;
@@ -910,8 +934,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestDepositWorksUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
-                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(),
+                financialDetail
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         // Generate Budget Rejection no here
         final String budgetRejectionNumber = "BC/" + estimateAppropriation.getDepositWorksUsage().getAppropriationNumber();
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();
@@ -1050,7 +1075,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public List<UOM> prepareUomListByExcludingSpecialUoms(final List<UOM> uomList) {
         final Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
-        final List<UOM> newList = new ArrayList<UOM>();
+        final List<UOM> newList = new ArrayList<>();
         for (final UOM uom : uomList)
             if (!exceptionSor.contains(uom.getUom()))
                 newList.add(uom);
@@ -1058,8 +1083,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     public List<BudgetUsage> getBudgetUsageListForEstNo(final String estNumber) {
-        List<BudgetUsage> buList = new ArrayList<BudgetUsage>();
-        buList = budgetUsageService.findAllBy("from BudgetUsage  where referenceNumber = ?) ", estNumber);
+        List<BudgetUsage> buList = new ArrayList<>();
+        buList = entityManager.createQuery("from BudgetUsage  where referenceNumber = :referenceNumber) ", BudgetUsage.class)
+                .setParameter("referenceNumber", estNumber)
+                .getResultList();
         return buList;
     }
 
@@ -1071,7 +1098,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      * @return List<Object> containing workOder Id and WorkOrder number
      */
     public List<Object> getWODetailsForEstimateId(final Long estimateId) {
-        List<Object> woDetails = new ArrayList<Object>();
+        List<Object> woDetails = new ArrayList<>();
         woDetails = workOrderService.getWorkOrderDetails(estimateId);
         return woDetails;
     }
@@ -1084,7 +1111,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
      * @return List<Object> containing worksPackage Id and worksPackage number
      */
     public List<Object> getWPDetailsForEstimateId(final Long estimateId) {
-        List<Object> wpDetails = new ArrayList<Object>();
+        List<Object> wpDetails = new ArrayList<>();
         wpDetails = workspackageService.getWorksPackageDetails(estimateId);
         return wpDetails;
     }

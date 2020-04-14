@@ -47,6 +47,8 @@
  */
 package org.egov.works.services;
 
+import java.util.List;
+
 import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.validation.exception.ValidationException;
@@ -54,11 +56,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.utils.WorksConstants;
 
-import java.util.List;
-
 /**
  * Entity Type Service for deposit code
  */
+@SuppressWarnings("deprecation")
 public class DepositCodeService extends PersistenceService<DepositCode, Long> implements EntityTypeService {
 
     public DepositCodeService() {
@@ -68,10 +69,12 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> im
     public DepositCodeService(Class<DepositCode> type) {
         super(type);
     }
+
     /*
      * (non-Javadoc)
      * @see org.egov.commons.service.EntityTypeService#filterActiveEntities(java. lang.String, int, java.lang.Integer)
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public List<DepositCode> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
@@ -93,6 +96,7 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> im
         return findAllByNamedQuery(WorksConstants.QUERY_GETACTIVEDEPOSITCODES);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public List getAssetCodesForProjectCode(final Integer accountdetailkey) throws ValidationException {
 

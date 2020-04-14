@@ -47,6 +47,17 @@
  */
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -58,17 +69,11 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 /**
  * This class will expose all measurment book related operations. NOTE ::: Suffix CQ and RE denote Change Quantity and Revision
  * Estimate Respectively
  */
+@SuppressWarnings("deprecation")
 public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> implements MeasurementBookService {
 
     private static final Logger logger = Logger.getLogger(MeasurementBookServiceImpl.class);
@@ -88,6 +93,9 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     public static final String DEPT_ID = "DEPT_ID";
     private WorksService worksService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public MeasurementBookServiceImpl(final PersistenceService<MBHeader, Long> persistenceService) {
         super(persistenceService);
     }
@@ -102,7 +110,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     @Override
     public List<String> searchMB(final Map<String, Object> criteriaMap, final List<Object> paramList) {
         logger.debug("-------Inside searchMB method-----------------------");
-        final List<String> mbHeaderQryList = new ArrayList<String>();
+        final List<String> mbHeaderQryList = new ArrayList<>();
         final String countQry = "select count(distinct mbh) from MBHeader mbh where mbh.id != null and mbh.egwStatus.code != 'NEW' ";
         final String resultQry = "select distinct mbh from MBHeader mbh where mbh.id != null and mbh.egwStatus.code != 'NEW'";
         StringBuffer commonFilter = new StringBuffer();
@@ -308,8 +316,8 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
      */
     @Override
     public List<WorkOrderEstimate> getWorkOrderEstimatesForMB(final List<WorkOrderEstimate> workOrderEstimateList) {
-        final List<WorkOrderEstimate> woEstimateList = new ArrayList<WorkOrderEstimate>();
-        final List<WorkOrderEstimate> usedWOEstimateList = new ArrayList<WorkOrderEstimate>();
+        final List<WorkOrderEstimate> woEstimateList = new ArrayList<>();
+        final List<WorkOrderEstimate> usedWOEstimateList = new ArrayList<>();
         Double approvedQuantity = 0D;
         Double usedQuantity = 0D;
         final Double extraPercentage = worksService.getConfigval();
@@ -399,7 +407,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
      */
     @Override
     public List<WorkOrderEstimate> getWorkOrderEstimatesForBill(final List<WorkOrderEstimate> workOrderEstimateList) {
-        final List<WorkOrderEstimate> woEstimateList = new ArrayList<WorkOrderEstimate>();
+        final List<WorkOrderEstimate> woEstimateList = new ArrayList<>();
         // Approved quantity for workorder
         for (final WorkOrderEstimate woe : workOrderEstimateList) {
             final List<MBHeader> mbHeaderList = findAllByNamedQuery("getMBbyWorkOrderEstID", woe.getId(),
@@ -433,7 +441,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
      */
     @Override
     public List<WorkOrderEstimate> getWOEstForBillExludingLegacyMB(final List<WorkOrderEstimate> workOrderEstimateList) {
-        final List<WorkOrderEstimate> woEstimateList = new ArrayList<WorkOrderEstimate>();
+        final List<WorkOrderEstimate> woEstimateList = new ArrayList<>();
         // Approved quantity for workorder
         for (final WorkOrderEstimate woe : workOrderEstimateList) {
             final List<MBHeader> mbHeaderList = findAllByNamedQuery("getMBWithoutLegacyByWOEstID", woe.getId(),
@@ -478,13 +486,15 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getId(), detail
                                 .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder()));
             } else {
+                final List<WorkOrderActivity> activities = entityManager.createQuery(new StringBuffer("from WorkOrderActivity")
+                        .append(" where activity.id = :activityId and (workOrderEstimate.id = :estimateId")
+                        .append(" or workOrderEstimate.estimate.parent.id = :parentId)").toString(), WorkOrderActivity.class)
+                        .setParameter("activityId", detail.getWorkOrderActivity().getActivity().getParent().getId())
+                        .setParameter("estimateId", mbHeader.getWorkOrderEstimate().getId())
+                        .setParameter("parentId", mbHeader.getWorkOrderEstimate().getEstimate().getId())
+                        .getResultList();
                 detail.getWorkOrderActivity()
-                        .setParent(
-                                (WorkOrderActivity) genericService
-                                        .find("from WorkOrderActivity where activity.id=? and (workOrderEstimate.id=? or workOrderEstimate.estimate.parent.id=?)",
-                                                detail.getWorkOrderActivity().getActivity().getParent().getId(),
-                                                mbHeader.getWorkOrderEstimate().getId(), mbHeader
-                                                        .getWorkOrderEstimate().getEstimate().getId()));
+                        .setParent(activities.isEmpty() ? null : activities.get(0));
                 lPrevCumlvQuant = prevCumulativeQuantityIncludingCQ(detail.getWorkOrderActivity().getId(),
                         mbHeader.getId(), detail.getWorkOrderActivity().getActivity().getParent().getId(), detail
                                 .getWorkOrderActivity().getWorkOrderEstimate().getWorkOrder());
@@ -518,7 +528,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
             mbHeaderId = -1l;
             currentTimestamp = new Date();
         } else {
-            mbHeader = persistenceService.find(" from MBHeader where id = ?", mbHeaderId);
+            mbHeader = entityManager.find(MBHeader.class, mbHeaderId);
             currentTimestamp = mbHeader.getCreatedDate();
         }
 
@@ -552,29 +562,29 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     public boolean isMBExistForLineItem(final String workOrderNumber, final long lineItemId) {
         boolean flag = false;
         List<MBHeader> mbHeaderList = null;
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
-        String dynQuery = "select distinct mbHeader from MBHeader mbHeader, WorkOrder wo "
-                + " join wo.workOrderActivities woa left join woa.activity.schedule schedule left join woa.activity.nonSor nonSor"
-                + " where mbHeader.id !=null" + " and mbHeader.workOrder.workOrderNumber like ?"
-                + " and mbHeader.egwStatus.code like ?";
-        paramList.add("%" + workOrderNumber + "%");
-        paramList.add("NEW");
+        final List<Object> paramList = new ArrayList<>();
+        final StringBuffer dynQuery = new StringBuffer("select distinct mbHeader")
+                .append(" from MBHeader mbHeader, WorkOrder wo join wo.workOrderActivities woa left join woa.activity.schedule schedule")
+                .append(" left join woa.activity.nonSor nonSor")
+                .append(" where mbHeader.id != null and mbHeader.workOrder.workOrderNumber like :workOrderNumber")
+                .append(" and mbHeader.egwStatus.code like :mbStatus");
         if (lineItemId > 0) {
-            dynQuery = dynQuery + " and (schedule.id = ? or nonSor.id = ?)";
+            dynQuery.append(" and (schedule.id = :scheduleId or nonSor.id = :nonSorId)");
             paramList.add(lineItemId);
             paramList.add(lineItemId);
         }
 
         logger.debug("1--inside action dynquery is" + dynQuery);
 
-        if (paramList.isEmpty())
-            mbHeaderList = genericService.findAllBy(dynQuery);
-        else {
-            params = new Object[paramList.size()];
-            params = paramList.toArray(params);
-            mbHeaderList = genericService.findAllBy(dynQuery, params);
-        }
+        final TypedQuery<MBHeader> typedQuery = entityManager.createQuery(dynQuery.toString(), MBHeader.class)
+                .setParameter("workOrderNumber", "%" + workOrderNumber + "%")
+                .setParameter("mbStatus", "NEW");
+
+        if (lineItemId > 0)
+            typedQuery.setParameter("scheduleId", lineItemId)
+                    .setParameter("nonSorId", lineItemId);
+
+        mbHeaderList = typedQuery.getResultList();
 
         if (mbHeaderList != null && !mbHeaderList.isEmpty())
             flag = true;
@@ -627,7 +637,7 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
     public List<MBHeader> getApprovedMBList(final Long workOrderId, final Long workOrderEstimateId, final Date asOnDate) {
         final Object[] params = new Object[] { WorksConstants.APPROVED, asOnDate, workOrderId, workOrderEstimateId };
         final List<MBHeader> mbList = persistenceService.findAllByNamedQuery("getApprovedMBList", params);
-        final List<MBHeader> mbListForBill = new ArrayList<MBHeader>();
+        final List<MBHeader> mbListForBill = new ArrayList<>();
         if (mbList != null && !mbList.isEmpty())
             for (final MBHeader mbHeader : mbList) {
                 if (mbHeader.getEgBillregister() != null && mbHeader.getEgBillregister().getStatus() != null
@@ -717,27 +727,42 @@ public class MeasurementBookServiceImpl extends BaseServiceImpl<MBHeader, Long> 
 
     @Override
     public BigDecimal getTotalMBAmount(final Long workOrderId, final Long estimateId) {
-        BigDecimal totalMBAmount = BigDecimal.ZERO;
-        totalMBAmount = (BigDecimal) genericService
-                .find("select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.id=? and  workOrderEstimate.estimate.id= ? ",
-                        workOrderId, estimateId);
-        return totalMBAmount;
+        return entityManager.createQuery(new StringBuffer("select sum(mbAmount)")
+                .append(" from MBHeader")
+                .append(" where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.id = :woId")
+                .append(" and workOrderEstimate.estimate.id = :estimateId ").toString(), BigDecimal.class)
+                .setParameter("woId", workOrderId)
+                .setParameter("estimateId", estimateId)
+                .getSingleResult();
     }
 
     @Override
     public Date getWorkCommencedDate(final Long woId) {
-        final Date workCommencedDate = (Date) genericService.find(" select stat.statusDate from OfflineStatus stat "
-                + "where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ", woId, "WorkOrder",
-                WorksConstants.WO_STATUS_WOCOMMENCED);
-        return workCommencedDate;
+        final List<Date> results = entityManager.createQuery(new StringBuffer(" select stat.statusDate")
+                .append(" from OfflineStatus stat ")
+                .append(" where stat.objectId = :objectId and stat.objectType = :objectType and stat.egwStatus.code = :status ")
+                .toString(),
+                Date.class)
+                .setParameter("objectId", woId)
+                .setParameter("objectType", "WorkOrder")
+                .setParameter("status", WorksConstants.WO_STATUS_WOCOMMENCED)
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public Date getLastMBCreatedDate(final Long woId, final Long estId) {
-        final Date latestMBDate = (Date) genericService
-                .find(" select max(mbh.mbDate) from MBHeader mbh "
-                        + "where mbh.workOrder.id= ? and mbh.workOrderEstimate.estimate.id=? and mbh.workOrderEstimate.estimate.egwStatus.code= ? and mbh.egwStatus.code = ? ",
-                        woId, estId, WorksConstants.ADMIN_SANCTIONED_STATUS, WorksConstants.APPROVED);
+        final Date latestMBDate = entityManager.createQuery(new StringBuffer(" select max(mbh.mbDate)")
+                .append(" from MBHeader mbh ")
+                .append(" where mbh.workOrder.id = :woId and mbh.workOrderEstimate.estimate.id = :estimateId")
+                .append(" and mbh.workOrderEstimate.estimate.egwStatus.code = :estimateStatus and mbh.egwStatus.code = :mbhStatus ")
+                .toString(),
+                Date.class)
+                .setParameter("woId", woId)
+                .setParameter("estimateId", estId)
+                .setParameter("estimateStatus", WorksConstants.ADMIN_SANCTIONED_STATUS)
+                .setParameter("mbhStatus", WorksConstants.APPROVED)
+                .getSingleResult();
         return latestMBDate;
     }
 }

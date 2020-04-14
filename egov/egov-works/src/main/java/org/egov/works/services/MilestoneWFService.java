@@ -54,6 +54,7 @@ import org.egov.works.milestone.entity.Milestone;
  * @author vikas
  */
 
+@SuppressWarnings("deprecation")
 public class MilestoneWFService extends PersistenceService<Milestone, Long> {
 
     public MilestoneWFService() {

@@ -47,6 +47,18 @@
  */
 package org.egov.works.services.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -73,14 +85,7 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
 
@@ -112,6 +117,9 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     public static final String CANCELWO = "cancelWO";
 
     private WorksPackageService workspackageService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public WorkOrderServiceImpl(final PersistenceService<WorkOrder, Long> persistenceService) {
         super(persistenceService);
@@ -175,7 +183,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public List<WorkOrder> searchWOForMB(final Map<String, Object> criteriaMap) {
         logger.info("---------------------------Inside searchWOForMB----------------------------");
-        final List<WorkOrder> filteredList = new ArrayList<WorkOrder>();
+        final List<WorkOrder> filteredList = new ArrayList<>();
         criteriaMap.put(ACTION_FLAG, "searchWOForMB");
         // Filter list for approval limit
         for (final WorkOrder workorder : searchWO(criteriaMap))
@@ -199,7 +207,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public List<WorkOrder> searchWOForBilling(final Map<String, Object> criteriaMap) {
         logger.debug("-------------------------Inside searchWOForBilling-----------------------");
-        final List<WorkOrder> filteredList = new ArrayList<WorkOrder>();
+        final List<WorkOrder> filteredList = new ArrayList<>();
         criteriaMap.put(ACTION_FLAG, "searchWOForBilling");
         // Filter list for approval limit
         for (final WorkOrder workorder : searchWO(criteriaMap))
@@ -238,115 +246,128 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
 
     public List<String> searchWOQuery(final Map<String, Object> criteriaMap, final List<Object> paramList) {
         logger.info("-------------------------Inside searchWO---------------------------------");
-        final List<String> qryList = new ArrayList<String>();
-        StringBuffer commonQueryFilter = new StringBuffer();
+        final List<String> qryList = new ArrayList<>();
+        final StringBuffer commonQueryFilter = new StringBuffer();
+        int index = 1;
         // this String is the return Countqruery
-        final String CountQry = " select count(distinct wo) from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate"
-                + " where wo.id is not null and wo.parent is null and wo.egwStatus.code<>'NEW' ";
+        final StringBuffer CountQry = new StringBuffer(" select count(distinct wo)")
+                .append(" from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate")
+                .append(" where wo.id is not null and wo.parent is null and wo.egwStatus.code<>'NEW' ");
 
-        final String dynQuery = "select distinct wo from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate"
-                + " where wo.id is not null and wo.parent is null and wo.egwStatus.code<>'NEW' ";
+        final StringBuffer dynQuery = new StringBuffer("select distinct wo")
+                .append(" from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate")
+                .append(" where wo.id is not null and wo.parent is null and wo.egwStatus.code<>'NEW' ");
         final String setStat = worksService.getWorksConfigValue("WorkOrder.setstatus");
         if (criteriaMap.get(STATUS) != null)
             if (criteriaMap.get(STATUS).equals("APPROVED") || criteriaMap.get(STATUS).equals("CANCELLED")) {
                 if (criteriaMap.get(SOURCEPAGE) != null && CANCELWO.equals(criteriaMap.get(SOURCEPAGE))) {
-                    commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ? ");
+                    commonQueryFilter.append(" and wo.egwStatus.code = ? ").append(index++);
                     paramList.add(criteriaMap.get(STATUS));
                 } else if (criteriaMap.get(STATUS).equals("APPROVED")) {
-                    commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)");
+                    commonQueryFilter.append(" and wo.egwStatus.code = ?").append(index++)
+                            .append(" and wo.id not in (select objectId from OfflineStatus where objectType = ?").append(index++)
+                            .append(")");
                     paramList.add(criteriaMap.get(STATUS));
                     paramList.add("WorkOrder");
                 } else if (criteriaMap.get(STATUS).equals("CANCELLED")) {
-                    commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ? ");
+                    commonQueryFilter.append(" and wo.egwStatus.code = ?").append(index++);
                     paramList.add(criteriaMap.get(STATUS));
                 }
             } else if (!criteriaMap.get(STATUS).equals("-1")
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
-                commonQueryFilter = commonQueryFilter
-                        .append(" and wo.egwStatus.code = 'APPROVED' and wo.id in(select stat.objectId from "
-                                + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                                + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)");
+                commonQueryFilter.append(" and wo.egwStatus.code = 'APPROVED' and wo.id in(select stat.objectId")
+                        .append(" from OfflineStatus stat where stat.egwStatus.code = ?").append(index++)
+                        .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1")
+                        .append(" where wo.id=stat1.objectId and stat1.objectType = ?").append(index++)
+                        .append(") and stat.objectType = ?").append(index++)
+                        .append(")");
                 paramList.add(criteriaMap.get(STATUS));
                 paramList.add("WorkOrder");
                 paramList.add("WorkOrder");
             } else if (!criteriaMap.get(STATUS).equals("-1")
                     && !Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
-                commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ?");
+                commonQueryFilter.append(" and wo.egwStatus.code = ?").append(index++);
                 paramList.add(criteriaMap.get(STATUS));
             }
         if (criteriaMap.get(CREATE_DATE) != null) {
-            commonQueryFilter = commonQueryFilter.append(" and wo.workOrderDate = ? ");
+            commonQueryFilter.append(" and wo.workOrderDate = ?").append(index++);
             paramList.add(criteriaMap.get(CREATE_DATE));
         }
 
         if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) == null) {
-            commonQueryFilter = commonQueryFilter.append(" and wo.workOrderDate >= ? ");
+            commonQueryFilter.append(" and wo.workOrderDate >= ?").append(index++);
             paramList.add(criteriaMap.get(FROM_DATE));
 
         } else if (criteriaMap.get(TO_DATE) != null && criteriaMap.get(FROM_DATE) == null) {
-            commonQueryFilter = commonQueryFilter.append(" and wo.workOrderDate <= ? ");
+            commonQueryFilter.append(" and wo.workOrderDate <= ?").append(index++);
             paramList.add(criteriaMap.get(TO_DATE));
         } else if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) != null) {
-            commonQueryFilter = commonQueryFilter.append(" and wo.workOrderDate between ? and ? ");
+            commonQueryFilter.append(" and wo.workOrderDate between ?").append(index++)
+                    .append(" and ?").append(index++);
             paramList.add(criteriaMap.get(FROM_DATE));
             paramList.add(criteriaMap.get(TO_DATE));
         }
         if (criteriaMap.get(WORKORDER_NO) != null) {
-            commonQueryFilter = commonQueryFilter.append(" and UPPER(wo.workOrderNumber) like ? ");
+            commonQueryFilter.append(" and UPPER(wo.workOrderNumber) like ?").append(index++);
             paramList.add("%" + criteriaMap.get(WORKORDER_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(WP_NO) != null) {
-            commonQueryFilter = commonQueryFilter.append(" and UPPER(wo.packageNumber) like ? ");
+            commonQueryFilter.append(" and UPPER(wo.packageNumber) like ?").append(index++);
             paramList.add("%" + criteriaMap.get(WP_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(TENDER_FILE_NO) != null) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and wo.negotiationNumber in (select tr1.negotiationNumber from TenderResponse tr1 where "
-                            + "UPPER(tr1.tenderEstimate.worksPackage.tenderFileNumber) like ? )");
+            commonQueryFilter.append(" and wo.negotiationNumber in (select tr1.negotiationNumber from TenderResponse tr1")
+                    .append(" where UPPER(tr1.tenderEstimate.worksPackage.tenderFileNumber) like ?").append(index++)
+                    .append(" )");
             paramList.add("%" + criteriaMap.get(TENDER_FILE_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(CONTRACTOR_ID) != null) {
-            commonQueryFilter = commonQueryFilter.append(" and wo.contractor.id = ? ");
+            commonQueryFilter.append(" and wo.contractor.id = ?").append(index++);
             paramList.add(criteriaMap.get(CONTRACTOR_ID));
         }
         if (criteriaMap.get("DEPT_ID") != null) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                            + " we.estimate.executingDepartment.id = ?) ");
+            commonQueryFilter
+                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" we.estimate.executingDepartment.id = ?").append(index++)
+                    .append(") ");
             paramList.add(criteriaMap.get("DEPT_ID"));
         }
 
         if (criteriaMap.get(ESTIMATE_NO) != null) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                            + " UPPER(we.estimate.estimateNumber) like ? ) ");
+            commonQueryFilter
+                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" UPPER(we.estimate.estimateNumber) like ?").append(index++)
+                    .append(") ");
             paramList.add("%" + criteriaMap.get(ESTIMATE_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(TENDER_NO) != null && !"".equalsIgnoreCase((String) criteriaMap.get(TENDER_NO))) {
             logger.debug("-------TENDER_NO-----------" + criteriaMap.get(TENDER_NO));
-            commonQueryFilter = commonQueryFilter.append(" and UPPER(wo.tenderNumber like) ? ) ");
+            commonQueryFilter.append(" and UPPER(wo.tenderNumber like) ?").append(index++)
+                    .append(" ) ");
             paramList.add("%" + criteriaMap.get(TENDER_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(PROJECT_CODE) != null) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                            + " UPPER(we.estimate.executingDepartment.projectCode.code) like ? ) ");
+            commonQueryFilter
+                    .append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" UPPER(we.estimate.executingDepartment.projectCode.code) like ?").append(index++)
+                    .append(" ) ");
             paramList.add("%" + criteriaMap.get(PROJECT_CODE).toString().trim().toUpperCase() + "%");
         }
 
         if (criteriaMap.get(ACTION_FLAG) != null
                 && criteriaMap.get(ACTION_FLAG).toString().equalsIgnoreCase("searchWOForMB")) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id "
-                            + "from MBHeader mbh where mbh.egwStatus.code=? "
-                            + " or mbh.egwStatus.code=?"
-                            + " or mbh.egwStatus.code=?"
-                            + " or mbh.egwStatus.code=? or mbh.egwStatus.code=? )"
-                            + "and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id "
-                            + "from MBHeader mbh where "
-                            + " mbh.egwStatus.code = ? and  mbh.egBillregister.billstatus = ? and "
-                            + " mbh.egBillregister.billtype=?)");
+            commonQueryFilter.append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED'")
+                    .append(" and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id ")
+                    .append(" from MBHeader mbh where mbh.egwStatus.code = ?").append(index++)
+                    .append(" or mbh.egwStatus.code = ?").append(index++)
+                    .append(" or mbh.egwStatus.code = ?").append(index++)
+                    .append(" or mbh.egwStatus.code = ?").append(index++)
+                    .append(" or mbh.egwStatus.code = ?").append(index++)
+                    .append(" ) and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id ")
+                    .append(" from MBHeader mbh where mbh.egwStatus.code = ?").append(index++)
+                    .append(" and mbh.egBillregister.billstatus = ?").append(index++)
+                    .append(" and mbh.egBillregister.billtype = ?").append(index++)
+                    .append(")");
             paramList.add(MBHeader.MeasurementBookStatus.CREATED.toString());
             paramList.add(MBHeader.MeasurementBookStatus.CHECKED.toString());
             paramList.add(MBHeader.MeasurementBookStatus.RESUBMITTED.toString());
@@ -359,10 +380,12 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
 
         if (criteriaMap.get(ACTION_FLAG) != null
                 && criteriaMap.get(ACTION_FLAG).toString().equalsIgnoreCase("searchWOForBilling")) {
-            commonQueryFilter = commonQueryFilter
-                    .append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id not in "
-                            + "(select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egwStatus.code = ? "
-                            + " and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?))");
+            commonQueryFilter.append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED'")
+                    .append(" and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh")
+                    .append(" where mbh.egwStatus.code = ?").append(index++)
+                    .append(" and (mbh.egBillregister.billstatus <> ?").append(index++)
+                    .append(" and mbh.egBillregister.billtype = ?").append(index++)
+                    .append("))");
 
             paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
             paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
@@ -372,8 +395,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         final String orderQry = " Order by wo.workOrderDate ";
         logger.info("Query is ::" + dynQuery);
 
-        qryList.add(CountQry + commonQueryFilter + orderQry);
-        qryList.add(dynQuery + commonQueryFilter + orderQry);
+        qryList.add(CountQry.append(commonQueryFilter).append(orderQry).toString());
+        qryList.add(dynQuery.append(commonQueryFilter).append(orderQry).toString());
 
         return qryList;
     }
@@ -406,142 +429,131 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
      */
     public List<WorkOrder> searchWO(final Map<String, Object> criteriaMap) {
         logger.info("-------------------------Inside searchWO---------------------------------");
-        List<WorkOrder> wolList = null;
-
-        String dynQuery = "select distinct wo from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate"
-                + " where wo.id is not null and wo.parent is null ";
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer dynQuery = new StringBuffer("select distinct wo")
+                .append(" from WorkOrder wo left join wo.workOrderEstimates workOrderEstimate")
+                .append(" where wo.id is not null and wo.parent is null ");
+        final Map<String, Object> paramsMap = new HashMap<>();
         final String setStat = worksService.getWorksConfigValue("WorkOrder.setstatus");
         if (criteriaMap.get(STATUS) != null)
             if (criteriaMap.get(STATUS).equals("APPROVED") || criteriaMap.get(STATUS).equals("CANCELLED")) {
                 if (criteriaMap.get(SOURCEPAGE) != null && CANCELWO.equals(criteriaMap.get(SOURCEPAGE))) {
-                    dynQuery = dynQuery + " and wo.egwStatus.code = ? ";
-                    paramList.add(criteriaMap.get(STATUS));
+                    dynQuery.append(" and wo.egwStatus.code = :woStatus ");
+                    paramsMap.put("woStatus", criteriaMap.get(STATUS));
                 } else {
-                    dynQuery = dynQuery + " and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)";
-                    paramList.add(criteriaMap.get(STATUS));
-                    paramList.add("WorkOrder");
+                    dynQuery.append(" and wo.egwStatus.code = :woStatus and ")
+                            .append(" wo.id not in (select objectId from OfflineStatus where objectType = :objectType)");
+                    paramsMap.put("woStatus", criteriaMap.get(STATUS));
+                    paramsMap.put("objectType", "WorkOrder");
                 }
             } else if (!criteriaMap.get(STATUS).equals("-1")
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
-                dynQuery = dynQuery
-                        + " and wo.id in(select stat.objectId from "
-                        + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                        + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)";
-                paramList.add(criteriaMap.get(STATUS));
-                paramList.add("WorkOrder");
-                paramList.add("WorkOrder");
+                dynQuery.append(
+                        " and wo.id in (select stat.objectId from OfflineStatus stat where stat.egwStatus.code = :osStatus")
+                        .append(" and stat.id = (select max(stat1.id) from OfflineStatus stat1 where wo.id = stat1.objectId")
+                        .append(" and stat1.objectType = :objectType) and stat.objectType = :objectType)");
+                paramsMap.put("osStatus", criteriaMap.get(STATUS));
+                paramsMap.put("objectType", "WorkOrder");
             } else if (!criteriaMap.get(STATUS).equals("-1")
                     && !Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
-                dynQuery = dynQuery + " and wo.egwStatus.code = ?";
-                paramList.add(criteriaMap.get(STATUS));
+                dynQuery.append(" and wo.egwStatus.code = :woStatus");
+                paramsMap.put("woStatus", criteriaMap.get(STATUS));
             }
         if (criteriaMap.get(CREATE_DATE) != null) {
-            dynQuery = dynQuery + " and wo.workOrderDate = ? ";
-            paramList.add(criteriaMap.get(CREATE_DATE));
+            dynQuery.append(" and wo.workOrderDate = :workOrderDate ");
+            paramsMap.put("workOrderDate", criteriaMap.get(CREATE_DATE));
         }
 
         if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) == null) {
-            dynQuery = dynQuery + " and wo.workOrderDate >= ? ";
-            paramList.add(criteriaMap.get(FROM_DATE));
+            dynQuery.append(" and wo.workOrderDate >= :workOrderFromDate ");
+            paramsMap.put("workOrderFromDate", criteriaMap.get(FROM_DATE));
 
         } else if (criteriaMap.get(TO_DATE) != null && criteriaMap.get(FROM_DATE) == null) {
-            dynQuery = dynQuery + " and wo.workOrderDate <= ? ";
-            paramList.add(criteriaMap.get(TO_DATE));
+            dynQuery.append(" and wo.workOrderDate <= :workOrderToDate ");
+            paramsMap.put("workOrderToDate", criteriaMap.get(TO_DATE));
         } else if (criteriaMap.get(FROM_DATE) != null && criteriaMap.get(TO_DATE) != null) {
-            dynQuery = dynQuery + " and wo.workOrderDate between ? and ? ";
-            paramList.add(criteriaMap.get(FROM_DATE));
-            paramList.add(criteriaMap.get(TO_DATE));
+            dynQuery.append(" and wo.workOrderDate between :workOrderFromDate and :workOrderToDate ");
+            paramsMap.put("workOrderFromDate", criteriaMap.get(FROM_DATE));
+            paramsMap.put("workOrderToDate", criteriaMap.get(TO_DATE));
         }
         if (criteriaMap.get(WORKORDER_NO) != null) {
-            dynQuery = dynQuery + " and UPPER(wo.workOrderNumber) like ? ";
-            paramList.add("%" + criteriaMap.get(WORKORDER_NO).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and UPPER(wo.workOrderNumber) like :workOrderNumber ");
+            paramsMap.put("workOrderNumber", "%" + criteriaMap.get(WORKORDER_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(WP_NO) != null) {
-            dynQuery = dynQuery + " and UPPER(wo.packageNumber) like ? ";
-            paramList.add("%" + criteriaMap.get(WP_NO).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and UPPER(wo.packageNumber) like :packageNumber ");
+            paramsMap.put("packageNumber", "%" + criteriaMap.get(WP_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(TENDER_FILE_NO) != null) {
-            dynQuery = dynQuery
-                    + " and wo.negotiationNumber in (select tr1.negotiationNumber from TenderResponse tr1 where "
-                    + "UPPER(tr1.tenderEstimate.worksPackage.tenderFileNumber) like ? )";
-            paramList.add("%" + criteriaMap.get(TENDER_FILE_NO).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and wo.negotiationNumber in (select tr1.negotiationNumber from TenderResponse tr1 where ")
+                    .append(" UPPER(tr1.tenderEstimate.worksPackage.tenderFileNumber) like :tenderFileNumber )");
+            paramsMap.put("tenderFileNumber", "%" + criteriaMap.get(TENDER_FILE_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(CONTRACTOR_ID) != null) {
-            dynQuery = dynQuery + " and wo.contractor.id = ? ";
-            paramList.add(criteriaMap.get(CONTRACTOR_ID));
+            dynQuery.append(" and wo.contractor.id = :contractorId ");
+            paramsMap.put("contractorId", criteriaMap.get(CONTRACTOR_ID));
         }
         if (criteriaMap.get("DEPT_ID") != null) {
-            dynQuery = dynQuery
-                    + " and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                    + " we.estimate.executingDepartment.id = ?) ";
-            paramList.add(criteriaMap.get("DEPT_ID"));
+            dynQuery.append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" we.estimate.executingDepartment.id = :edId) ");
+            paramsMap.put("edId", criteriaMap.get("DEPT_ID"));
         }
 
         if (criteriaMap.get(ESTIMATE_NO) != null) {
-            dynQuery = dynQuery
-                    + " and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                    + " UPPER(we.estimate.estimateNumber) like ? ) ";
-            paramList.add("%" + criteriaMap.get(ESTIMATE_NO).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" UPPER(we.estimate.estimateNumber) like :estimateNumber ) ");
+            paramsMap.put("estimateNumber", "%" + criteriaMap.get(ESTIMATE_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(TENDER_NO) != null && !"".equalsIgnoreCase((String) criteriaMap.get(TENDER_NO))) {
             logger.debug("-------TENDER_NO-----------" + criteriaMap.get(TENDER_NO));
-            dynQuery = dynQuery + " and UPPER(wo.tenderNumber like) ? ) ";
-            paramList.add("%" + criteriaMap.get(TENDER_NO).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and UPPER(wo.tenderNumber like) :tenderNumber ) ");
+            paramsMap.put("tenderNumber", "%" + criteriaMap.get(TENDER_NO).toString().trim().toUpperCase() + "%");
         }
         if (criteriaMap.get(PROJECT_CODE) != null) {
-            dynQuery = dynQuery
-                    + " and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and "
-                    + " UPPER(we.estimate.executingDepartment.projectCode.code) like ? ) ";
-            paramList.add("%" + criteriaMap.get(PROJECT_CODE).toString().trim().toUpperCase() + "%");
+            dynQuery.append(" and wo.id in (select we.workOrder.id from WorkOrderEstimate we where we.workOrder.id=wo.id and ")
+                    .append(" UPPER(we.estimate.executingDepartment.projectCode.code) like :projectCode ) ");
+            paramsMap.put("projectCode", "%" + criteriaMap.get(PROJECT_CODE).toString().trim().toUpperCase() + "%");
         }
 
         if (criteriaMap.get(ACTION_FLAG) != null
                 && criteriaMap.get(ACTION_FLAG).toString().equalsIgnoreCase("searchWOForMB")) {
-            dynQuery = dynQuery
-                    + " and workOrderEstimate.workOrder.egwStatus.code!='CANCELLED' and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id "
-                    + "from MBHeader mbh where mbh.egwStatus.code=? " + " or mbh.egwStatus.code=?"
-                    + " or mbh.egwStatus.code=?" + " or mbh.egwStatus.code=? or mbh.egwStatus.code=? )"
-                    + "and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id "
-                    + "from MBHeader mbh where "
-                    + " mbh.egwStatus.code = ? and  mbh.egBillregister.billstatus = ? and "
-                    + " mbh.egBillregister.billtype=?)";
-            paramList.add(MBHeader.MeasurementBookStatus.CREATED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.CHECKED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.RESUBMITTED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.REJECTED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.NEW.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            paramList.add(getFinalBillTypeConfigValue());
+            dynQuery.append(" and workOrderEstimate.workOrder.egwStatus.code!='CANCELLED'")
+                    .append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id")
+                    .append(" not in (select distinct mbh.workOrderEstimate.id ")
+                    .append(" from MBHeader mbh where mbh.egwStatus.code = :mbhCreatedStatus or mbh.egwStatus.code = :mbhCheckedStatus")
+                    .append(" or mbh.egwStatus.code = :mbhResubmittedStatus or mbh.egwStatus.code = :mbhRejectedStatus")
+                    .append(" or mbh.egwStatus.code = :mbhNewStatus ) and workOrderEstimate.id not in (select distinct mbh.workOrderEstimate.id ")
+                    .append(" from MBHeader mbh where mbh.egwStatus.code = :mbhApprovedStatus and  mbh.egBillregister.billstatus = :billStatus")
+                    .append(" and mbh.egBillregister.billtype = :billtype)");
+            paramsMap.put("mbhCreatedStatus", MBHeader.MeasurementBookStatus.CREATED.toString());
+            paramsMap.put("mbhCheckedStatus", MBHeader.MeasurementBookStatus.CHECKED.toString());
+            paramsMap.put("mbhResubmittedStatus", MBHeader.MeasurementBookStatus.RESUBMITTED.toString());
+            paramsMap.put("mbhRejectedStatus", MBHeader.MeasurementBookStatus.REJECTED.toString());
+            paramsMap.put("mbhNewStatus", MBHeader.MeasurementBookStatus.NEW.toString());
+            paramsMap.put("mbhApprovedStatus", MBHeader.MeasurementBookStatus.APPROVED.toString());
+            paramsMap.put("billStatus", MBHeader.MeasurementBookStatus.APPROVED.toString());
+            paramsMap.put("billtype", getFinalBillTypeConfigValue());
         }
 
         if (criteriaMap.get(ACTION_FLAG) != null
                 && criteriaMap.get(ACTION_FLAG).toString().equalsIgnoreCase("searchWOForBilling")) {
-            dynQuery = dynQuery
-                    + " and workOrderEstimate.workOrder.egwStatus.code!='CANCELLED' and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id not in "
-                    + "(select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egwStatus.code = ? "
-                    + " and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?))";
+            dynQuery.append(" and workOrderEstimate.workOrder.egwStatus.code!='CANCELLED'")
+                    .append(" and workOrderEstimate.estimate.projectCode.egwStatus.code!='CLOSED' and workOrderEstimate.id not in ")
+                    .append(" (select distinct mbh.workOrderEstimate.id from MBHeader mbh where mbh.egwStatus.code = :mbhApprovedStatus ")
+                    .append(" and (mbh.egBillregister.billstatus <> :cancelledBillStatus and mbh.egBillregister.billtype = :billtype))");
 
-            paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
-            paramList.add(getFinalBillTypeConfigValue());
+            paramsMap.put("mbhApprovedStatus", MBHeader.MeasurementBookStatus.APPROVED.toString());
+            paramsMap.put("cancelledBillStatus", MBHeader.MeasurementBookStatus.CANCELLED.toString());
+            paramsMap.put("billtype", getFinalBillTypeConfigValue());
         }
 
         // @Todo check action_flag
 
         logger.debug("Query is ::" + dynQuery);
-        if (paramList.isEmpty())
-            wolList = findAllBy(dynQuery);
-        else {
-            params = new Object[paramList.size()];
-            params = paramList.toArray(params);
-            wolList = findAllBy(dynQuery, params);
-        }
 
-        return wolList;
+        final TypedQuery<WorkOrder> typedQuery = entityManager.createQuery(dynQuery.toString(), WorkOrder.class);
+        paramsMap.entrySet().forEach(entry -> typedQuery.setParameter(entry.getKey(), entry.getValue()));
+
+        return typedQuery.getResultList();
 
     }
 
@@ -578,38 +590,38 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public List<WorkOrderActivity> searchWOActivities(final Map<String, Object> criteriaMap) {
         logger.info("-------------------------Inside searchWOActivities-----------------------");
-        List<WorkOrderActivity> woActivityList;
 
-        String dynQuery = "select distinct woa from WorkOrderActivity woa left join woa.activity.schedule schedule"
-                + " left join woa.activity.nonSor nonSor where woa.id != null and woa.workOrderEstimate.estimate.parent is null "
-                + " and woa.workOrderEstimate.workOrder.egwStatus.code != 'CANCELLED' ";
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer dynQuery = new StringBuffer("select distinct woa")
+                .append(" from WorkOrderActivity woa left join woa.activity.schedule schedule")
+                .append(" left join woa.activity.nonSor nonSor where woa.id != null and woa.workOrderEstimate.estimate.parent is null ")
+                .append(" and woa.workOrderEstimate.workOrder.egwStatus.code != 'CANCELLED' ");
+
+        final Map<String, Object> paramsMap = new HashMap<>();
 
         if (criteriaMap.get(WORKORDER_NO) != null) {
-            dynQuery = dynQuery + " and woa.workOrderEstimate.workOrder.workOrderNumber = ? ";
-            paramList.add(criteriaMap.get(WORKORDER_NO));
+            dynQuery.append(" and woa.workOrderEstimate.workOrder.workOrderNumber = :workOrderNumber ");
+            paramsMap.put("workOrderNumber", criteriaMap.get(WORKORDER_NO));
         }
         if (criteriaMap.get(WORKORDER_ESTIMATE_ID) != null) {
-            dynQuery = dynQuery + " and woa.workOrderEstimate.estimate.id = ? ";
-            paramList.add(criteriaMap.get(WORKORDER_ESTIMATE_ID));
+            dynQuery.append(" and woa.workOrderEstimate.estimate.id = :woeId ");
+            paramsMap.put("woeId", criteriaMap.get(WORKORDER_ESTIMATE_ID));
         }
         if (criteriaMap.get(ACTIVITY_DESC) != null) {
-            dynQuery = dynQuery + " and (" + "(UPPER(schedule.description) like ?) or ("
-                    + " UPPER(nonSor.description)  like ? ))";
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+            dynQuery.append(
+                    " and ((UPPER(schedule.description) like :scheduleDesc) or (UPPER(nonSor.description) like :nonSorDesc ))");
+            paramsMap.put("scheduleDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+            paramsMap.put("nonSorDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
         }
         if (criteriaMap.get(ACTIVITY_CODE) != null) {
-            dynQuery = dynQuery + " and " + "UPPER(schedule.code) like ? ";
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%");
+            dynQuery.append(" and UPPER(schedule.code) like :scheduleCode ");
+            paramsMap.put("scheduleCode", "%" + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%");
         }
         // @Todo state not in approved and cancelled
         /*
-         * dynQuery = dynQuery + "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
+         * dynQuery.append("and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
          * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)" ;
-         * paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-         * paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+         * paramsMap.put(MBHeader.MeasurementBookStatus.APPROVED.toString());
+         * paramsMap.put(MBHeader.MeasurementBookStatus.CANCELLED.toString());
          */
 
         final Double extraPercentage = worksService.getConfigval();
@@ -618,21 +630,19 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
             factor = 1 + extraPercentage / 100;
         // @Todo ignore quantity of cancelled mb
         if (!"Required".equals(worksService.getWorksConfigValue("ORDER_NUMBER_REQUIRED"))) {
-            dynQuery = dynQuery
-                    + "and ((woa.approvedQuantity*? > (select sum(mbd.quantity) as sumq from MBDetails mbd "
-                    + " where mbd.mbHeader.egwStatus.code != ? group by mbd.workOrderActivity "
-                    + "having mbd.workOrderActivity.id = woa.id)) or (select sum(mbd.quantity) as sumq from MBDetails mbd "
-                    + " where mbd.mbHeader.egwStatus.code != ? group by mbd.workOrderActivity "
-                    + "having mbd.workOrderActivity.id = woa.id) is null)";
-            paramList.add(factor);
-            paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+            dynQuery.append(" and ((woa.approvedQuantity*:factor > (select sum(mbd.quantity) as sumq from MBDetails mbd ")
+                    .append(" where mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity ")
+                    .append(" having mbd.workOrderActivity.id = woa.id)) or (select sum(mbd.quantity) as sumq from MBDetails mbd ")
+                    .append(" where mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity ")
+                    .append(" having mbd.workOrderActivity.id = woa.id) is null)");
+            paramsMap.put("factor", factor);
+            paramsMap.put("status", MBHeader.MeasurementBookStatus.CANCELLED.toString());
         }
-        params = new Object[paramList.size()];
-        params = paramList.toArray(params);
-        woActivityList = genericService.findAllBy(dynQuery, params);
 
-        return woActivityList;
+        final TypedQuery<WorkOrderActivity> typedQuery = entityManager.createQuery(dynQuery.toString(), WorkOrderActivity.class);
+        paramsMap.entrySet().forEach(entry -> typedQuery.setParameter(entry.getKey(), entry.getValue()));
+
+        return typedQuery.getResultList();
     }
 
     /**
@@ -645,60 +655,65 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public List<WorkOrderActivity> searchWOActivitiesForChangeQuantity(final Map<String, Object> criteriaMap) {
         logger.info("-------------------------Inside searchWOActivities-----------------------");
-        List<WorkOrderActivity> woActivityList;
 
-        String dynQuery = "select distinct woa from WorkOrderActivity woa left join woa.activity.schedule schedule"
-                + " left join woa.activity.nonSor nonSor where woa.id is not null ";
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer dynQuery = new StringBuffer("select distinct woa")
+                .append(" from WorkOrderActivity woa left join woa.activity.schedule schedule")
+                .append(" left join woa.activity.nonSor nonSor where woa.id is not null ");
+        final Map<String, Object> paramMap = new HashMap<>();
 
-        if (criteriaMap.get(ACTIVITY_DESC) != null)
-            dynQuery = dynQuery + " and (" + "(UPPER(schedule.description) like '%"
-                    + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%') or ("
-                    + " UPPER(nonSor.description)  like '%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase()
-                    + "%' ))";
-        if (criteriaMap.get(ACTIVITY_CODE) != null)
-            dynQuery = dynQuery + " and " + "UPPER(schedule.code) like '%"
-                    + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%'";
+        if (criteriaMap.get(ACTIVITY_DESC) != null) {
+            dynQuery.append(
+                    " and ((UPPER(schedule.description) like :scheduleDesc) or (UPPER(nonSor.description) like :nonSorDesc ))");
+            paramMap.put("scheduleDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+            paramMap.put("nonSorDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+        }
+        if (criteriaMap.get(ACTIVITY_CODE) != null) {
+            dynQuery.append(" and UPPER(schedule.code) like :scheduleCode");
+            paramMap.put("scheduleCode", "%" + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%");
+        }
         if (criteriaMap.get(WORKORDER_ESTIMATE_ID) != null) {
             if (criteriaMap.get(WORKORDER_ID) != null) {
-                dynQuery = dynQuery
-                        + " and (woa.workOrderEstimate.estimate.id = ? and woa.workOrderEstimate.workOrder.egwStatus.code=? and woa.workOrderEstimate.workOrder.id = ?) ";
-                paramList.add(criteriaMap.get(WORKORDER_ESTIMATE_ID));
-                paramList.add(WorksConstants.APPROVED);
-                paramList.add(criteriaMap.get(WORKORDER_ID));
+                dynQuery.append(" and (woa.workOrderEstimate.estimate.id = :estimateId")
+                        .append(" and woa.workOrderEstimate.workOrder.egwStatus.code = :woStatus")
+                        .append(" and woa.workOrderEstimate.workOrder.id = :woId) ");
+                paramMap.put("estimateId", criteriaMap.get(WORKORDER_ESTIMATE_ID));
+                paramMap.put("woStatus", WorksConstants.APPROVED);
+                paramMap.put("woId", criteriaMap.get(WORKORDER_ID));
             } else {
-                dynQuery = dynQuery
-                        + " and (woa.workOrderEstimate.estimate.id = ? and woa.workOrderEstimate.workOrder.egwStatus.code=?) ";
-                paramList.add(criteriaMap.get(WORKORDER_ESTIMATE_ID));
-                paramList.add(WorksConstants.APPROVED);
+                dynQuery.append(" and (woa.workOrderEstimate.estimate.id = :estimateId")
+                        .append(" and woa.workOrderEstimate.workOrder.egwStatus.code = :woStatus) ");
+                paramMap.put("estimateId", criteriaMap.get(WORKORDER_ESTIMATE_ID));
+                paramMap.put("woStatus", WorksConstants.APPROVED);
             }
-            dynQuery = dynQuery
-                    + " or ((woa.workOrderEstimate.estimate.egwStatus is not null and woa.workOrderEstimate.estimate.egwStatus.code=?)"
-                    + " and (woa.workOrderEstimate.estimate.parent is not null and woa.workOrderEstimate.estimate.parent.id = ? ))";
-            paramList.add(AbstractEstimate.EstimateStatus.APPROVED.toString());
-            paramList.add(criteriaMap.get(WORKORDER_ESTIMATE_ID));
+            dynQuery.append(" or ((woa.workOrderEstimate.estimate.egwStatus is not null")
+                    .append(" and woa.workOrderEstimate.estimate.egwStatus.code = :estimateStatus)")
+                    .append(" and (woa.workOrderEstimate.estimate.parent is not null")
+                    .append(" and woa.workOrderEstimate.estimate.parent.id = :estParentId ))");
+            paramMap.put("estimateStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
+            paramMap.put("estParentId", criteriaMap.get(WORKORDER_ESTIMATE_ID));
         }
         if (criteriaMap.get(WORKORDER_ID) != null) {
-            dynQuery = dynQuery
-                    + " and (woa.workOrderEstimate.workOrder.id = ?) or ((woa.workOrderEstimate.workOrder.egwStatus is not null and woa.workOrderEstimate.workOrder.egwStatus.code=?)"
-                    + " and (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent.id = ? ))";
-            paramList.add(criteriaMap.get(WORKORDER_ID));
-            paramList.add(WorksConstants.APPROVED);
-            paramList.add(criteriaMap.get(WORKORDER_ID));
+            dynQuery.append(" and (woa.workOrderEstimate.workOrder.id = :woId)")
+                    .append(" or ((woa.workOrderEstimate.workOrder.egwStatus is not null")
+                    .append(" and woa.workOrderEstimate.workOrder.egwStatus.code = :woStatus)")
+                    .append(" and (woa.workOrderEstimate.workOrder.parent is not null")
+                    .append(" and woa.workOrderEstimate.workOrder.parent.id = :woParentId ))");
+            paramMap.put("woId", criteriaMap.get(WORKORDER_ID));
+            paramMap.put("woStatus", WorksConstants.APPROVED);
+            paramMap.put("woParentId", criteriaMap.get(WORKORDER_ID));
         }
 
-        dynQuery = dynQuery + "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where "
-                + "mbd.mbHeader.egwStatus.code not in (?,?) and mbd.workOrderActivity.id = woa.id)";
-        paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-        paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+        dynQuery.append("and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where ")
+                .append(" mbd.mbHeader.egwStatus.code not in (:mbhApprovedStatus, :mbhCancelledStatus) and mbd.workOrderActivity.id = woa.id)");
+        paramMap.put("mbhApprovedStatus", MBHeader.MeasurementBookStatus.APPROVED.toString());
+        paramMap.put("mbhCancelledStatus", MBHeader.MeasurementBookStatus.CANCELLED.toString());
 
-        params = new Object[paramList.size()];
-        params = paramList.toArray(params);
-        dynQuery = dynQuery + " order by woa.activity.id asc";
-        woActivityList = genericService.findAllBy(dynQuery, params);
+        dynQuery.append(" order by woa.activity.id asc");
 
-        return woActivityList;
+        final TypedQuery<WorkOrderActivity> typedQuery = entityManager.createQuery(dynQuery.toString(), WorkOrderActivity.class);
+        paramMap.entrySet().forEach(entry -> typedQuery.setParameter(entry.getKey(), entry.getValue()));
+
+        return typedQuery.getResultList();
     }
 
     /**
@@ -711,45 +726,44 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public List<WorkOrderActivity> searchWOActivitiesFromRevEstimates(final Map<String, Object> criteriaMap) {
         logger.info("-------------------------Inside searchWOActivities-----------------------");
-        List<WorkOrderActivity> woActivityList;
-        String dynQuery = "select distinct woa from WorkOrderActivity woa left join woa.activity.schedule schedule"
-                + " left join woa.activity.nonSor nonSor where woa.id != null ";
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer dynQuery = new StringBuffer("select distinct woa")
+                .append(" from WorkOrderActivity woa left join woa.activity.schedule schedule")
+                .append(" left join woa.activity.nonSor nonSor where woa.id != null ");
+        final Map<String, Object> paramsMap = new HashMap<>();
 
         if (criteriaMap.get(WORKORDER_NO) != null) {
-            dynQuery = dynQuery + " and woa.workOrderEstimate.workOrder.parent.workOrderNumber = ? ";
-            paramList.add(criteriaMap.get(WORKORDER_NO));
+            dynQuery.append(" and woa.workOrderEstimate.workOrder.parent.workOrderNumber = :workOrderNumber ");
+            paramsMap.put("workOrderNumber", criteriaMap.get(WORKORDER_NO));
         }
         if (criteriaMap.get(WORKORDER_ESTIMATE_ID) != null) {
-            dynQuery = dynQuery + " and woa.workOrderEstimate.estimate.parent.id = ? ";
-            paramList.add(criteriaMap.get(WORKORDER_ESTIMATE_ID));
+            dynQuery.append(" and woa.workOrderEstimate.estimate.parent.id = :estParentId ");
+            paramsMap.put("estParentId", criteriaMap.get(WORKORDER_ESTIMATE_ID));
         }
         if (criteriaMap.get(ACTIVITY_DESC) != null) {
-            dynQuery = dynQuery + " and (" + "(UPPER(schedule.description) like ?) or ("
-                    + " UPPER(nonSor.description)  like ? ))";
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+            dynQuery.append(" and ((UPPER(schedule.description) like :scheduleDesc)")
+                    .append(" or (UPPER(nonSor.description)  like :nonSorDesc ))");
+            paramsMap.put("scheduleDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
+            paramsMap.put("nonSorDesc", "%" + ((String) criteriaMap.get(ACTIVITY_DESC)).toUpperCase() + "%");
         }
         if (criteriaMap.get(ACTIVITY_CODE) != null) {
-            dynQuery = dynQuery + " and " + "UPPER(schedule.code) like ? ";
-            paramList.add("%" + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%");
+            dynQuery.append(" and UPPER(schedule.code) like :scheduleCode ");
+            paramsMap.put("scheduleCode", "%" + ((String) criteriaMap.get(ACTIVITY_CODE)).toUpperCase() + "%");
         }
         // Check Approved REs
-        dynQuery = dynQuery + " and  woa.workOrderEstimate.estimate.egwStatus.code=?   ";
-        paramList.add(WorksConstants.APPROVED);
+        dynQuery.append(" and  woa.workOrderEstimate.estimate.egwStatus.code = :estimateStatus   ");
+        paramsMap.put("estimateStatus", WorksConstants.APPROVED);
         if (criteriaMap.get(REVISION_TYPE) != null) {
-            dynQuery = dynQuery + " and woa.activity.revisionType=?  ";
-            paramList.add(criteriaMap.get(REVISION_TYPE));
+            dynQuery.append(" and woa.activity.revisionType = :revisionType  ");
+            paramsMap.put("revisionType", criteriaMap.get(REVISION_TYPE));
 
         }
 
         // @Todo state not in approved and cancelled
         /*
-         * dynQuery = dynQuery + "and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
+         * dynQuery.append("and woa.id not in (select distinct mbd.workOrderActivity.id from MBDetails mbd where " +
          * "mbd.mbHeader.state.previous.value not in (?,?) and mbd.workOrderActivity.id = woa.id)" ;
-         * paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
-         * paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+         * paramsMap.put(MBHeader.MeasurementBookStatus.APPROVED.toString());
+         * paramsMap.put(MBHeader.MeasurementBookStatus.CANCELLED.toString());
          */
 
         final Double extraPercentage = worksService.getConfigval();
@@ -758,19 +772,14 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
             factor = 1 + extraPercentage / 100;
         // @Todo ignore quantity of cancelled mb
         if (!"Required".equals(worksService.getWorksConfigValue("ORDER_NUMBER_REQUIRED"))) {
-            dynQuery = dynQuery
-                    + "and ((woa.approvedQuantity*? > (select sum(mbd.quantity) as sumq from MBDetails mbd "
-                    + " where mbd.mbHeader.egwStatus.code != ? group by mbd.workOrderActivity "
-                    + "having mbd.workOrderActivity.id = woa.id)) or (select sum(mbd.quantity) as sumq from MBDetails mbd "
-                    + " where mbd.mbHeader.egwStatus.code != ? group by mbd.workOrderActivity "
-                    + "having mbd.workOrderActivity.id = woa.id) is null)";
-            paramList.add(factor);
-            paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
-            paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+            dynQuery.append("and ((woa.approvedQuantity*:factor > (select sum(mbd.quantity) as sumq from MBDetails mbd ")
+                    .append(" where mbd.mbHeader.egwStatus.code != :mbHeaderStatus group by mbd.workOrderActivity ")
+                    .append(" having mbd.workOrderActivity.id = woa.id)) or (select sum(mbd.quantity) as sumq from MBDetails mbd ")
+                    .append(" where mbd.mbHeader.egwStatus.code != :mbHeaderStatus group by mbd.workOrderActivity ")
+                    .append(" having mbd.workOrderActivity.id = woa.id) is null)");
+            paramsMap.put("factor", factor);
+            paramsMap.put("mbHeaderStatus", MBHeader.MeasurementBookStatus.CANCELLED.toString());
         }
-        params = new Object[paramList.size()];
-        params = paramList.toArray(params);
-        woActivityList = genericService.findAllBy(dynQuery, params);
         // /woActivityListOriEst = searchWOActivities(criteriaMap);
         // Remove the SOR items that were present in the original Estimate
         /*
@@ -778,7 +787,10 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
          * { for(WorkOrderActivity woaOri :woActivityListOriEst) { for(WorkOrderActivity woaRev : woActivityList) {
          * if(woaOri.getActivity().getId()==woaRev.getActivity().getId()) { woActivityList.remove(woaRev); } } } }
          */
-        return woActivityList;
+        final TypedQuery<WorkOrderActivity> typedQuery = entityManager.createQuery(dynQuery.toString(), WorkOrderActivity.class);
+        paramsMap.entrySet().forEach(entry -> typedQuery.setParameter(entry.getKey(), entry.getValue()));
+
+        return typedQuery.getResultList();
     }
 
     /**
@@ -791,9 +803,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     public MBHeader findLastMBPageNoForLineItem(final WorkOrderActivity workOrderActivity, final Long mbHeaderId) {
         logger.info("-------------------------Inside findLastMBPageNoForLineItem--------------");
 
-        String query = "select distinct mbh from MBHeader mbh join mbh.mbDetails as mbDetail ";
-        Object[] params;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer query = new StringBuffer("select distinct mbh from MBHeader mbh join mbh.mbDetails as mbDetail ");
+        final Map<String, Object> paramsMap = new HashMap<>();
         // if(workOrderActivity.getActivity().getSchedule() != null)
         // query = query +
         // "where mbDetail.workOrderActivity.activity.schedule.id = "+workOrderActivity.getActivity().getSchedule().getId();
@@ -801,21 +812,19 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         // query = query +
         // "where mbDetail.workOrderActivity.activity.nonSor.id = "+workOrderActivity.getActivity().getNonSor().getId();
 
-        query = query + " where mbDetail.workOrderActivity.id = ? " + " and mbh.id != ? and mbh.egwStatus.code=? "
-                + " and mbh.modifiedDate < (select modifiedDate from MBHeader where id = ? )"
-                + " order by mbh.modifiedDate desc";
-        paramList.add(workOrderActivity.getId());
-        paramList.add(mbHeaderId);
-        paramList.add(WorksConstants.APPROVED);
-        paramList.add(mbHeaderId);
+        query.append(" where mbDetail.workOrderActivity.id = :woaId and mbh.id != :mbhId and mbh.egwStatus.code = :mbhStatus ")
+                .append(" and mbh.modifiedDate < (select modifiedDate from MBHeader where id = :mbhId )")
+                .append(" order by mbh.modifiedDate desc");
+        paramsMap.put("woaId", workOrderActivity.getId());
+        paramsMap.put("mbhId", mbHeaderId);
+        paramsMap.put("mbhStatus", WorksConstants.APPROVED);
 
-        params = new Object[paramList.size()];
-        params = paramList.toArray(params);
-        final List<MBHeader> mbHeaderList = genericService.findAllBy(query, params);
+        final TypedQuery<MBHeader> typedQuery = entityManager.createQuery(query.toString(), MBHeader.class);
+        paramsMap.entrySet().forEach(entry -> typedQuery.setParameter(entry.getKey(), entry.getValue()));
+        final List<MBHeader> mbHeaderList = typedQuery.getResultList();
         MBHeader result = null;
         if (mbHeaderList != null && !mbHeaderList.isEmpty())
             result = mbHeaderList.get(0);
-
         return result;
     }
 
@@ -899,7 +908,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public Boolean isMBInApprovalPendingForWO(final String woNumber) {
         Boolean result = false;
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
         criteriaMap.put(WORKORDER_NO, woNumber);
         criteriaMap.put(ACTION_FLAG, "searchWOForMB");
         if (searchWO(criteriaMap).isEmpty())
@@ -918,7 +927,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public Collection<EstimateLineItemsForWP> getActivitiesForWorkorder(final TenderResponse tenderResponse) {
 
-        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<>();
         final Map<String, Integer> exceptionaSorMap = getSpecialUoms();
         final List<String> tenderTypeList = worksService.getTendertypeList();
         String percTenderType = "";
@@ -970,7 +979,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public Collection<EstimateLineItemsForWP> getActivitiesForWorksPackage(final TenderResponse tenderResponse) {
 
-        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<>();
         final Map<String, Integer> exceptionaSorMap = getSpecialUoms();
         final List<String> tenderTypeList = worksService.getTendertypeList();
         if (tenderTypeList != null && !tenderTypeList.isEmpty())
@@ -1014,7 +1023,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
 
     private Collection<EstimateLineItemsForWP> getEstLineItemsWithSrlNo(final Collection<EstimateLineItemsForWP> actList) {
         int i = 1;
-        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<EstimateLineItemsForWP>();
+        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<>();
         for (final EstimateLineItemsForWP act : actList) {
             act.setSrlNo(i);
             latestEstLineItemList.add(act);
@@ -1081,7 +1090,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     @Override
     public Collection<EstimateLineItemsForWP> getActivitiesForWorkorder(final WorkOrder workOrder) {
 
-        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<>();
         final Map<String, Integer> exceptionaSorMap = getSpecialUoms();
         for (final WorkOrderEstimate workOrderEstimate : workOrder.getWorkOrderEstimates())
             for (final WorkOrderActivity woAct : workOrderEstimate.getWorkOrderActivities()) {
@@ -1148,9 +1157,10 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
      * @return
      */
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Map createHeaderParams(final WorkOrder workOrder, final String type) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         if (workOrder != null)
             if ("estimate".equalsIgnoreCase(type)) {
                 for (final WorkOrderEstimate workOrderEstimate : workOrder.getWorkOrderEstimates())
@@ -1244,7 +1254,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
      * @return
      */
     protected List<AbstractEstimateForWp> getAeForWp(final List<WorkOrderEstimate> aeList) {
-        final List<AbstractEstimateForWp> aeForWpList = new ArrayList<AbstractEstimateForWp>();
+        final List<AbstractEstimateForWp> aeForWpList = new ArrayList<>();
         int srlNo = 0;
         for (final WorkOrderEstimate ae : aeList) {
             final AbstractEstimateForWp aeForWp = new AbstractEstimateForWp();
@@ -1276,7 +1286,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
      * @return
      */
     public List<WorkOrderEstimate> getAbstractEstimateListForWp(final WorkOrder workOrder) {
-        final List<WorkOrderEstimate> aeList = new ArrayList<WorkOrderEstimate>();
+        final List<WorkOrderEstimate> aeList = new ArrayList<>();
         final List<WorkOrderEstimate> workOrderEstimateList = workOrder.getWorkOrderEstimates();
         for (final WorkOrderEstimate workOrderEstimate : workOrderEstimateList)
             aeList.add(workOrderEstimate);
@@ -1303,24 +1313,30 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                         workOrderEstimate.getEstimate().getId(), detail.getActivity().getId(),
                         workOrderEstimate.getWorkOrder()));
             } else { // IN CASE OF CHANGE_QUANTITY
+                List<WorkOrderActivity> woActivities = null;
                 WorkOrderActivity woa = null;
                 // CHANGE_QUANTITY DONE FOR NON_TENDERED & LUMPSUM ACTIVITIES
                 if (detail.getActivity().getParent().getRevisionType() != null
                         && (detail.getActivity().getParent().getRevisionType().equals(RevisionType.NON_TENDERED_ITEM) || detail
-                                .getActivity().getParent().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM)))
-                    woa = (WorkOrderActivity) genericService.find(
-                            "from WorkOrderActivity where activity.id=? and workOrderEstimate.estimate.id=?", detail
-                                    .getActivity().getParent().getId(),
-                            detail.getActivity().getParent()
-                                    .getAbstractEstimate().getId());
-                else
+                                .getActivity().getParent().getRevisionType().equals(RevisionType.LUMP_SUM_ITEM))) {
+                    woActivities = entityManager
+                            .createQuery(
+                                    "from WorkOrderActivity where activity.id = :activityId and workOrderEstimate.estimate.id = :estimateId",
+                                    WorkOrderActivity.class)
+                            .setParameter("activityId", detail.getActivity().getParent().getId())
+                            .setParameter("estimateId", detail.getActivity().getParent().getAbstractEstimate().getId())
+                            .getResultList();
+                    woa = woActivities.isEmpty() ? null : woActivities.get(0);
+                } else {
                     // CHANGE_QUANTITY DONE FOR ORIGINAL ESTIMATE ACTIVITIES
-                    woa = (WorkOrderActivity) genericService.find(
-                            "from WorkOrderActivity where activity.id=? and workOrderEstimate.estimate.id=?", detail
-                                    .getActivity().getParent().getId(),
-                            workOrderEstimate.getEstimate().getParent()
-                                    .getId());
-
+                    woActivities = entityManager.createQuery(
+                            "from WorkOrderActivity where activity.id = :activityId and workOrderEstimate.estimate.id = :estimateId",
+                            WorkOrderActivity.class)
+                            .setParameter("activityId", detail.getActivity().getParent().getId())
+                            .setParameter("estimateId", workOrderEstimate.getEstimate().getParent().getId())
+                            .getResultList();
+                    woa = woActivities.isEmpty() ? null : woActivities.get(0);
+                }
                 detail.setParent(woa);
                 lPrevCumlvQuant = measurementBookService.prevCumulativeQuantityIncludingCQ(detail.getId(), null, detail
                         .getActivity().getParent().getId(), workOrderEstimate.getWorkOrder().getParent());
@@ -1352,49 +1368,73 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
 
     @Override
     public Date getWorkCommencedDateByWOId(final Long id) {
-        final Object wOCommencedDate = persistenceService
-                .find(" select stat.statusDate from OfflineStatus stat where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ",
-                        id, "WorkOrder", WorksConstants.WO_STATUS_WOCOMMENCED);
-        return (Date) wOCommencedDate;
+        final List<Date> results = entityManager.createQuery(new StringBuffer(" select stat.statusDate")
+                .append(" from OfflineStatus stat")
+                .append(" where stat.objectId = :objectId and stat.objectType = :objectType and stat.egwStatus.code = :status ")
+                .toString(),
+                Date.class)
+                .setParameter("objectId", id)
+                .setParameter("objectType", "WorkOrder")
+                .setParameter("status", WorksConstants.WO_STATUS_WOCOMMENCED)
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public String getWorksPackageName(final String wpNumber) {
-        final Object nameOfWO = persistenceService.find(
-                " select wp.name from WorksPackage wp where wp.wpNumber = ? and wp.egwStatus.code = ? ", wpNumber,
-                WorksConstants.APPROVED);
-        return nameOfWO.toString();
+        final List<String> results = entityManager.createQuery(new StringBuffer(" select wp.name")
+                .append(" from WorksPackage wp")
+                .append(" where wp.wpNumber = :wpNumber and wp.egwStatus.code = :status ").toString(), String.class)
+                .setParameter("wpNumber", wpNumber)
+                .setParameter("status", WorksConstants.APPROVED)
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public Object getTenderNegotiationInfo(final String negotiationNo) {
-        final Object obj = persistenceService
-                .find("select tr.percNegotiatedAmountRate,tr.tenderEstimate.tenderType from TenderResponse tr where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = ? ",
-                        negotiationNo);
-        return obj;
+        final List<Object> results = entityManager.createQuery(
+                new StringBuffer("select tr.percNegotiatedAmountRate,tr.tenderEstimate.tenderType")
+                        .append(" from TenderResponse tr")
+                        .append(" where tr.egwStatus.code = 'APPROVED' and tr.negotiationNumber = :negotiationNumber ")
+                        .toString(),
+                Object.class)
+                .setParameter("negotiationNumber", negotiationNo)
+                .getResultList();
+        return results.isEmpty() ? null : results.get(0);
 
     }
 
     @Override
     public WorkOrderEstimate getWorkOrderEstimateForWOIdAndEstimateId(final Long workOrderId, final Long estimateId) {
-        final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) genericService
-                .find("from WorkOrderEstimate woe where woe.workOrder.id = ? "
-                        + "and woe.estimate.id = ? and woe.estimate.egwStatus.code = ? and woe.workOrder.egwStatus.code = ? "
-                        + "and woe.workOrder.parent is null ", workOrderId, estimateId,
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.APPROVED);
-        return workOrderEstimate;
+        final List<WorkOrderEstimate> workOrderEstimates = entityManager
+                .createQuery(new StringBuffer("from WorkOrderEstimate woe")
+                        .append(" where woe.workOrder.id = :woId and woe.estimate.id = :estimateId and woe.estimate.egwStatus.code = :estimateStatus")
+                        .append(" and woe.workOrder.egwStatus.code = :woStatus and woe.workOrder.parent is null ").toString(),
+                        WorkOrderEstimate.class)
+                .setParameter("woId", workOrderId)
+                .setParameter("estimateId", estimateId)
+                .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                .setParameter("woStatus", WorksConstants.APPROVED)
+                .getResultList();
+        return workOrderEstimates.isEmpty() ? null : workOrderEstimates.get(0);
     }
 
     @Override
     public List<Object> getWorkOrderDetails(final Long estimateId) {
-        final List<Object> woDetails = genericService.findAllBy(
-                "select woe.workOrder.id ,woe.workOrder.workOrderNumber from WorkOrderEstimate woe "
-                        + " where woe.estimate.id = ? and woe.workOrder.egwStatus.code not in (?,?) ",
-                estimateId,
-                WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
+        final List<Object> woDetails = entityManager.createQuery(
+                new StringBuffer("select woe.workOrder.id ,woe.workOrder.workOrderNumber")
+                        .append(" from WorkOrderEstimate woe ")
+                        .append(" where woe.estimate.id = :estimateId and woe.workOrder.egwStatus.code not in :woStatuses ")
+                        .toString(),
+                Object.class)
+                .setParameter("estimateId", estimateId)
+                .setParameter("woStatuses", Arrays.asList(WorksConstants.NEW, WorksConstants.CANCELLED_STATUS))
+                .getResultList();
         return woDetails;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<WorkOrderActivity> getActionWorkOrderActivitiesList(
             final List<WorkOrderActivity> actionWorkOrderActivities) {

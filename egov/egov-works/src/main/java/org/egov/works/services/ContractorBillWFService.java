@@ -50,6 +50,7 @@ package org.egov.works.services;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
+@SuppressWarnings("deprecation")
 public class ContractorBillWFService extends PersistenceService<ContractorBillRegister, Long> {
 
     public ContractorBillWFService() {
