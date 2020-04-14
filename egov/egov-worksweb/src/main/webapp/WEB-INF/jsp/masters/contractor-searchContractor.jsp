@@ -70,6 +70,7 @@
     	
 <div id="contractorError" class="alert alert-danger" style="display: none;"></div>
 <s:form action="/masters/contractor-viewResult.action" theme="simple" name="contractor" cssClass="form-horizontal form-groups-bordered">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">

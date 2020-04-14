@@ -91,6 +91,7 @@
 						<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 				     </div>
 				</div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</s:form> 
 	</body>
 </html>

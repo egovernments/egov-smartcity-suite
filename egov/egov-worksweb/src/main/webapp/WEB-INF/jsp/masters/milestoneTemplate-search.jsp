@@ -170,6 +170,7 @@ function bodyOnLoad() {
 		</div>
 		<%@ include file='milestoneTemplate-searchResults.jsp'%>
 		<s:hidden name="sourcepage" id="sourcepage" value="%{sourcepage}" />
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	</s:form>
 </body>
 </html>

@@ -130,6 +130,8 @@ body {
 <input type="hidden" id="contractorDetailErrorMsg" value="<s:text name='contractor.details.altleastone_details_needed' />" />
 
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
 		<%@ include file='contractor-form.jsp'%>
 		<p class="text-center">
 			<s:if test="%{model.id!=null && mode != 'view'}">

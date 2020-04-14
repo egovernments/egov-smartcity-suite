@@ -78,7 +78,7 @@
     	</s:if>
     	
 		 <s:form name="searchGradeForm" id="searchGradeForm" cssClass="form-horizontal form-groups-bordered" action="/masters/contractorGrade-searchGradeDetails.action" theme="simple">			
-			
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			  <div class="panel panel-primary" data-collapsed="0"	style="text-align: left">
 						<div class="panel-heading">
 							<div class="panel-title"><s:text name='title.search.criteria' /></div>
