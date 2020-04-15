@@ -82,6 +82,7 @@ public class NonSor extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
+    @Length(max = 4000)
     private String description;
 
     @NotNull

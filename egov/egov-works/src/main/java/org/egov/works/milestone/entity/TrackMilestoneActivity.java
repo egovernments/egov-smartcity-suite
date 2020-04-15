@@ -61,6 +61,8 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE_ACTIVITY")
@@ -76,6 +78,8 @@ public class TrackMilestoneActivity extends AbstractAuditable {
     @GeneratedValue(generator = EGW_TRACK_MILESTONE_ACTIVITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
+    @Length(max=50)
     private String status;
 
     private double completedPercentage;
@@ -88,6 +92,8 @@ public class TrackMilestoneActivity extends AbstractAuditable {
     @JoinColumn(name = "milestoneactivity", nullable = false)
     private MilestoneActivity milestoneActivity;
 
+    @SafeHtml
+    @Length(max=1024)
     private String remarks;
 
     private Date completionDate;

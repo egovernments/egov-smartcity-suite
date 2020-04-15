@@ -75,7 +75,8 @@ public class DocumentDetails {
     @Id
     @GeneratedValue(generator = SEQ_EGW_DOCUMENTS, strategy = GenerationType.SEQUENCE)
     private Long id;
-
+    
+    @NotNull
     @Column(name = "objectid")
     private Long objectId;
 
@@ -84,6 +85,7 @@ public class DocumentDetails {
     @Length(max = 128)
     private String objectType;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;

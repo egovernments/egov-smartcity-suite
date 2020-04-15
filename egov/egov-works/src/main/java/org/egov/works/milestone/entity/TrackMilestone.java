@@ -72,6 +72,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE")
@@ -104,8 +105,10 @@ public class TrackMilestone extends StateAware<Position> {
     @OneToMany(mappedBy = "trackMilestone", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TrackMilestoneActivity.class)
     private List<TrackMilestoneActivity> activities = new LinkedList<>();
 
+    @SafeHtml
     private transient String ownerName;
 
+    @SafeHtml
     @Transient
     private String approvalComent;
 

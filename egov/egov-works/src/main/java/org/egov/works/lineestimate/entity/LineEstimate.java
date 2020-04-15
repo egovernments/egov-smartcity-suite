@@ -164,7 +164,10 @@ public class LineEstimate extends StateAware<Position> {
     @Temporal(TemporalType.DATE)
     private Date adminSanctionDate;
 
+    @SafeHtml
+    @Length(max = 100)
     private String adminSanctionBy;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
@@ -172,6 +175,7 @@ public class LineEstimate extends StateAware<Position> {
     @Transient
     private Long approvalDepartment;
 
+    @SafeHtml
     @Transient
     private String approvalComent;
 
@@ -179,6 +183,7 @@ public class LineEstimate extends StateAware<Position> {
     private Beneficiary beneficiary;
 
     @NotNull
+    @SafeHtml
     private String modeOfAllotment;
 
     @NotNull
@@ -219,6 +224,8 @@ public class LineEstimate extends StateAware<Position> {
     @Enumerated(EnumType.STRING)
     private WorkCategory workCategory;
 
+    @SafeHtml
+    @Length(max=100)
     private String councilResolutionNumber;
 
     @Temporal(TemporalType.DATE)
@@ -230,8 +237,12 @@ public class LineEstimate extends StateAware<Position> {
 
     private boolean spillOverFlag;
 
+    @SafeHtml
+    @Length(max=50)
     private String cancellationReason;
 
+    @SafeHtml
+    @Length(max=256)
     private String cancellationRemarks;
 
     @Transient

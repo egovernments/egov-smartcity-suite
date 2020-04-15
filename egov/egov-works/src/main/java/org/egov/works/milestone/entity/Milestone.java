@@ -72,6 +72,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("rawtypes")
 @Entity
@@ -110,13 +112,19 @@ public class Milestone extends StateAware<Position> implements Comparable {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "milestone", targetEntity = TrackMilestone.class)
     private List<TrackMilestone> trackMilestone = new ArrayList<>();
 
+    @SafeHtml
     private transient String ownerName;
 
+    @SafeHtml
     @Transient
     private String approvalComent;
 
+    @SafeHtml
+    @Length(max=50)
     private String cancellationReason;
 
+    @SafeHtml
+    @Length(max=256)
     private String cancellationRemarks;
 
     @Override
