@@ -60,7 +60,7 @@ public class ApplicationPropertyDetails implements Serializable {
     private List<OwnerInfo> ownerDetails;
     private String applicationNo;
     private String applicationDate;
-    private Character applicationStatus;
+    private String applicationStatus;
     private String applicationApprovalDate;
     private String assessmentNo;
     private String areaofSite;
@@ -103,11 +103,11 @@ public class ApplicationPropertyDetails implements Serializable {
         this.applicationDate = applicationDate;
     }
 
-    public Character getApplicationStatus() {
+    public String getApplicationStatus() {
         return applicationStatus;
     }
 
-    public void setApplicationStatus(Character applicationStatus) {
+    public void setApplicationStatus(String applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
 

@@ -3192,7 +3192,8 @@ public class PropertyExternalService {
         applicationDetails.setOwnerDetails(ownerDetails);
         applicationDetails.setApplicationNo(property.getApplicationNo());
         applicationDetails.setAssessmentNo(property.getBasicProperty().getUpicNo());
-        applicationDetails.setApplicationDate(property.getBasicProperty().getCreatedDate().toString());
+        applicationDetails.setApplicationDate(
+                DateUtils.getFormattedDate(property.getBasicProperty().getCreatedDate(), DATE_FORMAT_DDMMYYY));
         applicationDetails.setCurrentMarketValue(property.getPropertyDetail().getCurrentCapitalValue());
         applicationDetails.setRegisteredDocumentValue(property.getPropertyDetail().getMarketValue());
         applicationDetails.setRevenueWard(property.getBasicProperty().getPropertyID().getWard().getName());
@@ -3206,8 +3207,9 @@ public class PropertyExternalService {
         applicationDetails.setPropertyType(property.getPropertyDetail().getPropertyType());
         applicationDetails.setPattaNumber(property.getPropertyDetail().getPattaNumber());
         applicationDetails.setAreaofSite(property.getPropertyDetail().getSitalArea().getArea().toString());
-        applicationDetails.setApplicationStatus(property.getStatus());
-        applicationDetails.setApplicationApprovalDate(property.getLastModifiedDate().toString());
+        applicationDetails.setApplicationStatus(getStatus(property.getApplicationNo()));
+        applicationDetails
+                .setApplicationApprovalDate(DateUtils.getFormattedDate(property.getLastModifiedDate(), DATE_FORMAT_DDMMYYY));
         final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
         query.setParameter("basicProperty", property.getBasicProperty().getId());
         List<DocumentTypeDetails> docTypeDetailsList = query.getResultList();
@@ -3219,5 +3221,12 @@ public class PropertyExternalService {
             }
         }
         return applicationDetails;
+    }
+
+    public String getStatus(String applicationNo) {
+        final Query qry = entityManager
+                .createQuery("select approved from ApplicationIndex where applicationNumber= :applicationNo");
+        qry.setParameter("applicationNo", applicationNo);
+        return qry.getSingleResult().toString();
     }
 }

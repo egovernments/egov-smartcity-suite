@@ -1268,6 +1268,9 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_VALID_APPLICATION_NO_CODE = "PTIS-REST-51";
     public static final String THIRD_PARTY_VALID_APPLICATION_NO_MSG = "Please enter valid Application number.";
     
+    public static final String REST_API_DISABLED_CODE = "PTIS-REST-52";
+    public static final String REST_API_DISABLED_MSG = "The API is temporarily unavailable.";
+    
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
@@ -1607,6 +1610,7 @@ public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_REASSIGN = "PTIS_REASSIGN_REQUIRED";
     public static final String APPCONFIG_ENDORSEMENT = "PTIS_ENDORSEMENT_REQUIRED";
+    public static final String APPCONFIG_APPLICATION_DETAILS_REST_API = "PTIS_APPLICATION_DETAILS_REST_API_ENABLED";
 
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
