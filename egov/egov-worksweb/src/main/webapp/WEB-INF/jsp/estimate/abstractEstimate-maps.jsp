@@ -224,6 +224,8 @@ function createMap(paramLat,paramLong,paramDraggable)
 			<input type="button" class="btn btn-default"  value="Close" id="closeButton" name="closeButton" onclick="window.close();"/>
 		</div>
 		</s:push>
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
 	</s:form>
 </body>
 </html>

@@ -1220,7 +1220,7 @@ function jurisdictionSearchParameters(){
 					
 				</div>
 			</div>
-			
-		</s:form>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+</s:form>
 	</body>
 </html>

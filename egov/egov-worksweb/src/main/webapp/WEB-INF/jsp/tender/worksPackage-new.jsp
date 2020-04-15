@@ -420,6 +420,7 @@ function enableDepartment(){
 		<input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
 	</s:else>	 --%>
 </div>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 <script>
 

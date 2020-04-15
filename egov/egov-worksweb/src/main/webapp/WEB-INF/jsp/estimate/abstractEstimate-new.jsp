@@ -553,6 +553,7 @@ jQuery(document).ready(function(e){
    </s:if>
 </div>
 </s:push>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 <script>hideSORTab()</script>
    
