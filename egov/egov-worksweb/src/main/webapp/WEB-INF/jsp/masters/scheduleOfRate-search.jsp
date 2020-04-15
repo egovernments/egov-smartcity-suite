@@ -183,6 +183,7 @@ body
 		</div>
 	</div>
 </s:elseif>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 
 <s:if test="%{searchResult.fullListSize != 0}">

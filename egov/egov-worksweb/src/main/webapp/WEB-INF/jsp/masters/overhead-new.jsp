@@ -125,10 +125,8 @@
 					onclick="window.open('${pageContext.request.contextPath}/masters/overhead.action','_self');"/>
 				</div>
 			</div>
-			
-		    
-		
 			</s:push>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</s:form>  
 	    
 	    <script>

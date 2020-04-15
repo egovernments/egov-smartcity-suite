@@ -73,6 +73,7 @@
 		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory" cssClass="form-horizontal form-groups-bordered">
 			<s:token />
 			<%@ include file='scheduleCategory-form.jsp'%>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</s:form>
 	</body>
 </html>
