@@ -143,6 +143,7 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
 
+    @SafeHtml
     private String source;
 
     @OneToMany(mappedBy = "applicationDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -50,6 +50,7 @@ package org.egov.stms.entity;
 
 import org.egov.commons.Installment;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -84,6 +85,7 @@ public class SewerageTaxBatchDemandGenerate extends AbstractAuditable {
     private Integer successfullRecords = 0;
     private Integer failureRecords = 0;
 
+    @SafeHtml
     @NotNull
     private String jobName;
 
