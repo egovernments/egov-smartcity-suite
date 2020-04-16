@@ -486,6 +486,7 @@ function resetPreviousDate() {
 	</s:else>
 </div>
 </s:push>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 <script>
 <s:if test="%{sourcepage=='search' || sourcepage=='inbox'}">

@@ -575,6 +575,7 @@ function validate(obj,text){
 	 			 </s:if>
 				</div>
 			</s:push>
+		  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</s:form>
 		<SCRIPT type="text/javascript">
 			function showWorkOrderNotice(){

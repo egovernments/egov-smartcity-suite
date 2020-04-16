@@ -362,6 +362,7 @@ function hideNonTenderedLumpSumTab(){
 					
 				</div>
 			</s:push>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</s:form>
 		
 		<!-- for enable or disabling functionalities based on status -->

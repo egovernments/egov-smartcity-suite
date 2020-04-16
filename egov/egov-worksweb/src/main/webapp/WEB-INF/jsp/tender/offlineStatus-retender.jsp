@@ -1066,6 +1066,7 @@ function addElementsInLastColumn()
 			onclick="confirmClose('<s:text name='setStatus.close.confirm'/>');"/>
 	</s:else>
 </div>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 </body>
 </html>

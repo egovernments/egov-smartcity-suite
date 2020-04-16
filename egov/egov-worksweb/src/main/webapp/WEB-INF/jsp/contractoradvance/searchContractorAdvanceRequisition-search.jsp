@@ -232,6 +232,7 @@ function goToPage(obj){
 				<!-- end of insidecontent -->
 			</div>
 			<!-- end of formmainbox -->
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	</s:form>
 </body>
 </html>

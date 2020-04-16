@@ -444,6 +444,7 @@ function enablePreparedBy(){
 				</s:else>
 			</div>
 		</s:push>
+	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	</s:form>
 
 	<s:elseif test=""></s:elseif>

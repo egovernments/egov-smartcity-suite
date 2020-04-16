@@ -404,6 +404,7 @@ function addGrid(tableId,trId)
    <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" 
    onclick="confirmClose('<s:text name='setStatus.close.confirm'/>');"/>
 </div>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 </body>
 </html>

@@ -486,6 +486,7 @@ function validateDataBeforeSave(financialDetailForm) {
 					document.financialDetailForm.budgetGroup.disabled=true;
 		</s:if>
 	</script>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 
 </body>

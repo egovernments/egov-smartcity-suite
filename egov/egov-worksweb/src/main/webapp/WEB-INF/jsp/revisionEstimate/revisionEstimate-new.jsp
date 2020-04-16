@@ -422,6 +422,7 @@ function showChangeQtyDtlsTab(){
 </div>
 <s:hidden name="actionName"  id="actionName"/>
 </s:push>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </s:form>
 <script>hideRevEstDetailsTab()</script>
 <script>

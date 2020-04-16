@@ -829,6 +829,7 @@ accountDetailsLoadFailureHandler= function(){
 		
 	</div>
 	</s:push>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	</s:form>
 	<script>
 	<s:if test="%{model.id==null || ((model.id !=null || sourcepage=='inbox') && (model.status.code=='REJECTED' || model.status.code=='NEW'))}">
