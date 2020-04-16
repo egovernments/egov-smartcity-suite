@@ -67,6 +67,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.Installment;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGWTR_ESTIMATION_NOTICE")
@@ -95,6 +96,7 @@ public class EstimationNotice extends AbstractAuditable {
 	@JoinColumn(name = "filestore")
 	private FileStoreMapper estimationNoticeFileStore;
 
+	@SafeHtml
 	private String estimationNumber;
 
 	@Temporal(value = TemporalType.DATE)
