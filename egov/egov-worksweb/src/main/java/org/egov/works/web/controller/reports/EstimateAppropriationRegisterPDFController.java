@@ -47,6 +47,20 @@
  */
 package org.egov.works.web.controller.reports;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -59,7 +73,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.services.budget.BudgetGroupService;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
@@ -75,17 +88,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/reports/estimateappropriationregister")
@@ -115,8 +117,8 @@ public class EstimateAppropriationRegisterPDFController {
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
-    @Autowired
-    private BudgetGroupService budgetGroupService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public static final String BUDGETFOLIOPDF = "BudgetFolio";
 
@@ -124,6 +126,7 @@ public class EstimateAppropriationRegisterPDFController {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @RequestMapping(value = "/pdf", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateAppropriationRegisterPDF(final HttpServletRequest request,
             @RequestParam("departments") final Long department, @RequestParam("financialYear") final Long financialYear,
@@ -137,9 +140,9 @@ public class EstimateAppropriationRegisterPDFController {
         searchRequest.setFinancialYear(financialYear);
         searchRequest.setFunction(function);
         searchRequest.setFund(fund);
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
 
-        final Map<String, Object> queryParamMap = new HashMap<String, Object>();
+        final Map<String, Object> queryParamMap = new HashMap<>();
         BigDecimal totalGrant = BigDecimal.ZERO;
         BigDecimal totalGrantPerc = BigDecimal.ZERO;
         BigDecimal planningBudgetPerc = new BigDecimal(0);
@@ -149,8 +152,8 @@ public class EstimateAppropriationRegisterPDFController {
         if (searchRequest != null && searchRequest.getFunction() != null)
             queryParamMap.put("functionid", searchRequest.getFunction());
         if (searchRequest != null && searchRequest.getBudgetHead() != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
-            final BudgetGroup budgetGroup = budgetGroupService.findById(searchRequest.getBudgetHead(), true);
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
+            final BudgetGroup budgetGroup = entityManager.find(BudgetGroup.class, searchRequest.getBudgetHead());
             budgetheadid.add(budgetGroup);
             queryParamMap.put("budgetheadid", budgetheadid);
         }
@@ -223,6 +226,6 @@ public class EstimateAppropriationRegisterPDFController {
             headers.add("content-disposition", "inline;filename=EstimateAppropriationRegister.xls");
         }
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

@@ -47,6 +47,25 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,6 +83,7 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.entity.Employee;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -104,20 +124,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({
         @Result(name = WorkProgressRegisterAction.PRINT_PDF, type = "stream", location = "workProgressRegisterStream", params = {
@@ -141,7 +148,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private EgovCommon egovCommon;
     private ContractorBillService contractorBillService;
     ReportService reportService;
-    private final Map<String, String> milestoneStatuses = new LinkedHashMap<String, String>();
+    private final Map<String, String> milestoneStatuses = new LinkedHashMap<>();
     public static final String dateFormat = "dd/MM/yyyy";
     private Long parentCategory;
     private Long category;
@@ -179,13 +186,16 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private static final String WORK_COMMENCED = "Work commenced";
     @Autowired
     private FinancialYearHibernateDAO finHibernateDao;
-    private List<WorkProgressRegister> workProgressList = new ArrayList<WorkProgressRegister>();
+    private List<WorkProgressRegister> workProgressList = new ArrayList<>();
     private Integer estId;
     private String contractorName = "";
     private Long contractorId;
     private String searchCriteria = "";
     private Long wardId;
     private String wardName = "";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void prepare() {
@@ -195,36 +205,43 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         populateCategoryList(ajaxEstimateAction, parentCategory != null);
 
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw where etw.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         addDropdownData(
                 ASSIGNED_USER_LIST1,
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct wo.engineerIncharge from  WorkOrder wo where wo.engineerIncharge.employeeName is not null"));
+                entityManager.createQuery(
+                        "select distinct wo.engineerIncharge from  WorkOrder wo where wo.engineerIncharge.employeeName is not null",
+                        Employee.class).getResultList());
         addDropdownData(
                 ASSIGNED_USER_LIST2,
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct wo.engineerIncharge2 from  WorkOrder wo where wo.engineerIncharge2.employeeName is not null"));
-        addDropdownData("typeList", getPersistenceService().findAllBy("from NatureOfWork dt"));
+                entityManager.createQuery(
+                        "select distinct wo.engineerIncharge2 from  WorkOrder wo where wo.engineerIncharge2.employeeName is not null",
+                        Employee.class)
+                        .getResultList());
+        addDropdownData("typeList", entityManager.createQuery("from NatureOfWork dt", NatureOfWork.class).getResultList());
         addDropdownData("executingDepartmentList",
-                getPersistenceService().findAllBy("from Department order by upper(ame)"));
+                entityManager.createQuery("from Department order by upper(ame)", Department.class).getResultList());
 
-        final List<EgwStatus> workOrdStatusList = getPersistenceService().findAllBy(
-                "from EgwStatus st where st.moduletype=? and st.code in (?,?,?,?)", WO_OBJECT_TYPE,
-                WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOACKNOWLEDGED,
-                WorksConstants.WO_STATUS_WOSITEHANDEDOVER, WorksConstants.WO_STATUS_WOCOMMENCED);
+        final List<EgwStatus> workOrdStatusList = entityManager.createQuery(
+                "from EgwStatus st where st.moduletype = :moduleType and st.code in :codes", EgwStatus.class)
+                .setParameter("moduleType", WO_OBJECT_TYPE)
+                .setParameter("codes", Arrays.asList(WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOACKNOWLEDGED,
+                        WorksConstants.WO_STATUS_WOSITEHANDEDOVER, WorksConstants.WO_STATUS_WOCOMMENCED))
+                .getResultList();
         addDropdownData("workOrderStatuses", workOrdStatusList);
         addDropdownData("fundList", fundDao.findAll());
-        addDropdownData("budgetGroupList", getPersistenceService().findAllBy("from BudgetGroup order by name"));
+        addDropdownData("budgetGroupList",
+                entityManager.createQuery("from BudgetGroup order by name", BudgetGroup.class).getResultList());
         addDropdownData("functionList", functionHibDao.findAll());
         addDropdownData(
                 "preparedByList",
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct wo.workOrderPreparedBy from WorkOrder wo where wo.workOrderPreparedBy.employeeName is not null"));
+                entityManager.createQuery(
+                        "select distinct wo.workOrderPreparedBy from WorkOrder wo where wo.workOrderPreparedBy.employeeName is not null",
+                        Employee.class)
+                        .getResultList());
         addDropdownData("schemeList",
-                getPersistenceService().findAllBy("from org.egov.commons.Scheme sc where sc.isactive=true"));
+                entityManager.createQuery("from org.egov.commons.Scheme sc where sc.isactive = true", Scheme.class)
+                        .getResultList());
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
         populateSubSchemeList(ajaxWorkProgressAction, getScheme() != null);
         prepareMilestoneStatuses();
@@ -249,13 +266,12 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             addDropdownData("subSchemeList", Collections.emptyList());
     }
 
-    public List getMilestoneStatuses() {
-        return new LinkedList<String>(milestoneStatuses.keySet());
+    public List<String> getMilestoneStatuses() {
+        return new LinkedList<>(milestoneStatuses.keySet());
     }
 
     @Override
     public String search() {
-
         return "search";
     }
 
@@ -263,6 +279,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return egwStatusHibernateDAO.getStatusByModule(WorkOrder.class.getSimpleName());
     }
 
+    @SuppressWarnings("unchecked")
     @SkipValidation
     public String searchDetails() {
         if (!DateUtils.compareDates(toDate, fromDate)) {
@@ -272,7 +289,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 
         super.search();
 
-        final List<Object> objects = searchResult.getList();
+        final List<WorkOrderEstimate> objects = searchResult.getList();
         final ArrayList<WorkProgressRegister> workProgressRegisterList = (ArrayList<WorkProgressRegister>) getWorkProgressRegisterList(
                 objects);
         searchResult.getList().clear();
@@ -281,11 +298,12 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return "search";
     }
 
-    private List getWorkProgressRegisterList(final List workPorgressRegisterList) {
-        final Iterator iter = workPorgressRegisterList.iterator();
-        final List<WorkProgressRegister> tempList = new ArrayList<WorkProgressRegister>();
+    @SuppressWarnings("unchecked")
+    private List<WorkProgressRegister> getWorkProgressRegisterList(final List<WorkOrderEstimate> workPorgressRegisterList) {
+        final Iterator<WorkOrderEstimate> iter = workPorgressRegisterList.iterator();
+        final List<WorkProgressRegister> tempList = new ArrayList<>();
         while (iter.hasNext()) {
-            final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) iter.next();
+            final WorkOrderEstimate workOrderEstimate = iter.next();
             WorkOrder workOrder = null;
             AbstractEstimate estimate = null;
             Milestone milestone = null;
@@ -383,7 +401,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     }
                     workProgress.setApprDetails(apprDetails);
                 }
-                final Map tenderDetail = getTenderDetails(estimate.getId());
+                final Map<String, Object> tenderDetail = getTenderDetails(estimate.getId());
                 if (tenderDetail.get("tenderDate") != null)
                     workProgress.setTenderDate(DateUtils.getFormattedDate((Date) tenderDetail.get("tenderDate"),
                             dateFormat));
@@ -394,7 +412,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     workProgress.setTenderAgreementDate(DateUtils.getFormattedDate(
                             (Date) tenderDetail.get("aggreementDate"), dateFormat));
                 if (mbHeaders != null) {
-                    final Map paymentDetails = getPaymentDetail(mbHeaders);
+                    final Map<String, Object> paymentDetails = getPaymentDetail(mbHeaders);
                     workProgress.setPaymentDetails((List<PaymentDetail>) paymentDetails.get("paymentDetails"));
                     workProgress.setTotalBillAmt((BigDecimal) paymentDetails.get("totalBillAmt"));
                     workProgress.setTotalReleasedAmt((BigDecimal) paymentDetails.get("totalReleasedAmt"));
@@ -421,7 +439,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
                     workProgress.setCompletedPercentage(trackMilestone.getTotalPercentage());
                 } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getStatus().getCode())) {
-                    final List<TrackMilestoneActivity> trackList = new LinkedList<TrackMilestoneActivity>();
+                    final List<TrackMilestoneActivity> trackList = new LinkedList<>();
                     for (final MilestoneActivity milestoneActivity : milestone.getActivities()) {
                         final TrackMilestoneActivity trackMilestoneActivity = new TrackMilestoneActivity();
                         trackMilestoneActivity.setMilestoneActivity(milestoneActivity);
@@ -465,6 +483,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             addDropdownData("categoryList", Collections.emptyList());
     }
 
+    @SuppressWarnings("rawtypes")
     private Date getTechSanctionDate(final AbstractEstimate estimate) {
         for (final StateHistory stateHistory : estimate.getCurrentState().getHistory())
             if (stateHistory.getValue().equalsIgnoreCase("TECH_SANCTIONED"))
@@ -472,15 +491,17 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return null;
     }
 
-    private Map getTenderDetails(final Long estimateId) {
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getTenderDetails(final Long estimateId) {
 
-        final String query = "select wpkg,tr from TenderResponse tr,WorksPackage wpkg left outer join wpkg.worksPackageDetails wpkgd where tr.tenderEstimate.worksPackage.id=wpkg.id and wpkgd.estimate.id=?";
-        final ArrayList<Object> paramList = new ArrayList<Object>();
-        paramList.add(estimateId);
-        final List<Object> result = persistenceService.findAllBy(query, paramList.toArray());
+        final StringBuffer query = new StringBuffer("select wpkg,tr")
+                .append(" from TenderResponse tr,WorksPackage wpkg left outer join wpkg.worksPackageDetails wpkgd")
+                .append(" where tr.tenderEstimate.worksPackage.id=wpkg.id and wpkgd.estimate.id = :estimateId");
+        final List<Object> result = entityManager.createQuery(query.toString())
+                .setParameter("estimateId", estimateId).getResultList();
         Object[] objects;
-        final Iterator iterator = result.iterator();
-        final HashMap<String, Object> tenderDates = new HashMap<String, Object>();
+        final Iterator<Object> iterator = result.iterator();
+        final HashMap<String, Object> tenderDates = new HashMap<>();
         while (iterator.hasNext()) {
             objects = (Object[]) iterator.next();
             if (objects[0] != null) {
@@ -511,8 +532,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         BigDecimal totalReleasedAmt = BigDecimal.ZERO;
         BigDecimal totalOutstandingAmt = BigDecimal.ZERO;
         BigDecimal totalNetPayableAmt = BigDecimal.ZERO;
-        final HashMap<String, Object> result = new HashMap<String, Object>();
-        final List<PaymentDetail> paymentDetailList = new LinkedList<PaymentDetail>();
+        final HashMap<String, Object> result = new HashMap<>();
+        final List<PaymentDetail> paymentDetailList = new LinkedList<>();
         for (final MBHeader mbHeader : mbHeaders) {
             final PaymentDetail paymentDetail = new PaymentDetail();
             final EgBillregister egBillRegister = mbHeader.getEgBillregister();
@@ -667,13 +688,20 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         this.engineerIncharge2 = engineerIncharge2;
     }
 
+    @SuppressWarnings("unchecked")
     @SkipValidation
     public String viewWorkProgressRegister() {
         final HashMap<String, Object> queryMap = getQueryForWorkProgressRegister();
         final String finalQuery = (String) queryMap.get("finalQuery");
         final ArrayList<Object> paramList = (ArrayList<Object>) queryMap.get("params");
-        final List workPorgressRegisterList = persistenceService.findAllBy(finalQuery, paramList.toArray());
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+
+        final TypedQuery<WorkOrderEstimate> typedQuery = entityManager.createQuery(finalQuery, WorkOrderEstimate.class);
+        int index = 1;
+        for (Object param : paramList)
+            typedQuery.setParameter(index++, param);
+        final List<WorkOrderEstimate> workPorgressRegisterList = typedQuery.getResultList();
+
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("searchCriteria", searchCriteria);
         final ReportRequest reportInput = new ReportRequest("workProgressRegister",
                 getWorkProgressRegisterList(workPorgressRegisterList), reportParams);
@@ -691,32 +719,36 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 
     public HashMap<String, Object> getQueryForWorkProgressRegister() {
         final StringBuffer query = new StringBuffer(500);
-        final ArrayList<Object> paramList = new ArrayList<Object>();
-        final HashMap<String, Object> queryMap = new HashMap<String, Object>();
+        final ArrayList<Object> paramList = new ArrayList<>();
+        final HashMap<String, Object> queryMap = new HashMap<>();
         final StringBuilder srchCrit = new StringBuilder(3000);
         final StringBuffer orderQry = new StringBuffer(100);
+        int index = 1;
         srchCrit.append("Report");
-        query.append(
-                "from org.egov.works.models.workorder.WorkOrderEstimate as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone ");
-        query.append("where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
-        query.append("and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
+        query.append(" from org.egov.works.models.workorder.WorkOrderEstimate as woe left outer join woe.milestone milestone")
+                .append(" left outer join milestone.trackMilestone trackMilestone ")
+                .append("where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ")
+                .append("and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
         if (sourcePage == null || StringUtils.isEmpty(sourcePage)) {
             if (!workOrderStatus.equalsIgnoreCase("-1")) {
-                srchCrit.append(" for Work Order Status " + workOrderStatus);
+                srchCrit.append(" for Work Order Status ").append(workOrderStatus);
                 if (workOrderStatus.equalsIgnoreCase("APPROVED")) {
-                    query.append(" and woe.workOrder.egwStatus.code=?");
-                    query.append(
-                            " and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.OfflineStatus where objectType=?)");
+                    query.append(" and woe.workOrder.egwStatus.code = ?").append(index++)
+                            .append(" and woe.workOrder.id not in (select objectId from org.egov.works.models.tender.OfflineStatus")
+                            .append(" where objectType = ?").append(index++).append(")");
                     paramList.add(workOrderStatus);
                     paramList.add(WorkOrder.class.getSimpleName());
                 } else {
                     query.delete(0, query.length() - 1);
                     query.append(
-                            "from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.OfflineStatus st");
-                    query.append(
-                            " where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.OfflineStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
-                    query.append(" and woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
-                    query.append(" and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
+                            " from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone")
+                            .append(" left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.OfflineStatus st")
+                            .append(" where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.OfflineStatus")
+                            .append(" where objectId=woe.workOrder.id and objectType = ?").append(index++)
+                            .append(") and st.objectType = ?").append(index++)
+                            .append(" and st.egwStatus.code = ?").append(index++)
+                            .append(" and woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ")
+                            .append(" and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
                     paramList.add(WorkOrder.class.getSimpleName());
                     paramList.add(WorkOrder.class.getSimpleName());
                     paramList.add(workOrderStatus);
@@ -726,134 +758,137 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 
             if (execDept != -1) {
                 final Department dept = departmentService.getDepartmentById(execDept);
-                srchCrit.append(" in " + dept.getName() + " Department ");
-                query.append(" and woe.estimate.executingDepartment.id=?");
+                srchCrit.append(" in ").append(dept.getName()).append(" Department ");
+                query.append(" and woe.estimate.executingDepartment.id = ?").append(index++);
                 paramList.add(execDept);
             }
 
             if (fromDate != null && toDate == null && getFieldErrors().isEmpty()) {
-                srchCrit.append(" from " + DateUtils.getFormattedDate(fromDate, dateFormat) + " to current date ");
-                query.append(" and woe.workOrder.workOrderDate >= ? ");
+                srchCrit.append(" from ").append(DateUtils.getFormattedDate(fromDate, dateFormat)).append(" to current date ");
+                query.append(" and woe.workOrder.workOrderDate >= ?").append(index++);
                 paramList.add(fromDate);
             }
             if (fromDate == null && toDate != null && getFieldErrors().isEmpty()) {
-                srchCrit.append(" as on " + DateUtils.getFormattedDate(toDate, dateFormat));
-                query.append(" and woe.workOrder.workOrderDate <= ? ");
+                srchCrit.append(" as on ").append(DateUtils.getFormattedDate(toDate, dateFormat));
+                query.append(" and woe.workOrder.workOrderDate <= ?").append(index++);
                 paramList.add(toDate);
             }
             if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-                srchCrit.append(" for date range " + DateUtils.getFormattedDate(fromDate, dateFormat) + " - "
-                        + DateUtils.getFormattedDate(toDate, dateFormat));
-                query.append(" and woe.workOrder.workOrderDate between ? and ? ");
+                srchCrit.append(" for date range ").append(DateUtils.getFormattedDate(fromDate, dateFormat)).append(" - ")
+                        .append(DateUtils.getFormattedDate(toDate, dateFormat));
+                query.append(" and woe.workOrder.workOrderDate between ?").append(index++).append(" and ?").append(index++);
                 paramList.add(fromDate);
                 paramList.add(toDate);
             }
 
             if (contractorId != null) {
-                final Contractor contractor = (Contractor) getPersistenceService().find("from Contractor where id=?",
-                        contractorId);
-                srchCrit.append(" for Contractor " + contractor.getCode() + "-" + contractor.getName());
-                query.append("and woe.workOrder.contractor.id=? ");
+                final Contractor contractor = entityManager.find(Contractor.class, contractorId);
+                srchCrit.append(" for Contractor ").append(contractor.getCode()).append("-").append(contractor.getName());
+                query.append("and woe.workOrder.contractor.id = ?").append(index++);
                 paramList.add(contractorId);
             }
 
             if (expenditureType != -1) {
-                final NatureOfWork wtype = (NatureOfWork) getPersistenceService().find("from NatureOfWork where id=?",
-                        expenditureType);
-                srchCrit.append(" with Nature of Work " + wtype.getName());
-                query.append(" and woe.estimate.type.id=?");
+                final NatureOfWork wtype = entityManager.find(NatureOfWork.class, expenditureType);
+                srchCrit.append(" with Nature of Work ").append(wtype.getName());
+                query.append(" and woe.estimate.type.id = ?").append(index++);
                 paramList.add(expenditureType);
             }
 
             if (fund != -1) {
-                final Fund f = (Fund) getPersistenceService().find("from Fund where id=?", fund);
-                srchCrit.append(" under Fund " + f.getName());
-                query.append(" and woe.estimate.financialDetails[0].fund.id=?");
+                final Fund f = entityManager.find(Fund.class, fund);
+                srchCrit.append(" under Fund ").append(f.getName());
+                query.append(" and woe.estimate.financialDetails[0].fund.id = ?").append(index++);
                 paramList.add(fund);
             }
 
             if (function != -1) {
-                final CFunction fun = (CFunction) getPersistenceService().find("from CFunction where id=?", function);
-                srchCrit.append(" for Function " + fun.getName());
-                query.append(" and woe.estimate.financialDetails[0].function.id=?");
+                final CFunction fun = entityManager.find(CFunction.class, function);
+                srchCrit.append(" for Function ").append(fun.getName());
+                query.append(" and woe.estimate.financialDetails[0].function.id = ?").append(index++);
                 paramList.add(function);
             }
 
             if (parentCategory != -1) {
-                final EgwTypeOfWork tow = (EgwTypeOfWork) getPersistenceService().find(
-                        "from EgwTypeOfWork etw where etw.parentid is null and id=?", parentCategory);
+                final List<EgwTypeOfWork> tows = entityManager.createQuery(
+                        "from EgwTypeOfWork etw where etw.parentid is null and id = :id", EgwTypeOfWork.class)
+                        .setParameter("id", parentCategory).getResultList();
+                final EgwTypeOfWork tow = tows.isEmpty() ? null : tows.get(0);
                 srchCrit.append(" with Type of Work " + tow.getDescription());
-                query.append(" and woe.estimate.parentCategory.id=?");
+                query.append(" and woe.estimate.parentCategory.id = ?").append(index++);
                 paramList.add(parentCategory);
             }
 
             if (category != -1) {
-                final EgwTypeOfWork subtow = (EgwTypeOfWork) getPersistenceService().find(
-                        "from EgwTypeOfWork etw where id=? and parentid.id=?", category, parentCategory);
-                srchCrit.append(" and Subtype of Work " + subtow.getDescription());
-                query.append(" and woe.estimate.category.id=?");
+                final List<EgwTypeOfWork> subtows = entityManager.createQuery(
+                        "from EgwTypeOfWork etw where id = :id and parentid.id = :parentId", EgwTypeOfWork.class)
+                        .setParameter("id", category)
+                        .setParameter("parentId", parentCategory)
+                        .getResultList();
+                final EgwTypeOfWork subtow = subtows.isEmpty() ? null : subtows.get(0);
+                srchCrit.append(" and Subtype of Work ").append(subtow.getDescription());
+                query.append(" and woe.estimate.category.id = ?").append(index++);
                 paramList.add(category);
             }
 
             if (preparedBy != -1) {
-                final PersonalInformation prepBy = (PersonalInformation) getPersistenceService().find(
-                        "from PersonalInformation where id=?", preparedBy);
-                srchCrit.append(" as Prepared by " + prepBy.getEmployeeName());
-                query.append(" and woe.workOrder.workOrderPreparedBy.idPersonalInformation=?");
+                final PersonalInformation prepBy = entityManager.find(
+                        PersonalInformation.class, preparedBy);
+                srchCrit.append(" as Prepared by ").append(prepBy.getEmployeeName());
+                query.append(" and woe.workOrder.workOrderPreparedBy.idPersonalInformation = ?").append(index++);
                 paramList.add(preparedBy);
             }
 
             if (getScheme() != null && getScheme() != -1) {
-                final Scheme sch = (Scheme) getPersistenceService().find("from Scheme where isactive=true and id=?",
-                        getScheme());
+                final List<Scheme> schemes = entityManager
+                        .createQuery("from Scheme where isactive = true and id = :id", Scheme.class)
+                        .setParameter("id", getScheme())
+                        .getResultList();
+                final Scheme sch = schemes.isEmpty() ? null : schemes.get(0);
                 srchCrit.append(" under Scheme " + sch.getName());
-                query.append(" and woe.estimate.financialDetails[0].scheme.id=?");
+                query.append(" and woe.estimate.financialDetails[0].scheme.id = ?").append(index++);
                 paramList.add(getScheme());
             }
 
             if (getSubScheme() != null && getSubScheme() != -1) {
-                final SubScheme subsch = (SubScheme) getPersistenceService().find("from SubScheme where id=?",
-                        getSubScheme());
-                srchCrit.append(" and Subscheme " + subsch.getName());
-                query.append(" and woe.estimate.financialDetails[0].subScheme.id=?");
+                final SubScheme subsch = entityManager.find(SubScheme.class, getSubScheme());
+                srchCrit.append(" and Subscheme ").append(subsch.getName());
+                query.append(" and woe.estimate.financialDetails[0].subScheme.id = ?").append(index++);
                 paramList.add(getSubScheme());
             }
 
             if (budgetHead != -1) {
-                final BudgetGroup bh = (BudgetGroup) getPersistenceService().find("from BudgetGroup where id=?",
-                        budgetHead);
-                srchCrit.append(" with Budget Head " + bh.getName());
-                query.append(" and woe.estimate.financialDetails[0].budgetGroup.id=?");
+                final BudgetGroup bh = entityManager.find(BudgetGroup.class, budgetHead);
+                srchCrit.append(" with Budget Head ").append(bh.getName());
+                query.append(" and woe.estimate.financialDetails[0].budgetGroup.id = ?").append(index++);
                 paramList.add(budgetHead);
             }
 
             if (wardId != null) {
                 final Boundary wardObj = boundaryService.getBoundaryById(wardId);
-                srchCrit.append(" under Jurisdiction " + wardObj.getName());
-                query.append(" and woe.estimate.ward.id = ? ");
+                srchCrit.append(" under Jurisdiction ").append(wardObj.getName());
+                query.append(" and woe.estimate.ward.id = ?").append(index++);
                 paramList.add(wardId);
             }
 
             if (!milestoneStatus.equalsIgnoreCase("-1")) {
-                srchCrit.append(" with Milestone Status " + milestoneStatus);
-                query.append(" and trackMilestone.total " + milestoneStatuses.get(milestoneStatus));
-                query.append(" and trackMilestone.egwStatus.code=? ");
+                srchCrit.append(" with Milestone Status ").append(milestoneStatus);
+                query.append(" and trackMilestone.total ").append(milestoneStatuses.get(milestoneStatus));
+                query.append(" and trackMilestone.egwStatus.code = ?").append(index++);
                 paramList.add("APPROVED");
             }
 
             if (engineerIncharge != null && engineerIncharge != -1) {
-                final PersonalInformation engInc1 = (PersonalInformation) getPersistenceService().find(
-                        "from PersonalInformation where id=?", engineerIncharge);
-                srchCrit.append(" for Work Order Assigned to User1 " + engInc1.getEmployeeName());
-                query.append(" and woe.workOrder.engineerIncharge.idPersonalInformation=?");
+                final PersonalInformation engInc1 = entityManager.find(PersonalInformation.class, engineerIncharge);
+                srchCrit.append(" for Work Order Assigned to User1 ").append(engInc1.getEmployeeName());
+                query.append(" and woe.workOrder.engineerIncharge.idPersonalInformation = ?").append(index++);
                 paramList.add(engineerIncharge);
             }
 
             if (engineerIncharge2 != null && engineerIncharge2 != -1) {
-                final PersonalInformation engInc2 = (PersonalInformation) getPersistenceService().find(
-                        "from PersonalInformation where id=?", engineerIncharge2);
-                srchCrit.append(" for Work Order Assigned to User2 " + engInc2.getEmployeeName());
-                query.append(" and woe.workOrder.engineerIncharge2.idPersonalInformation=?");
+                final PersonalInformation engInc2 = entityManager.find(PersonalInformation.class, engineerIncharge2);
+                srchCrit.append(" for Work Order Assigned to User2 ").append(engInc2.getEmployeeName());
+                query.append(" and woe.workOrder.engineerIncharge2.idPersonalInformation = ?").append(index++);
                 paramList.add(engineerIncharge2);
             }
             searchCriteria = srchCrit.toString();
@@ -861,11 +896,11 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         if (sourcePage != null
                 && (sourcePage.equalsIgnoreCase("deptWiseReport") || sourcePage.equalsIgnoreCase("deptWiseReportForWP"))) {
             if (woId != null) {
-                query.append(" and woe.workOrder.id=?");
+                query.append(" and woe.workOrder.id = ?").append(index++);
                 paramList.add(Long.valueOf(woId.toString()));
             }
             if (estId != null) {
-                query.append(" and woe.estimate.id=?");
+                query.append(" and woe.estimate.id = ?").append(index++);
                 paramList.add(Long.valueOf(estId.toString()));
             }
         }
@@ -880,6 +915,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return queryMap;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         final HashMap<String, Object> queryMap = getQueryForWorkProgressRegister();

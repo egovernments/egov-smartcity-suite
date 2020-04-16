@@ -47,9 +47,26 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.gis.model.GeoLatLong;
@@ -59,6 +76,7 @@ import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponse;
@@ -68,17 +86,6 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WorksGISReportAction extends BaseFormAction {
 
@@ -98,7 +105,10 @@ public class WorksGISReportAction extends BaseFormAction {
     private String resultStatus = "beforeSearch";
     private String estimatenumber;
     private WorksService worksService;
-    private List<String> tenderTypeList = null;
+    private List<String> tenderTypeList = null;;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Long getContractorId() {
         return contractorId;
@@ -116,13 +126,15 @@ public class WorksGISReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final List<Boundary> zoneList = persistenceService
-                .findAllBy("from Boundary BI  where upper(BI.boundaryType.name) = 'ZONE' order by BI.id");
+        final List<Boundary> zoneList = entityManager.createQuery(
+                "from Boundary BI  where upper(BI.boundaryType.name) = 'ZONE' order by BI.id", Boundary.class)
+                .getResultList();
         addDropdownData("zoneList", zoneList);
         addDropdownData("wardList", Collections.emptyList());
-        addDropdownData("typeList", getPersistenceService().findAllBy("from NatureOfWork dt"));
+        addDropdownData("typeList", entityManager.createQuery("from NatureOfWork dt", NatureOfWork.class).getResultList());
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         addDropdownData("categoryList", Collections.emptyList());
     }
 
@@ -138,86 +150,97 @@ public class WorksGISReportAction extends BaseFormAction {
      *
      * @return
      */
-    private String generateQuery() {
+    private Map<String, Object> generateQuery() {
+        final Map<String, Object> queryMap = new HashMap<>();
         final StringBuffer query = new StringBuffer(1024);
-        final String columnsToShow = " absEst.id, absEst.lat, absEst.lon, absEst.estimateNumber,absEst.name, coalesce(absEst.workValue,0), "
-                + " (select sum(coalesce(ovr.amount,0)) from OverheadValue ovr where ovr.abstractEstimate=absEst)  , "
-                + " (select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
-                + WorksConstants.NEW
-                + "','"
-                + WorksConstants.CANCELLED_STATUS
-                + "') ), "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
-                + WorksConstants.NEW
-                + "','"
-                + WorksConstants.CANCELLED_STATUS
-                + "')  )"
-                + " and offLineStatus.egwStatus.code='"
-                + WorksConstants.TENDER_DOCUMENT_RELEASED
-                + "' and objectType='WorksPackage' ), "
-                + " absEst.parentCategory.description, workSubType.description, projcode.id ";
-        final String columnsToShowWhenWOEIsJoined = " absEst.id, absEst.lat, absEst.lon, absEst.estimateNumber,absEst.name, coalesce(absEst.workValue,0),"
-                + " (select sum(coalesce(ovr.amount,0)) from OverheadValue ovr where ovr.abstractEstimate=absEst)  ,"
-                + " (select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate=absEst  and wpd.worksPackage.egwStatus.code not in ('"
-                + WorksConstants.NEW
-                + "','"
-                + WorksConstants.CANCELLED_STATUS
-                + "') ), "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in ('"
-                + WorksConstants.NEW
-                + "','"
-                + WorksConstants.CANCELLED_STATUS
-                + "') )"
-                + " and offLineStatus.egwStatus.code='"
-                + WorksConstants.TENDER_DOCUMENT_RELEASED
-                + "' and objectType='WorksPackage' ), "
-                + " absEst.parentCategory.description, workSubType.description , projcode.id,  "
-                + " to_char(wo.workOrderDate,'dd/MM/YYYY'), wo.contractPeriod, wo.contractor.name, "
-                + " (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus where offLineStatus.objectId= wo.id  "
-                + "    and offLineStatus.egwStatus.code='"
-                + WorksConstants.WO_STATUS_WOCOMMENCED
-                + "' and objectType='WorkOrder') ";
+        final Map<String, Object> params = new HashMap<>();
+        final StringBuffer columnsToShow = new StringBuffer(
+                " absEst.id, absEst.lat, absEst.lon, absEst.estimateNumber,absEst.name,")
+                        .append(" coalesce(absEst.workValue,0), (select sum(coalesce(ovr.amount,0)) from OverheadValue ovr")
+                        .append(" where ovr.abstractEstimate=absEst), (select wpd.worksPackage.wpNumber from WorksPackageDetails wpd")
+                        .append(" where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in (:wpStatus)), ")
+                        .append(" (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus")
+                        .append(" where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd")
+                        .append(" where wpd.estimate = absEst and wpd.worksPackage.egwStatus.code not in (:wpStatus))")
+                        .append(" and offLineStatus.egwStatus.code = :olsStatus and objectType='WorksPackage' ), ")
+                        .append(" absEst.parentCategory.description, workSubType.description, projcode.id ");
+
+        params.put("wpStatus", Arrays.asList(WorksConstants.NEW, WorksConstants.CANCELLED_STATUS));
+        params.put("olsStatus", WorksConstants.TENDER_DOCUMENT_RELEASED);
+
+        final StringBuffer columnsToShowWhenWOEIsJoined = new StringBuffer(
+                " absEst.id, absEst.lat, absEst.lon, absEst.estimateNumber,absEst.name, coalesce(absEst.workValue,0),")
+                        .append(" (select sum(coalesce(ovr.amount,0)) from OverheadValue ovr where ovr.abstractEstimate=absEst)  ,")
+                        .append(" (select wpd.worksPackage.wpNumber from WorksPackageDetails wpd where wpd.estimate=absEst")
+                        .append(" and wpd.worksPackage.egwStatus.code not in (:wpStatus)), ")
+                        .append(" (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus")
+                        .append(" where offLineStatus.objectId = ( select wpd.worksPackage.id from WorksPackageDetails wpd")
+                        .append(" where wpd.estimate=absEst and wpd.worksPackage.egwStatus.code not in (:wpStatus))")
+                        .append(" and offLineStatus.egwStatus.code = :olsStatus and objectType='WorksPackage' ), ")
+                        .append(" absEst.parentCategory.description, workSubType.description , projcode.id,  ")
+                        .append(" to_char(wo.workOrderDate,'dd/MM/YYYY'), wo.contractPeriod, wo.contractor.name, ")
+                        .append(" (select to_char(offLineStatus.statusDate,'dd/MM/YYYY') from OfflineStatus offLineStatus")
+                        .append(" where offLineStatus.objectId= wo.id and offLineStatus.egwStatus.code = :olsStatusCommenced")
+                        .append(" and objectType='WorkOrder') ");
+
+        params.put("olsStatusCommenced", WorksConstants.WO_STATUS_WOCOMMENCED);
+
         if (contractorId != null && contractorId != -1) {
-            query.append("select "
-                    + columnsToShowWhenWOEIsJoined
-                    + " from AbstractEstimate absEst left join absEst.category workSubType left join absEst.projectCode projcode , WorkOrder wo, WorkOrderEstimate woe ");
-            query.append(" where  absEst.id=woe.estimate.id and wo.id=woe.workOrder.id  and wo.contractor.id="
-                    + contractorId);
-            query.append(" and absEst.parent is null ");
-        } else {
-            query.append("select "
-                    + columnsToShow
-                    + " from AbstractEstimate absEst left join absEst.category workSubType left join absEst.projectCode projcode ");
-            query.append(" where absEst.parent is null ");
-        }
+            query.append("select ").append(columnsToShowWhenWOEIsJoined)
+                    .append(" from AbstractEstimate absEst left join absEst.category workSubType left join absEst.projectCode projcode,")
+                    .append(" WorkOrder wo, WorkOrderEstimate woe ")
+                    .append(" where  absEst.id=woe.estimate.id and wo.id=woe.workOrder.id  and wo.contractor.id = :contractorId")
+                    .append(" and absEst.parent is null ");
+            params.put("contractorId", contractorId);
+        } else
+            query.append("select ").append(columnsToShow)
+                    .append(" from AbstractEstimate absEst left join absEst.category workSubType left join absEst.projectCode projcode ")
+                    .append(" where absEst.parent is null ");
         // Consider only estimates which have lat long
-        query.append(" and absEst.lat is not null and absEst.lon is not null and absEst.egwStatus.code not in ('"
-                + WorksConstants.NEW + "','" + WorksConstants.CANCELLED_STATUS + "') ");
-        if (zoneId != null && zoneId != -1)
-            query.append(" and absEst.ward.parent.id=" + zoneId);
-        if (wardId != null && wardId != -1)
-            query.append(" and absEst.ward.id=" + wardId);
-        if (category != null && category != -1)
-            query.append(" and absEst.category.id=" + category);
-        else if (parentCategory != null && parentCategory != -1)
-            query.append(" and absEst.parentCategory.id=" + parentCategory);
-        if (expenditureType != null && expenditureType != -1)
-            query.append(" and absEst.type.id=" + expenditureType);
-        if (StringUtils.isNotBlank(estimatenumber))
-            query.append(" and UPPER(absEst.estimateNumber) like '%" + estimatenumber.toUpperCase() + "%'");
+        query.append(" and absEst.lat is not null and absEst.lon is not null and absEst.egwStatus.code not in (:wpStatus) ");
+        if (zoneId != null && zoneId != -1) {
+            query.append(" and absEst.ward.parent.id = :zoneId");
+            params.put("zoneId", zoneId);
+        }
+        if (wardId != null && wardId != -1) {
+            query.append(" and absEst.ward.id= :wardId");
+            params.put("wardId", wardId);
+        }
+        if (category != null && category != -1) {
+            query.append(" and absEst.category.id = :category");
+            params.put("category", category);
+        } else if (parentCategory != null && parentCategory != -1) {
+            query.append(" and absEst.parentCategory.id = :parentCategory");
+            params.put("parentCategory", parentCategory);
+        }
+        if (expenditureType != null && expenditureType != -1) {
+            query.append(" and absEst.type.id = :expenditureType");
+            params.put("expenditureType", expenditureType);
+        }
+        if (StringUtils.isNotBlank(estimatenumber)) {
+            query.append(" and UPPER(absEst.estimateNumber) like :estimateNumber");
+            params.put("estimateNumber", "%" + estimatenumber.toUpperCase() + "%");
+        }
         query.append(" order by absEst.id ");
-        return query.toString();
+        queryMap.put("query", query);
+        queryMap.put("params", params);
+        return queryMap;
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public String search() {
         List<Object[]> findAll = null;
-        locationList = new ArrayList<GeoLocation>();
+        locationList = new ArrayList<>();
         GeoLatLong latlong = new GeoLatLong();
         Map<String, Object> markerdata = null;
-        final String query = generateQuery();
+        final Map<String, Object> queryMap = generateQuery();
+        final String queryString = (String) queryMap.get("query");
+        final Map<String, Object> params = (Map<String, Object>) queryMap.get("params");
         try {
-            LOGGER.info("HQl query=" + query.toString());
-            findAll = persistenceService.findAllBy(query.toString());
+            LOGGER.info("HQl query=" + queryString.toString());
+            final Query query = entityManager.createQuery(queryString);
+            params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+            findAll = query.getResultList();
             LOGGER.info("HQl query RESULT " + findAll.size());
             Long estId, projcodeId, contractPeriod;
             BigDecimal estLat, estLon;
@@ -274,7 +297,7 @@ public class WorksGISReportAction extends BaseFormAction {
                     geoLocation.setInfo3("Estimate Value(Rs)=0.00");
                 if (wpno != null)
                     geoLocation.setInfo4("Works Package Number=" + wpno);
-                markerdata = new HashMap<String, Object>();
+                markerdata = new HashMap<>();
                 if (typeOfWork != null) {
                     geoLocation.appendToInfo5("Type of Work=" + typeOfWork);
                     if (typeOfWork.equalsIgnoreCase(WorksConstants.TYPE_OF_WORK_BRIDGES))
@@ -322,11 +345,14 @@ public class WorksGISReportAction extends BaseFormAction {
                     if (contractorName != null)
                         geoLocation.appendToInfo5("Contractor Name=" + contractorName);
                 } else {
-                    final List<WorkOrder> woList = persistenceService
-                            .findAllBy(
-                                    "  select woe.workOrder from WorkOrderEstimate woe where woe.estimate.id=? and upper(woe.workOrder.egwStatus.code) not in ('"
-                                            + WorksConstants.NEW + "','" + WorksConstants.CANCELLED_STATUS + "') ",
-                                    estId);
+                    final List<WorkOrder> woList = entityManager.createQuery(
+                            new StringBuffer("select woe.workOrder from WorkOrderEstimate woe")
+                                    .append(" where woe.estimate.id = :estimateId and upper(woe.workOrder.egwStatus.code) not in (:woStatus) ")
+                                    .toString(),
+                            WorkOrder.class)
+                            .setParameter("estimateId", estId)
+                            .setParameter("woStatus", Arrays.asList(WorksConstants.NEW, WorksConstants.CANCELLED_STATUS))
+                            .getResultList();
                     if (woList != null && woList.size() > 0) {
                         final StringBuffer workOrderDatesBuf = new StringBuffer("");
                         final StringBuffer workCommencedDateBuf = new StringBuffer("");
@@ -400,8 +426,10 @@ public class WorksGISReportAction extends BaseFormAction {
     }
 
     private String getTenderAmount(final Object estimateId) {
-        final List<WorksPackageDetails> wpdDetailsList = persistenceService.findAllBy(
-                "select wpd from WorksPackageDetails wpd where wpd.estimate.id=?  ", (Long) estimateId);
+        final List<WorksPackageDetails> wpdDetailsList = entityManager.createQuery(
+                "select wpd from WorksPackageDetails wpd where wpd.estimate.id = :estimateId", WorksPackageDetails.class)
+                .setParameter("estimateId", estimateId)
+                .getResultList();
         if (tenderTypeList == null || tenderTypeList.size() == 0)
             tenderTypeList = worksService.getTendertypeList();
         double totalAmt = 0;
@@ -411,12 +439,17 @@ public class WorksGISReportAction extends BaseFormAction {
                     for (final TenderResponse tr : te.getTenderResponseSet())
                         // Consider only approved Tender Response
                         if (WorksConstants.APPROVED.equals(tr.getEgwStatus().getCode())) {
-                            final List<TenderResponseActivity> trAct = persistenceService
-                                    .findAllBy(
-                                            "from TenderResponseActivity trAct where trAct.activity.abstractEstimate.id=? and trAct.tenderResponse.id=? and trAct.tenderResponse.egwStatus.code='"
-                                                    + WorksConstants.APPROVED + "' ",
-                                            wpd.getEstimate().getId(),
-                                            tr.getId());
+                            final List<TenderResponseActivity> trAct = entityManager.createQuery(
+                                    new StringBuffer("from TenderResponseActivity trAct")
+                                            .append(" where trAct.activity.abstractEstimate.id = :estimateId")
+                                            .append(" and trAct.tenderResponse.id = :tenderResponseId")
+                                            .append(" and trAct.tenderResponse.egwStatus.code = :tenderResponseStatus")
+                                            .toString(),
+                                    TenderResponseActivity.class)
+                                    .setParameter("estimateId", wpd.getEstimate().getId())
+                                    .setParameter("tenderResponseId", tr.getId())
+                                    .setParameter("tenderResponseStatus", WorksConstants.APPROVED)
+                                    .getResultList();
 
                             for (final TenderResponseActivity act : trAct)
                                 if (tr.getTenderEstimate().getTenderType().equals(tenderTypeList.get(1)))
@@ -447,8 +480,9 @@ public class WorksGISReportAction extends BaseFormAction {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public Map<String, Object> getContractorForApprovedWorkOrder() {
-        final Map<String, Object> contractorsWithWOList = new HashMap<String, Object>();
+        final Map<String, Object> contractorsWithWOList = new HashMap<>();
         if (workOrderService.getContractorsWithWO() != null)
             for (final Contractor contractor : workOrderService.getContractorsWithWO())
                 contractorsWithWOList.put(contractor.getId() + "", contractor.getName() + " - " + contractor.getCode());

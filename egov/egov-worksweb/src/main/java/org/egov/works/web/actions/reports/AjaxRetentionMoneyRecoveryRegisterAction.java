@@ -47,30 +47,33 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class AjaxRetentionMoneyRecoveryRegisterAction extends BaseFormAction {
 
     private static final long serialVersionUID = 7421372624155467521L;
-
-    private static final Logger logger = Logger.getLogger(AjaxRetentionMoneyRecoveryRegisterAction.class);
 
     private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
     private static final String PROJECT_CODE_SEARCH_RESULTS = "projectCodeSearchResults";
     private static final String CONTRACTOR_CODE_SEARCH_RESULTS = "contractorCodeSearchResults";
 
     private String query;
-    private List<String> estimateNumberSearchList = new LinkedList<String>();
-    private List<String> projectCodeList = new LinkedList<String>();
-    private List<String> contractorCodeNameList = new LinkedList<String>();
+    private List<String> estimateNumberSearchList = new LinkedList<>();
+    private List<String> projectCodeList = new LinkedList<>();
+    private List<String> contractorCodeNameList = new LinkedList<>();
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -85,20 +88,24 @@ public class AjaxRetentionMoneyRecoveryRegisterAction extends BaseFormAction {
     /*
      * Autocomplete for estimates where bills are created
      */
+    @ReadOnly
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(ae.estimateNumber) from AbstractEstimate ae where ae.parent is null and ae.projectCode.id in "
-                    + "(select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                    + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                    + " and expendituretype='Works' ) "
-                    + "and UPPER(ae.estimateNumber) like '%'||?||'%' and ae.egwStatus.code = ? )";
-            params.add(ContractorBillRegister.BillStatus.APPROVED.toString());
-            params.add(query.toUpperCase());
-            params.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            strquery.append("select distinct(ae.estimateNumber)")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is null and ae.projectCode.id in ")
+                    .append(" (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = (")
+                    .append(" select id from Accountdetailtype where name='PROJECTCODE')")
+                    .append(" and bpd.egBilldetailsId.egBillregister.status.code = :billRegisterStatus ")
+                    .append(" and expendituretype='Works' ) and UPPER(ae.estimateNumber) like '%'||:estimateNumber||'%'")
+                    .append(" and ae.egwStatus.code = :aeStatus )");
 
-            estimateNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("billRegisterStatus", ContractorBillRegister.BillStatus.APPROVED.toString())
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .setParameter("aeStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                    .getResultList();
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
@@ -106,17 +113,21 @@ public class AjaxRetentionMoneyRecoveryRegisterAction extends BaseFormAction {
     /*
      * Autocomplete of Project codes where bills are created
      */
+    @ReadOnly
     public String searchProjectCode() {
         if (!StringUtils.isEmpty(query)) {
-            String strquery = "";
-            final ArrayList<Object> params = new ArrayList<Object>();
-            strquery = "select pc.code from ProjectCode pc where upper(pc.code) like '%'||?||'%'"
-                    + " and pc.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                    + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                    + " and expendituretype='Works')";
-            params.add(query.toUpperCase());
-            params.add(ContractorBillRegister.BillStatus.APPROVED.toString());
-            projectCodeList = getPersistenceService().findAllBy(strquery, params.toArray());
+            final StringBuffer strquery = new StringBuffer("select pc.code")
+                    .append(" from ProjectCode pc")
+                    .append(" where upper(pc.code) like '%'||:pcCode||'%'")
+                    .append(" and pc.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = (")
+                    .append(" select id from Accountdetailtype where name='PROJECTCODE')")
+                    .append(" and bpd.egBilldetailsId.egBillregister.status.code = :billRegisterStatus ")
+                    .append(" and expendituretype='Works')");
+
+            projectCodeList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("pcCode", query.toUpperCase())
+                    .setParameter("billRegisterStatus", ContractorBillRegister.BillStatus.APPROVED.toString())
+                    .getResultList();
         }
         return PROJECT_CODE_SEARCH_RESULTS;
     }
@@ -124,18 +135,22 @@ public class AjaxRetentionMoneyRecoveryRegisterAction extends BaseFormAction {
     /*
      * Autocomplete of Contractor Code/Names where bills are created
      */
+    @ReadOnly
     public String searchContractors() {
         if (!StringUtils.isEmpty(query)) {
-            String strquery = "";
-            final ArrayList<Object> params = new ArrayList<Object>();
-            strquery = "select cont.code||'~'||cont.name from Contractor cont where upper(cont.code) like '%'||?||'%' or upper(cont.name) like '%'||?||'%'"
-                    + " and cont.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                    + " select id from Accountdetailtype where name='contractor') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                    + " and expendituretype='Works')";
-            params.add(query.toUpperCase());
-            params.add(query.toUpperCase());
-            params.add(ContractorBillRegister.BillStatus.APPROVED.toString());
-            contractorCodeNameList = getPersistenceService().findAllBy(strquery, params.toArray());
+            final StringBuffer strquery = new StringBuffer("select cont.code||'~'||cont.name")
+                    .append(" from Contractor cont")
+                    .append(" where upper(cont.code) like '%'||:code||'%' or upper(cont.name) like '%'||:name||'%'")
+                    .append(" and cont.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = (")
+                    .append(" select id from Accountdetailtype where name='contractor')")
+                    .append(" and bpd.egBilldetailsId.egBillregister.status.code = :billRegisterStatus ")
+                    .append(" and expendituretype = 'Works')");
+
+            contractorCodeNameList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("code", query.toUpperCase())
+                    .setParameter("name", query.toUpperCase())
+                    .setParameter("billRegisterStatus", ContractorBillRegister.BillStatus.APPROVED.toString())
+                    .getResultList();
         }
         return CONTRACTOR_CODE_SEARCH_RESULTS;
     }

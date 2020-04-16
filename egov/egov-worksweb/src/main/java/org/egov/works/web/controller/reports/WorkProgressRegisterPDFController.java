@@ -48,6 +48,17 @@
 
 package org.egov.works.web.controller.reports;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -73,16 +84,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/reports/workprogressregister")
@@ -114,7 +115,7 @@ public class WorkProgressRegisterPDFController {
             @RequestParam("contractor") final String contractor, @RequestParam("department") final Long department,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         final WorkProgressRegisterSearchRequest searchRequest = new WorkProgressRegisterSearchRequest();
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -157,7 +158,7 @@ public class WorkProgressRegisterPDFController {
     private ResponseEntity<byte[]> generateReport(final List<WorkProgressRegister> workProgressRegisters,
             final HttpServletRequest request, final HttpSession session, final String contentType,
             final Map<String, Object> reportParams) {
-        final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<WorkProgressRegisterPdf>();
+        final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<>();
 
         String dataRunDate = "";
         ReportRequest reportInput = null;
@@ -309,7 +310,7 @@ public class WorkProgressRegisterPDFController {
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.xls");
         }
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 

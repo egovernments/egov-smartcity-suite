@@ -48,6 +48,23 @@
 
 package org.egov.works.web.controller.reports;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -72,18 +89,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/reports/estimateabstractreport")
@@ -115,6 +120,9 @@ public class EstimateAbstractReportPDFController {
     @Autowired
     private MessageSource messageSource;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @RequestMapping(value = "/departmentwise/pdf", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
@@ -126,7 +134,7 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -163,11 +171,11 @@ public class EstimateAbstractReportPDFController {
 
         if (scheme != null)
             queryParameters += messageSource.getMessage("msg.scheme", null, null)
-                    + schemeService.findById(scheme, false).getName() + ", ";
+                    + entityManager.find(Scheme.class, scheme).getName() + ", ";
 
         if (subScheme != null)
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
-                    + subSchemeService.findById(subScheme, false).getName() + ", ";
+                    + entityManager.find(SubScheme.class, subScheme).getName() + ", ";
 
         if (workCategory != null)
             queryParameters += "Work Category : " + workCategory.replace('_', ' ') + ", ";
@@ -191,7 +199,7 @@ public class EstimateAbstractReportPDFController {
     private ResponseEntity<byte[]> generateReportDepartmentWise(
             final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
             final HttpSession session, final String contentType, final Map<String, Object> reportParams) {
-        final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
+        final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
@@ -284,7 +292,7 @@ public class EstimateAbstractReportPDFController {
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
         }
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 
@@ -316,7 +324,7 @@ public class EstimateAbstractReportPDFController {
 
         final List<EstimateAbstractReport> estimateAbstractReports = workProgressRegisterService
                 .searchEstimateAbstractReportByTypeOfWorkWise(searchRequest);
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
 
         String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null);
         if (spillOverFlag)
@@ -353,11 +361,11 @@ public class EstimateAbstractReportPDFController {
 
         if (scheme != null)
             queryParameters += messageSource.getMessage("msg.scheme", null, null)
-                    + schemeService.findById(scheme, false).getName() + ", ";
+                    + entityManager.find(Scheme.class, scheme).getName() + ", ";
 
         if (subScheme != null)
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
-                    + subSchemeService.findById(subScheme, false).getName() + ", ";
+                    + entityManager.find(SubScheme.class, subScheme).getName() + ", ";
 
         if (workCategory != null)
             queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ')
@@ -384,7 +392,7 @@ public class EstimateAbstractReportPDFController {
             final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
             final HttpSession session, final String contentType, final Set<Department> departments,
             final Map<String, Object> reportParams) {
-        final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
+        final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         String dataRunDate = "";
@@ -491,7 +499,7 @@ public class EstimateAbstractReportPDFController {
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 

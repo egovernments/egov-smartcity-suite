@@ -47,28 +47,6 @@
  */
 package org.egov.works.web.actions.reports;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQuerySQL;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.services.ContractorBillService;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -80,6 +58,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQuerySQL;
+import org.egov.model.budget.BudgetGroup;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.services.ContractorBillService;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({
         @Result(name = RetentionMoneyRecoveryRegisterAction.EXPORTPDF, type = "stream", location = "pdfInputStream", params = {
@@ -91,8 +96,6 @@ import java.util.Map;
 public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3137793754124318372L;
-
-    private static final Logger logger = Logger.getLogger(RetentionMoneyRecoveryRegisterAction.class);
 
     private String estimateNumber;
     private String projectCode;
@@ -121,6 +124,9 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
     private String billType;
     public Integer retentionMoneyRefPeriod;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public RetentionMoneyRecoveryRegisterAction() {
     }
 
@@ -141,35 +147,40 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         addDropdownData("billTypeList", contractorBillService.getBillType());
         addDropdownData(
                 "budgetHeadList",
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct(bg) from FinancialDetail fd , BudgetGroup bg where "
-                                        + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                                        + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                                        + " and expendituretype='Works' ) and bg=fd.budgetGroup order by bg.name ",
-                                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                                ContractorBillRegister.BillStatus.APPROVED.toString()));
+                entityManager.createQuery(new StringBuffer("select distinct(bg)")
+                        .append(" from FinancialDetail fd , BudgetGroup bg")
+                        .append(" where fd.abstractEstimate.egwStatus.code = :estimateStatus and fd.abstractEstimate.projectCode.id")
+                        .append(" in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ")
+                        .append(" (select id from Accountdetailtype where name='PROJECTCODE')")
+                        .append(" and bpd.egBilldetailsId.egBillregister.status.code = :billRegisterStatus ")
+                        .append(" and expendituretype='Works' ) and bg=fd.budgetGroup order by bg.name ").toString(),
+                        BudgetGroup.class)
+                        .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                        .setParameter("billRegisterStatus", ContractorBillRegister.BillStatus.APPROVED.toString())
+                        .getResultList());
 
         addDropdownData(
                 "depositCOAList",
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct(fd.coa) from FinancialDetail fd where "
-                                        + "fd.abstractEstimate.egwStatus.code = ? and fd.abstractEstimate.projectCode.id in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ("
-                                        + " select id from Accountdetailtype where name='PROJECTCODE') and bpd.egBilldetailsId.egBillregister.status.code=? "
-                                        + " and expendituretype='Works') order by glcode ",
-                                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
-                                ContractorBillRegister.BillStatus.APPROVED.toString()));
+                entityManager.createQuery(new StringBuffer("select distinct(fd.coa)")
+                        .append(" from FinancialDetail fd")
+                        .append(" where fd.abstractEstimate.egwStatus.code = :estimateStatus and fd.abstractEstimate.projectCode.id")
+                        .append(" in (select bpd.accountDetailKeyId from EgBillPayeedetails bpd where bpd.accountDetailTypeId = ")
+                        .append(" (select id from Accountdetailtype where name='PROJECTCODE')")
+                        .append(" and bpd.egBilldetailsId.egBillregister.status.code = :billRegisterStatus ")
+                        .append(" and expendituretype='Works') order by glcode ").toString(), CChartOfAccounts.class)
+                        .setParameter("estimateStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString())
+                        .setParameter("billRegisterStatus", ContractorBillRegister.BillStatus.APPROVED.toString())
+                        .getResultList());
     }
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        final String query = getSelectQuery() + getSearchQuery();
-        final String countQry = " select count(*) from (" + query + ")";
+        final StringBuffer query = getSelectQuery().append(getSearchQuery());
+        final String countQry = new StringBuffer(" select count(*) from (").append(query).append(")").toString();
         final String orderByClause = " ORDER BY \"Bill Date\"";
 
         setPageSize(30);
-        return new SearchQuerySQL(query + orderByClause, countQry, paramList);
+        return new SearchQuerySQL(query.append(orderByClause).toString(), countQry, paramList);
     }
 
     @Override
@@ -177,6 +188,7 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         return "search";
     }
 
+    @SuppressWarnings("unchecked")
     public String searchList() {
         boolean isError = false;
         if (billDateFrom != null && billDateTo == null) {
@@ -207,8 +219,9 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         return "search";
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<RetentionMoneyRecoveryRegisterBean> setBeanValues(final List searchList) {
-        final List<RetentionMoneyRecoveryRegisterBean> resultList = new ArrayList<RetentionMoneyRecoveryRegisterBean>();
+        final List<RetentionMoneyRecoveryRegisterBean> resultList = new ArrayList<>();
         for (final Object[] object : (List<Object[]>) searchList) {
             final RetentionMoneyRecoveryRegisterBean retentionMoneyRecoveryRegisterBean = new RetentionMoneyRecoveryRegisterBean();
             if (object[0] != null)
@@ -273,218 +286,255 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
 
     }
 
-    private String getSelectQuery() {
-        return "select \"Bill Department\", \"Contractor Code\",\"Contractor Name\","
-                + " RTrim(xmlagg(xmlelement(a,\"Project Code\" || ', ').extract('//text()')),', ') as \"Project Code\","
-                + " RTrim(xmlagg(xmlelement(a,\"Project Name\" || ',').extract('//text()')),',') as \"Project Name\","
-                + " \"Bill Number\", \"Bill Type\", \"Bill Date\", \"Voucher Number\", \"Bill Amount\", "
-                + " \"Retention money recovered\", count(\"Project Code\"),\"Refund Date\",\"PC Flag\" ";
+    private StringBuffer getSelectQuery() {
+        return new StringBuffer("select \"Bill Department\", \"Contractor Code\",\"Contractor Name\",")
+                .append(" RTrim(xmlagg(xmlelement(a,\"Project Code\" || ', ').extract('//text()')),', ') as \"Project Code\",")
+                .append(" RTrim(xmlagg(xmlelement(a,\"Project Name\" || ',').extract('//text()')),',') as \"Project Name\",")
+                .append(" \"Bill Number\", \"Bill Type\", \"Bill Date\", \"Voucher Number\", \"Bill Amount\", ")
+                .append(" \"Retention money recovered\", count(\"Project Code\"),\"Refund Date\",\"PC Flag\" ");
     }
 
+    @SuppressWarnings("unchecked")
     private String getSearchQuery() {
-        paramList = new ArrayList<Object>();
+        paramList = new ArrayList<>();
         final StringBuffer titleBuffer = new StringBuffer();
 
         titleBuffer.append(getText("retentionMoneyRecoveryRegister.title.report"));
 
-        final Map<String, Object> whereClauseMap = formSearchConditionsQuery();
-        final List<Object> params = (List<Object>) whereClauseMap.get("params");
+        final StringBuffer query1 = new StringBuffer(" (SELECT dp.name AS \"Bill Department\", cont.code AS \"Contractor Code\",")
+                .append(" cont.name AS \"Contractor Name\", pc.code AS \"Project Code\", pc.name as \"Project Name\",")
+                .append(" br.billnumber AS \"Bill Number\", br.billtype AS \"Bill Type\", br.billdate AS \"Bill Date\",")
+                .append(" vh.vouchernumber AS \"Voucher Number\", br.billamount AS \"Bill Amount\",")
+                .append(" bd.creditamount AS \"Retention money recovered\",(pcmis.work_completion_date+(365*pcmis.defect_liability_period))")
+                .append(" AS \"Refund Date\", pc.is_final_bill AS \"PC Flag\" ")
+                .append(" FROM EG_DEPARTMENT dp, eg_billregister br, eg_billregistermis bmis LEFT OUTER JOIN VOUCHERHEADER vh")
+                .append(" ON vh.id=bmis.voucherheaderid and vh.status=0, eg_billdetails bd, eg_billpayeedetails bpd,")
+                .append(" egw_contractor cont, egw_projectcode pc left outer join egw_projectcodemis pcmis on pcmis.projectcode_id = pc.id ")
+                .append(" WHERE dp.id_dept = bmis.departmentid AND br.id = bd.billid AND bmis.billid = br.id AND bd.id = bpd.billdetailid ")
+                .append(" AND cont.id = bpd.ACCOUNTDETAILKEYID AND bpd.ACCOUNTDETAILTYPEID=(select id from accountdetailtype")
+                .append(" where name='contractor') AND bd.creditamount > 0 AND br.EXPENDITURETYPE = 'Works' AND br.STATUSID IN")
+                .append(" (select id from egw_status where code='APPROVED' and moduletype='CONTRACTORBILL') ")
+                .append(" and bd.glcodeid in(select coa1.id from chartofaccounts coa1 ")
+                .append(" where coa1.purposeid = (select id from egf_accountcode_purpose where name = 'RETENTION_MONEY'))")
+                .append(" and pc.id in(select bpd1.accountdetailkeyid from eg_billpayeedetails bpd1,eg_billdetails bd1 where ")
+                .append(" bpd1.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='PROJECTCODE')")
+                .append(" AND bd1.id = bpd1.billdetailid and bd1.debitamount>0 and bd1.billid=br.id) and not exists")
+                .append(" (select cbr.id from egw_contractorbill cbr where cbr.id = br.id ) ");
+
+        int index = 1;
+
+        Map<String, Object> whereClauseMap = formSearchConditionsQuery(index);
+        String whereClauseBfr = whereClauseMap.get("whereClause").toString();
+        String estimateStartQueryCondition = whereClauseMap.get("estimateQryCondition").toString();
+        List<Object> params = (List<Object>) whereClauseMap.get("params");
         paramList.addAll(params);
 
-        final String whereClauseBfr = whereClauseMap.get("whereClause").toString();
-        final String estimateStartQueryCondition = whereClauseMap.get("estimateQryCondition").toString();
+        index = (int) whereClauseMap.get("params");
 
-        String query1 = " (SELECT dp.name AS \"Bill Department\", cont.code AS \"Contractor Code\", cont.name AS \"Contractor Name\","
-                + " pc.code AS \"Project Code\", pc.name as \"Project Name\",br.billnumber AS \"Bill Number\", br.billtype AS \"Bill Type\", "
-                + " br.billdate AS \"Bill Date\", vh.vouchernumber AS \"Voucher Number\", br.billamount AS \"Bill Amount\","
-                + " bd.creditamount AS \"Retention money recovered\",(pcmis.work_completion_date+(365*pcmis.defect_liability_period)) AS \"Refund Date\", pc.is_final_bill AS \"PC Flag\" "
-                + " FROM EG_DEPARTMENT dp, eg_billregister br, eg_billregistermis bmis LEFT OUTER JOIN VOUCHERHEADER vh ON vh.id=bmis.voucherheaderid and vh.status=0,"
-                + " eg_billdetails bd, eg_billpayeedetails bpd, egw_contractor cont, egw_projectcode pc left outer join egw_projectcodemis pcmis on pcmis.projectcode_id = pc.id "
-                + " WHERE dp.id_dept = bmis.departmentid AND br.id = bd.billid AND bmis.billid = br.id AND bd.id = bpd.billdetailid "
-                + " AND cont.id = bpd.ACCOUNTDETAILKEYID AND bpd.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='contractor') "
-                + " AND bd.creditamount > 0 AND br.EXPENDITURETYPE = 'Works' AND br.STATUSID IN (select id from egw_status where code='APPROVED' and moduletype='CONTRACTORBILL') "
-                + " and bd.glcodeid in(select coa1.id from chartofaccounts coa1 "
-                + " where coa1.purposeid = (select id from egf_accountcode_purpose where name = 'RETENTION_MONEY'))"
-                + " and pc.id in(select bpd1.accountdetailkeyid from eg_billpayeedetails bpd1,eg_billdetails bd1 where "
-                + " bpd1.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='PROJECTCODE') AND bd1.id = bpd1.billdetailid "
-                + " and bd1.debitamount>0 and bd1.billid=br.id) and not exists (select cbr.id from egw_contractorbill cbr where cbr.id = br.id ) "
-                + whereClauseBfr + estimateStartQueryCondition;
+        query1.append(whereClauseBfr).append(estimateStartQueryCondition);
 
         if (retentionMoneyRefPeriod != null && retentionMoneyRefPeriod != -1) {
             final Date currentDate = new Date();
             final Long period = retentionMoneyRefPeriod * 24 * 3600 * 1000L;
             final Date toDate = new Date(currentDate.getTime() + period.longValue());
-            query1 = query1.concat(" and (br.billtype = ? OR pc.is_final_bill = 1) ");
+            query1.append(" and (br.billtype = ?").append(index++).append(" OR pc.is_final_bill = 1) ");
             paramList.add(WorksConstants.FINAL_BILL);
-            query1 = query1
-                    .concat(" and (pcmis.work_completion_date+(365*pcmis.defect_liability_period)) between ? and ? ");
+            query1.append(" and (pcmis.work_completion_date+(365*pcmis.defect_liability_period)) between ?")
+                    .append(index++).append(" and ?").append(index++);
             paramList.add(DateUtils.getFormattedDate(currentDate, "dd-MMM-yyyy"));
             paramList.add(DateUtils.getFormattedDate(toDate, "dd-MMM-yyyy"));
         }
-        query1 = query1.concat(")");
+        query1.append(")");
 
+        final StringBuffer query2 = new StringBuffer(
+                "(SELECT dp.dept_name AS \"Bill Department\", cont.code AS \"Contractor Code\",")
+                        .append(" cont.name AS \"Contractor Name\", pc.code AS \"Project Code\", pc.name as \"Project Name\",")
+                        .append(" br.billnumber AS \"Bill Number\", br.billtype AS \"Bill Type\", br.billdate AS \"Bill Date\",")
+                        .append(" vh.vouchernumber AS \"Voucher Number\", br.billamount AS \"Bill Amount\",")
+                        .append(" bd.creditamount AS \"Retention money recovered\",(woe.work_completion_date+ (365*wo.defect_liability_period))")
+                        .append(" as \"Refund Date\", pc.is_final_bill AS \"PC Flag\" FROM EG_DEPARTMENT dp, eg_billregister br,")
+                        .append(" eg_billregistermis bmis LEFT OUTER JOIN VOUCHERHEADER vh ON vh.id=bmis.voucherheaderid and vh.status=0,")
+                        .append(" eg_billdetails bd, eg_billpayeedetails bpd, egw_contractor cont, egw_projectcode pc,egw_work_order wo")
+                        .append(" left outer join egw_workorder_estimate woe on woe.workorder_id = wo.id, egw_mb_header mbh ")
+                        .append(" WHERE dp.id = bmis.departmentid AND br.id = bd.billid AND bmis.billid = br.id AND bd.id = bpd.billdetailid ")
+                        .append(" AND cont.id = bpd.ACCOUNTDETAILKEYID AND mbh.WORKORDER_ESTIMATE_ID = woe.id AND mbh.billregister_id = br.id")
+                        .append(" AND bpd.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='contractor') ")
+                        .append(" AND bd.creditamount > 0 AND br.EXPENDITURETYPE = 'Works' AND br.STATUSID IN (select id from egw_status")
+                        .append(" where code='APPROVED' and moduletype='CONTRACTORBILL') ")
+                        .append(" and bd.glcodeid in(select coa1.id from chartofaccounts coa1 ")
+                        .append(" where coa1.purposeid = (select id from egf_accountcode_purpose where name = 'RETENTION_MONEY'))")
+                        .append(" and pc.id in(select bpd1.accountdetailkeyid from eg_billpayeedetails bpd1,eg_billdetails bd1 where ")
+                        .append(" bpd1.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='PROJECTCODE')")
+                        .append(" AND bd1.id = bpd1.billdetailid and bd1.debitamount>0 and bd1.billid=br.id)");
+
+        whereClauseMap = formSearchConditionsQuery(index);
+        whereClauseBfr = whereClauseMap.get("whereClause").toString();
+        estimateStartQueryCondition = whereClauseMap.get("estimateQryCondition").toString();
+        params = (List<Object>) whereClauseMap.get("params");
         paramList.addAll(params);
-        String query2 = "(SELECT dp.dept_name AS \"Bill Department\", cont.code AS \"Contractor Code\", cont.name AS \"Contractor Name\","
-                + " pc.code AS \"Project Code\", pc.name as \"Project Name\",br.billnumber AS \"Bill Number\", br.billtype AS \"Bill Type\", "
-                + " br.billdate AS \"Bill Date\", vh.vouchernumber AS \"Voucher Number\", br.billamount AS \"Bill Amount\","
-                + " bd.creditamount AS \"Retention money recovered\",(woe.work_completion_date+ (365*wo.defect_liability_period)) as \"Refund Date\", pc.is_final_bill AS \"PC Flag\" FROM EG_DEPARTMENT dp, eg_billregister br, eg_billregistermis bmis LEFT OUTER JOIN VOUCHERHEADER vh ON vh.id=bmis.voucherheaderid and vh.status=0,"
-                + " eg_billdetails bd, eg_billpayeedetails bpd, egw_contractor cont, egw_projectcode pc,egw_work_order wo left outer join egw_workorder_estimate woe on woe.workorder_id = wo.id, egw_mb_header mbh "
-                + " WHERE dp.id = bmis.departmentid AND br.id = bd.billid AND bmis.billid = br.id AND bd.id = bpd.billdetailid "
-                + " AND cont.id = bpd.ACCOUNTDETAILKEYID AND mbh.WORKORDER_ESTIMATE_ID = woe.id AND mbh.billregister_id = br.id AND bpd.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='contractor') "
-                + " AND bd.creditamount > 0 AND br.EXPENDITURETYPE = 'Works' AND br.STATUSID IN (select id from egw_status where code='APPROVED' and moduletype='CONTRACTORBILL') "
-                + " and bd.glcodeid in(select coa1.id from chartofaccounts coa1 "
-                + " where coa1.purposeid = (select id from egf_accountcode_purpose where name = 'RETENTION_MONEY'))"
-                + " and pc.id in(select bpd1.accountdetailkeyid from eg_billpayeedetails bpd1,eg_billdetails bd1 where "
-                + " bpd1.ACCOUNTDETAILTYPEID=(select id from accountdetailtype where name='PROJECTCODE') AND bd1.id = bpd1.billdetailid "
-                + " and bd1.debitamount>0 and bd1.billid=br.id)" + whereClauseBfr + estimateStartQueryCondition;
+
+        query2.append(whereClauseBfr).append(estimateStartQueryCondition);
 
         if (retentionMoneyRefPeriod != null && retentionMoneyRefPeriod != -1) {
             final Date currentDate = new Date();
             final Long period = new Long(retentionMoneyRefPeriod) * new Long(24) * new Long(3600) * new Long(1000);
             final Date toDate = new Date(currentDate.getTime() + period.longValue());
-            query2 = query2.concat(" and br.billtype = ? ");
+            query2.append(" and br.billtype = ?").append(index++);
             paramList.add(WorksConstants.FINAL_BILL);
-            query2 = query2
-                    .concat(" and (woe.work_completion_date+ (365*wo.defect_liability_period)) between ? and ? ");
+            query2.append(" and (woe.work_completion_date + (365*wo.defect_liability_period)) between ?")
+                    .append(" and ?").append(index++);
             paramList.add(DateUtils.getFormattedDate(currentDate, "dd-MMM-yyyy"));
             paramList.add(DateUtils.getFormattedDate(toDate, "dd-MMM-yyyy"));
         }
-        query2 = query2.concat(")");
+        query2.append(")");
 
-        final String unionQuery = "FROM (" + query1 + " UNION " + query2;
-        final String groupByQuery = " ) GROUP BY \"Bill Department\", \"Contractor Code\",\"Contractor Name\",\"Bill Number\", \"Bill Type\", "
-                + "\"Bill Date\", \"Voucher Number\", \"Bill Amount\", \"Retention money recovered\", \"Refund Date\",\"PC Flag\" ";
+        final StringBuffer unionQuery = new StringBuffer("FROM (").append(query1).append(" UNION ").append(query2);
+        final StringBuffer groupByQuery = new StringBuffer(
+                " ) GROUP BY \"Bill Department\", \"Contractor Code\",\"Contractor Name\",")
+                        .append("\"Bill Number\", \"Bill Type\", \"Bill Date\", \"Voucher Number\", \"Bill Amount\",")
+                        .append(" \"Retention money recovered\", \"Refund Date\",\"PC Flag\" ");
         reportSubTitle = titleBuffer.append(whereClauseMap.get("title").toString()).toString();
-        return unionQuery + groupByQuery;
+        return unionQuery.append(groupByQuery).toString();
     }
 
-    private Map<String, Object> formSearchConditionsQuery() {
+    private Map<String, Object> formSearchConditionsQuery(int index) {
 
         final StringBuilder dynQuery = new StringBuilder(800);
         final StringBuffer titleBuffer = new StringBuffer();
-        final Map<String, Object> searchCriteria = new HashMap<String, Object>();
-        final List<Object> params = new ArrayList<Object>();
+        final Map<String, Object> searchCriteria = new HashMap<>();
+        final List<Object> params = new ArrayList<>();
 
         if (StringUtils.isNotBlank(projectCode)) {
-            dynQuery.append(" and pc.code like '%'||?||'%' ");
+            dynQuery.append(" and pc.code like '%'||?").append(index++)
+                    .append("||'%' ");
             params.add(projectCode);
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.projectcode") + projectCode);
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.projectcode")).append(projectCode);
         }
 
         if (StringUtils.isNotBlank(contractorCodeName)) {
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.contractorcodeorname")
-                    + contractorCodeName);
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.contractorcodeorname"))
+                    .append(contractorCodeName);
             final String[] contractorDetails = contractorCodeName.split("~");
             if (contractorDetails.length > 1) {
-                dynQuery.append(" and (upper(cont.code) like '%'||?||'%' or upper(cont.name) like '%'||?||'%') ");
+                dynQuery.append(" and (upper(cont.code) like '%'||?").append(index++)
+                        .append("||'%' or upper(cont.name) like '%'||?").append(index++)
+                        .append("||'%') ");
                 params.add(contractorDetails[0].toUpperCase());
                 params.add(contractorDetails[1].toUpperCase());
             } else {
-                dynQuery.append(" and (upper(cont.code) like '%'||?||'%' or upper(cont.name) like '%'||?||'%') ");
+                dynQuery.append(" and (upper(cont.code) like '%'||?").append(index++)
+                        .append("||'%' or upper(cont.name) like '%'||?").append(index++)
+                        .append("||'%') ");
                 params.add(contractorDetails[0].toUpperCase());
                 params.add(contractorDetails[0].toUpperCase());
             }
         }
 
         if (billDepartment != null && billDepartment != 0 && billDepartment != -1) {
-            dynQuery.append(" and bmis.departmentid = ?");
+            dynQuery.append(" and bmis.departmentid = ?").append(index++);
             params.add(billDepartment);
             final Department department = departmentService.getDepartmentById(billDepartment);
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.billdepartment")
-                    + department.getName());
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.billdepartment"))
+                    .append(department.getName());
         }
 
-        if (billDateFrom != null)
-            dynQuery.append(" and br.billdate >= '" + DateUtils.getFormattedDate(billDateFrom, "dd-MMM-yyyy") + "' ");
-        // paramList.add(DateUtils.getFormattedDate(billDateFrom,"dd-MMM-yyyy"));
+        if (billDateFrom != null) {
+            dynQuery.append(" and br.billdate >= ?").append(index++);
+            params.add(DateUtils.getFormattedDate(billDateFrom, "dd-MMM-yyyy"));
+            // paramList.add(DateUtils.getFormattedDate(billDateFrom,"dd-MMM-yyyy"));
+        }
 
-        if (billDateTo != null)
-            dynQuery.append(" and br.billdate <= '" + DateUtils.getFormattedDate(billDateTo, "dd-MMM-yyyy") + "' ");
-        // paramList.add(DateUtils.getFormattedDate(billDateTo,"dd-MMM-yyyy"));
+        if (billDateTo != null) {
+            dynQuery.append(" and br.billdate <= ?").append(index++);
+            params.add(DateUtils.getFormattedDate(billDateTo, "dd-MMM-yyyy"));
+            // paramList.add(DateUtils.getFormattedDate(billDateTo,"dd-MMM-yyyy"));
+        }
         if (billDateFrom != null && billDateTo != null)
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.date")
-                    + DateUtils.getFormattedDate(billDateFrom, "dd/MM/yyyy") + " to "
-                    + DateUtils.getFormattedDate(billDateTo, "dd/MM/yyyy"));
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.date"))
+                    .append(DateUtils.getFormattedDate(billDateFrom, "dd/MM/yyyy")).append(" to ")
+                    .append(DateUtils.getFormattedDate(billDateTo, "dd/MM/yyyy"));
 
         if (StringUtils.isNotBlank(billType)) {
-            dynQuery.append(" and br.billtype = ? ");
+            dynQuery.append(" and br.billtype = ?").append(index++);
             params.add(billType);
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.billType") + billType);
-
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.billType")).append(billType);
         }
         if (retentionMoneyAmountFrom != null && retentionMoneyAmountTo != null
                 && !retentionMoneyAmountFrom.equals(BigDecimal.ZERO) && !retentionMoneyAmountTo.equals(BigDecimal.ZERO)) {
-            dynQuery.append(" and bd.creditamount between ? and ? ");
+            dynQuery.append(" and bd.creditamount between ?").append(index++)
+                    .append(" and ?").append(index++);
             params.add(retentionMoneyAmountFrom);
             params.add(retentionMoneyAmountTo);
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.report.retentionmoney.amount.range.lebel")
-                    + String.format("%.2f", retentionMoneyAmountFrom) + " - "
-                    + String.format("%.2f", retentionMoneyAmountTo));
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.report.retentionmoney.amount.range.lebel"))
+                    .append(String.format("%.2f", retentionMoneyAmountFrom)).append(" - ")
+                    .append(String.format("%.2f", retentionMoneyAmountTo));
         }
 
         if (retentionMoneyRefPeriod != null && retentionMoneyRefPeriod != -1) {
-            titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.refundDueForPayable"));
+            titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.refundDueForPayable"));
 
             if (retentionMoneyRefPeriod == 30)
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.refundDueForPayable.1month"));
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.refundDueForPayable.1month"));
             if (retentionMoneyRefPeriod == 60)
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.refundDueForPayable.2month"));
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.refundDueForPayable.2month"));
             if (retentionMoneyRefPeriod == 90)
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.refundDueForPayable.3month"));
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.refundDueForPayable.3month"));
             if (retentionMoneyRefPeriod == 180)
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.refundDueForPayable.6month"));
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.refundDueForPayable.6month"));
             if (retentionMoneyRefPeriod == 365)
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.refundDueForPayable.1year"));
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.refundDueForPayable.1year"));
         }
 
-        String estimateStartQueryCondition = "";
+        final StringBuffer estimateStartQueryCondition = new StringBuffer();
         if (StringUtils.isNotBlank(estimateNumber) || budgetHeads != null && !budgetHeads.isEmpty()
                 || depositCOA != null && !depositCOA.isEmpty()) {
-            estimateStartQueryCondition = " and pc.id in (select est.projectcode_id from egw_abstractestimate est where est.parentid is null and "
-                    + "est.status_id = (select id from egw_status where code='ADMIN_SANCTIONED' and moduletype='AbstractEstimate') ";
+            estimateStartQueryCondition.append(" and pc.id in (select est.projectcode_id from egw_abstractestimate est")
+                    .append(" where est.parentid is null and est.status_id = (select id from egw_status where code='ADMIN_SANCTIONED'")
+                    .append(" and moduletype='AbstractEstimate') ");
 
             if (StringUtils.isNotBlank(estimateNumber)) {
-                estimateStartQueryCondition = estimateStartQueryCondition + " and est.estimate_number like '%'||?||'%'";
+                estimateStartQueryCondition.append(" and est.estimate_number like '%'||?").append(index++)
+                        .append("||'%'");
                 params.add(estimateNumber);
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.estimatenumber")
-                        + estimateNumber);
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.estimatenumber"))
+                        .append(estimateNumber);
             }
 
             if (budgetHeads != null && !budgetHeads.isEmpty() && budgetHeads.get(0) != null && budgetHeads.get(0) != -1
                     && depositCOA != null && !depositCOA.isEmpty() && depositCOA.get(0) != null
                     && depositCOA.get(0) != -1) {
-                estimateStartQueryCondition = estimateStartQueryCondition
-                        + " and est.id in (select abstractestimate_id from egw_financialdetail" + " where "
-                        + getInSubQuery(new ArrayList<Object>(budgetHeads), " BUDGETGROUP_ID ");
-                estimateStartQueryCondition = estimateStartQueryCondition + " or "
-                        + getInSubQuery(new ArrayList<Object>(depositCOA), " COA_ID ") + ")";
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.budgethead")
-                        + subHeaderBudgetHeads);
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.depositcoa")
-                        + subHeaderDepositCOA);
+                estimateStartQueryCondition.append(" and est.id in (select abstractestimate_id from egw_financialdetail")
+                        .append(" where ").append(getInSubQuery(new ArrayList<Object>(budgetHeads), " BUDGETGROUP_ID "));
+                estimateStartQueryCondition.append(" or ").append(getInSubQuery(new ArrayList<Object>(depositCOA), " COA_ID "))
+                        .append(")");
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.budgethead"))
+                        .append(subHeaderBudgetHeads);
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.depositcoa"))
+                        .append(subHeaderDepositCOA);
             } else if (budgetHeads != null && !budgetHeads.isEmpty() && budgetHeads.get(0) != null
                     && budgetHeads.get(0) != -1) {
-                estimateStartQueryCondition = estimateStartQueryCondition
-                        + " and est.id in (select abstractestimate_id from egw_financialdetail" + " where "
-                        + getInSubQuery(new ArrayList<Object>(budgetHeads), " BUDGETGROUP_ID ") + ")";
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.budgethead")
-                        + subHeaderBudgetHeads);
+                estimateStartQueryCondition.append(" and est.id in (select abstractestimate_id from egw_financialdetail")
+                        .append(" where ").append(getInSubQuery(new ArrayList<Object>(budgetHeads), " BUDGETGROUP_ID "))
+                        .append(")");
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.budgethead"))
+                        .append(subHeaderBudgetHeads);
             } else if (depositCOA != null && !depositCOA.isEmpty() && depositCOA.get(0) != null
                     && depositCOA.get(0) != -1) {
-                estimateStartQueryCondition = estimateStartQueryCondition
-                        + " and est.id in (select abstractestimate_id from egw_financialdetail" + " where "
-                        + getInSubQuery(new ArrayList<Object>(depositCOA), " COA_ID ") + ")";
-                titleBuffer.append(" " + getText("retentionMoneyRecoveryRegister.title.depositcoa")
-                        + subHeaderDepositCOA);
+                estimateStartQueryCondition.append(" and est.id in (select abstractestimate_id from egw_financialdetail")
+                        .append(" where ").append(getInSubQuery(new ArrayList<Object>(depositCOA), " COA_ID "))
+                        .append(")");
+                titleBuffer.append(" ").append(getText("retentionMoneyRecoveryRegister.title.depositcoa"))
+                        .append(subHeaderDepositCOA);
             }
 
-            estimateStartQueryCondition = estimateStartQueryCondition + ")";
+            estimateStartQueryCondition.append(")");
         }
 
         searchCriteria.put("whereClause", dynQuery.toString());
         searchCriteria.put("params", params);
         searchCriteria.put("title", titleBuffer.toString());
         searchCriteria.put("estimateQryCondition", estimateStartQueryCondition);
+        searchCriteria.put("index", index);
         return searchCriteria;
     }
 
@@ -492,10 +542,10 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         final StringBuffer inClause = new StringBuffer("");
         if (idList != null && idList.size() > 0 && param != null) {
             final int size = idList.size();
-            inClause.append(" (" + param + " in ( ");
+            inClause.append(" (").append(param).append(" in ( ");
             for (int i = 0; i < size; i++) {
                 if (i % 1000 == 0 && i != 0)
-                    inClause.append(") or " + param + " in (").append(idList.get(i).toString());
+                    inClause.append(") or ").append(param).append(" in (").append(idList.get(i).toString());
                 else
                     inClause.append(idList.get(i).toString());
                 if (i == size - 1)
@@ -508,23 +558,23 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    private List getReportData() {
+    private List<RetentionMoneyRecoveryRegisterBean> getReportData() {
         final String orderByClause = " ORDER BY \"Bill Date\"";
-        final String reportQuery = getSelectQuery() + getSearchQuery() + orderByClause;
-        final Query sqlQuery = getPersistenceService().getSession().createNativeQuery(String.valueOf(reportQuery));
-        int count = 0;
+        final String reportQuery = getSelectQuery().append(getSearchQuery()).append(orderByClause).toString();
+        final Query sqlQuery = entityManager.createNativeQuery(reportQuery);
+        int count = 1;
         for (final Object param : paramList) {
             sqlQuery.setParameter(count, param);
             count++;
         }
-        final List<Object[]> resultList = sqlQuery.list();
+        final List<Object[]> resultList = sqlQuery.getResultList();
         final List<RetentionMoneyRecoveryRegisterBean> reportList = setBeanValues(resultList);
         return reportList;
     }
 
     public String exportToPdf() {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        final List reportData = getReportData();
+        final Map<String, Object> reportParams = new HashMap<>();
+        final List<RetentionMoneyRecoveryRegisterBean> reportData = getReportData();
         reportParams.put("reportSubTitle", reportSubTitle);
         final ReportRequest reportRequest = new ReportRequest("RetentionMoneyRecoveryRegister", reportData,
                 reportParams);
@@ -535,8 +585,8 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
     }
 
     public String exportToExcel() {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        final List<AbstractEstimate> reportData = getReportData();
+        final Map<String, Object> reportParams = new HashMap<>();
+        final List<RetentionMoneyRecoveryRegisterBean> reportData = getReportData();
         reportParams.put("reportSubTitle", reportSubTitle);
         final ReportRequest reportRequest = new ReportRequest("RetentionMoneyRecoveryRegister", reportData,
                 reportParams);

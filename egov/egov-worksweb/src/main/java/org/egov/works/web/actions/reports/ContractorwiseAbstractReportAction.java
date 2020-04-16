@@ -47,19 +47,40 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.ContractorGrade;
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.Scheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -75,23 +96,9 @@ import org.egov.works.services.WorkProgressAbstractReportService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 @Results({
         @Result(name = ContractorwiseAbstractReportAction.PDF, type = "stream", location = "reportInputStream", params = {
                 "inputName", "contractorwiseAbstractReport", "contentType", "application/pdf", "contentDisposition",
@@ -109,7 +116,6 @@ import java.util.Map;
 public class ContractorwiseAbstractReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 6545841427307931948L;
-    private static final Logger LOGGER = Logger.getLogger(ContractorwiseAbstractReportAction.class);
     private static final String DEPT_WISE = "deptwise";
     private String finYearId;
     private String finYearRange;
@@ -154,7 +160,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private List<Long> depositCodeIds;
     private BudgetDetailsDAO budgetDetailsDAO;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-    private List<ContractorwiseReportBean> resultList = new LinkedList<ContractorwiseReportBean>();
+    private List<ContractorwiseReportBean> resultList = new LinkedList<>();
     private String resultStatus = "beforeSearch";
     public static final String PDF = "PDF";
     public static final String XLS = "XLS";
@@ -165,7 +171,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private EgovPaginatedList paginatedList;
     private Integer page = 1;
     private Integer pageSize = 30;
-    private final List<CommonDrillDownReportBean> commonBeanList = new ArrayList<CommonDrillDownReportBean>();
+    private final List<CommonDrillDownReportBean> commonBeanList = new ArrayList<>();
     private List<Object> paramList;
     public WorkProgressAbstractReportService workProgressAbstractReportService;
     private String budgetHeadsStr;
@@ -173,6 +179,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private String depositCodeIdsStr;
     private String budgetHeadIdsStr;
     private String reportMessage;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -184,40 +193,51 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
         super.prepare();
         final List<CFinancialYear> finYrList = worksService.getAllFinancialYearsForWorks();
         addDropdownData("finYearList", finYrList);
-        addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from Department"));
+        addDropdownData("executingDepartmentList",
+                entityManager.createQuery("from Department", Department.class).getResultList());
         addDropdownData("worksTypeList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+                entityManager.createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null", EgwTypeOfWork.class)
+                        .getResultList());
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
         populateCategoryList(ajaxEstimateAction, getWorksType() == -1 ? false : getWorksType() != -1);
         addDropdownData("fundList", fundDao.findAllActiveIsLeafFunds());
         addDropdownData("functionList", functionHibDao.findAll());
-        addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme sc where sc.isactive=true"));
+        addDropdownData("schemeList", entityManager.createQuery("from Scheme sc where sc.isactive = true", Scheme.class)
+                .getResultList());
         final AjaxWorkProgressAction ajaxWorkProgressAction = new AjaxWorkProgressAction();
         populateSubSchemeList(ajaxWorkProgressAction, getScheme() != null);
         addDropdownData("budgetHeadList", getBudgetGroupsFromAppConfig());
         addDropdownData("depositCodeList", getDepositCodesFromAppConfig());
         addDropdownData(
                 "allDepositCodeCOAList",
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct(fd.coa) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
+                entityManager.createQuery(
+                        new StringBuffer("select distinct(fd.coa)")
+                                .append(" from FinancialDetail fd")
+                                .append(" where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe")
+                                .append(" where woe.workOrder.egwStatus.code='APPROVED' ) order by name  ").toString(),
+                        CChartOfAccounts.class)
+                        .getResultList());
         addDropdownData(
                 "allBudgetHeadList",
-                getPersistenceService()
-                        .findAllBy(
-                                "select distinct(fd.budgetGroup) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
+                entityManager.createQuery(
+                        new StringBuffer("select distinct(fd.budgetGroup)")
+                                .append(" from FinancialDetail fd")
+                                .append(" where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe")
+                                .append(" where woe.workOrder.egwStatus.code='APPROVED' ) order by name  ").toString(),
+                        BudgetGroup.class)
+                        .getResultList());
         final CFinancialYear financialYear = finHibernateDao.getFinYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
         finYearRangeStr = generateFinYrList(finYrList);
-        addDropdownData("gradeList", getPersistenceService().findAllBy("from ContractorGrade order by upper(grade)"));
+        addDropdownData("gradeList",
+                entityManager.createQuery("from ContractorGrade order by upper(grade)", ContractorGrade.class).getResultList());
         if (dropDownBudgetHeads != null && dropDownBudgetHeads.size() > 0)
             generateBudgetHeads();
         if (dropDownDepositCodes != null && dropDownDepositCodes.size() > 0)
@@ -232,46 +252,43 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
 
     private void setBudgetHeadIdsAndDepositCodeIds() {
         if (StringUtils.isNotBlank(budgetHeadsStr)) {
-            budgetHeads = new ArrayList<String>();
-            budgetHeadIds = new ArrayList<Long>();
+            budgetHeads = new ArrayList<>();
+            budgetHeadIds = new ArrayList<>();
             workProgressAbstractReportService.setBudgetHeadsFromString(budgetHeadsStr, budgetHeads, budgetHeadIds);
         }
         if (StringUtils.isNotBlank(depositCodesStr)) {
-            depositCodeIds = new ArrayList<Long>();
+            depositCodeIds = new ArrayList<>();
             workProgressAbstractReportService.setDepositCodesFromString(depositCodesStr, depositCodeIds);
         }
         if (StringUtils.isNotBlank(budgetHeadIdsStr)) {
-            budgetHeads = new ArrayList<String>();
-            budgetHeadIds = new ArrayList<Long>();
+            budgetHeads = new ArrayList<>();
+            budgetHeadIds = new ArrayList<>();
             workProgressAbstractReportService.setBudgetHeadsFromIdString(budgetHeadIdsStr, budgetHeads, budgetHeadIds);
         }
         if (StringUtils.isNotBlank(depositCodeIdsStr)) {
-            depositCodeIds = new ArrayList<Long>();
+            depositCodeIds = new ArrayList<>();
             workProgressAbstractReportService.setDepositCodesFromIdString(depositCodeIdsStr, depositCodeIds);
         }
     }
 
     private void formReportMessage() {
-        final String dateStr = (String) persistenceService.getSession()
-                .createNativeQuery(" select min(VIEW_TIMESTAMP) from EGW_WPREPORT_EST_WO_MVIEW ").list().get(0);
+        final String dateStr = (String) entityManager
+                .createNativeQuery(" select min(VIEW_TIMESTAMP) from EGW_WPREPORT_EST_WO_MVIEW ").getResultList()
+                .get(0);
         reportMessage = getText("contractorwiseAbstractReport.data.message", new String[] { dateStr });
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String search() {
         resultStatus = "afterSearch";
         formReportMessage();
-        final String commonSearchFilter = constructSearchFilter();
-        final Map<String, String> queryMap = generateQuery(commonSearchFilter);
-        final String query = queryMap.get("query");
-        final String countQuery = queryMap.get("count");
+        final Map<String, Object> queryMap = generateQuery();
+        final String query = (String) queryMap.get("query");
+        final String countQuery = (String) queryMap.get("count");
+        final List<Object> params = (List<Object>) queryMap.get("params");
         Page resPage;
-        final List<Object> listWithRepeatedPramsForUnion = new LinkedList();
-        listWithRepeatedPramsForUnion.addAll(paramList);
-        listWithRepeatedPramsForUnion.addAll(paramList);
-        listWithRepeatedPramsForUnion.addAll(paramList);
-        listWithRepeatedPramsForUnion.addAll(paramList);
         if (searchType.equals("")) {
-            final SearchQuerySQL sqlQuery = new SearchQuerySQL(query, countQuery, listWithRepeatedPramsForUnion);
+            final SearchQuerySQL sqlQuery = new SearchQuerySQL(query, countQuery, params);
             resPage = sqlQuery.getPage(getPersistenceService(), page, pageSize);
             paginatedList = new EgovPaginatedList(resPage, sqlQuery.getCount(getPersistenceService()));
             populateData(paginatedList.getList());
@@ -283,10 +300,10 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             }
         } else if (searchType.equalsIgnoreCase("report")) {
             List<Object[]> wholeQueryList = null;
-            final Query qry = getPersistenceService().getSession().createNativeQuery(query);
-            for (int i = 0; i < listWithRepeatedPramsForUnion.size(); i++)
-                qry.setParameter(i, listWithRepeatedPramsForUnion.get(i));
-            wholeQueryList = qry.list();
+            final Query qry = entityManager.createNativeQuery(query);
+            for (int i = 0; i < params.size(); i++)
+                qry.setParameter(i, params.get(i));
+            wholeQueryList = qry.getResultList();
             populateData(wholeQueryList);
         }
         return DEPT_WISE;
@@ -295,7 +312,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     public String viewEstimatePDF() {
         setSearchType("report");
         showEstimatesTakenUpDrillDown();
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("subHeader", subHeader + "\n" + reportMessage);
         reportParams.put("mainHeader", getText("contractorwiseAbstractReport.showTakenUpEst") + getContractorName());
 
@@ -311,7 +328,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     public String viewEstimateXLS() {
         setSearchType("report");
         showEstimatesTakenUpDrillDown();
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("subHeader", subHeader + "\n" + reportMessage);
 
         reportParams.put("mainHeader", getText("contractorwiseAbstractReport.showTakenUpEst") + getContractorName());
@@ -325,171 +342,136 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         return "estimateXLS";
     }
 
-    private String getTakenUpQuery(final String commonSearchCriteriaQueryStr, final String finalBillType) {
+    private String getTakenUpQuery(final String finalBillType, Integer index, List<Object> params) {
         final StringBuffer query = new StringBuffer(
-                " SELECT WORK_ORDER_CONTRACTOR_ID,WORK_ORDER_CONTRACTOR_NAME,WORK_ORDER_CONTRACTOR_CODE, "
-                        + " SUM(EST_COUNT) TAKEN_UP_EST_COUNT ,SUM(NVL(WORK_ORDER_WORKORDER_AMOUNT,0)) TAKEN_UP_WO_AMOUNT, "
-                        + " 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD,0 IN_PROGRESS_EST_COUNT,0 IN_PROGRESS_NEGO_VAL ,0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT,"
-                        + " SUM(NVL(REV_WO_TAKEN_UP_AMT,0)) REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, 0 REV_WO_NOT_STARTED_AMT_SUM "
-                        + " FROM (select WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME, "
-                        + " WORK_ORDER_CONTRACTOR_CODE, COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT , WORK_ORDER_ID, WORK_ORDER_WORKORDER_AMOUNT,  "
-                        + " (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0)) FROM EGW_WPREPORT_EST_WO_MVIEW INNER_VIEW WHERE INNER_VIEW.WORK_ORDER_PARENTID = OUTER_VIEW.WORK_ORDER_ID) REV_WO_TAKEN_UP_AMT "
-                        + " from EGW_WPREPORT_EST_WO_MVIEW OUTER_VIEW ");
-        query.append(" where ABS_EST_PARENTID IS NULL AND WORK_ORDER_STATUS_CODE = 'APPROVED' "
-                + commonSearchCriteriaQueryStr + " group by WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME , "
-                + " WORK_ORDER_CONTRACTOR_CODE,WORK_ORDER_ID,WORK_ORDER_WORKORDER_AMOUNT ) "
-                + " group by WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE ");
+                "SELECT WORK_ORDER_CONTRACTOR_ID,WORK_ORDER_CONTRACTOR_NAME,WORK_ORDER_CONTRACTOR_CODE, ")
+                        .append(" SUM(EST_COUNT) TAKEN_UP_EST_COUNT ,SUM(NVL(WORK_ORDER_WORKORDER_AMOUNT,0)) TAKEN_UP_WO_AMOUNT, ")
+                        .append(" 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD,0 IN_PROGRESS_EST_COUNT,0 IN_PROGRESS_NEGO_VAL ,")
+                        .append("0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT,")
+                        .append(" SUM(NVL(REV_WO_TAKEN_UP_AMT,0)) REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM,")
+                        .append(" 0 REV_WO_NOT_STARTED_AMT_SUM ")
+                        .append(" FROM (select WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME, ")
+                        .append(" WORK_ORDER_CONTRACTOR_CODE, COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT , WORK_ORDER_ID,")
+                        .append(" WORK_ORDER_WORKORDER_AMOUNT,  ")
+                        .append(" (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0)) FROM EGW_WPREPORT_EST_WO_MVIEW INNER_VIEW")
+                        .append(" WHERE INNER_VIEW.WORK_ORDER_PARENTID = OUTER_VIEW.WORK_ORDER_ID) REV_WO_TAKEN_UP_AMT ")
+                        .append(" from EGW_WPREPORT_EST_WO_MVIEW OUTER_VIEW ")
+                        .append(constructSearchFilter(index));
+        params.addAll(paramList);
+        query.append(" where ABS_EST_PARENTID IS NULL AND WORK_ORDER_STATUS_CODE = 'APPROVED' ")
+                .append(constructSearchFilter(index));
+        params.addAll(paramList);
+        query.append(" group by WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME , ")
+                .append(" WORK_ORDER_CONTRACTOR_CODE,WORK_ORDER_ID,WORK_ORDER_WORKORDER_AMOUNT ) ")
+                .append(" group by WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE ");
         return query.toString();
     }
 
-    private String getCompletedQuery(final String commonSearchCriteriaQueryStr, final String finalBillType) {
-        final StringBuffer query = new StringBuffer("");
-        query.append(" SELECT WORK_ORDER_CONTRACTOR_ID,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT,");
-        query.append("  SUM(EST_COUNT) COMPLETED_EST_COUNT ,");
-        query.append(
-                "  SUM(PYMT_RELEASED_AMT) COMPLETED_PYMT_RLSD , 0 IN_PROGRESS_EST_COUNT,0 IN_PROGRESS_NEGO_VAL,0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT, "
-                        + "0 REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, 0 REV_WO_NOT_STARTED_AMT_SUM ");
-        query.append(" FROM");
-        query.append("  (SELECT WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("    WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("    WORK_ORDER_CONTRACTOR_CODE,");
-        query.append("    WORK_ORDER_ID,");
-        query.append("    COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT ,");
-        query.append("    (SELECT SUM(NVL(bill_view.PMT_RLSD_TO_CONTRACTOR_FOR_WO,0))");
-        query.append("    FROM EGW_WPREPORT_EST_BILLS_MVIEW bill_view");
-        query.append("    WHERE bill_view.BILL_REG_BILLTYPE='" + finalBillType + "'");
-        query.append("    AND bill_view.WORK_ORDER_ID      =WO_VIEW.WORK_ORDER_ID");
-        query.append("    AND bill_view.BILL_REG_BILLSTATUS='APPROVED'");
-        query.append("    ) AS PYMT_RELEASED_AMT");
-        query.append("  FROM EGW_WPREPORT_EST_WO_MVIEW WO_VIEW");
-        query.append("  WHERE WORK_ORDER_STATUS_CODE = 'APPROVED'");
-        query.append("  AND WORK_ORDER_ID           IN");
-        query.append("    (SELECT bill_view.WORK_ORDER_ID");
-        query.append("    FROM EGW_WPREPORT_EST_BILLS_MVIEW bill_view");
-        query.append("    WHERE bill_view.BILL_REG_BILLTYPE='" + finalBillType + "'");
-        query.append("    AND bill_view.WORK_ORDER_ID      =WO_VIEW.WORK_ORDER_ID");
-        query.append("    AND bill_view.BILL_REG_BILLSTATUS='APPROVED'");
-        query.append("    )");
-        query.append("  AND ABS_EST_PARENTID IS NULL   " + commonSearchCriteriaQueryStr);
-        query.append("  GROUP BY WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("    WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("    WORK_ORDER_CONTRACTOR_CODE,");
-        query.append("    WORK_ORDER_ID");
-        query.append("  )");
-        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE");
+    private String getCompletedQuery(final String finalBillType, Integer index, List<Object> params) {
+        final StringBuffer query = new StringBuffer(" SELECT WORK_ORDER_CONTRACTOR_ID,")
+                .append("  WORK_ORDER_CONTRACTOR_NAME ,WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT,")
+                .append("  SUM(EST_COUNT) COMPLETED_EST_COUNT , SUM(PYMT_RELEASED_AMT) COMPLETED_PYMT_RLSD , 0 IN_PROGRESS_EST_COUNT,")
+                .append("0 IN_PROGRESS_NEGO_VAL,0 IN_PROGRESS_PYMT_RLSD,0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT, ")
+                .append(" 0 REV_WO_TAKEN_UP_AMT_SUM, 0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, 0 REV_WO_NOT_STARTED_AMT_SUM ")
+                .append(" FROM (SELECT WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE,")
+                .append(" WORK_ORDER_ID, COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT , (SELECT SUM(NVL(bill_view.PMT_RLSD_TO_CONTRACTOR_FOR_WO,0))")
+                .append(" FROM EGW_WPREPORT_EST_BILLS_MVIEW bill_view WHERE bill_view.BILL_REG_BILLTYPE = ?")
+                .append(index++);
+        params.add(finalBillType);
+        query.append(" AND bill_view.WORK_ORDER_ID = WO_VIEW.WORK_ORDER_ID AND bill_view.BILL_REG_BILLSTATUS='APPROVED'")
+                .append(" ) AS PYMT_RELEASED_AMT FROM EGW_WPREPORT_EST_WO_MVIEW WO_VIEW WHERE WORK_ORDER_STATUS_CODE = 'APPROVED'")
+                .append(" AND WORK_ORDER_ID IN (SELECT bill_view.WORK_ORDER_ID FROM EGW_WPREPORT_EST_BILLS_MVIEW bill_view")
+                .append(" WHERE bill_view.BILL_REG_BILLTYPE = ?").append(index++);
+        params.add(finalBillType);
+        query.append(" AND bill_view.WORK_ORDER_ID = WO_VIEW.WORK_ORDER_ID AND bill_view.BILL_REG_BILLSTATUS='APPROVED'")
+                .append(" ) AND ABS_EST_PARENTID IS NULL ")
+                .append(constructSearchFilter(index));
+        params.addAll(paramList);
+        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE,")
+                .append(" WORK_ORDER_ID) GROUP BY WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE");
 
         return query.toString();
     }
 
-    private String getInProgressQuery(final String commonSearchCriteriaQueryStr, final String finalBillType) {
-        final StringBuffer query = new StringBuffer("");
-        query.append(" SELECT WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME,");
-        query.append(
-                " WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD, SUM(EST_COUNT) IN_PROGRESS_EST_COUNT, ");
-        query.append(
-                " SUM(NVL(TENDER_RESP_NEGOTIATED_VALUE,0)) IN_PROGRESS_NEGO_VAL , SUM(PYMT_RELEASED_AMT) IN_PROGRESS_PYMT_RLSD , 0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT,"
-                        + " 0 REV_WO_TAKEN_UP_AMT_SUM, SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL,0)) REV_WO_IN_PROGRESS_NEG_VAL_SUM,0 REV_WO_NOT_STARTED_AMT_SUM  ");
-        query.append(" FROM ");
-        query.append(" (");
-        query.append(" SELECT WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE ,");
-        query.append("  WORK_ORDER_ID,");
-        query.append("  COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT ,");
-        query.append("  TENDER_RESP_NEGOTIATED_VALUE,");
-        query.append("    (SELECT SUM(NVL(BILL_VIEW.PMT_RLSD_TO_CONTRACTOR_FOR_WO,0))");
-        query.append("    FROM EGW_WPREPORT_EST_BILLS_MVIEW BILL_VIEW");
-        query.append("    WHERE BILL_VIEW.WORK_ORDER_ID      =EST_VIEW.WORK_ORDER_ID");
-        query.append("    AND BILL_VIEW.BILL_REG_BILLSTATUS='APPROVED'");
-        query.append("    ) AS PYMT_RELEASED_AMT, "
-                + " (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0)) FROM EGW_WPREPORT_EST_WO_MVIEW INNER_VIEW WHERE INNER_VIEW.WORK_ORDER_PARENTID = EST_VIEW.WORK_ORDER_ID) REV_WO_IN_PROGRESS_NEG_VAL ");
-        query.append(" FROM EGW_WPREPORT_EST_WO_MVIEW EST_VIEW");
-        query.append(" WHERE WORK_ORDER_STATUS_CODE      = 'APPROVED'");
-        query.append(" AND WO_LATEST_OFFLINE_STATUS_CODE = '" + WorksConstants.WO_STATUS_WOCOMMENCED + "'");
-        query.append(" AND '" + finalBillType + "' NOT      IN");
-        query.append("  (SELECT DISTINCT(BILL_VIEW.BILL_REG_BILLTYPE)");
-        query.append("  FROM EGW_WPREPORT_EST_BILLS_MVIEW BILL_VIEW");
-        query.append("  WHERE BILL_VIEW.WORK_ORDER_ID    = EST_VIEW.WORK_ORDER_ID");
-        query.append("  AND BILL_VIEW.BILL_REG_BILLSTATUS='APPROVED'");
-        query.append("  )");
-        query.append(" AND EST_VIEW.TENDER_RESP_STATUS_CODE='APPROVED' ");
-        query.append("  AND ABS_EST_PARENTID IS NULL   " + commonSearchCriteriaQueryStr);
-        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE,");
-        query.append("  WORK_ORDER_ID,");
-        query.append("  TENDER_RESP_NEGOTIATED_VALUE");
-        query.append(" )");
-        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE");
+    private String getInProgressQuery(final String finalBillType, Integer index, List<Object> params) {
+        final StringBuffer query = new StringBuffer(" SELECT WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME,")
+                .append(" WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,")
+                .append(" 0 COMPLETED_PYMT_RLSD, SUM(EST_COUNT) IN_PROGRESS_EST_COUNT, ")
+                .append(" SUM(NVL(TENDER_RESP_NEGOTIATED_VALUE,0)) IN_PROGRESS_NEGO_VAL , SUM(PYMT_RELEASED_AMT) IN_PROGRESS_PYMT_RLSD,")
+                .append(" 0 NOT_STARTED_EST_COUNT,0 NOT_STARTED_WO_AMT, 0 REV_WO_TAKEN_UP_AMT_SUM,")
+                .append(" SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL,0)) REV_WO_IN_PROGRESS_NEG_VAL_SUM,0 REV_WO_NOT_STARTED_AMT_SUM  ")
+                .append(" FROM (SELECT WORK_ORDER_CONTRACTOR_ID , WORK_ORDER_CONTRACTOR_NAME , WORK_ORDER_CONTRACTOR_CODE ,")
+                .append(" WORK_ORDER_ID, COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT , TENDER_RESP_NEGOTIATED_VALUE,")
+                .append(" (SELECT SUM(NVL(BILL_VIEW.PMT_RLSD_TO_CONTRACTOR_FOR_WO,0)) FROM EGW_WPREPORT_EST_BILLS_MVIEW BILL_VIEW")
+                .append(" WHERE BILL_VIEW.WORK_ORDER_ID = EST_VIEW.WORK_ORDER_ID AND BILL_VIEW.BILL_REG_BILLSTATUS='APPROVED'")
+                .append(" ) AS PYMT_RELEASED_AMT, (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0))")
+                .append(" FROM EGW_WPREPORT_EST_WO_MVIEW INNER_VIEW WHERE INNER_VIEW.WORK_ORDER_PARENTID = EST_VIEW.WORK_ORDER_ID)")
+                .append(" REV_WO_IN_PROGRESS_NEG_VAL FROM EGW_WPREPORT_EST_WO_MVIEW EST_VIEW WHERE WORK_ORDER_STATUS_CODE = 'APPROVED'")
+                .append(" AND WO_LATEST_OFFLINE_STATUS_CODE = ?").append(index++);
+        params.add(WorksConstants.WO_STATUS_WOCOMMENCED);
+        query.append(" AND ?").append(index++);
+        params.add(finalBillType);
+        query.append(" NOT IN (SELECT DISTINCT(BILL_VIEW.BILL_REG_BILLTYPE) FROM EGW_WPREPORT_EST_BILLS_MVIEW BILL_VIEW")
+                .append(" WHERE BILL_VIEW.WORK_ORDER_ID = EST_VIEW.WORK_ORDER_ID AND BILL_VIEW.BILL_REG_BILLSTATUS='APPROVED'")
+                .append(" ) AND EST_VIEW.TENDER_RESP_STATUS_CODE='APPROVED' AND ABS_EST_PARENTID IS NULL")
+                .append(constructSearchFilter(index));
+        params.addAll(paramList);
+        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID ,WORK_ORDER_CONTRACTOR_NAME ,WORK_ORDER_CONTRACTOR_CODE, WORK_ORDER_ID,")
+                .append(" TENDER_RESP_NEGOTIATED_VALUE) GROUP BY WORK_ORDER_CONTRACTOR_ID ,")
+                .append(" WORK_ORDER_CONTRACTOR_NAME, WORK_ORDER_CONTRACTOR_CODE");
         return query.toString();
     }
 
-    private String getNotYetStartedQuery(final String commonSearchCriteriaQueryStr, final String finalBillType) {
-        final StringBuffer query = new StringBuffer("");
-        query.append(" SELECT WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME,");
-        query.append(" WORK_ORDER_CONTRACTOR_CODE, "
-                + " 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,0 COMPLETED_PYMT_RLSD, "
-                + " 0 IN_PROGRESS_EST_COUNT, 0 IN_PROGRESS_NEGO_VAL, 0 IN_PROGRESS_PYMT_RLSD, ");
-        query.append(" SUM(EST_COUNT) NOT_STARTED_EST_COUNT, SUM(NVL(WORK_ORDER_WORKORDER_AMOUNT,0)) NOT_STARTED_WO_AMT,"
-                + " 0 REV_WO_TAKEN_UP_AMT_SUM,0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, SUM(NVL(REV_WO_NOT_STARTED_AMT,0)) REV_WO_NOT_STARTED_AMT_SUM ");
-        query.append(" FROM(");
-        query.append(" SELECT WORK_ORDER_CONTRACTOR_ID ,");
-        query.append("  WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append("  WORK_ORDER_CONTRACTOR_CODE ,");
-        query.append("  WORK_ORDER_ID,");
-        query.append("  COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT,");
-        query.append("  WORK_ORDER_WORKORDER_AMOUNT,"
-                + " (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0)) FROM EGW_WPREPORT_EST_WO_MVIEW INNER_VIEW WHERE INNER_VIEW.WORK_ORDER_PARENTID = OUTER_VIEW.WORK_ORDER_ID) REV_WO_NOT_STARTED_AMT ");
-        query.append(" FROM EGW_WPREPORT_EST_WO_MVIEW OUTER_VIEW ");
-        query.append(" WHERE (WO_LATEST_OFFLINE_STATUS_CODE!='" + WorksConstants.WO_STATUS_WOCOMMENCED + "'");
-        query.append(" OR WO_LATEST_OFFLINE_STATUS_CODE    IS NULL)");
-        query.append(" AND WORK_ORDER_STATUS_CODE           = 'APPROVED' ");
-        query.append(" AND ABS_EST_PARENTID IS NULL   " + commonSearchCriteriaQueryStr);
-        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID , ");
-        query.append(" WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append(" WORK_ORDER_CONTRACTOR_CODE,");
-        query.append(" WORK_ORDER_ID,");
-        query.append(" WORK_ORDER_WORKORDER_AMOUNT ");
-        query.append(" )");
-        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID , ");
-        query.append(" WORK_ORDER_CONTRACTOR_NAME ,");
-        query.append(" WORK_ORDER_CONTRACTOR_CODE");
+    private String getNotYetStartedQuery(final String finalBillType, Integer index, List<Object> params) {
+        final StringBuffer query = new StringBuffer("SELECT WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME,")
+                .append(" WORK_ORDER_CONTRACTOR_CODE, 0 TAKEN_UP_EST_COUNT  ,0 TAKEN_UP_WO_AMOUNT, 0 COMPLETED_EST_COUNT,")
+                .append(" 0 COMPLETED_PYMT_RLSD, 0 IN_PROGRESS_EST_COUNT, 0 IN_PROGRESS_NEGO_VAL, 0 IN_PROGRESS_PYMT_RLSD, ")
+                .append(" SUM(EST_COUNT) NOT_STARTED_EST_COUNT, SUM(NVL(WORK_ORDER_WORKORDER_AMOUNT,0)) NOT_STARTED_WO_AMT,")
+                .append(" 0 REV_WO_TAKEN_UP_AMT_SUM,0 REV_WO_IN_PROGRESS_NEG_VAL_SUM, SUM(NVL(REV_WO_NOT_STARTED_AMT,0))")
+                .append(" REV_WO_NOT_STARTED_AMT_SUM ")
+                .append(" FROM (SELECT WORK_ORDER_CONTRACTOR_ID ,WORK_ORDER_CONTRACTOR_NAME, WORK_ORDER_CONTRACTOR_CODE, WORK_ORDER_ID,")
+                .append(" COUNT(DISTINCT(ABS_EST_ID)) EST_COUNT, WORK_ORDER_WORKORDER_AMOUNT,")
+                .append(" (SELECT SUM(NVL(INNER_VIEW.WORK_ORDER_WORKORDER_AMOUNT,0)) FROM EGW_WPREPORT_EST_WO_MVIEW")
+                .append(" INNER_VIEW WHERE INNER_VIEW.WORK_ORDER_PARENTID = OUTER_VIEW.WORK_ORDER_ID) REV_WO_NOT_STARTED_AMT ")
+                .append(" FROM EGW_WPREPORT_EST_WO_MVIEW OUTER_VIEW WHERE (WO_LATEST_OFFLINE_STATUS_CODE != ?").append(index++);
+        params.add(WorksConstants.WO_STATUS_WOCOMMENCED);
+        query.append(" OR WO_LATEST_OFFLINE_STATUS_CODE IS NULL) AND WORK_ORDER_STATUS_CODE = 'APPROVED' ")
+                .append(" AND ABS_EST_PARENTID IS NULL ")
+                .append(constructSearchFilter(index));
+        params.addAll(paramList);
+        query.append(" GROUP BY WORK_ORDER_CONTRACTOR_ID ,WORK_ORDER_CONTRACTOR_NAME, WORK_ORDER_CONTRACTOR_CODE,")
+                .append(" WORK_ORDER_ID, WORK_ORDER_WORKORDER_AMOUNT)")
+                .append(" GROUP BY WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME, WORK_ORDER_CONTRACTOR_CODE");
         return query.toString();
     }
 
-    private Map<String, String> generateQuery(final String commonSearchCriteriaQueryStr) {
+    private Map<String, Object> generateQuery() {
         final String finalBillType = worksService.getWorksConfigValue("FinalBillType");
-        final String getTakenUpQuery = getTakenUpQuery(commonSearchCriteriaQueryStr, finalBillType);
-        final String getCompletedQuery = getCompletedQuery(commonSearchCriteriaQueryStr, finalBillType);
-        final String getInProgressQuery = getInProgressQuery(commonSearchCriteriaQueryStr, finalBillType);
-        final String getNotYetStartedQuery = getNotYetStartedQuery(commonSearchCriteriaQueryStr, finalBillType);
+        Integer index = Integer.valueOf(1);
+        List<Object> params = new ArrayList<>();
+        final String getTakenUpQuery = getTakenUpQuery(finalBillType, index, params);
+        final String getCompletedQuery = getCompletedQuery(finalBillType, index, params);
+        final String getInProgressQuery = getInProgressQuery(finalBillType, index, params);
+        final String getNotYetStartedQuery = getNotYetStartedQuery(finalBillType, index, params);
 
-        final String mainQuery = " select WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME, WORK_ORDER_CONTRACTOR_CODE, "
-                + " SUM(TAKEN_UP_EST_COUNT),SUM(TAKEN_UP_WO_AMOUNT), "
-                + " SUM(COMPLETED_EST_COUNT),SUM(COMPLETED_PYMT_RLSD),"
-                + " SUM(IN_PROGRESS_EST_COUNT),SUM(IN_PROGRESS_NEGO_VAL),"
-                + " SUM(IN_PROGRESS_PYMT_RLSD),SUM(NOT_STARTED_EST_COUNT),"
-                + " SUM(NOT_STARTED_WO_AMT), SUM(NVL(REV_WO_TAKEN_UP_AMT_SUM,0)),"
-                + " SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL_SUM,0)),"
-                + " SUM(NVL(REV_WO_NOT_STARTED_AMT_SUM,0)) FROM ( "
-                + getTakenUpQuery
-                + " UNION "
-                + getCompletedQuery
-                + " UNION "
-                + getInProgressQuery
-                + " UNION "
-                + getNotYetStartedQuery
-                + " ) GROUP BY WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME,WORK_ORDER_CONTRACTOR_CODE ";
+        final StringBuffer mainQuery = new StringBuffer(" select WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME,")
+                .append(" WORK_ORDER_CONTRACTOR_CODE, SUM(TAKEN_UP_EST_COUNT),SUM(TAKEN_UP_WO_AMOUNT), ")
+                .append(" SUM(COMPLETED_EST_COUNT),SUM(COMPLETED_PYMT_RLSD), SUM(IN_PROGRESS_EST_COUNT),SUM(IN_PROGRESS_NEGO_VAL),")
+                .append(" SUM(IN_PROGRESS_PYMT_RLSD),SUM(NOT_STARTED_EST_COUNT), SUM(NOT_STARTED_WO_AMT), SUM(NVL(REV_WO_TAKEN_UP_AMT_SUM,0)),")
+                .append(" SUM(NVL(REV_WO_IN_PROGRESS_NEG_VAL_SUM,0)), SUM(NVL(REV_WO_NOT_STARTED_AMT_SUM,0)) FROM ( ")
+                .append(getTakenUpQuery)
+                .append(" UNION ")
+                .append(getCompletedQuery)
+                .append(" UNION ")
+                .append(getInProgressQuery)
+                .append(" UNION ")
+                .append(getNotYetStartedQuery)
+                .append(" ) GROUP BY WORK_ORDER_CONTRACTOR_ID, WORK_ORDER_CONTRACTOR_NAME,WORK_ORDER_CONTRACTOR_CODE ");
 
-        final Map returnMap = new HashMap<String, String>();
+        final Map<String, Object> returnMap = new HashMap<>();
         returnMap.put("query", mainQuery.toString());
         returnMap.put("count", "Select count (*) from (" + mainQuery.toString() + ")");
+        returnMap.put("params", params);
 
         return returnMap;
     }
@@ -572,17 +554,20 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void populateContractorClass() {
-        final List<Long> contractorIdList = new LinkedList<Long>();
+        final List<Long> contractorIdList = new LinkedList<>();
         for (final ContractorwiseReportBean bean : resultList)
             contractorIdList.add(bean.getContractorId());
-        final String contractorClassQry = " select cd.contractor_id,cg.grade from egw_contractor_detail cd, "
-                + "  egw_contractor_grade cg where cg.id= cd.contractor_grade_id and cd.contractor_id in (:contractorIdList) group by cd.contractor_id,cg.grade ";
-        final Query sqlQuery = getPersistenceService().getSession().createNativeQuery(contractorClassQry);
-        sqlQuery.setParameterList("contractorIdList", contractorIdList);
-        final List<Object[]> resultObjList = sqlQuery.list();
+        final StringBuffer contractorClassQry = new StringBuffer(" select cd.contractor_id,cg.grade")
+                .append(" from egw_contractor_detail cd, egw_contractor_grade cg")
+                .append(" where cg.id= cd.contractor_grade_id and cd.contractor_id in (:contractorIdList)")
+                .append(" group by cd.contractor_id,cg.grade ");
+        final Query sqlQuery = entityManager.createNativeQuery(contractorClassQry.toString())
+                .setParameter("contractorIdList", contractorIdList);
+        final List<Object[]> resultObjList = sqlQuery.getResultList();
         if (resultObjList != null) {
-            final Map<String, String> contractorIdGradeMap = new HashMap<String, String>();
+            final Map<String, String> contractorIdGradeMap = new HashMap<>();
             String concGrade = null;
             for (final Object[] objArr : resultObjList)
                 if (objArr[1] != null) {
@@ -648,21 +633,24 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     private Map<String, Object> getParamMap() {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("reportTitle", getText("contractorwiseAbstractReport.title"));
         reportParams.put("subHeader", getSubHeader() + "\n" + reportMessage);
         return reportParams;
     }
 
     private String getTakenUpEstimateDrillDownQuery() {
-        final String searchConditions = constructSearchFilter();
-        final StringBuffer query = new StringBuffer(
-                " select ABS_EST_ID,ABS_EST_ESTIMATE_NUMBER,ABS_EST_ESTIMATEDATE,ABS_EST_NAME,ABS_EST_WARD_NAME,ABS_EST_APPROVEDDATE,ABS_EST_VALUE_WITH_OH from EGW_WPREPORT_EST_WO_MVIEW ");
-        query.append(" where  WORK_ORDER_STATUS_CODE = 'APPROVED' " + searchConditions
-                + " order by ABS_EST_ESTIMATEDATE ");
+        Integer index = Integer.valueOf(1);
+        final String searchConditions = constructSearchFilter(index);
+        final StringBuffer query = new StringBuffer("select ABS_EST_ID,ABS_EST_ESTIMATE_NUMBER,ABS_EST_ESTIMATEDATE,")
+                .append("ABS_EST_NAME,ABS_EST_WARD_NAME,ABS_EST_APPROVEDDATE,ABS_EST_VALUE_WITH_OH from EGW_WPREPORT_EST_WO_MVIEW ")
+                .append(" where  WORK_ORDER_STATUS_CODE = 'APPROVED' ")
+                .append(searchConditions)
+                .append(" order by ABS_EST_ESTIMATEDATE ");
         return query.toString();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String showEstimatesTakenUpDrillDown() {
         Page resPage;
         formReportMessage();
@@ -683,10 +671,10 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             }
         } else if (searchType.equalsIgnoreCase("report")) {
             List<Object[]> wholeQueryList = null;
-            final Query qry = getPersistenceService().getSession().createNativeQuery(query);
+            final Query qry = entityManager.createNativeQuery(query);
             for (int i = 0; i < paramList.size(); i++)
                 qry.setParameter(i, paramList.get(i));
-            wholeQueryList = qry.list();
+            wholeQueryList = qry.getResultList();
             resultBeanList = generateEstimateList(wholeQueryList);
             commonBeanList.addAll(resultBeanList);
         }
@@ -694,7 +682,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     private List<CommonDrillDownReportBean> generateEstimateList(final List<Object[]> objArrList) {
-        final List<CommonDrillDownReportBean> beanList = new LinkedList<CommonDrillDownReportBean>();
+        final List<CommonDrillDownReportBean> beanList = new LinkedList<>();
         CommonDrillDownReportBean bean = null;
         BigDecimal amount = null;
         for (final Object[] objArr : objArrList) {
@@ -713,43 +701,50 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         return beanList;
     }
 
-    private String constructSearchFilter() {
+    private String constructSearchFilter(Integer index) {
         final StringBuffer queryBfr = new StringBuffer(1000);
-        paramList = new LinkedList<Object>();
-        if (fromDate != null && toDate != null)
-            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) between '" + dateFormatter.format(fromDate)
-                    + "' and '" + dateFormatter.format(toDate) + "' ");
-        if (fromDate != null && toDate == null)
-            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) >= '" + dateFormatter.format(fromDate) + "' ");
-        if (fromDate == null && toDate != null)
-            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) <= '" + dateFormatter.format(toDate) + "' ");
+        paramList = new LinkedList<>();
+        if (fromDate != null && toDate != null) {
+            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) between ?").append(index++)
+                    .append(" and ?").append(index++);
+            paramList.add(dateFormatter.format(fromDate));
+            paramList.add(dateFormatter.format(toDate));
+        }
+        if (fromDate != null && toDate == null) {
+            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) >= ?").append(index++);
+            paramList.add(dateFormatter.format(fromDate));
+        }
+        if (fromDate == null && toDate != null) {
+            queryBfr.append(" AND TRUNC(WORK_ORDER_APPROVEDDATE) <= ?").append(index++);
+            paramList.add(dateFormatter.format(toDate));
+        }
         if (executingDepartment != null && executingDepartment != -1) {
-            queryBfr.append(" AND ABS_EST_EXECUTINGDEPARTMENT=?");
+            queryBfr.append(" AND ABS_EST_EXECUTINGDEPARTMENT = ?").append(index++);
             paramList.add(executingDepartment);
         }
         if (worksType != null && worksType != -1) {
-            queryBfr.append(" AND ABS_EST_PARENT_CATEGORY=?");
+            queryBfr.append(" AND ABS_EST_PARENT_CATEGORY = ?").append(index++);
             paramList.add(worksType);
         }
         if (worksSubType != null && worksSubType != -1) {
-            queryBfr.append(" AND ABS_EST_CATEGORY=?");
+            queryBfr.append(" AND ABS_EST_CATEGORY = ?").append(index++);
             paramList.add(worksSubType);
         }
         if (fund != null && fund != -1) {
-            queryBfr.append(" AND FIN_DETAILS_FUND_ID=? ");
+            queryBfr.append(" AND FIN_DETAILS_FUND_ID = ?").append(index++);
             paramList.add(fund);
         }
         if (function != null && function != -1) {
-            queryBfr.append(" AND FIN_DETAILS_FUNCTION_ID=?");
+            queryBfr.append(" AND FIN_DETAILS_FUNCTION_ID = ?").append(index++);
             paramList.add(function);
         }
         if (scheme != null && scheme != -1) {
-            queryBfr.append(" AND FIN_DETAILS_SCHEME_ID=?");
+            queryBfr.append(" AND FIN_DETAILS_SCHEME_ID = ?").append(index++);
             paramList.add(scheme);
         }
 
         if (subScheme != null && subScheme != -1) {
-            queryBfr.append(" AND FIN_DETAILS_SUBSCHEME_ID=?");
+            queryBfr.append(" AND FIN_DETAILS_SUBSCHEME_ID = ?").append(index++);
             paramList.add(subScheme);
         }
         if (budgetHeads != null && !budgetHeads.isEmpty() && !budgetHeads.contains("-1")
@@ -761,9 +756,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 queryBfr.append("  FIN_DETAILS_BUDGETGROUP_ID in (");
                 for (int i = 0; i < budgetHeadIds.size(); i++) {
                     if (i == 0)
-                        queryBfr.append(" ?");
+                        queryBfr.append(" ?").append(index++);
                     else
-                        queryBfr.append(" ,? ");
+                        queryBfr.append(" ,?").append(index++);
                     paramList.add(budgetHeadIds.get(i));
                 }
                 queryBfr.append(" ) ");
@@ -772,9 +767,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 queryBfr.append(" OR FIN_DETAILS_COA_ID in (");
                 for (int i = 0; i < depositCodeIds.size(); i++) {
                     if (i == 0)
-                        queryBfr.append(" ?");
+                        queryBfr.append(" ?").append(index++);
                     else
-                        queryBfr.append(" ,? ");
+                        queryBfr.append(" ,?").append(index++);
                     paramList.add(depositCodeIds.get(i));
                 }
                 queryBfr.append(" ) ");
@@ -786,9 +781,9 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 queryBfr.append(" AND FIN_DETAILS_BUDGETGROUP_ID in (");
                 for (int i = 0; i < budgetHeadIds.size(); i++) {
                     if (i == 0)
-                        queryBfr.append(" ?");
+                        queryBfr.append(" ?").append(index++);
                     else
-                        queryBfr.append(" ,? ");
+                        queryBfr.append(" ,?").append(index++);
                     paramList.add(budgetHeadIds.get(i));
                 }
                 queryBfr.append(" ) ");
@@ -797,30 +792,33 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 queryBfr.append(" AND FIN_DETAILS_COA_ID in (");
                 for (int i = 0; i < depositCodeIds.size(); i++) {
                     if (i == 0)
-                        queryBfr.append(" ?");
+                        queryBfr.append(" ?").append(index++);
                     else
-                        queryBfr.append(" ,? ");
+                        queryBfr.append(" ,?").append(index++);
                     paramList.add(depositCodeIds.get(i));
                 }
                 queryBfr.append(" ) ");
             }
         }
         if (contractorId != null && contractorId != -1 && StringUtils.isNotBlank(contractorName)) {
-            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_ID=?");
+            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_ID = ?").append(index++);
             paramList.add(contractorId);
-        } else if (StringUtils.isNotBlank(contractorName))
-            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_NAME like '%" + contractorName + "%'");
+        } else if (StringUtils.isNotBlank(contractorName)) {
+            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_NAME like ?").append(index++);
+            paramList.add("%" + contractorName + "%");
+        }
         if (gradeId != null && gradeId != -1) {
-            queryBfr.append(
-                    " AND WORK_ORDER_CONTRACTOR_ID IN ( SELECT CONTRACTOR_ID FROM EGW_CONTRACTOR_DETAIL WHERE CONTRACTOR_GRADE_ID=? AND CONTRACTOR_ID=WORK_ORDER_CONTRACTOR_ID)");
+            queryBfr.append(" AND WORK_ORDER_CONTRACTOR_ID IN ( SELECT CONTRACTOR_ID FROM EGW_CONTRACTOR_DETAIL")
+                    .append(" WHERE CONTRACTOR_GRADE_ID = ?").append(index++)
+                    .append(" AND CONTRACTOR_ID = WORK_ORDER_CONTRACTOR_ID)");
             paramList.add(gradeId);
         }
         return queryBfr.toString();
     }
 
     private void generateBudgetHeads() {
-        final List<CChartOfAccounts> coaList = new ArrayList<CChartOfAccounts>();
-        final List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
+        final List<CChartOfAccounts> coaList = new ArrayList<>();
+        final List<BudgetGroup> budgetHeadList = new ArrayList<>();
         // In case all is selected, then should consider all the budget heads
         if (dropDownBudgetHeads.size() == 1 && dropDownBudgetHeads.get(0).equalsIgnoreCase(WorksConstants.ALL)) {
             final String[] budgetHeadsFromAppConf = budgetHeadsAppConfValue.split(",");
@@ -835,8 +833,8 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(dropDownBudgetHeads.get(i).split("-")[0]));
             budgetHeadList.addAll(budgetDetailsDAO.getBudgetHeadForGlcodeList(coaList));
         }
-        final List<Long> budgetHeadIdsLong = new ArrayList<Long>();
-        final List<String> budgetHeadIdStr = new ArrayList<String>();
+        final List<Long> budgetHeadIdsLong = new ArrayList<>();
+        final List<String> budgetHeadIdStr = new ArrayList<>();
         if (budgetHeadList != null && budgetHeadList.size() > 0)
             for (final BudgetGroup bdgtGrp : budgetHeadList) {
                 budgetHeadIdStr.add(bdgtGrp.getId().toString());
@@ -847,7 +845,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     private void generateDepositCodes() {
-        final List<CChartOfAccounts> coaList = new ArrayList<CChartOfAccounts>();
+        final List<CChartOfAccounts> coaList = new ArrayList<>();
         if (dropDownDepositCodes.size() == 1 && dropDownDepositCodes.get(0).equalsIgnoreCase(WorksConstants.ALL)) {
             final String[] depositCodesFromAppConf = depositCodesAppConfValue.split(",");
             for (final String element : depositCodesFromAppConf)
@@ -857,7 +855,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         if (!dropDownDepositCodes.get(0).equalsIgnoreCase(WorksConstants.ALL))
             for (int i = 0; i < dropDownDepositCodes.size(); i++)
                 coaList.addAll(chartOfAccountsHibernateDAO.getListOfDetailCode(dropDownDepositCodes.get(i).split("-")[0]));
-        final List<Long> depositCodeIdsLong = new ArrayList<Long>();
+        final List<Long> depositCodeIdsLong = new ArrayList<>();
         if (coaList != null && coaList.size() > 0)
             for (final CChartOfAccounts coa : coaList)
                 depositCodeIdsLong.add(coa.getId());
@@ -866,7 +864,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
 
     private void getBudgetHeadsFromAllBudgetHeads() {
         budgetHeadIds = allBudgetHeads;
-        budgetHeads = new ArrayList<String>();
+        budgetHeads = new ArrayList<>();
         for (int i = 0; i < allBudgetHeads.size(); i++)
             budgetHeads.add(allBudgetHeads.get(i).toString());
     }
@@ -891,7 +889,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     private List<String> getBudgetGroupsFromAppConfig() {
-        final List<String> budgetGrpStrList = new ArrayList<String>();
+        final List<String> budgetGrpStrList = new ArrayList<>();
         budgetGrpStrList.add(WorksConstants.ALL);
         budgetHeadsAppConfValue = worksService.getWorksConfigValue(BUDGET_HEADS_APPCONFIG_KEY);
         if (budgetHeadsAppConfValue != null)
@@ -901,7 +899,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     }
 
     private List<String> getDepositCodesFromAppConfig() {
-        final List<String> glcodesStrList = new ArrayList<String>();
+        final List<String> glcodesStrList = new ArrayList<>();
         glcodesStrList.add(WorksConstants.ALL);
         depositCodesAppConfValue = worksService.getWorksConfigValue(DEPOSITCODES_APPCONFIG_KEY);
         if (depositCodesAppConfValue != null)

@@ -47,14 +47,17 @@
  */
 package org.egov.works.web.actions.reports;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.commons.SubScheme;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.masters.Contractor;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.SubScheme;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.works.models.masters.Contractor;
 
 public class AjaxWorkProgressAction extends BaseFormAction {
 
@@ -63,7 +66,10 @@ public class AjaxWorkProgressAction extends BaseFormAction {
     private List<SubScheme> subSchemes;
     private static final String SUBSCHEMES = "subschemes";
     private String query;
-    private List<Contractor> contractorList = new LinkedList<Contractor>();
+    private List<Contractor> contractorList = new LinkedList<>();
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -75,23 +81,29 @@ public class AjaxWorkProgressAction extends BaseFormAction {
 
     }
 
+    @ReadOnly
     public String loadSubSchemes() {
-        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=?", schemeId);
+        subSchemes = entityManager.createQuery("from SubScheme where scheme.id = :schemeId", SubScheme.class)
+                .setParameter("schemeId", schemeId)
+                .getResultList();
         return SUBSCHEMES;
     }
 
     // TODO: check only for approved work orders
+    @ReadOnly
     public String searchAllContractorsForWorkOrder() {
         if (!StringUtils.isEmpty(query)) {
             final StringBuilder strquery = new StringBuilder(300);
-            final ArrayList<Object> params = new ArrayList<Object>();
-            strquery.append(
-                    "select distinct(woe.workOrder.contractor) from WorkOrderEstimate woe where upper(woe.workOrder.contractor.name) like '%'||?||'%'");
-            strquery.append(" or upper(woe.workOrder.contractor.code) like '%'||?||'%'");
-            strquery.append(" and woe.workOrder.egwStatus.code='APPROVED'");
-            params.add(query.toUpperCase());
-            params.add(query.toUpperCase());
-            contractorList = getPersistenceService().findAllBy(strquery.toString(), params.toArray());
+            strquery.append("select distinct(woe.workOrder.contractor)")
+                    .append(" from WorkOrderEstimate woe")
+                    .append(" where upper(woe.workOrder.contractor.name) like '%'||:name||'%'")
+                    .append(" or upper(woe.workOrder.contractor.code) like '%'||:code||'%'")
+                    .append(" and woe.workOrder.egwStatus.code='APPROVED'");
+
+            contractorList = entityManager.createQuery(strquery.toString(), Contractor.class)
+                    .setParameter("name", query.toUpperCase())
+                    .setParameter("code", query.toUpperCase())
+                    .getResultList();
         }
         return "contractorNameSearchResults";
     }

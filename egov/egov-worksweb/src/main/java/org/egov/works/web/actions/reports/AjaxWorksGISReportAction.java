@@ -47,15 +47,18 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AjaxWorksGISReportAction extends BaseFormAction {
 
@@ -64,10 +67,13 @@ public class AjaxWorksGISReportAction extends BaseFormAction {
     private static final String WARDS = "wards";
     private Long zoneId;
     private String query;
-    private List<String> estimateNumberSearchList = new LinkedList<String>();
+    private List<String> estimateNumberSearchList = new LinkedList<>();
     private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
     @Autowired
     private BoundaryService boundaryService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public String ajaxLoadWardsByZone() {
         wardList = boundaryService.getAllBoundariesByBoundaryTypeId(zoneId);
@@ -77,15 +83,18 @@ public class AjaxWorksGISReportAction extends BaseFormAction {
     /*
      * Autocomplete of Admin sanctioned Estimate nos for Cancel Estimate screen
      */
+    @ReadOnly
     public String searchEstimateNumber() {
-        String strquery = "";
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final StringBuffer strquery = new StringBuffer();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(ae.estimateNumber) from AbstractEstimate ae where ae.parent is null and UPPER(ae.estimateNumber) like '%'||?||'%' "
-                    + " and ae.egwStatus.code != 'NEW' )";
-            params.add(query.toUpperCase());
+            strquery.append("select distinct(ae.estimateNumber)")
+                    .append(" from AbstractEstimate ae")
+                    .append(" where ae.parent is null and UPPER(ae.estimateNumber) like '%'||:estimateNumber||'%' ")
+                    .append(" and ae.egwStatus.code != 'NEW' )");
 
-            estimateNumberSearchList = getPersistenceService().findAllBy(strquery, params.toArray());
+            estimateNumberSearchList = entityManager.createQuery(strquery.toString(), String.class)
+                    .setParameter("estimateNumber", query.toUpperCase())
+                    .getResultList();
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }

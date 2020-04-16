@@ -47,13 +47,18 @@
  */
 package org.egov.works.web.controller.reports;
 
+import java.util.Collections;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.Scheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
@@ -67,8 +72,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Collections;
-
 @Controller
 @RequestMapping("/reports/estimateabstractreport")
 public class EstimateAbstractReportController {
@@ -78,9 +81,6 @@ public class EstimateAbstractReportController {
 
     @Autowired
     private FinancialYearService financialYearService;
-
-    @Autowired
-    private SchemeService schemeService;
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
@@ -93,6 +93,9 @@ public class EstimateAbstractReportController {
 
     @Autowired
     private WorksUtils worksUtils;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @RequestMapping(value = "/departmentwise-searchform", method = RequestMethod.GET)
     public String departmentWiseShowSearchForm(
@@ -128,7 +131,7 @@ public class EstimateAbstractReportController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("financialyears", financialYearService.getAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("schemes", entityManager.createQuery("from Scheme", Scheme.class).getResultList());
         model.addAttribute("subSchemes", Collections.emptyList());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("beneficiary", Beneficiary.values());

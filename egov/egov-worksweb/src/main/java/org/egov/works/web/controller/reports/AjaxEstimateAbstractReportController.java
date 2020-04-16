@@ -47,8 +47,9 @@
  */
 package org.egov.works.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.web.adaptor.EstimateAbstractReportJsonAdaptor;
@@ -61,7 +62,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/reports")
@@ -73,6 +75,7 @@ public class AjaxEstimateAbstractReportController {
     @Autowired
     private EstimateAbstractReportJsonAdaptor estimateAbstractReportJsonAdaptor;
 
+    @ReadOnly
     @RequestMapping(value = "/ajax-estimateabstractreportbydepartmentwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchEstimateAbstractReportByDepartment(
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport, final Model model) {
@@ -84,6 +87,7 @@ public class AjaxEstimateAbstractReportController {
         return result;
     }
 
+    @ReadOnly
     @RequestMapping(value = "/ajax-estimateabstractreportbytypeofworkwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchEstimateAbstractReportByTypeOfWork(final Model model,
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport) {
