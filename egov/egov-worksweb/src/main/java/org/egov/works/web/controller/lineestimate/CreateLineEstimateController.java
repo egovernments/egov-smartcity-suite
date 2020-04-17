@@ -86,6 +86,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.LineEstimateUOMService;
 import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.utils.WorkFlowValidator;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private WorkFlowValidator workFlowValidator;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -186,8 +190,11 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
-        validateLineEstimate(lineEstimate, errors);
-        validateBudgetHead(lineEstimate, errors);
+		validateLineEstimate(lineEstimate, errors);
+		validateBudgetHead(lineEstimate, errors);
+		if (!workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
+			errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
+		}
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 

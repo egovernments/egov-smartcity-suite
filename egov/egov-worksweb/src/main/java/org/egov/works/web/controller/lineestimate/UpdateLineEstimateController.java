@@ -87,6 +87,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.LineEstimateUOMService;
 import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.utils.WorkFlowValidator;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,11 +153,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @ModelAttribute
-    public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
-        final LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(Long.parseLong(lineEstimateId));
-        return lineEstimate;
-    }
+	@Autowired
+	private WorkFlowValidator workFlowValidator;
+
+	@ModelAttribute
+	public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
+		return lineEstimateService.getLineEstimateById(Long.parseLong(lineEstimateId));
+	}
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
     public String updateLineEstimate(final Model model, @PathVariable final String lineEstimateId,
@@ -236,8 +239,12 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                validateBudgetAmount(lineEstimate, errors);
-        if (errors.hasErrors()) {
+				validateBudgetAmount(lineEstimate, errors);
+		if (!workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
+			errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
+		}
+
+		if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("removedLineEstimateDetailsIds", removedLineEstimateDetailsIds);
             return loadViewData(model, request, lineEstimate);
