@@ -61,6 +61,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class ContractorDetail extends BaseModel {
@@ -74,6 +75,7 @@ public class ContractorDetail extends BaseModel {
 
     private Department department;
 
+    @SafeHtml
     @Length(max = 50, message = "contractorDetail.registrationNumber.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
     private String registrationNumber;
@@ -86,6 +88,7 @@ public class ContractorDetail extends BaseModel {
     @Valid
     private Period validity;
 
+    @SafeHtml
     private String category;
 
     public Contractor getContractor() {

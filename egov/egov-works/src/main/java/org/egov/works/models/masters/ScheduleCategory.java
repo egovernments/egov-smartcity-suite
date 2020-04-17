@@ -60,6 +60,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 
@@ -68,11 +69,15 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 public class ScheduleCategory extends BaseModel {
 
     private static final long serialVersionUID = -9168726999209110086L;
+    @SafeHtml
     @Length(max = 150, message = "ScheCategory.description.length")
     private String description;
+    
+    @SafeHtml
     @Length(max = 15, message = "ScheCategory.code.length")
     @Required(message = "contractor.code.null")
     private String code;
+    
     private ScheduleCategory parent;
 
     @PersistenceContext

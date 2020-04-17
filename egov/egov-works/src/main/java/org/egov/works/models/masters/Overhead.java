@@ -61,7 +61,9 @@ import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.LocalDate;
 
 @SuppressWarnings("deprecation")
@@ -71,7 +73,15 @@ public class Overhead extends BaseModel {
     private static final long serialVersionUID = 985152668665306509L;
     public static final String BY_DATE_AND_TYPE = "BY_DATE_AND_TYPE";
     public static final String OVERHEADS_BY_DATE = "OVERHEADS_BY_DATE";
+    
+    @SafeHtml
+    @Length(max=255)
+    @NotNull
     private String name;
+    
+    @SafeHtml
+    @Length(max=1024)
+    @NotNull
     private String description;
 
     private CChartOfAccounts accountCode;

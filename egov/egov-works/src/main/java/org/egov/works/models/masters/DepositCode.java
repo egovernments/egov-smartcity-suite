@@ -63,6 +63,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_DEPOSITCODE", columnName = { "CODE" }, message = "depositCode.isUnique")
@@ -72,14 +73,20 @@ public class DepositCode extends BaseModel implements EntityType {
      *
      */
     private static final long serialVersionUID = -6649203487282172205L;
+    @SafeHtml
+    @Length(max=256)
     private String code;
+    
+    @SafeHtml
     @Length(max = 1024, message = "depositCode.description.length")
     private String description;
+    
     private NatureOfWork natureOfWork;
 
     @Required(message = "depositCode.workName.null")
     @Length(max = 256, message = "depositCode.workName.length")
     private String codeName;
+    
     private Fund fund;
     private Functionary functionary;
     private CFunction function;

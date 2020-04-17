@@ -51,15 +51,18 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class NatureOfWork extends BaseModel {
 
     private static final long serialVersionUID = -8350958038107099411L;
+    @SafeHtml
     @NotEmpty
     private String name;
     @NotNull
     private ExpenditureType expenditureType;
+    @SafeHtml
     private String code;
 
     public NatureOfWork() {

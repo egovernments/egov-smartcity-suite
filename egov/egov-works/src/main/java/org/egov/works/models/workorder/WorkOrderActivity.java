@@ -54,6 +54,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class WorkOrderActivity extends BaseModel {
@@ -71,6 +72,7 @@ public class WorkOrderActivity extends BaseModel {
     private double approvedQuantity;
 
     private double approvedAmount;
+    @SafeHtml
     private String remarks;
 
     // Used in new/cancelled WO (for validating the approvedquantity)

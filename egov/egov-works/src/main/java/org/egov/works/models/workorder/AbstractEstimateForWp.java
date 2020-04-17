@@ -47,8 +47,11 @@
  */
 package org.egov.works.models.workorder;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class AbstractEstimateForWp {
     private Integer srlNo;
+    @SafeHtml
     private String aeWorkNameForWp;
     private double negotiatedAmtForWp;
 

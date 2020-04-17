@@ -65,7 +65,9 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.LocalDate;
 
 @SuppressWarnings("deprecation")
@@ -76,13 +78,19 @@ public class ScheduleOfRate extends BaseModel {
     private static final Logger logger = Logger.getLogger(ScheduleOfRate.class);
     static Integer MAX_DESCRIPTION_LENGTH = 100;
 
+    @SafeHtml
+    @Length(max=255)
     @NotEmpty(message = "sor.code.not.empty")
     private String code;
+    
     @Required(message = "sor.category.not.null")
     private ScheduleCategory scheduleCategory;
 
+    @SafeHtml
+    @Length(max=1024)
     @NotEmpty(message = "sor.description.not.empty")
     private String description;
+    
     @Required(message = "sor.uom.not.null")
     private UOM uom;
 

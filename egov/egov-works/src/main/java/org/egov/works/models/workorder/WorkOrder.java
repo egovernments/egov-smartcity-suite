@@ -76,6 +76,7 @@ import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class WorkOrder extends StateAware<Position> implements Auditable {
 
@@ -92,20 +93,27 @@ public class WorkOrder extends StateAware<Position> implements Auditable {
     private Date workOrderDate;
 
     @NotNull
+    @SafeHtml
     private String workOrderNumber;
 
+    @SafeHtml
     private String packageNumber;
+    @SafeHtml
     private String tenderNumber;
+    @SafeHtml
     private String negotiationNumber;
 
+    @SafeHtml
     @Length(max = 1024, message = "workOrderDetails.length")
     private String workOrderDetails;
 
     private Integer contractPeriod;
 
+    @SafeHtml
     @Length(max = 1024, message = "agreementDetails.length")
     private String agreementDetails;
 
+    @SafeHtml
     @Length(max = 1024, message = "paymentTerms.length")
     private String paymentTerms;
 
@@ -136,22 +144,29 @@ public class WorkOrder extends StateAware<Position> implements Auditable {
     @DateFormat(message = "invalid.fieldvalue.workOrderDate")
     private Date approvedDate;
 
+    @SafeHtml
     private String fileNumber;
 
     @DateFormat(message = "invalid.fieldvalue.fileDate")
     private Date fileDate;
 
+    @SafeHtml
     @Length(max = 1024, message = "bankguarantee.length")
     private String bankGuarantee;
 
+    @SafeHtml
     private String estimateNumber;
 
     private WorkOrder parent;
 
     private Date expectedCompletionDate;
+    @SafeHtml
     private String tenderType;
+    @SafeHtml
     private String owner;
+    @SafeHtml
     private String status;
+    @SafeHtml
     private transient String percentageSign;
 
     private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<>();
@@ -162,8 +177,10 @@ public class WorkOrder extends StateAware<Position> implements Auditable {
 
     private transient List<DocumentDetails> documentDetails = new ArrayList<>();
 
+    @SafeHtml
     private String cancellationReason;
 
+    @SafeHtml
     private String cancellationRemarks;
 
     @Override
