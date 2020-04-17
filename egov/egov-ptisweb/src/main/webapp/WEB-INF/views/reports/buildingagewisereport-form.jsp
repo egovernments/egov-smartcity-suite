@@ -52,7 +52,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div id="dcbError" class="errorstyle" style="color: red"></div>
-<form:form name="SearchRequest" role="form" action="" modelAttribute="BuildingAgeWiseReport" id="BuildingAgeWiseReport"
+<form:form name="SearchRequest" role="form" action=""
+	modelAttribute="BuildingAgeWiseReport" id="BuildingAgeWiseReport"
 	class="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
@@ -65,34 +66,35 @@
 				<input type="hidden" name="mode" id="mode" value="${mode}" />
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.ward" /></label>
+						<label class="col-sm-3 control-label text-right"> <spring:message
+								code="lbl.ownership.type" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="" data-first-option="false" id="ownership" class="form-control">
-								<form:option value="0">
+							<form:select path="" data-first-option="false" id="ownership"
+								class="form-control">
+								<form:option value="-1">
 									<spring:message code="lbl.default.all" />
 								</form:option>
-								<form:options items="${ownershiptype}" />
+								<form:options items="${propertyTypeMaster}" />
 							</form:select>
 						</div>
-				    </div>
+					</div>
 					<div>
 						<label class="col-sm-3 control-label"> <spring:message
-								code="lbl.apartment.name" /></label>
-						<div class="col-sm-6 add-margin">
+								code="lbl.from.age" /><span class="mandatory1">*</span></label>
+						<div class="col-sm-3 add-margin">
 							<form:select path="" id="buildingfromage" cssClass="form-control">
-								<form:option value="0">
-									<spring:message code="lbl.default.all" />
+								<form:option value="">
+									<spring:message code="lbl.option.select" />
 								</form:option>
 								<form:options items="${buildingagefrom}" />
 							</form:select>
 						</div>
 						<label class="col-sm-3 control-label"> <spring:message
-								code="lbl.apartment.name" /></label>
-						<div class="col-sm-6 add-margin">
+								code="lbl.to.age" /><span class="mandatory1">*</span></label>
+						<div class="col-sm-3 add-margin">
 							<form:select path="" id="buildingtoage" cssClass="form-control">
-								<form:option value="0">
-									<spring:message code="lbl.default.all" />
+								<form:option value="">
+									<spring:message code="lbl.option.select" />
 								</form:option>
 								<form:options items="${buildingageto}" />
 							</form:select>
@@ -105,4 +107,4 @@
 </form:form>
 <jsp:include page="buildingagewisereport-searchresult.jsp" />
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/apartmentdcbreport.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/buildingagewisereport.js?rnd=${app_release_no}'/>"></script>

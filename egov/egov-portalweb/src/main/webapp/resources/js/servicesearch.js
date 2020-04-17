@@ -132,6 +132,36 @@ $("#SearchResults").on('click','tbody tr td  .viewbutton',function(event) {
 	
 });
 
+function unlinkService(consumerCode,moduleName,applicantName){
+	if(consumerCode != null && moduleName != null){
+		bootbox.confirm({message: "Do you want to delink\n" +
+						    		"consumer Number " + consumerCode  + 
+						    		" with applicant Name "+ applicantName +
+						    		"\nfrom your account",
+						    buttons: {
+						        confirm: {
+						            label: 'Yes',
+						            className: 'btn-primary'
+						        },
+						        cancel: {
+						            label: 'No',
+						            className: 'btn-danger'
+						        }
+						    },
+						    callback: function(result) {
+								if (result) {
+									openPopupPage("/portal/citizen/delinkconnection/",consumerCode,moduleName,applicantName);
+								} else {
+									event.stopPropagation();
+									event.preventDefault();
+									
+								}
+							}
+						});
+	}
+}
+
+
 function openPopupPage(relativeUrl,consumerCode,moduleName,applicantName)
 {
  var param = { 'consumerCode' : consumerCode, 'moduleName': moduleName ,'applicantName':applicantName };

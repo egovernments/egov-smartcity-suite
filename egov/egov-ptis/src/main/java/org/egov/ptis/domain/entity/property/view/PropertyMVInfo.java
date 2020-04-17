@@ -73,7 +73,8 @@ public class PropertyMVInfo implements Serializable {
     private static final long serialVersionUID = -6146352214041057969L;
 
     @Id
-    private Integer basicPropertyID;
+    @Column(name = "basicPropertyID")
+    private Integer id;
 
     @Column(name = "UPICNO")
     private String propertyId;
@@ -264,12 +265,12 @@ public class PropertyMVInfo implements Serializable {
 
     private BigDecimal longitude;
 
-    public Integer getBasicPropertyID() {
-        return basicPropertyID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setBasicPropertyID(final Integer tbasicPropertyID) {
-        basicPropertyID = tbasicPropertyID;
+    public void setId(final Integer id) {
+        this.id = id;
     }
 
     public String getPropertyId() {

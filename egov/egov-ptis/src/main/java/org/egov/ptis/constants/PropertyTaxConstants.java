@@ -1251,7 +1251,16 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_ADVANCE_LIMIT_EXCEEDED = "PTIS-REST-49";
     public static final String THIRD_PARTY_ERR_MSG_ADVANCE_LIMIT_EXCEEDED = "Payment is rejected because Advance amount is beyond 10 installments.";
-
+    
+    public static final String THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_CODE = "PTIS-REST-50";
+    public static final String THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_MSG = "Application number is incorrect.";
+    
+    public static final String THIRD_PARTY_VALID_APPLICATION_NO_CODE = "PTIS-REST-51";
+    public static final String THIRD_PARTY_VALID_APPLICATION_NO_MSG = "Please enter valid Application number.";
+    
+    public static final String REST_API_DISABLED_CODE = "PTIS-REST-52";
+    public static final String REST_API_DISABLED_MSG = "The API is temporarily unavailable.";
+    
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
@@ -1591,6 +1600,7 @@ public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_REASSIGN = "PTIS_REASSIGN_REQUIRED";
     public static final String APPCONFIG_ENDORSEMENT = "PTIS_ENDORSEMENT_REQUIRED";
+    public static final String APPCONFIG_APPLICATION_DETAILS_REST_API = "PTIS_APPLICATION_DETAILS_REST_API_ENABLED";
 
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;

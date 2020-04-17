@@ -66,6 +66,7 @@
 	<field name="basicPropId" class="java.lang.Long"/>
 	<field name="arrearVacantLandTax" class="java.math.BigDecimal"/>
 	<field name="arrearEducationCess" class="java.math.BigDecimal"/>
+	<field name="variationAmount" class="java.math.BigDecimal"/>
 	<variable name="subTotalArrearGenTax" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearPropertyTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
@@ -87,12 +88,15 @@
 	<variable name="subTotalArrearEducationCess" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearEducationCess}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
+	<variable name="subTotalVariationAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{variationAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
 	<group name="subTotalTax">
 		<groupExpression><![CDATA[$F{basicPropId}]]></groupExpression>
 		<groupFooter>
 			<band height="37" splitType="Prevent">
 				<staticText>
-					<reportElement x="263" y="0" width="72" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
+					<reportElement x="240" y="0" width="64" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
 						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -100,12 +104,12 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="335" y="0" width="83" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
+					<reportElement x="304" y="0" width="75" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
 						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="2">
@@ -115,41 +119,62 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{subTotalArrearLibCessTax} != null ? $V{subTotalArrearLibCessTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="418" y="0" width="86" height="20" uuid="38af8673-4def-433a-8b55-2f01f6bd9b60">
+					<reportElement x="379" y="0" width="78" height="20" uuid="38af8673-4def-433a-8b55-2f01f6bd9b60">
 						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25" lineStyle="Dashed"/>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{subTotalArrearGenTax} == 0 ? $V{subTotalArrearVacantLandTax} + $V{subTotalArrearEducationCess} :$V{subTotalArrearGenTax} + $V{subTotalArrearEducationCess}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="504" y="0" width="80" height="20" uuid="fe93ca1e-889d-4ca0-babd-4a103fc63bd1">
+					<reportElement x="457" y="0" width="72" height="20" uuid="fe93ca1e-889d-4ca0-babd-4a103fc63bd1">
 						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25" lineStyle="Dashed"/>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{subTotalArrearPenaltyTax} != null ? $V{subTotalArrearPenaltyTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="584" y="0" width="69" height="20" uuid="6353b6f1-3250-486d-b4f5-54f9d71493eb">
+					<reportElement x="529" y="0" width="61" height="20" uuid="6353b6f1-3250-486d-b4f5-54f9d71493eb">
 						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25"/>
 						<bottomPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{subTotalTotalTax} != null ? $V{subTotalTotalTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="590" y="0" width="61" height="20" uuid="fe3c5676-8e21-4cbb-9ba6-9e8b1e64a476">
+						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="2">
+						<topPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{subTotalVariationAmount} != null ? $V{subTotalVariationAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO).setScale(2)]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -167,62 +192,69 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="33" splitType="Prevent">
+		<band height="38" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="89" y="1" width="95" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
+				<reportElement x="81" y="1" width="87" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="335" y="1" width="83" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c"/>
+				<reportElement x="303" y="1" width="75" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{arrearLibraryCess} != null ? $F{arrearLibraryCess}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO)]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="418" y="0" width="86" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
+				<reportElement x="378" y="0" width="78" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{arrearPropertyTax}.equals(BigDecimal.ZERO) ? $F{arrearVacantLandTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) + $F{arrearEducationCess}.setScale(2,BigDecimal.ROUND_HALF_DOWN):$F{arrearPropertyTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) + $F{arrearEducationCess}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="584" y="0" width="69" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
+				<reportElement x="528" y="0" width="61" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalArrearTax} != null ? $F{totalArrearTax}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="184" y="1" width="79" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a"/>
+				<reportElement x="168" y="1" width="71" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="1" width="89" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6"/>
+				<reportElement x="0" y="1" width="81" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{indexNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="504" y="0" width="80" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30"/>
+				<reportElement x="456" y="0" width="72" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{arrearPenalty} != null ? $F{arrearPenalty}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO)]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="263" y="0" width="72" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
+				<reportElement x="239" y="0" width="64" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{arrearInstallmentDesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="589" y="0" width="61" height="33" uuid="c07c68bb-2c9b-46f3-86c5-818397ed5475"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{variationAmount} != null ? $F{variationAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN) : (BigDecimal.ZERO)]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

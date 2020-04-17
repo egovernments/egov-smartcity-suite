@@ -58,6 +58,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.view.FloorDetailsInfo;
 import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.service.utils.PropertyTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,13 +88,15 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 	public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
 
 	private static PropertyTaxUtil propertyTaxUtil;
+	private static PropertyTaxService propertyTaxService;
 
 	public BaseRegisterResultAdaptor() {
 	}
 
 	@Autowired
-	public BaseRegisterResultAdaptor(final PropertyTaxUtil propertyTaxUtil) {
+	public BaseRegisterResultAdaptor(final PropertyTaxUtil propertyTaxUtil, final PropertyTaxService propertyTaxService) {
 		BaseRegisterResultAdaptor.propertyTaxUtil = propertyTaxUtil;
+		BaseRegisterResultAdaptor.propertyTaxService = propertyTaxService;
 	}
 
 	@Override
@@ -148,8 +151,10 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 			jsonObject.addProperty("arrearColl", baseRegisterResultObj.getAggrArrColl() != null
 					? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO);
 			jsonObject.addProperty("totalColl", totalColl);
-			jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
-
+            jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null
+                    ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
+            jsonObject.addProperty("courtVerdictAndWOAmount", propertyTaxService.getCourtVerdictAndWriteOffAmount(baseRegisterResultObj));
+                   
 			if (!valuesMap.isEmpty()) {
 				jsonObject.addProperty("generalTax", valuesMap.get(TOTAL_CURR_PROPERTY_TAX) != null
 						? valuesMap.get(TOTAL_CURR_PROPERTY_TAX) : BigDecimal.ZERO);

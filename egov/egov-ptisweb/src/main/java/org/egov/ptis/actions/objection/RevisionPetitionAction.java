@@ -1392,6 +1392,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         List<String> reasonList = objection.getAppealReasons().stream().map(AppealPetitionReasons::getDescription)
                 .collect(Collectors.toList());
          objection.setReasons(String.join(",", reasonList));
+        if (!objection.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)
+                && WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType()))
+            objection.setAppealOtherRemarks("N/A");
         return "view";
     }
 
@@ -1694,8 +1697,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         for (String value : appeal) {
             appealList.add(appealPetitionReasonRepository.findByCode(value.trim()));
         }
-        if(!appealList.stream().anyMatch(o -> o.getCode().contains("OTHERS")))
-            objection.setAppealOtherRemarks("");
         return appealList;
 
     }

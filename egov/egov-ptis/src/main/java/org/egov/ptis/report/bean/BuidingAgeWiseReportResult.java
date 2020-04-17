@@ -48,88 +48,55 @@
 
 package org.egov.ptis.report.bean;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class BuidingAgeWiseReportResult {
-    
-    private String assessmentNo;
-    private String doorNo;
-    private String ownerName;
-    private String revenueZone;
-    private String revenueWard;
-    private String revenueBlock;
-    private String locality;
-    private BigDecimal propertyTax = BigDecimal.ZERO;
-    private BigDecimal libraryCess = BigDecimal.ZERO;
-    private BigDecimal educationTax = BigDecimal.ZERO;
-    private BigInteger assessmentCount;
-    
-    public String getAssessmentNo() {
-        return assessmentNo;
+public class BuidingAgeWiseReportResult extends DataTableSearchRequest {
+
+    private String fromAge;
+    private String toAge;
+    private String propertyTypeMaster;
+    private String filterName;
+    private ReportFormat printFormat;
+
+    public String getFromAge() {
+        return fromAge;
     }
-    public void setAssessmentNo(String assessmentNo) {
-        this.assessmentNo = assessmentNo;
+
+    public void setFromAge(String fromAge) {
+        this.fromAge = fromAge;
     }
-    public String getDoorNo() {
-        return doorNo;
+
+    public String getToAge() {
+        return toAge;
     }
-    public void setDoorNo(String doorNo) {
-        this.doorNo = doorNo;
+
+    public void setToAge(String toAge) {
+        this.toAge = toAge;
     }
-    public String getOwnerName() {
-        return ownerName;
+
+    public String getPropertyTypeMaster() {
+        return propertyTypeMaster;
     }
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
+
+    public void setPropertyTypeMaster(String propertyTypeMaster) {
+        this.propertyTypeMaster = propertyTypeMaster;
     }
-    public String getRevenueZone() {
-        return revenueZone;
+
+    public String getFilterName() {
+        return filterName;
     }
-    public void setRevenueZone(String revenueZone) {
-        this.revenueZone = revenueZone;
+
+    public void setFilterName(String filterName) {
+        this.filterName = filterName;
     }
-    public String getRevenueWard() {
-        return revenueWard;
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
     }
-    public void setRevenueWard(String revenueWard) {
-        this.revenueWard = revenueWard;
+
+    public void setPrintFormat(ReportFormat printFormat) {
+        this.printFormat = printFormat;
     }
-    public String getRevenueBlock() {
-        return revenueBlock;
-    }
-    public void setRevenueBlock(String revenueBlock) {
-        this.revenueBlock = revenueBlock;
-    }
-    public String getLocality() {
-        return locality;
-    }
-    public void setLocality(String locality) {
-        this.locality = locality;
-    }
-    public BigDecimal getPropertyTax() {
-        return propertyTax;
-    }
-    public void setPropertyTax(BigDecimal propertyTax) {
-        this.propertyTax = propertyTax;
-    }
-    public BigDecimal getLibraryCess() {
-        return libraryCess;
-    }
-    public void setLibraryCess(BigDecimal libraryCess) {
-        this.libraryCess = libraryCess;
-    }
-    public BigDecimal getEducationTax() {
-        return educationTax;
-    }
-    public void setEducationTax(BigDecimal educationTax) {
-        this.educationTax = educationTax;
-    }
-    public BigInteger getAssessmentCount() {
-        return assessmentCount;
-    }
-    public void setAssessmentCount(BigInteger assessmentCount) {
-        this.assessmentCount = assessmentCount;
-    }
-    
+
 }

@@ -107,14 +107,19 @@ public class YearWiseDCBIndexService {
     private static final String IS_UNDER_COURT = "isUnderCourtcase";
     private static final String VLT_CODE = "Vacant Land";
     private static final String EWHS_CODE = "EWSHS";
-
     private static final String WAIVEDOFF_AMOUNT = "waivedoffAmount";
     private static final String EXEMPTED_AMOUNT = "exemptedAmount";
-    private static final String WRITEOFF_AMOUNT = "writeoffAmount";
-    private static final String COURTCASE_AMOUNT = "courtcaseAmount";
     private static final String ARREAR_BALANCE = "arrearBalance";
     private static final String ARREAR_INTEREST_BALANCE = "arrearPenBalance";
     private static final String CURRENT_INTEREST_BALANCE = "currentPenBalance";
+    private static final String ARREAR_CV_AMOUNT = "arrearCourtVerdict";
+    private static final String CURRENT_CV_AMOUNT = "currentCourtVerdict";
+    private static final String ARREAR_INTEREST_CV_AMOUNT = "arrearPenCourtVerdict";
+    private static final String CURRENT_INTEREST_CV_AMOUNT = "currentPenCourtVerdict";
+    private static final String ARREAR_WO_AMOUNT = "arrearWriteOff";
+    private static final String CURRENT_WO_AMOUNT = "currentWriteOff";
+    private static final String ARREAR_INTEREST_WO_AMOUNT = "arrearPenWriteOff";
+    private static final String CURRENT_INTEREST_WO_AMOUNT = "currentPenWriteOff";
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -135,10 +140,11 @@ public class YearWiseDCBIndexService {
     public List<CFinancialYear> getFinancialYears() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.YEAR, -1);
+        cal.add(Calendar.YEAR, 0);
         return financialYearDAO
                 .getFinancialYearsAfterFromDate(
-                        DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(getDCBStartDateFromAppConfig()).toDate(),cal.getTime());
+                        DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(getDCBStartDateFromAppConfig()).toDate(),
+                        cal.getTime());
     }
 
     public String getDCBStartDateFromAppConfig() {
@@ -172,20 +178,31 @@ public class YearWiseDCBIndexService {
             YearWiseDCBReponse serviceWiseResponse = new YearWiseDCBReponse();
             Map<String, Object> responseFields = hit.getSource();
             serviceWiseResponse.setOwnersName(responseFields.get(OWNERS_NAME).toString());
-           if (responseFields.get(DOOR_NO)!=null){
-            serviceWiseResponse.setDoorNo(responseFields.get(DOOR_NO).toString());}
-            serviceWiseResponse.setArrearDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString()));
-            serviceWiseResponse.setArrearPenDemand(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString()));
-            serviceWiseResponse.setArrearTotalDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString())
-                    .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString())));
-            serviceWiseResponse.setCurrentDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString()));
-            serviceWiseResponse.setCurrentPenDemand(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString()));
-            serviceWiseResponse.setCurrentTotalDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
-                    .add(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString())));
-            serviceWiseResponse.setTotalDemand(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString())
-                    .add(new BigDecimal(responseFields.get(ARREARDEMAND).toString())
-                            .add(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
-                                    .add(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString())))));
+            if (responseFields.get(DOOR_NO) != null) {
+                serviceWiseResponse.setDoorNo(responseFields.get(DOOR_NO).toString());
+            }
+            serviceWiseResponse.setArrearDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString())
+                    .subtract(new BigDecimal(responseFields.get(ARREAR_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(ARREAR_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setArrearPenDemand(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString())
+                    .subtract(new BigDecimal(responseFields.get(ARREAR_INTEREST_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse
+                    .setArrearTotalDemand(serviceWiseResponse.getArrearDemand().add(serviceWiseResponse.getArrearPenDemand()));
+            serviceWiseResponse.setCurrentDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(CURRENT_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setCurrentPenDemand(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString())
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_INTEREST_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse
+                    .setCurrentTotalDemand(serviceWiseResponse.getCurrentDemand().add(serviceWiseResponse.getCurrentPenDemand()));
+            serviceWiseResponse
+                    .setTotalDemand(serviceWiseResponse.getArrearTotalDemand().add(serviceWiseResponse.getCurrentTotalDemand()));
             serviceWiseResponse.setArrearCollection(new BigDecimal(responseFields.get(ARREAR_COLLECTION).toString()));
             serviceWiseResponse.setArrearPenCollection(new BigDecimal(responseFields.get(ARREAR_INTEREST_COLLECTION).toString()));
             serviceWiseResponse.setArrearTotalCollection(new BigDecimal(responseFields.get(ARREAR_COLLECTION).toString())
@@ -199,16 +216,26 @@ public class YearWiseDCBIndexService {
                     .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_COLLECTION).toString())
                             .add(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())
                                     .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString())))));
-            serviceWiseResponse.setArrearBalance(new BigDecimal(responseFields.get(ARREAR_BALANCE).toString()));
-            serviceWiseResponse.setArrearPenBalance(new BigDecimal(responseFields.get(ARREAR_INTEREST_BALANCE).toString()));
+            serviceWiseResponse.setArrearBalance(new BigDecimal(responseFields.get(ARREAR_BALANCE).toString())
+                    .subtract(new BigDecimal(responseFields.get(ARREAR_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(ARREAR_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setArrearPenBalance(new BigDecimal(responseFields.get(ARREAR_INTEREST_BALANCE).toString())
+                    .subtract(new BigDecimal(responseFields.get(ARREAR_INTEREST_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse.setCurrentBalance(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
-                    .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())));
-            serviceWiseResponse.setCurrentPenBalance(new BigDecimal(responseFields.get(CURRENT_INTEREST_BALANCE).toString()));
-            serviceWiseResponse.setTotalBalance(new BigDecimal(responseFields.get(ARREAR_BALANCE).toString())
-                    .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_BALANCE).toString())
-                            .add(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
-                                    .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_BALANCE).toString()))))
-                    .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())));
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(CURRENT_WO_AMOUNT).toString())))
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString()))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setCurrentPenBalance(new BigDecimal(responseFields.get(CURRENT_INTEREST_BALANCE).toString())
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_INTEREST_CV_AMOUNT).toString())
+                            .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_WO_AMOUNT).toString())))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse
+                    .setTotalBalance(serviceWiseResponse.getArrearBalance().add(serviceWiseResponse.getArrearPenBalance())
+                            .add(serviceWiseResponse.getCurrentBalance()).add(serviceWiseResponse.getCurrentPenBalance()));
             serviceWiseResponse.setWaivedoffAmount(
                     new BigDecimal(
                             responseFields.get(WAIVEDOFF_AMOUNT) == null ? "0"
@@ -216,14 +243,6 @@ public class YearWiseDCBIndexService {
             serviceWiseResponse.setExemptedAmount(
                     new BigDecimal(
                             responseFields.get(EXEMPTED_AMOUNT) == null ? "0" : responseFields.get(EXEMPTED_AMOUNT).toString()));
-            serviceWiseResponse.setWriteoffAmount(
-                    new BigDecimal(
-                            responseFields.get(WRITEOFF_AMOUNT) == null ? "0" : responseFields.get(WRITEOFF_AMOUNT).toString()));
-            serviceWiseResponse.setCourtcaseAmount(
-                    new BigDecimal(
-                            responseFields.get(COURTCASE_AMOUNT) == null ? "0"
-                                    : responseFields.get(COURTCASE_AMOUNT).toString()));
-
             serviceWiseResponse.setDrillDownType(responseFields.get("assessmentNo").toString());
             dcbData.add(serviceWiseResponse);
         }
@@ -248,12 +267,18 @@ public class YearWiseDCBIndexService {
         Sum currentCollected;
         Sum currentPenCollected;
         Sum waivedOffAmount;
-        Sum writeOffAmount;
         Sum exemptedAmount;
-        Sum courtCaseAmount;
         Sum arrearBalance;
         Sum arrearPenBalance;
         Sum currentPenBalance;
+        Sum arrearCourtVerdict;
+        Sum currentCourtVerdict;
+        Sum arrearPenCourtVerdict;
+        Sum currentPenCourtVerdict;
+        Sum arrearWriteOff;
+        Sum currentWriteOff;
+        Sum arrearPenWriteOff;
+        Sum currentPenWriteOff;
 
         Terms aggTerms = response.getAggregations().get(aggregationTerms);
         List<YearWiseDCBReponse> serviceWiseResponses = new ArrayList<>();
@@ -269,31 +294,42 @@ public class YearWiseDCBIndexService {
             currentPenCollected = entry.getAggregations().get(CURRENT_INTEREST_COLLECTION);
             waivedOffAmount = entry.getAggregations().get(WAIVEDOFF_AMOUNT);
             exemptedAmount = entry.getAggregations().get(EXEMPTED_AMOUNT);
-            writeOffAmount = entry.getAggregations().get(WRITEOFF_AMOUNT);
-            courtCaseAmount = entry.getAggregations().get(COURTCASE_AMOUNT);
             arrearBalance = entry.getAggregations().get(ARREAR_BALANCE);
             arrearPenBalance = entry.getAggregations().get(ARREAR_INTEREST_BALANCE);
             currentPenBalance = entry.getAggregations().get(CURRENT_INTEREST_BALANCE);
+            arrearCourtVerdict = entry.getAggregations().get(ARREAR_CV_AMOUNT);
+            currentCourtVerdict = entry.getAggregations().get(CURRENT_CV_AMOUNT);
+            arrearPenCourtVerdict = entry.getAggregations().get(ARREAR_INTEREST_CV_AMOUNT);
+            currentPenCourtVerdict = entry.getAggregations().get(CURRENT_INTEREST_CV_AMOUNT);
+            arrearWriteOff = entry.getAggregations().get(ARREAR_WO_AMOUNT);
+            currentWriteOff = entry.getAggregations().get(CURRENT_WO_AMOUNT);
+            arrearPenWriteOff = entry.getAggregations().get(ARREAR_INTEREST_WO_AMOUNT);
+            currentPenWriteOff = entry.getAggregations().get(CURRENT_INTEREST_WO_AMOUNT);
 
             serviceWiseResponse.setCount(entry.getDocCount());
             serviceWiseResponse
-                    .setArrearDemand(BigDecimal.valueOf(arrearDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setArrearDemand(
+                            BigDecimal.valueOf(arrearDemand.getValue())
+                                    .subtract(BigDecimal.valueOf(arrearCourtVerdict.getValue())
+                                            .add(BigDecimal.valueOf(arrearWriteOff.getValue())))
+                                    .setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse
-                    .setArrearPenDemand(BigDecimal.valueOf(arrearPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setArrearPenDemand(BigDecimal.valueOf(arrearPenDemand.getValue())
+                            .subtract(BigDecimal.valueOf(arrearPenCourtVerdict.getValue())
+                                    .add(BigDecimal.valueOf(arrearPenWriteOff.getValue())))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse
-                    .setArrearTotalDemand(BigDecimal.valueOf(arrearDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                            .add(BigDecimal.valueOf(arrearPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                    .setArrearTotalDemand(serviceWiseResponse.getArrearDemand().add(serviceWiseResponse.getArrearPenDemand()));
             serviceWiseResponse.setCurrentDemand(
-                    BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    BigDecimal.valueOf(currentDemand.getValue()).subtract(BigDecimal.valueOf(currentCourtVerdict.getValue())
+                            .add(BigDecimal.valueOf(currentWriteOff.getValue()))).setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse.setCurrentPenDemand(
-                    BigDecimal.valueOf(currentPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    BigDecimal.valueOf(currentPenDemand.getValue()).subtract(BigDecimal.valueOf(currentPenCourtVerdict.getValue())
+                            .add(BigDecimal.valueOf(currentPenWriteOff.getValue()))).setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse
-                    .setCurrentTotalDemand(BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                            .add(BigDecimal.valueOf(currentPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
-            serviceWiseResponse.setTotalDemand(BigDecimal.valueOf(arrearDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                    .add(BigDecimal.valueOf(arrearPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP))
-                    .add(BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP))
-                    .add(BigDecimal.valueOf(currentPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                    .setCurrentTotalDemand(serviceWiseResponse.getCurrentDemand().add(serviceWiseResponse.getCurrentPenDemand()));
+            serviceWiseResponse
+                    .setTotalDemand(serviceWiseResponse.getArrearTotalDemand().add(serviceWiseResponse.getCurrentTotalDemand()));
             serviceWiseResponse.setArrearCollection(
                     BigDecimal.valueOf(arrearCollected.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse.setArrearPenCollection(
@@ -319,33 +355,36 @@ public class YearWiseDCBIndexService {
                             .add(BigDecimal.valueOf(currentPenCollected.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
 
             serviceWiseResponse
-                    .setArrearBalance(BigDecimal.valueOf(arrearBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setArrearBalance(BigDecimal.valueOf(arrearBalance.getValue())
+                            .subtract(BigDecimal.valueOf(arrearCourtVerdict.getValue())
+                                    .add(BigDecimal.valueOf(arrearWriteOff.getValue())))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP));
 
             serviceWiseResponse
-                    .setArrearPenBalance(BigDecimal.valueOf(arrearPenBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setArrearPenBalance(BigDecimal.valueOf(arrearPenBalance.getValue())
+                            .subtract(BigDecimal.valueOf(arrearPenCourtVerdict.getValue())
+                                    .add(BigDecimal.valueOf(arrearPenWriteOff.getValue())))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP));
 
             serviceWiseResponse
-                    .setCurrentBalance(BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                    .setCurrentBalance(BigDecimal.valueOf(currentDemand.getValue())
+                            .subtract(BigDecimal.valueOf(currentCourtVerdict.getValue())
+                                    .add(BigDecimal.valueOf(currentWriteOff.getValue())))
                             .subtract(BigDecimal.valueOf(currentCollected.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
 
             serviceWiseResponse
-                    .setCurrentPenBalance(BigDecimal.valueOf(currentPenBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setCurrentPenBalance(BigDecimal.valueOf(currentPenBalance.getValue())
+                            .subtract(BigDecimal.valueOf(currentPenCourtVerdict.getValue())
+                                    .add(BigDecimal.valueOf(currentPenWriteOff.getValue())))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP));
 
-            serviceWiseResponse.setTotalBalance(BigDecimal.valueOf(arrearBalance.getValue()).setScale(0,
-                    BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(arrearPenBalance.getValue()).setScale(0,
-                            BigDecimal.ROUND_HALF_UP)
-                            .add(BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP))
-                            .add(BigDecimal.valueOf(currentPenBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                                    .subtract(BigDecimal.valueOf(currentCollected.getValue()).setScale(0,
-                                            BigDecimal.ROUND_HALF_UP)))));
+            serviceWiseResponse
+                    .setTotalBalance(serviceWiseResponse.getArrearBalance().add(serviceWiseResponse.getArrearPenBalance())
+                            .add(serviceWiseResponse.getCurrentBalance()).add(serviceWiseResponse.getCurrentPenBalance()));
 
             serviceWiseResponse.setWaivedoffAmount(BigDecimal.valueOf(waivedOffAmount.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
             serviceWiseResponse.setExemptedAmount(BigDecimal.valueOf(exemptedAmount.getValue()).setScale(0,
-                    BigDecimal.ROUND_HALF_UP));
-            serviceWiseResponse.setWriteoffAmount(BigDecimal.valueOf(writeOffAmount.getValue()).setScale(0,
-                    BigDecimal.ROUND_HALF_UP));
-            serviceWiseResponse.setCourtcaseAmount(BigDecimal.valueOf(courtCaseAmount.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
 
             serviceWiseResponse.setDrillDownType(entry.getKeyAsString());
@@ -368,11 +407,17 @@ public class YearWiseDCBIndexService {
                 .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_COLLECTION).field(CURRENT_INTEREST_COLLECTION))
                 .subAggregation(AggregationBuilders.sum(WAIVEDOFF_AMOUNT).field(WAIVEDOFF_AMOUNT))
                 .subAggregation(AggregationBuilders.sum(EXEMPTED_AMOUNT).field(EXEMPTED_AMOUNT))
-                .subAggregation(AggregationBuilders.sum(WRITEOFF_AMOUNT).field(WRITEOFF_AMOUNT))
-                .subAggregation(AggregationBuilders.sum(COURTCASE_AMOUNT).field(COURTCASE_AMOUNT))
                 .subAggregation(AggregationBuilders.sum(ARREAR_BALANCE).field(ARREAR_BALANCE))
                 .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_BALANCE).field(ARREAR_INTEREST_BALANCE))
-                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_BALANCE).field(CURRENT_INTEREST_BALANCE));
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_BALANCE).field(CURRENT_INTEREST_BALANCE))
+                .subAggregation(AggregationBuilders.sum(ARREAR_CV_AMOUNT).field(ARREAR_CV_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(CURRENT_CV_AMOUNT).field(CURRENT_CV_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_CV_AMOUNT).field(ARREAR_INTEREST_CV_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_CV_AMOUNT).field(CURRENT_INTEREST_CV_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(ARREAR_WO_AMOUNT).field(ARREAR_WO_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(CURRENT_WO_AMOUNT).field(CURRENT_WO_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_WO_AMOUNT).field(ARREAR_INTEREST_WO_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_WO_AMOUNT).field(CURRENT_INTEREST_WO_AMOUNT));
 
     }
 

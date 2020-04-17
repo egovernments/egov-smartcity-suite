@@ -63,6 +63,7 @@ import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.service.utils.PropertyTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -80,13 +81,15 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
 
     private static PropertyTaxUtil propertyTaxUtil;
+    private static PropertyTaxService propertyTaxService;
 
     public BaseRegisterVLTResultAdaptor() {
     }
 
     @Autowired
-    public BaseRegisterVLTResultAdaptor(final PropertyTaxUtil propertyTaxUtil) {
+    public BaseRegisterVLTResultAdaptor(final PropertyTaxUtil propertyTaxUtil, final PropertyTaxService propertyTaxService) {
         BaseRegisterVLTResultAdaptor.propertyTaxUtil = propertyTaxUtil;
+        BaseRegisterVLTResultAdaptor.propertyTaxService = propertyTaxService;
     }
 
     @Override
@@ -145,7 +148,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
                     ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrFirstHalfDmd());
             jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
-
+            jsonObject.addProperty("courtVerdictAndWOAmount", propertyTaxService.getCourtVerdictAndWriteOffAmount(baseRegisterResultObj));
+            
             if (!valuesMap.isEmpty()) {
                 jsonObject.addProperty("libraryCessTaxFirstHlf", valuesMap.get(CURR_FIRST_HALF_LIB_CESS) == null
                         ? BigDecimal.ZERO : valuesMap.get(CURR_FIRST_HALF_LIB_CESS));

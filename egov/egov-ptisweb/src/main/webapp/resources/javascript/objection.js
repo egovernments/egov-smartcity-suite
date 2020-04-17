@@ -218,14 +218,18 @@ function showDocumentManager() {
 	window.open(url, 'docupload', 'width=1000,height=400');
 }
 
-jQuery(document).ready(function() {
-	jQuery('#ownerdetails').hide();
-	jQuery('#docdetails').hide();
-	jQuery('#attachments').hide();
-	jQuery("option:selected").removeAttr("selected", false);
-	jQuery('[id="ordersdetails"]').hide();
-	jQuery('[id="orderstext"]').hide();
-});
+jQuery(document).ready(
+		function() {
+			jQuery('#ownerdetails').hide();
+			jQuery('#docdetails').hide();
+			jQuery('#attachments').hide();
+			if (document.getElementById("wfType").value == 'APPEAL PETITION') {
+				jQuery("#appealDropDownList option:selected").removeAttr(
+						"selected", false);
+				jQuery('[id="ordersdetails"]').hide();
+				jQuery('[id="orderstext"]').hide();
+			}
+		});
 
 function validateDisposalDate() {
 	jQuery('#disposalDate').datepicker('setEndDate', new Date());

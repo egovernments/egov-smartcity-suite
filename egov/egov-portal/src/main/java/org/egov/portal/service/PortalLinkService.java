@@ -68,7 +68,12 @@ public class PortalLinkService {
     public void link(final PortalLink portalLink) {
         portalLinkRepository.save(portalLink);
     }
-
+    
+    @Transactional
+    public void delink(final String consumerCode, final String moduleName, Long userId) {
+        portalLinkRepository.delink(consumerCode,moduleName,userId);
+    }
+    
     public PortalLink findByConsumerNumber(String consumerNo) {
         return portalLinkRepository.findByConsumerNo(consumerNo);
     }

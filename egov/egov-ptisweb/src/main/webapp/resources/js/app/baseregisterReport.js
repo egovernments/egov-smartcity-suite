@@ -123,6 +123,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "currentColl", "title": "Current Collection"},
 						  { "data" : "totalColl", "title": "Total Collection"},
 						  { "data" : "waivedOffPT", "title": "Penalty Waiver"},
+						  { "data" : "courtVerdictAndWOAmount", "title": "Covered by Court Case / Write Off"},
 						  { "data" : "propertyUsage", "title": "Nature of Usage"},
 						  { "data" : "classification", "title": "Classification of Building"}, 
 						  { "data" : "area", "title": "Plinth Area"}, 

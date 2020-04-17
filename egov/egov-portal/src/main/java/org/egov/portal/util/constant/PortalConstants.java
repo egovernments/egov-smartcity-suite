@@ -48,6 +48,7 @@
 package org.egov.portal.util.constant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,6 +57,8 @@ public final class PortalConstants {
     public static final String PROPERTY_TAX = "Property Tax";
     public static final String WATER_CHARGES = "Water Charges";
     public static final String SEWERAGE_TAX = "Sewerage Tax";
+    public static final String TRADE_LICENSE = "Trade License";
+    public static final String LEASES_AND_AGREEMENTS = "Leases And Agreements";
     public static final String PTIS_URL = "%s/restapi/property/propertytaxdetails";
     public static final String WTMS_URL = "%s/restapi/watercharges/getwatertaxdetails";
     public static final String STMS_URL = "%s/restapi/sewerage/getseweragedetails";
@@ -72,6 +75,10 @@ public final class PortalConstants {
 
     public static List<String> getModuleList() {
         return Collections.unmodifiableList(MODULELIST);
+    }
+
+    public static List<String> getServiceList() {
+        return Collections.unmodifiableList(Arrays.asList(PROPERTY_TAX, WATER_CHARGES, TRADE_LICENSE, LEASES_AND_AGREEMENTS));
     }
 
 }

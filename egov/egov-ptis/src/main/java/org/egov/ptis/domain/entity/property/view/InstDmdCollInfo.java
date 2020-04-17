@@ -48,7 +48,9 @@
 
 package org.egov.ptis.domain.entity.property.view;
 
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,24 +59,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
 @Table(name = "EGPT_VIEW_INST_DEM_COLL")
-public class InstDmdCollInfo implements Serializable{
-	
-	private static final long serialVersionUID = 3736399639203706920L;
-	
-	@Id
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_BASIC_PROPERTY")
-	private PropertyMVInfo propMatView;
-	
-	@Id
-	@Column(name = "id_installment")
+public class InstDmdCollInfo implements Serializable {
+
+    private static final long serialVersionUID = 3736399639203706920L;
+
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_BASIC_PROPERTY")
+    private PropertyMVInfo propMatView;
+
+    @Id
+    @Column(name = "id_installment")
     private Integer installment;
 	
     private BigDecimal generalTax;
@@ -108,8 +109,26 @@ public class InstDmdCollInfo implements Serializable{
     private BigDecimal vacantLandTaxColl;
 	
     private BigDecimal pubSerChrgTaxColl;
-	
+
+    @Column(name = "drainagetax")
+    private BigDecimal drainageTax;
+
+    @Column(name = "lighttax")
+    private BigDecimal lightTax;
+
+    @Column(name = "scavengetax")
+    private BigDecimal scavengeTax;
+
+    @Column(name = "watertax")
+    private BigDecimal waterTax;
+
     private Date createdDate;
+    
+    @Column(name = "writeoff_amt")
+    private BigDecimal instWriteOffAmount;
+
+    @Column(name = "courtverdict_amt")
+    private BigDecimal instCourtVerdictAmount;
 
     public PropertyMVInfo getPropMatView() {
         return propMatView;
@@ -261,6 +280,54 @@ public class InstDmdCollInfo implements Serializable{
 
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public BigDecimal getDrainageTax() {
+        return drainageTax;
+    }
+
+    public void setDrainageTax(BigDecimal drainageTax) {
+        this.drainageTax = drainageTax;
+    }
+
+    public BigDecimal getLightTax() {
+        return lightTax;
+    }
+
+    public void setLightTax(BigDecimal lightTax) {
+        this.lightTax = lightTax;
+    }
+
+    public BigDecimal getScavengeTax() {
+        return scavengeTax;
+    }
+
+    public void setScavengeTax(BigDecimal scavengeTax) {
+        this.scavengeTax = scavengeTax;
+    }
+
+    public BigDecimal getWaterTax() {
+        return waterTax;
+    }
+
+    public void setWaterTax(BigDecimal waterTax) {
+        this.waterTax = waterTax;
+    }
+
+    public BigDecimal getInstWriteOffAmount() {
+        return instWriteOffAmount;
+    }
+
+    public void setInstWriteOffAmount(BigDecimal instWriteOffAmount) {
+        this.instWriteOffAmount = instWriteOffAmount;
+    }
+
+    public BigDecimal getInstCourtVerdictAmount() {
+        return instCourtVerdictAmount;
+    }
+
+    public void setInstCourtVerdictAmount(BigDecimal instCourtVerdictAmount) {
+        this.instCourtVerdictAmount = instCourtVerdictAmount;
     }
 
 }

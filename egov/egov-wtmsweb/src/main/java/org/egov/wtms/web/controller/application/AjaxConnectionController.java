@@ -224,7 +224,7 @@ public class AjaxConnectionController {
     public String getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
             @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize,
-            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid) {
+            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid, @RequestParam Long id) {
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
         final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
@@ -234,10 +234,12 @@ public class AjaxConnectionController {
         DonationDetails donationDetails = null;
         if (!donationHeaderTempList.isEmpty())
             for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
-                donationDetails = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp,
-                        fromDate, toDate);
-                if (donationDetails != null)
-                    break;
+				if (!donationHeaderTemp.getId().equals(id)) {
+					donationDetails = donationDetailsService
+							.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp, fromDate, toDate);
+					if (donationDetails != null)
+						break;
+				}
             }
         if (donationDetails != null && donationDetails.getDonationHeader().isActive() == activeid) {
             final JsonObject jsonObj = new JsonObject();
@@ -270,7 +272,7 @@ public class AjaxConnectionController {
             @ModelAttribute("waterRatesHeader") @RequestParam final ConnectionType categoryType,
             @RequestParam final WaterSource waterSource, @RequestParam final UsageType usageType,
             @RequestParam final PipeSize pipeSize, @RequestParam final Date fromDate, @RequestParam final Date toDate,
-            @RequestParam final Boolean activeid) {
+            @RequestParam final Boolean activeid, @RequestParam Long id) {
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource,
@@ -278,10 +280,12 @@ public class AjaxConnectionController {
         WaterRatesDetails waterRatesDetails = null;
         if (!waterRatesHeaderList.isEmpty())
             for (final WaterRatesHeader waterRatesHeaderTemp : waterRatesHeaderList) {
-                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
-                        waterRatesHeaderTemp, fromDate, toDate);
-                if (waterRatesDetails != null)
-                    break;
+            	if(waterRatesHeaderTemp.getId() != id){
+	                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
+	                        waterRatesHeaderTemp, fromDate, toDate);
+	                if (waterRatesDetails != null)
+	                    break;
+            	}
             }
         if (waterRatesDetails != null && waterRatesDetails.getWaterRatesHeader().isActive() == activeid) {
             final JsonObject jsonObj = new JsonObject();

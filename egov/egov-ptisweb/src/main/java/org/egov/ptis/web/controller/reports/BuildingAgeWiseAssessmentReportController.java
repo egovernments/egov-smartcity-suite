@@ -48,9 +48,6 @@
 
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -58,21 +55,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.ptis.actions.reports.BuidingAgeWiseReportHelperAdaptor;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.report.bean.BuidingAgeWiseReportHelperAdaptor;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.report.bean.BuidingAgeWiseReportResult;
+import org.egov.ptis.service.BuildingAgeWiseAssessmentReport.BuildingAgeWiseAssessmentReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -81,8 +80,10 @@ public class BuildingAgeWiseAssessmentReportController {
 
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @Autowired
+    private BuildingAgeWiseAssessmentReportService buildingAgeWiseService;
 
-    @ModelAttribute("ownershiptype")
+    @ModelAttribute("propertyTypeMaster")
     public Map<Long, String> propertyType() {
         return getFormattedPropertyTypeMap(propertyTypeMasterDAO.findAll());
     }
@@ -108,24 +109,20 @@ public class BuildingAgeWiseAssessmentReportController {
         return "buildingagewise-form";
     }
 
-    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void dcbReportSearchResult(@RequestParam final String boundaryId,
-            @RequestParam final String mode, @RequestParam final String apartmentId,
-            final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException {
-        final List<BuidingAgeWiseReportResult> resultList = null ; /*reportService
-                .prepareQueryForBuidingAgeWiseReport(Long.valueOf(boundaryId), mode, Long.valueOf(apartmentId));*/
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(resultList, BuidingAgeWiseReportResult.class,
-                BuidingAgeWiseReportHelperAdaptor.class)).append("}").toString();
-        IOUtils.write(result, response.getWriter());
+    @GetMapping(value = "/result", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String buildingAgeWiseResult(final BuidingAgeWiseReportResult buidingAgeWiseReportResult, final Model model,
+            final HttpServletRequest request) {
+        Page<PropertyMVInfo> prop = buildingAgeWiseService.pagedAgeWiseRecord(buidingAgeWiseReportResult);
+        return new DataTable<>(prop,
+                buidingAgeWiseReportResult.draw()).toJson(BuidingAgeWiseReportHelperAdaptor.class);
     }
-    
+
     private Map<Long, String> getFormattedPropertyTypeMap(List<PropertyTypeMaster> propertyTypeList) {
         Map<Long, String> propertyTypeMap = new TreeMap<>();
-        for (PropertyTypeMaster propertyTypeMaster : propertyTypeList) {
-                propertyTypeMap.put(propertyTypeMaster.getId(),
-                        propertyTypeMaster.getType());
-        }
+        for (PropertyTypeMaster propertyTypeMaster : propertyTypeList)
+            propertyTypeMap.put(propertyTypeMaster.getId(),
+                    propertyTypeMaster.getType());
         return propertyTypeMap;
     }
 

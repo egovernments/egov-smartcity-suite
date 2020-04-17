@@ -167,6 +167,10 @@ $(document).ready(function(){
 			window.open("/wtms/masters/donationMaster/", "_self");
 			});
 
+	  var mode = $('#mode').val();
+	  if(mode == 'modify'){
+		  $('#donationAmount').attr('readonly', 'readonly');
+	  }
      });
 
 function validRange(start, end) {
@@ -245,7 +249,8 @@ function donationheadercombination()
         	minPipeSize :$('#minpipeSize').val(),
         	fromDate : $('#effectiveDate').val(),
         	toDate : $('#toDate').val(),
-        	activeid : activeid
+        	activeid : activeid,
+        	id : $('#currentId').val()
         },
         dataType : 'json',
         success: function (response) {

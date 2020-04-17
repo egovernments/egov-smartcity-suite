@@ -130,6 +130,7 @@ public class WaterTaxSearchService {
         boolean ulbOperator = waterTaxUtils.isUlbOperator();
         boolean cscUser = waterTaxUtils.getCurrentUserRole();
         boolean bankCollectorOperator = waterTaxUtils.isRoleBankCollectorOperator(currentUser);
+        boolean citizenRole = waterTaxUtils.isCurrentUserCitizenRole();
         List<ConnectionSearchRequest> finalResult = new ArrayList<>();
         List<WaterChargeDocument> temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (WaterChargeDocument waterChargeIndex : temList) {
@@ -156,7 +157,7 @@ public class WaterTaxSearchService {
             customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
             customerObj.setClosureType(waterChargeIndex.getClosureType());
             customerObj.setActions(addActions(waterChargeIndex, publicRole, collectionOperatorRole, cscUser, superUserRole,
-                    ulbOperator, adminRole, bankCollectorOperator));
+                    ulbOperator, adminRole, bankCollectorOperator, citizenRole));
             finalResult.add(customerObj);
         }
         return finalResult;
@@ -209,11 +210,11 @@ public class WaterTaxSearchService {
     }
 
     private List<String> addActions(WaterChargeDocument connection, boolean publicRole, boolean collectionOperatorRole,
-            boolean cscUser, boolean superUserRole, boolean ulbOperator, boolean adminRole, boolean bankCollectorOperator) {
+            boolean cscUser, boolean superUserRole, boolean ulbOperator, boolean adminRole, boolean bankCollectorOperator, boolean citizenRole) {
 
         List<String> connectionActions = new ArrayList<>();
 
-        if (publicRole && ACTIVE.equals(connection.getStatus())) {
+        if ((publicRole || citizenRole) && ACTIVE.equals(connection.getStatus())) {
             connectionActions.add(COLLECT_CHARGES);
             connectionActions.add(VIEW_DCB_SCREEN);
         } else if (superUserRole) {

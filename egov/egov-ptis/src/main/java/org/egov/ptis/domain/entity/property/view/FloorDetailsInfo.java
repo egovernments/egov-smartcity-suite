@@ -60,6 +60,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Immutable
@@ -92,9 +93,12 @@ public class FloorDetailsInfo implements Serializable {
 
 	private String classification;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "occupation")
-	private PropertyOccupation propertyOccupation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupation")
+    private PropertyOccupation propertyOccupation;
+    
+    @Column(name = "constructiondate")
+    private Date constructionDate;
 
 	public PropertyMVInfo getPropMatView() {
 		return propMatView;
@@ -172,8 +176,16 @@ public class FloorDetailsInfo implements Serializable {
 		return propertyOccupation;
 	}
 
-	public void setPropertyOccupation(final PropertyOccupation propertyOccupation) {
-		this.propertyOccupation = propertyOccupation;
-	}
+    public void setPropertyOccupation(final PropertyOccupation propertyOccupation) {
+        this.propertyOccupation = propertyOccupation;
+    }
+
+    public Date getConstructionDate() {
+        return constructionDate;
+    }
+
+    public void setConstructionDate(Date constructionDate) {
+        this.constructionDate = constructionDate;
+    }
 
 }

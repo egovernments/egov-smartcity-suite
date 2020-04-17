@@ -171,12 +171,10 @@ public class ViewPropertyAction extends BaseFormAction {
                 getBasicPropForAppNo(applicationNo, applicationType);
                 setPropertyId(basicProperty.getUpicNo());
             }
-            Ptdemand ptDemand = null;
-            if (getBasicProperty() != null && property == null) {
+            if (getBasicProperty() != null && property == null)
                 property = (PropertyImpl) getBasicProperty().getProperty();
-                Collections.sort(getBasicProperty().getPropertyOwnerInfo(), new OwnerNameComparator());
-                ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-            }
+            Collections.sort(getBasicProperty().getPropertyOwnerInfo(), new OwnerNameComparator());
+            final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null) {
                 setErrorMessage("No Tax details for current Demand period.");
                 return "view";

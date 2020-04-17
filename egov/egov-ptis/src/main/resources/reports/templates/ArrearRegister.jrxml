@@ -170,9 +170,9 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="38" splitType="Stretch">
+		<band height="43" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="90" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6"/>
+				<reportElement x="0" y="0" width="82" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -181,12 +181,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Assessment Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="0" width="68" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16"/>
+				<reportElement x="169" y="0" width="60" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -195,12 +195,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Door No. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="0" width="95" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
+				<reportElement x="82" y="0" width="87" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -209,12 +209,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="253" y="0" width="77" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
+				<reportElement x="229" y="0" width="69" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -223,12 +223,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Arrear Installment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="0" width="85" height="38" uuid="cfa97e38-685b-4003-80b9-c333fae65365"/>
+				<reportElement x="298" y="0" width="77" height="38" uuid="cfa97e38-685b-4003-80b9-c333fae65365"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -237,12 +237,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Arrear LibraryCess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="415" y="0" width="90" height="38" uuid="85e1d449-1630-4a63-9fc1-50285c63d8e1"/>
+				<reportElement x="375" y="0" width="82" height="38" uuid="85e1d449-1630-4a63-9fc1-50285c63d8e1"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -251,12 +251,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Arrear PropertyTax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="505" y="0" width="76" height="38" uuid="48cfda6b-a1d3-4b04-985f-a91ecddd79dc"/>
+				<reportElement x="457" y="0" width="68" height="38" uuid="48cfda6b-a1d3-4b04-985f-a91ecddd79dc"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -265,12 +265,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Arrear Penalty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="581" y="0" width="74" height="38" uuid="799fc1b0-f143-4c89-b761-297aebe56ab2"/>
+				<reportElement x="525" y="0" width="66" height="38" uuid="799fc1b0-f143-4c89-b761-297aebe56ab2"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -279,9 +279,23 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="591" y="0" width="64" height="38" uuid="0055c025-90c6-406f-a3b5-02551155f8f9"/>
+				<box leftPadding="0">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Demand Covered By Court Verdict / Write Off]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

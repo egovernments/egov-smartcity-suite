@@ -121,6 +121,7 @@
 						</s:else>
 						{key:"reappropriation_amount",label:'Total <br/>Reappropriation Amount',className:"budgetSearch"},
 						{key:"approved_amount",label:'Total <br/>Approved Amount',className:"budgetSearch"},
+						{key:"available_balance",label:'Available Balance',className:"budgetSearch"},
 						{key:"comment",label:'Comments',className:"budgetSearch"},
 						/* {key:"document",label:'Documents',className:"budgetSearch"} */
 				];
@@ -190,6 +191,13 @@
 							</s:else>
 							"reappropriation_amount":'<s:property value="approvedReAppropriationsTotal.setScale(2).toString()"/>',
 							"approved_amount":'<s:property value="%{calculateTotal(#p)}"/>',
+							"":'',
+							<s:if test="%{budgetDetailIdsAndAmount[#p.id.toString()] != null}">
+								"available_balance":'<s:property value="budgetAvailable-budgetDetailIdsAndAmount[#p.id.toString()]"/>',
+							</s:if>
+							<s:else>
+								"available_balance":'<s:property value="budgetAvailable"/>',
+							</s:else>
 							"comment":'<s:property value="comment"/>',
 							/* "document":'<input type="submit" class="buttonsubmit" value="View" onclick="'+'viewDocumentManager(<s:property value="#p.documentNumber"/>);return false;"/>' */
 						});

@@ -48,10 +48,12 @@
 package org.egov.restapi.web.rest;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,13 +68,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.bean.AssessmentInfo;
 import org.egov.ptis.bean.dashboard.DefaultersResultForNotification;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
+import org.egov.ptis.domain.model.ApplicationPropertyDetails;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -130,6 +136,9 @@ public class AssessmentController {
     
     @Autowired
     private PropertyTaxService propertyTaxService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     /**
      * This method is used get the property tax details.
@@ -879,4 +888,73 @@ public class AssessmentController {
             final HttpServletRequest request) {
         return propertyTaxReportService.getResultList(defaultersRequest);
     }
+
+    /**
+     * This method is used get the property tax details.
+     * 
+     * @param assessmentRequest
+     * @return
+     * @throws IOException
+     */
+    @PostMapping(value = "/property/propertyApplicationDetails", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String getPropertyApplicationDetails(@RequestBody String assessmentRequest)
+            throws IOException {
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+        return getPropertyApplicationDetails(assessmentReq);
+    }
+
+    private String getPropertyApplicationDetails(AssessmentRequest assessmentReq) throws IOException {
+        ApplicationPropertyDetails applicationDetails = null;
+        ErrorDetails errorDetails;
+        PropertyImpl property = null;
+        try {
+            final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                    PropertyTaxConstants.APPCONFIG_APPLICATION_DETAILS_REST_API);
+            if ("Y".equals(appConfigValues.get(0).getValue())) {
+                if (org.apache.commons.lang.StringUtils.isBlank(assessmentReq.getApplicationNo())) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_VALID_APPLICATION_NO_CODE);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_VALID_APPLICATION_NO_MSG);
+                    return getJSONResponse(errorDetails);
+                } else {
+                    property = propertyExternalService.getPropertyDetails(assessmentReq.getApplicationNo());
+                    if (property == null) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_CODE);
+                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_APPLICATION_DETAIL_SUCCESS_MSG);
+                        return getJSONResponse(errorDetails);
+                    } else {
+                        applicationDetails = propertyExternalService.getPropertyData(property);
+                        if (applicationDetails != null) {
+                            if (applicationDetails.getAssessmentNo() == null)
+                                applicationDetails.setAssessmentNo("N/A");
+                            if (applicationDetails.getDocumentNo() == null)
+                                applicationDetails.setDocumentNo("N/A");
+                            if (applicationDetails.getCurrentMarketValue() == null)
+                                applicationDetails.setCurrentMarketValue(BigDecimal.ZERO);
+                            if (applicationDetails.getRegisteredDocumentValue() == null)
+                                applicationDetails.setRegisteredDocumentValue(BigDecimal.ZERO);
+                            if (applicationDetails.getDocumentType() == null)
+                                applicationDetails.setDocumentType("");
+                        }
+                    }
+                }
+            } else {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.REST_API_DISABLED_CODE);
+                errorDetails.setErrorMessage(PropertyTaxConstants.REST_API_DISABLED_MSG);
+                return getJSONResponse(errorDetails);
+            }
+        } catch (Exception e) {
+            List<ErrorDetails> errorList = new ArrayList<>(0);
+            ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            return JsonConvertor.convert(errorList);
+        }
+        return getJSONResponse(applicationDetails);
+    }
+
 }

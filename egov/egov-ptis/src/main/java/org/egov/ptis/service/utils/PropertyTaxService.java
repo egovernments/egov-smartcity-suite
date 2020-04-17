@@ -51,12 +51,13 @@ package org.egov.ptis.service.utils;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -105,5 +106,25 @@ public class PropertyTaxService {
             basicProperties.forEach(basicProperty -> assessmentList.add(basicProperty.getUpicNo()));
         }
         return assessmentList;
+    }
+
+    public BigDecimal getCourtVerdictAndWriteOffAmount(final PropertyMVInfo propMatView) {
+        BigDecimal amount = BigDecimal.ZERO;
+        amount = amount.add(nullCheckBigDecimal(propMatView.getArrearCourtVerdictAmount()))
+                .add(nullCheckBigDecimal(propMatView.getArrearPenaltyCourtVerdictAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentFirstHalfCourtVerdictAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentSecondHalfCourtVerdictAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentPenaltyCourtVerdictAmount()))
+                .add(nullCheckBigDecimal(propMatView.getArrearWriteOffAmount()))
+                .add(nullCheckBigDecimal(propMatView.getArrearPenaltyWriteOffAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentFirstHalfWriteOffAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentSecondHalfWriteOffAmount()))
+                .add(nullCheckBigDecimal(propMatView.getCurrentPenaltyWriteOffAmount()));
+        return amount;
+    }
+
+    public BigDecimal nullCheckBigDecimal(BigDecimal value) {
+
+        return value != null ? value : BigDecimal.ZERO;
     }
 }

@@ -714,15 +714,22 @@ public class ReportService {
             defaultersInfo.setHouseNo(propView.getHouseNo());
             defaultersInfo.setLocality(getLocality(propView));
             defaultersInfo.setMobileNumber(getMobileNo(propView));
-            defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
+            defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()
+                    .add(propView.getArrearCourtVerdictAmount()).add(propView.getArrearWriteOffAmount())));
             defaultersInfo.setCurrentDue(propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd())
-                    .subtract(propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl())));
-            defaultersInfo.setAggrArrearPenalyDue(getAggArrPenaltyDue(propView));
+                    .subtract(propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl())
+                            .add(propView.getCurrentFirstHalfCourtVerdictAmount())
+                            .add(propView.getCurrentSecondHalfCourtVerdictAmount())
+                            .add(propView.getCurrentFirstHalfWriteOffAmount())
+                            .add(propView.getCurrentSecondHalfWriteOffAmount())));
+            defaultersInfo.setAggrArrearPenalyDue(getAggArrPenaltyDue(propView)
+                    .subtract(propView.getArrearPenaltyCourtVerdictAmount().add(propView.getArrearPenaltyWriteOffAmount())));
             currPenalty = getAggCurrFirstHalfPenalty(propView)
                     .add(getAggCurrSecHalfPenalty(propView));
             currPenaltyColl = getAggCurrFirstHalfPenColl(propView)
                     .add(getAggCurrSecHalfPenColl(propView));
-            defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
+            defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl
+                    .add(propView.getCurrentPenaltyCourtVerdictAmount()).add(propView.getCurrentPenaltyWriteOffAmount())));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);

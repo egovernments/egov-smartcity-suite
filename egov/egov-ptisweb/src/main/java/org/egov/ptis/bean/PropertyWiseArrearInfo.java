@@ -61,7 +61,7 @@ public class PropertyWiseArrearInfo {
     private BigDecimal totalArrearTax;
     private BigDecimal arrearEducationCess;
     private BigDecimal arrearVacantLandTax;
-    private BigDecimal waivedOffAmt;
+    private BigDecimal variationAmount;
 
     public String getIndexNumber() {
         return indexNumber;
@@ -151,12 +151,12 @@ public class PropertyWiseArrearInfo {
         this.arrearVacantLandTax = arrearVacantLandTax;
     }
 
-    public BigDecimal getWaivedOffAmt() {
-        return waivedOffAmt;
+    public BigDecimal getVariationAmount() {
+        return variationAmount;
     }
 
-    public void setWaivedOffAmt(BigDecimal waivedOffAmt) {
-        this.waivedOffAmt = waivedOffAmt;
+    public void setVariationAmount(BigDecimal variationAmount) {
+        this.variationAmount = variationAmount;
     }
 
 }

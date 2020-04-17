@@ -166,28 +166,9 @@ jQuery(document).ready(
 								'#tblViewMutation tbody tr:eq('
 										+ jQuery(this).attr('data-idx') + ')')
 								.find('.effToDate');
-
-						var effToDateValue = effToDateTextBox.val();
-						var todaysDate = new Date();
-						var currentDate = todaysDate.getDate() + "/"
-								+ (todaysDate.getMonth() + 1) + "/"
-								+ todaysDate.getFullYear();
-						var stsplit = effToDateValue.split("/");
-						var ensplit = currentDate.split("/");
-						effToDateValue = stsplit[1] + "/" + stsplit[0] + "/"
-								+ stsplit[2];
-						currentDate = ensplit[1] + "/" + ensplit[0] + "/"
-								+ ensplit[2];
-
-						var start = Date.parse(effToDateValue);
-						var end = Date.parse(currentDate);
-						var difference = (end - start) / (86400000 * 7);
-						if (difference < 0) {
-
-							effToDateTextBox.removeAttr('disabled');
-							effToDateTextBox.addClass('datepicker');
-							changeDatePicker();
-						}
+						effToDateTextBox.removeAttr('disabled');
+						effToDateTextBox.addClass('datepicker');
+						changeDatePicker();
 						return false;
 					});
 

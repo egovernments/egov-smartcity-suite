@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,38 +45,42 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.portal.entity;
 
-package org.egov.ptis.report.bean;
+import java.util.Date;
 
-import java.lang.reflect.Type;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+public class SearchPastPaymentRequest {
 
-public class BuidingAgeWiseReportHelperAdaptor implements JsonSerializer<BuidingAgeWiseReportResult> {
+    private String serviceName;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date fromDate;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date toDate;
 
-    @Override
-    public JsonElement serialize(final BuidingAgeWiseReportResult buildingAgeWiseReportObj, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (buildingAgeWiseReportObj != null) {
-            jsonObject.addProperty("assessmentNo", buildingAgeWiseReportObj.getAssessmentNo());
-            jsonObject.addProperty("doorNo", buildingAgeWiseReportObj.getDoorNo());
-            jsonObject.addProperty("ownerName", buildingAgeWiseReportObj.getOwnerName());
-            jsonObject.addProperty("revenueZone", buildingAgeWiseReportObj.getRevenueZone());
-            jsonObject.addProperty("revenueWard", buildingAgeWiseReportObj.getRevenueWard());
-            jsonObject.addProperty("revenueBlock", buildingAgeWiseReportObj.getRevenueBlock());
-
-            jsonObject.addProperty("locality", buildingAgeWiseReportObj.getLocality());
-            jsonObject.addProperty("propertyTax", buildingAgeWiseReportObj.getPropertyTax());
-            jsonObject.addProperty("libraryCess", buildingAgeWiseReportObj.getLibraryCess());
-
-            jsonObject.addProperty("educationTax", buildingAgeWiseReportObj.getEducationTax());
-            jsonObject.addProperty("assessmentCount", buildingAgeWiseReportObj.getAssessmentCount());
-
-        }
-        return jsonObject;
+    public String getServiceName() {
+        return serviceName;
     }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
 }

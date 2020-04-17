@@ -910,4 +910,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/appealpetitionreport-form.jsp" />
 	</definition>
+	<definition name="bccollectionbook-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.bc.collection.book.report.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/billcollectorscollectionbook-form.jsp" />
+	</definition>
 </tiles-definitions> 

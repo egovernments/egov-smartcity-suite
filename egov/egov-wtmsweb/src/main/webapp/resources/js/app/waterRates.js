@@ -192,7 +192,8 @@ $(document).ready(function(){
 				pipeSize :$('#pipeSize').val(),
 				fromDate :$('#formDate').val(),
 				toDate :$('#toDate').val(),
-				activeid : activeid
+				activeid : activeid,
+				id : $('#currentId').val()
 		            	
 		            },
 		            dataType : 'json',

@@ -49,6 +49,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
+<script src="<cdn:url  value='/resources/js/servicesearch.js?rnd=${app_release_no}'/>" type="text/javascript"></script>
+
 <div class="container-fluid">
     <div class="">
         <div class="left-menu">
@@ -332,6 +335,206 @@
                         </table>
                     </div>
                 </div>
+
+              </div><br>
+              <div id="showServiceGroup">
+				<div class="col-md-3 col-md-offset-6 text-right" style="line-height: 2.3;"><spring:message code="lbl.servicegroup" /> :</div>
+				<div class="col-md-3">
+					<select class="form-control" id="serviceGroup" >
+					  <option value="" >ALL</option>
+						<c:forEach items="${distinctModuleNames}" var="module" varStatus="item">
+							<c:if test="${module.displayName != 'My Services'}">
+								  <option value="${module.contextRoot }">${module.displayName}</option>
+							</c:if>
+						</c:forEach>
+					</select>
+				</div>
+             </div>
+             <div class="col-md-12"><br>
+          	<table class="table table-striped datatable" id="tabelPortal">
+                <thead>
+                  <tr>
+                    <th><spring:message code="lbl.slno" /></th>
+                    <th><spring:message code="lbl.applicartionno" /></th>
+                    <th><spring:message code="lbl.applicant.name" /></th>
+                    <th><spring:message code="lbl.applicationdate" /></th>
+                    <th><spring:message code="lbl.servicegroup" /></th>
+                    <th><spring:message code="lbl.servicename" /></th>
+                    <th><spring:message code="lbl.status" /></th>
+                    <th><spring:message code="lbl.pendingaction" /></th>
+                    <th><spring:message code="lbl.expectedservicedelivery" /></th>
+                    <th><spring:message code="lbl.description" /></th>
+                  </tr>
+                </thead>
+                <tbody class="servicesUnderScrutinyHide">
+                <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
+		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
+		                   <td><span class="spansno">${item.index + 1}</span></td>
+		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
+		                   <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+		                   <td>
+			                   <fmt:formatDate
+								value="${inboxItem.portalInbox.applicationDate}"
+								pattern="dd/MM/yyyy" /></td>
+		                   <td>${inboxItem.portalInbox.module.displayName}</td>
+		                   <td>${inboxItem.portalInbox.serviceType}</td>
+		                   <td>${inboxItem.portalInbox.status}</td>
+		                   <td>
+								<c:choose>
+		 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+		 								${inboxItem.portalInbox.state.nextAction}
+	 								</c:when>
+	 								<c:otherwise>
+	 									<div class="text-center">
+	 										<c:out value="-" ></c:out>
+	 									</div>
+	 								</c:otherwise>
+		 						</c:choose>
+							</td>
+		                   <td>
+		 						<div class="text-center">
+									<fmt:formatDate
+										value="${inboxItem.portalInbox.slaEndDate}"
+										pattern="dd/MM/yyyy" />
+							</div>
+		 					</td>
+		 					<td>
+ 								${inboxItem.portalInbox.detailedMessage}
+		 					</td>
+		                 </tr>
+                  </c:forEach>
+                </tbody>
+                <tbody class="totalServicesAppliedHide">
+                <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
+	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
+	                    <td><span class="spansno">${item.index + 1}</span></td>
+	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+	                    <td>
+	                    	<fmt:formatDate
+								value="${inboxItem.portalInbox.applicationDate}"
+								pattern="dd/MM/yyyy" /></td>
+
+	                    <td>${inboxItem.portalInbox.module.displayName}</td>
+	                    <td>${inboxItem.portalInbox.serviceType}</td>
+	                    <td>${inboxItem.portalInbox.status}</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+	 								${inboxItem.portalInbox.state.nextAction}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
+	                    <td>
+	 						<div class="text-center">
+								<fmt:formatDate
+									value="${inboxItem.portalInbox.slaEndDate}"
+									pattern="dd/MM/yyyy" />
+							</div>
+	 					</td>
+	                    <td>
+	 						${inboxItem.portalInbox.detailedMessage}
+	 					</td>
+	                  	</tr>
+                  </c:forEach>
+                </tbody>
+                 <tbody class="totalServicesCompletedHide">
+                <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
+	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
+	                    <td><span class="spansno">${item.index + 1}</span></td>
+	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+	                    <td>
+		                   <fmt:formatDate
+							value="${inboxItem.portalInbox.applicationDate}"
+							pattern="dd/MM/yyyy" /></td>
+	                    <td>${inboxItem.portalInbox.module.displayName}</td>
+	                    <td>${inboxItem.portalInbox.serviceType}</td>
+	                    <td>${inboxItem.portalInbox.status}</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+	 								${inboxItem.portalInbox.state.nextAction}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
+	                    <td>
+							<div class="text-center">
+								<fmt:formatDate
+									value="${inboxItem.portalInbox.slaEndDate}"
+									pattern="dd/MM/yyyy" />
+							</div>
+	 					</td>
+	                    <td>
+	 						${inboxItem.portalInbox.detailedMessage}
+	 					</td>
+	                  </tr>
+                  </c:forEach>
+                </tbody>
+              </table>
+          </div>
+            </div><br>
+          
+            <input type="hidden" value="<spring:message code="error.pwd.invalid.case" />" id="errorPwdInvalid" />
+            
+            <c:forEach items="${services}" var="service" varStatus="item">
+	            <div class="is-flex services-item">
+	              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 services" data-services="${service.module.displayName }">
+	                <a href="javascript:openPopUp('${service.url}')" >
+	                  <div class="content a">${service.name}</div>
+	                </a>
+	              </div>
+	            </div>
+	        </c:forEach>
+	         <div class="col-md-12"><br>
+	          <div class="linkedApplications">
+            	<table class="table table-striped datatable" id="linkedTable">
+                <thead>
+                  <tr>
+                    <th><spring:message code="lbl.slno" /></th>
+                    <th><spring:message code="lbl.consumernumber" /></th>
+                    <th><spring:message code="lbl.applicant.name" /></th>
+                    <th><spring:message code="lbl.linkeddate" /></th>
+                    <th><spring:message code="lbl.servicegroup" /></th>
+                    <th><spring:message code="lbl.action" /></th>
+                    <th><spring:message code="lbl.delink.service" /></th>
+                 
+                  </tr>
+                </thead>
+                <tbody>
+                	<c:forEach items="${totalServicesLinked}" var="linkedItem" varStatus="item">
+                	<tr>
+		                   <td><span class="spansno">${item.index + 1}</span></td>
+		                   <td><a href="#" onclick="openPopUp('${linkedItem.url}');">${linkedItem.consumerNo}</a></td>
+		                   <td>${linkedItem.applicantName}</td>
+		                   <td>
+		                   <fmt:formatDate
+								value="${linkedItem.createdDate}"
+								pattern="dd/MM/yyyy" />
+		                    </td>
+		                   <td>${linkedItem.moduleName} </td>
+		                   <td><input type="Button" type="submit" value="Pay Tax" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.paymentURL}');"> 
+		                   		<input type="Button" type="submit" value="View DCB" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.viewDcbURL}');">
+		                   </td>
+		                   <td>
+		                   		<input type="Button" type="submit" value="Delink" class="buttonsubmit"
+		                   		onclick="unlinkService('${linkedItem.consumerNo}','${linkedItem.moduleName}','${linkedItem.applicantName}');"/>
+		                   </td>
+		                 </tr>
+                  </c:forEach>
+                </tbody>
+                </table>
+            </div>
             </div>
         </div>
     </div>

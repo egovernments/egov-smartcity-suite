@@ -74,11 +74,17 @@ public class YearWiseDCBReponse {
     private BigDecimal currentBalance;
     private BigDecimal currentPenBalance;
     private BigDecimal totalBalance;
-
     private BigDecimal waivedoffAmount;
     private BigDecimal exemptedAmount;
-    private BigDecimal writeoffAmount;
-    private BigDecimal courtcaseAmount;
+    private BigDecimal arrearCourtVerdict;
+    private BigDecimal currentCourtVerdict;
+    private BigDecimal arrearPenCourtVerdict;
+    private BigDecimal currentPenCourtVerdict;
+    private BigDecimal arrearWriteOff;
+    private BigDecimal currentWriteOff;
+    private BigDecimal arrearPenWriteOff;
+    private BigDecimal currentPenWriteOff;
+
 
     public String getDrillDownType() {
         return drillDownType;
@@ -280,20 +286,67 @@ public class YearWiseDCBReponse {
         this.exemptedAmount = exemptedAmount;
     }
 
-    public BigDecimal getWriteoffAmount() {
-        return writeoffAmount;
+    public BigDecimal getArrearCourtVerdict() {
+        return arrearCourtVerdict;
     }
 
-    public void setWriteoffAmount(BigDecimal writeoffAmount) {
-        this.writeoffAmount = writeoffAmount;
+    public void setArrearCourtVerdict(BigDecimal arrearCourtVerdict) {
+        this.arrearCourtVerdict = arrearCourtVerdict;
     }
 
-    public BigDecimal getCourtcaseAmount() {
-        return courtcaseAmount;
+    public BigDecimal getCurrentCourtVerdict() {
+        return currentCourtVerdict;
     }
 
-    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
-        this.courtcaseAmount = courtcaseAmount;
+    public void setCurrentCourtVerdict(BigDecimal currentCourtVerdict) {
+        this.currentCourtVerdict = currentCourtVerdict;
     }
 
+    public BigDecimal getArrearPenCourtVerdict() {
+        return arrearPenCourtVerdict;
+    }
+
+    public void setArrearPenCourtVerdict(BigDecimal arrearPenCourtVerdict) {
+        this.arrearPenCourtVerdict = arrearPenCourtVerdict;
+    }
+
+    public BigDecimal getCurrentPenCourtVerdict() {
+        return currentPenCourtVerdict;
+    }
+
+    public void setCurrentPenCourtVerdict(BigDecimal currentPenCourtVerdict) {
+        this.currentPenCourtVerdict = currentPenCourtVerdict;
+    }
+
+    public BigDecimal getArrearWriteOff() {
+        return arrearWriteOff;
+    }
+
+    public void setArrearWriteOff(BigDecimal arrearWriteOff) {
+        this.arrearWriteOff = arrearWriteOff;
+    }
+
+    public BigDecimal getCurrentWriteOff() {
+        return currentWriteOff;
+    }
+
+    public void setCurrentWriteOff(BigDecimal currentWriteOff) {
+        this.currentWriteOff = currentWriteOff;
+    }
+
+    public BigDecimal getArrearPenWriteOff() {
+        return arrearPenWriteOff;
+    }
+
+    public void setArrearPenWriteOff(BigDecimal arrearPenWriteOff) {
+        this.arrearPenWriteOff = arrearPenWriteOff;
+    }
+
+    public BigDecimal getCurrentPenWriteOff() {
+        return currentPenWriteOff;
+    }
+
+    public void setCurrentPenWriteOff(BigDecimal currentPenWriteOff) {
+        this.currentPenWriteOff = currentPenWriteOff;
+    }
 }

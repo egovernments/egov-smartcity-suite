@@ -166,6 +166,7 @@ import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
+import org.egov.ptis.domain.model.ApplicationPropertyDetails;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.DocumentDetailsRequest;
@@ -175,6 +176,7 @@ import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.OwnerInfo;
 import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
@@ -3132,5 +3134,65 @@ public class PropertyExternalService {
         errorDetails.setErrorMessage(THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG);
         newPropertyDetails.setErrorDetails(errorDetails);
         return newPropertyDetails;
+    }
+
+    public PropertyImpl getPropertyDetails(final String applicationNo) {
+        List<PropertyImpl> property = new ArrayList<>();
+        if (StringUtils.isNotBlank(applicationNo)) {
+            final Query query = entityManager.createNamedQuery("PROPERTYIMPL_BY_APPLICATIONNO");
+            query.setParameter("applicatiNo", applicationNo);
+            property = query.getResultList();
+        }
+        return !property.isEmpty() ? property.get(0) : null;
+    }
+
+    public ApplicationPropertyDetails getPropertyData(PropertyImpl property) {
+        List<OwnerInfo> ownerDetails = new ArrayList<>();
+        ApplicationPropertyDetails applicationDetails = new ApplicationPropertyDetails();
+        for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
+            OwnerInfo ownerInfo = new OwnerInfo();
+            ownerInfo.setName(owner.getOwner().getName());
+            ownerInfo.setGuardian(owner.getOwner().getGuardian());
+            ownerDetails.add(ownerInfo);
+        }
+        applicationDetails.setOwnerDetails(ownerDetails);
+        applicationDetails.setApplicationNo(property.getApplicationNo());
+        applicationDetails.setAssessmentNo(property.getBasicProperty().getUpicNo());
+        applicationDetails.setApplicationDate(
+                DateUtils.getFormattedDate(property.getBasicProperty().getCreatedDate(), DATE_FORMAT_DDMMYYY));
+        applicationDetails.setCurrentMarketValue(property.getPropertyDetail().getCurrentCapitalValue());
+        applicationDetails.setRegisteredDocumentValue(property.getPropertyDetail().getMarketValue());
+        applicationDetails.setRevenueWard(property.getBasicProperty().getPropertyID().getWard().getName());
+        applicationDetails.setElectionWard(property.getBasicProperty().getPropertyID().getElectionBoundary().getName());
+        applicationDetails.setLocality(property.getBasicProperty().getPropertyID().getLocality().getName());
+        applicationDetails.setNorthBoundary(property.getBasicProperty().getPropertyID().getNorthBoundary());
+        applicationDetails.setSouthBoundary(property.getBasicProperty().getPropertyID().getSouthBoundary());
+        applicationDetails.setWestBoundary(property.getBasicProperty().getPropertyID().getWestBoundary());
+        applicationDetails.setEastBoundary(property.getBasicProperty().getPropertyID().getEastBoundary());
+        applicationDetails.setSurveyNumber(property.getPropertyDetail().getSurveyNumber());
+        applicationDetails.setPropertyType(property.getPropertyDetail().getPropertyType());
+        applicationDetails.setPattaNumber(property.getPropertyDetail().getPattaNumber());
+        applicationDetails.setAreaofSite(property.getPropertyDetail().getSitalArea().getArea().toString());
+        applicationDetails.setApplicationStatus(getStatus(property.getApplicationNo()));
+        applicationDetails
+                .setApplicationApprovalDate(DateUtils.getFormattedDate(property.getLastModifiedDate(), DATE_FORMAT_DDMMYYY));
+        final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+        query.setParameter("basicProperty", property.getBasicProperty().getId());
+        List<DocumentTypeDetails> docTypeDetailsList = query.getResultList();
+        if (!docTypeDetailsList.isEmpty()) {
+            DocumentTypeDetails docTypeDetails = docTypeDetailsList.get(0);
+            if (docTypeDetails != null) {
+                applicationDetails.setDocumentType(docTypeDetails.getDocumentName());
+                applicationDetails.setDocumentNo(docTypeDetails.getDocumentNo());
+            }
+        }
+        return applicationDetails;
+    }
+
+    public String getStatus(String applicationNo) {
+        final Query qry = entityManager
+                .createQuery("select approved from ApplicationIndex where applicationNumber= :applicationNo");
+        qry.setParameter("applicationNo", applicationNo);
+        return qry.getSingleResult().toString();
     }
 }
