@@ -57,6 +57,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -216,19 +218,15 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     }
 
     /*
-     * @Override public CFinancialYear getFinancialYear(String estDate) {
-     * session = getCurrentSession(); logger.info("Obtained session");
-     * CFinancialYear result=null; Query query=session.createQuery(
+     * @Override public CFinancialYear getFinancialYear(String estDate) { session = getCurrentSession();
+     * logger.info("Obtained session"); CFinancialYear result=null; Query query=session.createQuery(
      * "from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
-     * +estDate+"' and cfinancialyear.endingDate >= '"+estDate+"' "); ArrayList
-     * list= (ArrayList)query.list(); if(list.size()>0) result=(CFinancialYear)
-     * list.get(0); return result; }
+     * +estDate+"' and cfinancialyear.endingDate >= '"+estDate+"' "); ArrayList list= (ArrayList)query.list(); if(list.size()>0)
+     * result=(CFinancialYear) list.get(0); return result; }
      */
     /**
      * @param fromDate
-     * @param toDate
-     *            will will return false if any financialyear is not active for
-     *            posting within given date range
+     * @param toDate will will return false if any financialyear is not active for posting within given date range
      */
     public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate) {
 
@@ -249,22 +247,21 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     }
 
     /**
-     * gives active FY only else throws
-     * ApplicationRuntimeException("Financial Year is not active For Posting.")
+     * gives active FY only else throws ApplicationRuntimeException("Financial Year is not active For Posting.")
      */
 
     public CFinancialYear getFinancialYearByDate(Date date) {
         CFinancialYear cFinancialYear = null;
         logger.info("Obtained session");
-        String result = "";
-        Query query = getCurrentSession()
-                .createQuery(
-                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=true");
-        query.setDate("sDate", date);
-        query.setDate("eDate", date);
-        ArrayList list = (ArrayList) query.list();
+        List<CFinancialYear> list = entityManager
+                .createQuery(new StringBuffer(" from CFinancialYear cfinancialyear")
+                        .append(" where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate")
+                        .append(" and cfinancialyear.isActiveForPosting=true").toString(), CFinancialYear.class)
+                .setParameter("sDate", date, TemporalType.DATE)
+                .setParameter("eDate", date, TemporalType.DATE)
+                .getResultList();
         if (list.size() > 0)
-            cFinancialYear = (CFinancialYear) list.get(0);
+            cFinancialYear = list.get(0);
         if (null == cFinancialYear)
             throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
         return cFinancialYear;
@@ -329,14 +326,13 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         query.setDate("sDate", date);
         return query.list();
     }
-    
-    
-    /* (non-Javadoc)
-     * @see org.egov.commons.dao.FinancialYearDAO#getFinancialYearsAfterFromDate(java.util.Date)
-     *  * returns FY from the given date
+
+    /*
+     * (non-Javadoc)
+     * @see org.egov.commons.dao.FinancialYearDAO#getFinancialYearsAfterFromDate(java.util.Date) * returns FY from the given date
      * example: 01-04-2016 is given then it will return 2016-17,2017-18 and so on till previous financial year
      */
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate,Date toDate) {
+    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate, Date toDate) {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate order by finYearRange desc ");

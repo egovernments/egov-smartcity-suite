@@ -153,13 +153,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @PersistenceContext
     private EntityManager entityManager;
 
-	@Autowired
-	private WorkFlowValidator workFlowValidator;
+    @Autowired
+    private WorkFlowValidator workFlowValidator;
 
-	@ModelAttribute
-	public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
-		return lineEstimateService.getLineEstimateById(Long.parseLong(lineEstimateId));
-	}
+    @ModelAttribute
+    public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
+        return lineEstimateService.getLineEstimateById(Long.parseLong(lineEstimateId));
+    }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
     public String updateLineEstimate(final Model model, @PathVariable final String lineEstimateId,
@@ -239,12 +239,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-				validateBudgetAmount(lineEstimate, errors);
-		if (!workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
-			errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
-		}
+                validateBudgetAmount(lineEstimate, errors);
+        validateApprover(lineEstimate, errors, request);
 
-		if (errors.hasErrors()) {
+        if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("removedLineEstimateDetailsIds", removedLineEstimateDetailsIds);
             return loadViewData(model, request, lineEstimate);
@@ -285,6 +283,18 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                     newLineEstimate.getId(), approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
+        }
+    }
+
+    /**
+     * @param lineEstimate
+     * @param errors
+     * @param request
+     */
+    public void validateApprover(final LineEstimate lineEstimate, final BindingResult errors, final HttpServletRequest request) {
+        if (request.getParameter("approvalPosition") != null
+                && !workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
+            errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
         }
     }
 

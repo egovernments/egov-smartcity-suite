@@ -155,7 +155,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private WorkFlowValidator workFlowValidator;
 
@@ -190,11 +190,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
-		validateLineEstimate(lineEstimate, errors);
-		validateBudgetHead(lineEstimate, errors);
-		if (!workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
-			errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
-		}
+        validateLineEstimate(lineEstimate, errors);
+        validateBudgetHead(lineEstimate, errors);
+        validateApprover(lineEstimate, errors, request);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -232,6 +230,18 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     newLineEstimate.getId(), approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
+        }
+    }
+
+    /**
+     * @param lineEstimate
+     * @param errors
+     * @param request
+     */
+    public void validateApprover(final LineEstimate lineEstimate, final BindingResult errors, final HttpServletRequest request) {
+        if (request.getParameter("approvalPosition") != null
+                && !workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
+            errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
         }
     }
 
