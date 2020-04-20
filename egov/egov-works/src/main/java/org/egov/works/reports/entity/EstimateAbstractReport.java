@@ -52,6 +52,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.hibernate.validator.constraints.Length;
 
 public class EstimateAbstractReport {
     private Long financialYear;
@@ -61,27 +62,34 @@ public class EstimateAbstractReport {
     private Integer scheme;
     private Integer subScheme;
     private Long natureOfWork;
+    @Length(max = 100)
     private String workCategory;
     private String typeOfSlum;
+    @Length(max = 100)
     private String beneficiary;
     private boolean spillOverFlag;
     private Long currentFinancialYearId;
     private Long typeOfWork;
     private Long subTypeOfWork;
-
+    @Length(max = 50)
     private String departmentName;
     private Long lineEstimates;
     private Long adminSanctionedEstimates;
+    @Length(max = 100)
     private String adminSanctionedAmountInCrores;
     private Long technicalSanctionedEstimates;
     private Long loaCreated;
+    @Length(max = 100)
     private String agreementValueInCrores;
     private Long workInProgress;
     private Long WorkCompleted;
     private Long billsCreated;
+    @Length(max = 100)
     private String BillValueInCrores;
     private Date createdDate;
+    @Length(max = 50)
     private String typeOfWorkName;
+    @Length(max = 50)
     private String subTypeOfWorkName;
     private Set<Department> departments = new HashSet<>();
 

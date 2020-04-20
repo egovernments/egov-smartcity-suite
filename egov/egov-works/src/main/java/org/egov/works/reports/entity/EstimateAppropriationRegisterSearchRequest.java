@@ -50,13 +50,21 @@ package org.egov.works.reports.entity;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 public class EstimateAppropriationRegisterSearchRequest {
 
+	@NotNull
     private Date asOnDate;
+	@NotNull
     private Long budgetHead;
+	@NotNull
     private Long fund;
+	@NotNull
     private Long function;
+	@NotNull
     private Long department;
+	@NotNull
     private Long financialYear;
 
     public Date getAsOnDate() {

@@ -49,10 +49,15 @@ package org.egov.works.reports.entity;
 
 import java.util.Date;
 
+
+import org.hibernate.validator.constraints.Length;
+
 public class WorkProgressRegisterSearchRequest {
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
+    @Length(max = 256)
     private String workIdentificationNumber;
+    @Length(max = 100)
     private String contractor;
     private Long department;
     private boolean spillOverFlag;
