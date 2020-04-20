@@ -292,7 +292,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
      * @param request
      */
     public void validateApprover(final LineEstimate lineEstimate, final BindingResult errors, final HttpServletRequest request) {
-        if (request.getParameter("approvalPosition") != null
+        if (request.getParameter("approvalPosition") != null && Long.valueOf(request.getParameter("approvalPosition")) != -1
                 && !workFlowValidator.isValidAssignee(lineEstimate, Long.valueOf(request.getParameter("approvalPosition")))) {
             errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
         }

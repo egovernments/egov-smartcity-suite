@@ -61,28 +61,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorkFlowValidator {
 
-	@Autowired
-	@Qualifier("workflowService")
-	private SimpleWorkflowService<?> workflowService;
-	@Autowired
-	private PositionMasterService positionMasterService;
-	@Autowired
-	private EisCommonService eisCommonService;
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<?> workflowService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
 
-	/*
-	 * api to validate the assignee in workflow
-	 */
-	public Boolean isValidAssignee(final StateAware<?> state, final Long approverPositionId) {
-		String currentState = null;
-		if (state.getCurrentState() != null)
-			currentState = state.getCurrentState().getValue();
-		final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null,
-				currentState, null);
-		if (approverPositionId != null && approverPositionId != -1) {
-			Position pos = positionMasterService.getPositionById(approverPositionId);
-			return eisCommonService.isValidAppover(wfmatrix, pos);
-		}
-		return Boolean.FALSE;
-	}
+    /*
+     * api to validate the assignee in workflow
+     */
+    public Boolean isValidAssignee(final StateAware<?> state, final Long approverPositionId) {
+        String currentState = null;
+        if (state.getCurrentState() != null)
+            currentState = state.getCurrentState().getValue();
+        final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null,
+                currentState, null);
+
+        Position pos = positionMasterService.getPositionById(approverPositionId);
+        return eisCommonService.isValidAppover(wfmatrix, pos);
+
+    }
 
 }
