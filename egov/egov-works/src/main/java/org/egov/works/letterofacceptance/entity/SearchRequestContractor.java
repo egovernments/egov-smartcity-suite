@@ -47,8 +47,13 @@
  */
 package org.egov.works.letterofacceptance.entity;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class SearchRequestContractor {
+	@SafeHtml
     private String contractorCode;
+	
+	@SafeHtml
     private String nameOfAgency;
     private Long contractorClass;
     private Long department;

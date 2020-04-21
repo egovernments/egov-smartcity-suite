@@ -50,21 +50,32 @@ package org.egov.works.letterofacceptance.entity;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class SearchRequestLetterOfAcceptance {
 
+	@SafeHtml
     private String workOrderNumber;
     private Date fromDate;
     private Date toDate;
+    
+    @SafeHtml
     private String name;
+    
+    @SafeHtml
     private String fileNumber;
     private Long departmentName;
+    @SafeHtml
     private String estimateNumber;
+    @SafeHtml
     private String egwStatus;
+    @SafeHtml
     private String workIdentificationNumber;
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
     private Long typeOfWork;
     private Long subTypeOfWork;
+    @SafeHtml
     private String contractor;
 
     public SearchRequestLetterOfAcceptance() {
