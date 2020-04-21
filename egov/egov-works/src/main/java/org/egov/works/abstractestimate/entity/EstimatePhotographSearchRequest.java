@@ -49,15 +49,21 @@ package org.egov.works.abstractestimate.entity;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class EstimatePhotographSearchRequest {
+	@SafeHtml
     private String estimateNumber;
+	@SafeHtml
     private String workIdentificationNumber;
     private Date fromDate;
     private Date toDate;
     private Long executingDepartment;
     private Long estimateCreatedBy;
     private Long natureOfWork;
+    @SafeHtml
     private String workOrderNumber;
+    @SafeHtml
     private String contractorName;
     private double workCompletion;
 

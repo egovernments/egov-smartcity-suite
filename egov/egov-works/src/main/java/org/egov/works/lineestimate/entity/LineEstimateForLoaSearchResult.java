@@ -49,16 +49,25 @@ package org.egov.works.lineestimate.entity;
 
 import java.math.BigDecimal;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class LineEstimateForLoaSearchResult {
     private Long id;
+    @SafeHtml
     private String adminSanctionNumber;
+    @SafeHtml
     private String estimateNumber;
+    @SafeHtml
     private String nameOfWork;
+    @SafeHtml
     private String currentOwner;
+    @SafeHtml
     private String createdBy;
+    @SafeHtml
     private String adminSanctionBy;
     private BigDecimal estimateAmount;
     private BigDecimal actualEstimateAmount;
+    @SafeHtml
     private String workIdentificationNumber;
 
     public LineEstimateForLoaSearchResult() {

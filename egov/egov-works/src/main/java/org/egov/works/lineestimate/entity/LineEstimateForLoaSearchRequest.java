@@ -49,13 +49,18 @@ package org.egov.works.lineestimate.entity;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class LineEstimateForLoaSearchRequest {
+	@SafeHtml
     private String adminSanctionNumber;
+	@SafeHtml
     private String estimateNumber;
     private Long executingDepartment;
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
     private Long lineEstimateCreatedBy;
+    @SafeHtml
     private String workIdentificationNumber;
     private boolean spillOverFlag;
 
