@@ -75,6 +75,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorkFlowValidator;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+    
+    @Autowired
+    private WorkFlowValidator workFlowValidator;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -206,7 +210,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             contractorBillRegisterService.validateRefundAmount(contractorBillRegister, errors);
 
             contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, errors);
-
+            
+            validateApprover(contractorBillRegister, errors, request);
         }
 
         if (errors.hasErrors()) {
@@ -418,6 +423,18 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         }
 
         return contractorBillRegister;
+    }
+    
+    /**
+     * @param contractorBillRegister
+     * @param errors
+     * @param request
+     */
+    public void validateApprover(final ContractorBillRegister contractorBillRegister, final BindingResult errors, final HttpServletRequest request) {
+        if (request.getParameter("approvalPosition") != null && Long.valueOf(request.getParameter("approvalPosition")) != -1
+                && !workFlowValidator.isValidAssignee(contractorBillRegister, Long.valueOf(request.getParameter("approvalPosition")))) {
+            errors.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
+        }
     }
 
 }

@@ -79,6 +79,7 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.utils.WorkFlowValidator;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
@@ -133,6 +134,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+    
+    @Autowired
+    private WorkFlowValidator workFlowValidator;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -209,6 +213,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     "error.contractorbill.duplicate.refund.accountcodes");
 
         contractorBillRegisterService.validateTotalDebitAndCreditAmount(contractorBillRegister, resultBinder);
+        
+        validateApprover(contractorBillRegister, resultBinder, request);
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
@@ -500,6 +506,17 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         }
 
         return contractorBillRegister;
+    }
+    /**
+     * @param contractorBillRegister
+     * @param resultBinder
+     * @param request
+     */
+    public void validateApprover(final ContractorBillRegister contractorBillRegister, final BindingResult resultBinder, final HttpServletRequest request) {
+        if (request.getParameter("approvalPosition") != null && Long.valueOf(request.getParameter("approvalPosition")) != -1
+                && !workFlowValidator.isValidAssignee(contractorBillRegister, Long.valueOf(request.getParameter("approvalPosition")))) {
+        	resultBinder.reject("error.workflow.invalid.assignee", "error.workflow.invalid.assignee");
+        }
     }
 
 }
