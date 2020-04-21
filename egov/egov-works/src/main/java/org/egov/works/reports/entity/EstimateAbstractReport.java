@@ -53,6 +53,7 @@ import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class EstimateAbstractReport {
     private Long financialYear;
@@ -62,35 +63,59 @@ public class EstimateAbstractReport {
     private Integer scheme;
     private Integer subScheme;
     private Long natureOfWork;
+    
+    @SafeHtml
     @Length(max = 100)
     private String workCategory;
+    
+    @SafeHtml
     private String typeOfSlum;
+    
+    @SafeHtml
     @Length(max = 100)
     private String beneficiary;
+    
     private boolean spillOverFlag;
     private Long currentFinancialYearId;
     private Long typeOfWork;
     private Long subTypeOfWork;
+    
+    @SafeHtml
     @Length(max = 50)
     private String departmentName;
+    
     private Long lineEstimates;
     private Long adminSanctionedEstimates;
+    
+    @SafeHtml
     @Length(max = 100)
     private String adminSanctionedAmountInCrores;
+    
     private Long technicalSanctionedEstimates;
     private Long loaCreated;
+    
+    @SafeHtml
     @Length(max = 100)
     private String agreementValueInCrores;
+    
     private Long workInProgress;
     private Long WorkCompleted;
     private Long billsCreated;
+    
+    @SafeHtml
     @Length(max = 100)
     private String BillValueInCrores;
+    
     private Date createdDate;
+    
+    @SafeHtml
     @Length(max = 50)
     private String typeOfWorkName;
+    
+    @SafeHtml
     @Length(max = 50)
     private String subTypeOfWorkName;
+    
     private Set<Department> departments = new HashSet<>();
 
     public Long getFinancialYear() {

@@ -51,14 +51,20 @@ import java.util.Date;
 
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class WorkProgressRegisterSearchRequest {
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
+    
+    @SafeHtml
     @Length(max = 256)
     private String workIdentificationNumber;
+    
+    @SafeHtml
     @Length(max = 100)
     private String contractor;
+    
     private Long department;
     private boolean spillOverFlag;
 
