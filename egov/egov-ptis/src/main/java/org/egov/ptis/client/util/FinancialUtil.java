@@ -145,6 +145,8 @@ public class FinancialUtil {
             return cvh;
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
+            LOGGER.error("createVoucher: IndexNumber==>" + indexNum + " amountsMap ==>" + amountsMap + "actionName==>"
+                    + transaction);
             throw new ApplicationRuntimeException("Unable to create a voucher.", t);
         }
     }
