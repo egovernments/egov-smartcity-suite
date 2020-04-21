@@ -208,14 +208,14 @@ public class DemandVoucherService {
     private void prepareVoucherDetailsMap(Map<String, Map<String, Object>> voucherDetails,
             Map<String, String> glCodeMap, boolean demandIncreased,
             List<DemandVoucherDetails> demandVoucherDetailList) {
-        BigDecimal generalTax = BigDecimal.ZERO;
-        BigDecimal vacantLandtax = BigDecimal.ZERO;
-        BigDecimal libraryCess = BigDecimal.ZERO;
-        BigDecimal priorIncome = BigDecimal.ZERO;
-        BigDecimal arrearsTax = BigDecimal.ZERO;
-        BigDecimal currentTax = BigDecimal.ZERO;
-        BigDecimal penalty = BigDecimal.ZERO;
-        BigDecimal advance = BigDecimal.ZERO;
+        BigDecimal generalTax = ZERO;
+        BigDecimal vacantLandtax = ZERO;
+        BigDecimal libraryCess = ZERO;
+        BigDecimal priorIncome = ZERO;
+        BigDecimal arrearsTax = ZERO;
+        BigDecimal currentTax = ZERO;
+        BigDecimal penalty = ZERO;
+        BigDecimal advance = ZERO;
         for (DemandVoucherDetails demandVoucherDetail : demandVoucherDetailList) {
             if (demandVoucherDetail.getPurpose().equals(CURR_TAX)) {
                 generalTax = generalTax.add(demandVoucherDetail.getGeneralTaxVariation());
@@ -232,41 +232,41 @@ public class DemandVoucherService {
             penalty = penalty.add(demandVoucherDetail.getPenalty());
         }
 
-        if (advance.compareTo(BigDecimal.ZERO) > 0)
+        if (advance.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
                     putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        if (generalTax.compareTo(BigDecimal.ZERO) > 0)
+        if (generalTax.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_GENERAL_TAX),
                     putAmountAndType(generalTax.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (vacantLandtax.compareTo(BigDecimal.ZERO) > 0)
+        if (vacantLandtax.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_VACANT_TAX),
                     putAmountAndType(vacantLandtax.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (libraryCess.compareTo(BigDecimal.ZERO) != 0) {
+        if (libraryCess.compareTo(ZERO) != 0) {
             /*
              * if overall demand is decreased and library cess is increased or vice-versa, then library cess amount will go to
              * credit and debit account respectively.
              */
-            if (!demandIncreased && libraryCess.compareTo(BigDecimal.ZERO) < 0
-                    || demandIncreased && libraryCess.compareTo(BigDecimal.ZERO) > 0)
+            if (!demandIncreased && libraryCess.compareTo(ZERO) < 0
+                    || demandIncreased && libraryCess.compareTo(ZERO) > 0)
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
                         putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
             else
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
                         putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         }
-        if (penalty.compareTo(BigDecimal.ZERO) > 0)
+        if (penalty.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), false));
         if (penalty.compareTo(ZERO) < 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (priorIncome.compareTo(BigDecimal.ZERO) > 0)
+        if (priorIncome.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
                     putAmountAndType(priorIncome.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (arrearsTax.abs().compareTo(BigDecimal.ZERO) > 0)
+        if (arrearsTax.abs().compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(ARREAR_TAX),
                     putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        if (currentTax.abs().compareTo(BigDecimal.ZERO) > 0)
+        if (currentTax.abs().compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(CURR_TAX),
                     putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
     }
@@ -300,8 +300,8 @@ public class DemandVoucherService {
 
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         List<NormalizeDemandDetails> normalizedDemandDetailListOld = new ArrayList<>();
-        BigDecimal oldBalance = BigDecimal.ZERO;
-        BigDecimal newBalance = BigDecimal.ZERO;
+        BigDecimal oldBalance = ZERO;
+        BigDecimal newBalance = ZERO;
 
         List<NormalizeDemandDetails> normalizedDemandDetailListNew = normalizeDemandDetails(currFirstHalf, currSecondHalf,
                 newPtDemand);
@@ -446,12 +446,12 @@ public class DemandVoucherService {
 
     private void setVariationAmount(DemandVoucherDetails demandVoucherDetails, NormalizeDemandDetails oldDetails,
             NormalizeDemandDetails newDetails) {
-        if (oldDetails.getGeneralTax().compareTo(BigDecimal.ZERO) > 0
-                && newDetails.getVacantLandTax().compareTo(BigDecimal.ZERO) > 0)
+        if (oldDetails.getGeneralTax().compareTo(ZERO) > 0
+                && newDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setVacantTaxVariation(
                     newDetails.getVacantLandTax().subtract(oldDetails.getGeneralTax()).abs());
-        else if (newDetails.getGeneralTax().compareTo(BigDecimal.ZERO) > 0
-                && oldDetails.getVacantLandTax().compareTo(BigDecimal.ZERO) > 0)
+        else if (newDetails.getGeneralTax().compareTo(ZERO) > 0
+                && oldDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setGeneralTaxVariation(
                     newDetails.getGeneralTax().subtract(oldDetails.getVacantLandTax()).abs());
         else {
@@ -542,13 +542,13 @@ public class DemandVoucherService {
 
     private NormalizeDemandDetails reduceDemandForVacancyRemission(NormalizeDemandDetails nmd) {
         NormalizeDemandDetails details = new NormalizeDemandDetails();
-        BigDecimal totalCollection = BigDecimal.ZERO;
+        BigDecimal totalCollection = ZERO;
         totalCollection = totalCollection
                 .add(nmd.getGeneralTaxCollection().add(nmd.getVacantLandTaxCollection().add(nmd.getLibraryCessCollection())))
                 .add(nmd.getPenaltyCollection());
         details.setInstallment(nmd.getInstallment());
         details.setPurpose(nmd.getPurpose());
-        if (nmd.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
+        if (nmd.getPenalty().compareTo(ZERO) > 0) {
             details.setPenalty(nmd.getPenalty().divide(new BigDecimal("2")).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
             if (totalCollection.compareTo(details.getPenalty()) > 0) {
@@ -558,7 +558,7 @@ public class DemandVoucherService {
                 details.setPenaltyCollection(totalCollection);
         }
 
-        if (nmd.getGeneralTax().compareTo(BigDecimal.ZERO) > 0) {
+        if (nmd.getGeneralTax().compareTo(ZERO) > 0) {
             details.setGeneralTax(nmd.getGeneralTax().divide(new BigDecimal("2")).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
             if (totalCollection.compareTo(details.getGeneralTax()) > 0) {
@@ -568,7 +568,7 @@ public class DemandVoucherService {
                 details.setGeneralTaxCollection(totalCollection);
         }
 
-        if (nmd.getVacantLandTax().compareTo(BigDecimal.ZERO) > 0) {
+        if (nmd.getVacantLandTax().compareTo(ZERO) > 0) {
             details.setVacantLandTax(nmd.getVacantLandTax().divide(new BigDecimal("2")).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
             if (totalCollection.compareTo(details.getVacantLandTax()) > 0) {
@@ -578,7 +578,7 @@ public class DemandVoucherService {
                 details.setVacantLandTaxCollection(totalCollection);
         }
 
-        if (nmd.getLibraryCess().compareTo(BigDecimal.ZERO) > 0) {
+        if (nmd.getLibraryCess().compareTo(ZERO) > 0) {
             details.setLibraryCess(nmd.getLibraryCess().divide(new BigDecimal("2")).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
             if (totalCollection.compareTo(details.getLibraryCess()) > 0) {
@@ -588,7 +588,7 @@ public class DemandVoucherService {
                 details.setLibraryCessCollection(totalCollection);
         }
 
-        if (totalCollection.compareTo(BigDecimal.ZERO) > 0)
+        if (totalCollection.compareTo(ZERO) > 0)
             details.setAdvance(totalCollection);
 
         return details;
