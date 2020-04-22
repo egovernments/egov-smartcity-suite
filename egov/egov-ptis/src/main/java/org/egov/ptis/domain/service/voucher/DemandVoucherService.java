@@ -249,10 +249,10 @@ public class DemandVoucherService {
             if (!demandIncreased && libraryCess.compareTo(ZERO) < 0
                     || demandIncreased && libraryCess.compareTo(ZERO) > 0)
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
-                        putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
             else
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
-                        putAmountAndType(libraryCess.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         }
         if (penalty.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
@@ -323,7 +323,7 @@ public class DemandVoucherService {
             demandVoucherDetails.setInstallment(normalizeDemandDetailsOld.getInstallment());
             setVariationAmount(demandVoucherDetails, normalizeDemandDetailsOld, normalizeDemandDetailsNew);
             demandVoucherDetails.setLibraryCessVariation(
-                    normalizeDemandDetailsNew.getLibraryCess().subtract(normalizeDemandDetailsOld.getLibraryCess()));
+                    normalizeDemandDetailsOld.getLibraryCess().subtract(normalizeDemandDetailsNew.getLibraryCess()));
             demandVoucherDetails
                     .setAdvance(normalizeDemandDetailsNew.getAdvance().subtract(normalizeDemandDetailsOld.getAdvance()).abs());
             oldBalance = normalizeDemandDetailsOld.getGeneralTax().add(normalizeDemandDetailsOld.getLibraryCess())
