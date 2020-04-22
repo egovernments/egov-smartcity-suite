@@ -55,6 +55,11 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -62,6 +67,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "egwtr_usage_type")
@@ -83,12 +89,14 @@ public class UsageType extends AbstractAuditable {
     @SafeHtml
     @Length(min = 1, max = 25)
     @Audited
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPECIAL_CHARS, message = INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS)
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
     @Audited
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @SafeHtml
