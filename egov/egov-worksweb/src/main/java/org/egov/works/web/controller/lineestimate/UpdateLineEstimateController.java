@@ -239,8 +239,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                validateBudgetAmount(lineEstimate, errors);
-        validateApprover(lineEstimate, errors, request);
+				validateBudgetAmount(lineEstimate, errors);
+		if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction)
+				|| WorksConstants.SUBMIT_ACTION.equalsIgnoreCase(workFlowAction))
+			validateApprover(lineEstimate, errors, request);
 
         if (errors.hasErrors()) {
             setDropDownValues(model);

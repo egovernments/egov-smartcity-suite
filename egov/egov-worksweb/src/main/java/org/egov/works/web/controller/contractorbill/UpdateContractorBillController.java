@@ -210,7 +210,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             contractorBillRegisterService.validateRefundAmount(contractorBillRegister, errors);
 
             contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, errors);
-            
+
+			if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction)
+					|| WorksConstants.SUBMIT_ACTION.equalsIgnoreCase(workFlowAction))
             validateApprover(contractorBillRegister, errors, request);
         }
 
