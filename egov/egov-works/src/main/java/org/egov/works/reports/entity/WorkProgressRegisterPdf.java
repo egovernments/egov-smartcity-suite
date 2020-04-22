@@ -47,62 +47,92 @@
  */
 package org.egov.works.reports.entity;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class WorkProgressRegisterPdf {
 
+	@SafeHtml
     private String ward;
 
+	@SafeHtml
     private String location;
 
+	@SafeHtml
     private String workCategory;
 
+	@SafeHtml
     private String typeOfSlum;
 
+	@SafeHtml
     private String beneficiary;
 
+	@SafeHtml
     private String nameOfWork;
 
+	@SafeHtml
     private String winCode;
 
+	@SafeHtml
     private String fund;
 
+	@SafeHtml
     private String function;
 
+	@SafeHtml
     private String budgetHead;
 
+	@SafeHtml
     private String typeOfWork;
 
+	@SafeHtml
     private String subTypeOfWork;
 
+	@SafeHtml
     private String adminSanctionAuthorityDate;
 
+	@SafeHtml
     private String adminSanctionAmount;
 
+	@SafeHtml
     private String technicalSanctionAuthorityDate;
 
+	@SafeHtml
     private String estimateAmount;
 
+	@SafeHtml
     private String modeOfAllotment;
 
+	@SafeHtml
     private String agreementNumberDate;
 
+	@SafeHtml
     private String contractorCodeName;
 
+	@SafeHtml
     private String agreementAmount;
 
+	@SafeHtml
     private String latestMbNumberDate;
 
+	@SafeHtml
     private String latestBillNumberDate;
 
+	@SafeHtml
     private String billtype;
 
+	@SafeHtml
     private String billamount;
 
+	@SafeHtml
     private String totalBillAmount;
 
+	@SafeHtml
     private String totalBillPaidSoFar;
 
+	@SafeHtml
     private String balanceValueOfWorkToBill;
 
+	@SafeHtml
     private String milestonePercentageCompleted;
 
     public String getWard() {

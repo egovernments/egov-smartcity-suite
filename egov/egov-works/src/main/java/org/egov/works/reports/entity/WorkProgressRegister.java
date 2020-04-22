@@ -141,6 +141,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     @Temporal(TemporalType.DATE)
     private Date adminSanctionDate;
 
+    @SafeHtml
     private String adminSanctionBy;
 
     private BigDecimal adminSanctionAmount;
@@ -154,6 +155,7 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     private BigDecimal estimateAmount;
 
+    @SafeHtml
     private String modeOfAllotment;
 
     @SafeHtml
@@ -217,12 +219,15 @@ public class WorkProgressRegister extends AbstractAuditable {
     @JoinColumn(name = "ledid")
     private LineEstimateDetails lineEstimateDetails;
 
+    @SafeHtml
     @Length(max = 50)
     private String lineEstimateStatus;
 
+    @SafeHtml
     @Length(max = 50)
     private String departmentName;
 
+    @SafeHtml
     @Length(max = 50)
     private String woStatusCode;
 
@@ -230,9 +235,11 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     private boolean workCompleted;
 
+    @SafeHtml
     @Length(max = 50)
     private String typeOfWorkName;
 
+    @SafeHtml
     @Length(max = 50)
     private String subTypeOfWorkName;
 

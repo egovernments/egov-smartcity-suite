@@ -65,6 +65,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.workorder.WorkOrder;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_MV_BILLDETAILS")
@@ -91,6 +92,7 @@ public class BillDetails extends AbstractAuditable {
     @JoinColumn(name = "billid", nullable = false)
     private ContractorBillRegister contractorBillRegister;
 
+    @SafeHtml
     @Length(max = 100)
     private String billnumber;
 
@@ -98,6 +100,7 @@ public class BillDetails extends AbstractAuditable {
 
     private BigDecimal billamount;
 
+    @SafeHtml
     @Length(max = 100)
     private String billtype;
 
