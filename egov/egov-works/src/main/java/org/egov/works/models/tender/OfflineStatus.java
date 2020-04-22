@@ -55,11 +55,13 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class OfflineStatus extends BaseModel {
 
     private static final long serialVersionUID = -1056415004063322298L;
+    @SafeHtml
     @NotEmpty(message = "ws.name.is.null")
     private String objectType;
     @NotNull(message = "ws.status.is.null")

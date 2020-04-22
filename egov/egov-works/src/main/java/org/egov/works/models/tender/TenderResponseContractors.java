@@ -52,6 +52,7 @@ import javax.validation.Valid;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.masters.Contractor;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class TenderResponseContractors extends BaseModel {
@@ -64,8 +65,10 @@ public class TenderResponseContractors extends BaseModel {
     @Required(message = "tenderResponseContractors.contractor.not.null")
     private Contractor contractor;
 
+    @SafeHtml
     private String status;
 
+    @SafeHtml
     private String statusCode;
 
     public TenderResponse getTenderResponse() {

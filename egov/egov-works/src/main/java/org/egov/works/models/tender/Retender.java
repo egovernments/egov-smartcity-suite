@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.infstr.models.BaseModel;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class Retender extends BaseModel {
@@ -59,6 +60,7 @@ public class Retender extends BaseModel {
     private static final long serialVersionUID = -8004618443430435287L;
     private WorksPackage worksPackage;
     private List<RetenderHistory> retenderHistoryDetails = new LinkedList<>();
+    @SafeHtml
     private String reason;
     private Date retenderDate;
     private Integer iterationNumber;

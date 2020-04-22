@@ -56,6 +56,7 @@ import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class TenderResponseActivity extends BaseModel {
@@ -74,6 +75,7 @@ public class TenderResponseActivity extends BaseModel {
     // @GreaterThan(value=0,message="tenderResponseActivity.negotiatedQuantity.non.negative")
     private double negotiatedQuantity;
 
+    @SafeHtml
     private String schCode;
     private double assignedQty;
 

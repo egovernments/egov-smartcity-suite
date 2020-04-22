@@ -76,6 +76,7 @@ import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class WorksPackage extends StateAware<Position> implements Auditable {
@@ -83,10 +84,12 @@ public class WorksPackage extends StateAware<Position> implements Auditable {
     private static final long serialVersionUID = -4874817415037202881L;
     private Long id;
 
+    @SafeHtml
     @NotEmpty(message = "wp.name.is.null")
     @Length(max = 1024, message = "workspackage.name.length")
     private String name;
 
+    @SafeHtml
     @Length(max = 1024, message = "workspackage.description.length")
     private String description;
 
@@ -97,9 +100,11 @@ public class WorksPackage extends StateAware<Position> implements Auditable {
     @DateFormat(message = "invalid.fieldvalue.wpDate")
     private Date wpDate;
 
+    @SafeHtml
     @NotEmpty(message = "wp.wpNumber.is.null")
     private String wpNumber;
 
+    @SafeHtml
     private String employeeName;
     private Money workValueIncludingTaxes;
 
@@ -107,16 +112,19 @@ public class WorksPackage extends StateAware<Position> implements Auditable {
     private List<RetenderHistory> retenderHistoryDetails = new LinkedList<>();
     private List<Retender> retenderDetails = new LinkedList<>();
 
+    @SafeHtml
     @NotEmpty(message = "wp.tenderFileNumber.is.null")
     @Length(max = 50, message = "wp.tenderFileNumber.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "wp.tenderFileNumber.alphaNumeric")
     private String tenderFileNumber;
     private Long documentNumber;
     private EgwStatus egwStatus;
+    @SafeHtml
     private String wpOfflineStatus;
     private OfflineStatus latestOfflineStatus;
     private Set<OfflineStatus> offlineStatuses = Collections.emptySet();
     private List<String> worksPackageActions = new LinkedList<>();
+    @SafeHtml
     private String worksPackageStatus;
     private Date approvedDate;
 

@@ -62,12 +62,14 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class TenderHeader extends BaseModel {
 
     private static final long serialVersionUID = 6208133912780798895L;
 
+    @SafeHtml
     @Required(message = "tenderHeader.tenderNo.null")
     @Length(max = 50, message = "tenderHeader.tenderNo.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "tenderHeader.tenderNo.alphaNumeric")

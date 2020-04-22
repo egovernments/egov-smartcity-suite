@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.works.abstractestimate.entity.Activity;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class EstimateLineItemsForTR {
 
@@ -63,11 +64,15 @@ public class EstimateLineItemsForTR {
     }
 
     private Integer srlNo;
+    @SafeHtml
     private String code;
     private double quantity;
+    @SafeHtml
     private String description;
+    @SafeHtml
     private String summary;
     private double rate;
+    @SafeHtml
     private String uom;
     private double conversionFactor;
     private double amt;
