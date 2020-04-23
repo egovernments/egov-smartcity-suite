@@ -85,12 +85,12 @@ public class ViewWaterTaxDonationController {
     public String getDonationResult(@ModelAttribute final DonationChargesDCBReportSearch donationChargesDCBReportSearch,
             final HttpServletResponse response) {
         return new StringBuilder("{ \"data\":")
-                .append(toSearchLineEstimatesToCancelJson(
+                .append(getObjectFromJSON(
                         currentDcbService.getDonationDCBReportDetails(donationChargesDCBReportSearch)))
                 .append("}").toString();
     }
 
-    public Object toSearchLineEstimatesToCancelJson(final Object object) {
+    public Object getObjectFromJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(DonationChargesDCBReportSearch.class, donationChargeDCBReportAdaptor)
                 .create();
