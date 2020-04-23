@@ -575,6 +575,11 @@ function validateWorkFlowApprover(name) {
 					bootbox.hideAll();
 					return false;
 				} else {
+					jQuery('<input >').attr({
+						type : 'hidden',
+						name : tokenName,
+						value : tokenVal
+					}).appendTo(document.forms[0]);
 					document.forms[0].submit();
 				}
 			});
