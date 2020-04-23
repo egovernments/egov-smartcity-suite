@@ -49,12 +49,18 @@ package org.egov.works.milestone.entity;
 
 import java.math.BigDecimal;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class PaymentDetail {
 
+	@SafeHtml
     String billNumber;
+	@SafeHtml
     String billDate;
+	@SafeHtml
     String billType;
     BigDecimal billAmount;
+    @SafeHtml
     String cjvNo;
     BigDecimal releasedAmount;
     BigDecimal outstandingAmount;

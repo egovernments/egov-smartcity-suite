@@ -48,9 +48,13 @@
 
 package org.egov.works.milestone.entity;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class SearchRequestMilestoneTemplate {
 
+	@SafeHtml
     private String name;
+	@SafeHtml
     private String description;
     private Long typeOfWork;
     private Long subTypeOfWork;

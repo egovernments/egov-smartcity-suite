@@ -50,6 +50,7 @@ package org.egov.works.models.contractoradvance;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
@@ -66,7 +67,9 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
     private Integer workflowDesignationId;
     private Integer workflowApproverUserId;
     private Integer workflowWardId;
+    @SafeHtml
     private String workflowapproverComments;
+    @SafeHtml
     private String ownerName;
 
     @Override

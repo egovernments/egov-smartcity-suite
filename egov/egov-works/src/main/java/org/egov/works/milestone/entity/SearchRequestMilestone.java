@@ -50,18 +50,24 @@ package org.egov.works.milestone.entity;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class SearchRequestMilestone {
 
     private Long department;
     private Date milestoneFromDate;
     private Date milestoneToDate;
+    @SafeHtml
     private String workIdentificationNumber;
     private Long typeOfWork;
     private Long subTypeOfWork;
+    @SafeHtml
     private String workOrderNumber;
+    @SafeHtml
     private String status;
     private Date trackMilestoneFromDate;
     private Date trackMilestoneToDate;
+    @SafeHtml
     private String contractor;
 
     public String getStatus() {

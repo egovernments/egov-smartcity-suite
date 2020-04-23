@@ -50,44 +50,70 @@ package org.egov.works.milestone.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class WorkProgressRegister {
+	@SafeHtml
     String dept;
+	@SafeHtml
     String ward;
+	@SafeHtml
     String location;
+	@SafeHtml
     String estimateNo;
+	@SafeHtml
     String projectCode;
+	@SafeHtml
     String nameOfWork;
+	@SafeHtml
     String typeOfWork;
     BigDecimal estimateAmt;
+    @SafeHtml
     String estimateDate;
+    @SafeHtml
     String techSanctionDate;
+    @SafeHtml
     String adminSanctionDate;
+    @SafeHtml
     String fund;
+    @SafeHtml
     String function;
+    @SafeHtml
     String budgetHead;
     BigDecimal completedPercentage;
     Boolean isFinalBillCreated = Boolean.FALSE;
     // apprDetail=finYearRange||apprAmt
+    @SafeHtml
     String apprInfo;
+    @SafeHtml
     String apprDetails;
 
+    @SafeHtml
     String tenderDate;
+    @SafeHtml
     String tenderFinalizationDate;
+    @SafeHtml
     String tenderAgreementDate;
     BigDecimal workOrderValue;
+    @SafeHtml
     String workOrderDate;
+    @SafeHtml
     String contractPeriod;
+    @SafeHtml
     String workCommencementDate;
+    @SafeHtml
     String siteHandedOverDate;
     BigDecimal totalBillAmt;
     BigDecimal totalReleasedAmt;
     BigDecimal totalOutstandingAmt;
     List<TrackMilestoneActivity> trackMilestoneActivities;
+    @SafeHtml
     String contractorName;
 
     // payment Details
     List<PaymentDetail> paymentDetails;
 
+    @SafeHtml
     String projectStatus;
 
     public String getDept() {
