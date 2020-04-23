@@ -84,11 +84,15 @@ public class WorkFlowValidator {
             currentState = state.getCurrentState().getValue();
         final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null,
                 currentState, null);
-
         Position pos = positionMasterService.getPositionById(approverPositionId);
-
-        LOGGER.debug("wfMatrix:",wfmatrix.toString());
-        LOGGER.debug("position:",pos.toString());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(wfmatrix.toString() + " " + wfmatrix.getNextDesignation());
+			LOGGER.debug(pos.toString() + " " + pos.getDeptDesig().getDesignation().getName());
+		}
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info(wfmatrix.toString() + ": " + wfmatrix.getNextDesignation());
+			LOGGER.info(pos.toString() + ": " + pos.getDeptDesig().getDesignation().getName());
+		}
         return eisCommonService.isValidAppover(wfmatrix, pos);
 
     }
