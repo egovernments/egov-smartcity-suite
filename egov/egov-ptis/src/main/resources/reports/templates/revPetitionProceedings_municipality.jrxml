@@ -116,7 +116,7 @@
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="45" y="132" width="448" height="229" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="45" y="132" width="452" height="212" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
