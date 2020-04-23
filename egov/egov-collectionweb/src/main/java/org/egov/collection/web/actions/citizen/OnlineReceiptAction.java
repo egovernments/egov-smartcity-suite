@@ -428,21 +428,21 @@ public class OnlineReceiptAction extends BaseFormAction {
                         .stream().noneMatch(pendingReceipt -> pendingReceipt.getId().equals(getRepayTransactionId()))))
             throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
                     getText(REPAY_VALIDATION_KEY))));
-        ReceiptHeader repayReceipt = receiptHeaderService.findById(getRepayTransactionId(), false);
-        if (repayReceipt == null)
+        onlinePaymentReceiptHeader = receiptHeaderService.findById(getRepayTransactionId(), false);
+        if (onlinePaymentReceiptHeader == null)
             throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
                     REPAY_VALIDATION_KEY)));
-        paymentResponse = collectionCommon.repayReconciliation(repayReceipt.getOnlinePayment().getService(),
-                repayReceipt.getOnlinePayment());
+        paymentResponse = collectionCommon.repayReconciliation(onlinePaymentReceiptHeader.getOnlinePayment().getService(),
+                onlinePaymentReceiptHeader.getOnlinePayment());
         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
-            reconciliationService.processSuccessMsg(repayReceipt, paymentResponse);
+            reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
         else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus())) {
             addActionMessage(getText("onlineReceipts.pending.validate",
-                    new String[] { repayReceipt.getConsumerCode(),
-                            repayReceipt.getId().toString() }));
+                    new String[] { onlinePaymentReceiptHeader.getConsumerCode(),
+                            onlinePaymentReceiptHeader.getId().toString() }));
         } else {
-            reconciliationService.processFailureMsg(repayReceipt, paymentResponse);
-            addActionError(getText(repayReceipt.getOnlinePayment().getService().getCode().toLowerCase() + ".pgi." +
+            reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+            addActionError(getText(onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().toLowerCase() + ".pgi." +
                     paymentResponse.getAuthStatus()));
         }
         return RESULT;
