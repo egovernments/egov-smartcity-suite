@@ -105,9 +105,6 @@
           id="projectcodeGenerator">
     </bean>
 
-    <bean id="egwTypeOfWorkService" parent="abstractPersistenceService" scope="prototype">
-        <constructor-arg name="type" value="org.egov.commons.EgwTypeOfWork"/>
-    </bean>
     <bean id="overheadService" parent="abstractPersistenceService" scope="prototype">
         <constructor-arg name="type" value="org.egov.works.models.masters.Overhead" />
     </bean>

@@ -69,9 +69,9 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.models.masters.MilestoneTemplateActivity;
+import org.egov.works.services.TypeOfWorkService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("deprecation")
@@ -94,6 +94,9 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     @Autowired
     private WorksService worksService;
+
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -118,14 +121,10 @@ public class MilestoneTemplateAction extends SearchFormAction {
     public void prepare() {
         if (id != null)
             template = milestoneTemplateService.getMilestoneTemplateById(id);
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
-        addDropdownData("parentCategoryList",
-                entityManager.createQuery("from EgwTypeOfWork etw where etw.parentid is null", EgwTypeOfWork.class)
-                        .getResultList());
-        populateCategoryList(ajaxEstimateAction, template.getTypeOfWork() != null);
+        addDropdownData("parentCategoryList", typeOfWorkService.findAll());
+        populateCategoryList(template.getTypeOfWork() != null);
     }
 
     @Override
@@ -223,13 +222,10 @@ public class MilestoneTemplateAction extends SearchFormAction {
             addFieldError("milestone.activity.total.percentage", getText("milestone.activity.total.percentage"));
     }
 
-    protected void populateCategoryList(
-            final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
-        if (categoryPopulated) {
-            ajaxEstimateAction.setCategory(template.getTypeOfWork().getId());
-            ajaxEstimateAction.subcategories();
-            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
-        } else
+    protected void populateCategoryList(final boolean categoryPopulated) {
+        if (categoryPopulated)
+            addDropdownData("categoryList", typeOfWorkService.findSubcategoriesByCategory(template.getTypeOfWork().getId()));
+        else
             addDropdownData("categoryList", Collections.emptyList());
     }
 
