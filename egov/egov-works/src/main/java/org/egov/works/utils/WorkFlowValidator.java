@@ -54,12 +54,16 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WorkFlowValidator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowValidator.class);
+
 
     @Autowired
     @Qualifier("workflowService")
@@ -82,6 +86,9 @@ public class WorkFlowValidator {
                 currentState, null);
 
         Position pos = positionMasterService.getPositionById(approverPositionId);
+
+        LOGGER.debug("wfMatrix:",wfmatrix.toString());
+        LOGGER.debug("position:",pos.toString());
         return eisCommonService.isValidAppover(wfmatrix, pos);
 
     }
