@@ -528,8 +528,10 @@ public class ReportGenerationService {
 			reportParams.put("pipeSize", waterConnectionDetails.getPipeSize().getCode());
 			reportParams.put("category", waterConnectionDetails.getCategory().getName());
 			reportParams.put("usageType", waterConnectionDetails.getUsageType().getName());
-			reportParams.put("monthlyRate", connectionDemandService
-					.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
+			reportParams.put("monthlyRate",
+					BigDecimal.valueOf(connectionDemandService
+							.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate())
+							.setScale(2, BigDecimal.ROUND_HALF_UP));
 
 			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
 			double donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit()
