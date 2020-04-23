@@ -93,6 +93,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -101,10 +104,10 @@ import java.util.*;
 import static org.egov.utils.FinancialConstants.*;
 
 /**
- * @author Administrator TODO To change the template for this generated type
- * comment go to Window - Preferences - Java - Code Style - Code
- * Templates
+ * @author Administrator TODO To change the template for this generated type comment go to Window - Preferences - Java - Code
+ * Style - Code Templates
  */
+@SuppressWarnings("deprecation")
 @Transactional(readOnly = true)
 public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     private static final String EGF = "EGF";
@@ -113,8 +116,6 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     private static final String BUDGETARY_CHECK_GROUPBY_VALUES = "budgetaryCheck_groupby_values";
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailsHibernateDAO.class);
     private static final String EMPTY_STRING = "";
-    private static int count = 0;
-    private static Logger LOG = Logger.getLogger(BudgetDetailsHibernateDAO.class);
     @Autowired
     protected ScriptService scriptService;
     @Autowired
@@ -122,6 +123,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @PersistenceContext
     private EntityManager entityManager;
     private Session session;
+    @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -173,7 +175,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     public List<BudgetDetail> findAll() {
-        return getCurrentSession().createQuery("from BudgetDetail").list();
+        return entityManager.createQuery("from BudgetDetail", BudgetDetail.class).getResultList();
     }
 
     public Session getCurrentSession() {
@@ -181,19 +183,15 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This API is to check whether the planning budget is available or not.For
-     * the amount passed if there is sufficient budget available API will return
-     * TRUE. Else it will return FALSE. At any point the budgetavailable will
-     * show the right picture of how much more we can plan for.
+     * This API is to check whether the planning budget is available or not.For the amount passed if there is sufficient budget
+     * available API will return TRUE. Else it will return FALSE. At any point the budgetavailable will show the right picture of
+     * how much more we can plan for.
      * <p>
-     * Assumptions- 1) on load of the budget there will be budgetavailable
-     * amount loaded using the multiplier factor. 2) on load of supplementary
-     * budget budget available is recalculated and updated.
+     * Assumptions- 1) on load of the budget there will be budgetavailable amount loaded using the multiplier factor. 2) on load
+     * of supplementary budget budget available is recalculated and updated.
      * <p>
-     * For the sake of audit we should be updating the budgetusage object with
-     * the reference object and the moduleid and amount for any budget consumed.
-     * This will be used for reporting as to which object consumed how much and
-     * when.
+     * For the sake of audit we should be updating the budgetusage object with the reference object and the moduleid and amount
+     * for any budget consumed. This will be used for reporting as to which object consumed how much and when.
      *
      * @return boolean
      * @throws Exception
@@ -209,10 +207,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
     @Override
     public boolean consumeEncumbranceBudget(final Long financialyearid, final Integer moduleid,
-                                            final String referencenumber, final Integer departmentid, final Long functionid,
-                                            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-                                            final List<Long> budgetheadid, final Integer fundid, final double amount,
-                                            final String appropriationnumber) {
+            final String referencenumber, final Integer departmentid, final Long functionid,
+            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
+            final List<Long> budgetheadid, final Integer fundid, final double amount,
+            final String appropriationnumber) {
 
         final BigDecimal bd = getDetails(financialyearid, moduleid, referencenumber, departmentid, functionid,
                 functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, true,
@@ -221,10 +219,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * Does the same as the above API. Except this API returns BudgetUsage
-     * object if the available amount is >=0. If there is insufficient available
-     * amount then null is returned. Note that the first parameter is a String,
-     * unlike the previous API.
+     * Does the same as the above API. Except this API returns BudgetUsage object if the available amount is >=0. If there is
+     * insufficient available amount then null is returned. Note that the first parameter is a String, unlike the previous API.
      *
      * @param appropriationnumber
      * @param financialyearid
@@ -244,9 +240,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Override
     @Deprecated
     public BudgetUsage consumeEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
-                                                final Integer moduleid, final String referencenumber, final Integer departmentid, final Long functionid,
-                                                final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-                                                final List<Long> budgetheadid, final Integer fundid, final double amount) {
+            final Integer moduleid, final String referencenumber, final Integer departmentid, final Long functionid,
+            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
+            final List<Long> budgetheadid, final Integer fundid, final double amount) {
 
         return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentid, functionid,
                 functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, true,
@@ -254,27 +250,19 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This API will be called for releasing the budget that was already
-     * allocated to some estimate or purchase order. On calling this the amount
-     * that was allocated to some entity will get released. Budget available
-     * will be increased.
+     * This API will be called for releasing the budget that was already allocated to some estimate or purchase order. On calling
+     * this the amount that was allocated to some entity will get released. Budget available will be increased.
      * <p>
-     * On modify of any entity they should first call the release budget and
-     * then call the consume budget. The budget usage table needs to be updated
-     * anytime this is invoked with the date and reference object number.
+     * On modify of any entity they should first call the release budget and then call the consume budget. The budget usage table
+     * needs to be updated anytime this is invoked with the date and reference object number.
      *
-     * @param detailsMap is the map containig following fields financialyearid This is
-     *                   the id from the financial year object moduleid This is the id
-     *                   of the module, say for payroll 7 and for stores 8 and for PTIS
-     *                   it is 2 referencenumber This is the module object reference
-     *                   number, say purchase order number or estimate number
-     *                   departmentid This is the id of the department object
-     *                   functionid This is the id of the function object functionaryid
-     *                   This is the id of the functionary object schemeid This is the
-     *                   id of the scheme object subschemeid This is the id of the sub
-     *                   scheme object fieldid This is the id of the boundary object
-     *                   budgetheadid This is the id of budgegroup object amount This
-     *                   is the amount of which budget needs to be allocated
+     * @param detailsMap is the map containig following fields financialyearid This is the id from the financial year object
+     * moduleid This is the id of the module, say for payroll 7 and for stores 8 and for PTIS it is 2 referencenumber This is the
+     * module object reference number, say purchase order number or estimate number departmentid This is the id of the department
+     * object functionid This is the id of the function object functionaryid This is the id of the functionary object schemeid
+     * This is the id of the scheme object subschemeid This is the id of the sub scheme object fieldid This is the id of the
+     * boundary object budgetheadid This is the id of budgegroup object amount This is the amount of which budget needs to be
+     * allocated
      * @throws Exception
      */
     public boolean releaseEncumbranceBudget(final Map<String, Object> detailsMap) {
@@ -289,17 +277,17 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Override
     @Deprecated
     public void releaseEncumbranceBudget(final Long financialyearid, final Integer moduleid,
-                                         final String referencenumber, final Integer departmentid, final Long functionid,
-                                         final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-                                         final List<Long> budgetheadid, final Integer fundid, final double amount,
-                                         final String appropriationnumber) {
+            final String referencenumber, final Integer departmentid, final Long functionid,
+            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
+            final List<Long> budgetheadid, final Integer fundid, final double amount,
+            final String appropriationnumber) {
         getDetails(financialyearid, moduleid, referencenumber, departmentid, functionid, functionaryid, schemeid,
                 subschemeid, boundaryid, budgetheadid, fundid, amount, false, appropriationnumber);
     }
 
     /**
-     * This does the same as the above API except this returns the BudgetUsage
-     * object that is modified. Please note that first parameter is a string.
+     * This does the same as the above API except this returns the BudgetUsage object that is modified. Please note that first
+     * parameter is a string.
      *
      * @param appropriationnumber
      * @param financialyearid
@@ -320,9 +308,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Override
     @Transactional
     public BudgetUsage releaseEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
-                                                final Integer moduleid, final String referencenumber, final Integer departmentid, final Long functionid,
-                                                final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-                                                final List<Long> budgetheadid, final Integer fundid, final double amount) {
+            final Integer moduleid, final String referencenumber, final Integer departmentid, final Long functionid,
+            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
+            final List<Long> budgetheadid, final Integer fundid, final double amount) {
         return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentid, functionid,
                 functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, false,
                 appropriationnumber);
@@ -395,15 +383,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 // need to update budget details
                 final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid,
                         boundaryid, fundid);
-                final Query q = getCurrentSession().createQuery(
-                        " from BudgetDetail bd where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type and bd.budgetGroup.id in (:bgId)".concat(query));
+                final TypedQuery<BudgetDetail> q = entityManager.createQuery(
+                        new StringBuffer(" from BudgetDetail bd")
+                                .append(" where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type")
+                                .append(" and bd.budgetGroup.id in (:bgId)").append(query).toString(),
+                        BudgetDetail.class);
                 if (budgetService.hasApprovedReForYear(financialyearid))
-                    q.setParameter("type", "RE", StringType.INSTANCE);
+                    q.setParameter("type", "RE");
                 else
-                    q.setParameter("type", "BE", StringType.INSTANCE);
-                q.setParameter("finYearId", financialyearid, LongType.INSTANCE);
-                q.setParameterList("bgId", budgetheadid, LongType.INSTANCE);
-                final List<BudgetDetail> bdList = q.list();
+                    q.setParameter("type", "BE");
+                q.setParameter("finYearId", financialyearid);
+                q.setParameter("bgId", budgetheadid);
+                final List<BudgetDetail> bdList = q.getResultList();
                 if (bdList.isEmpty()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug(
@@ -446,9 +437,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
     @Deprecated
     private BigDecimal getDetails(final Long financialyearid, final Integer moduleid, final String referencenumber,
-                                  final Integer departmentid, final Long functionid, final Integer functionaryid, final Integer schemeid,
-                                  final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid,
-                                  final double amount, final boolean consumeOrRelease, final String appropriationnumber) {
+            final Integer departmentid, final Long functionid, final Integer functionaryid, final Integer schemeid,
+            final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid,
+            final double amount, final boolean consumeOrRelease, final String appropriationnumber) {
         try {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("financialyearid==" + financialyearid + ",moduleid==" + moduleid + ",referencenumber=="
@@ -471,15 +462,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 // need to update budget details
                 final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid,
                         boundaryid, fundid);
-                final Query q = persistenceService.getSession().createQuery(
-                        " from BudgetDetail bd where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type and bd.budgetGroup.id in (:bgId)".concat(query));
+                final TypedQuery<BudgetDetail> q = entityManager.createQuery(
+                        new StringBuffer(" from BudgetDetail bd")
+                                .append(" where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type")
+                                .append(" and bd.budgetGroup.id in (:bgId)").append(query).toString(),
+                        BudgetDetail.class);
                 if (budgetService.hasApprovedReForYear(financialyearid))
-                    q.setParameter("type", "RE", StringType.INSTANCE);
+                    q.setParameter("type", "RE");
                 else
-                    q.setParameter("type", "BE", StringType.INSTANCE);
-                q.setParameter("finYearId", financialyearid, LongType.INSTANCE);
-                q.setParameterList("bgId", budgetheadid, LongType.INSTANCE);
-                final List<BudgetDetail> bdList = q.list();
+                    q.setParameter("type", "BE");
+                q.setParameter("finYearId", financialyearid);
+                q.setParameter("bgId", budgetheadid);
+                final List<BudgetDetail> bdList = q.getResultList();
                 if (bdList.isEmpty()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug(
@@ -521,10 +515,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Deprecated
     @Transactional
     public BudgetUsage getBudgetUsageDetails(final Long financialyearid, final Integer moduleid,
-                                              final String referencenumber, final Integer departmentid, final Long functionid,
-                                              final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-                                              final List<Long> budgetheadid, final Integer fundid, final double amount, final boolean consumeOrRelease,
-                                              final String appropriationnumber) {
+            final String referencenumber, final Integer departmentid, final Long functionid,
+            final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
+            final List<Long> budgetheadid, final Integer fundid, final double amount, final boolean consumeOrRelease,
+            final String appropriationnumber) {
         try {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("financialyearid==" + financialyearid + ",moduleid==" + moduleid + ",referencenumber=="
@@ -551,15 +545,17 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             // need to update budget details
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid,
                     boundaryid, fundid);
-            final Query q = persistenceService.getSession().createQuery(
-                    " from BudgetDetail bd where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type and bd.budgetGroup.id in (:bgId)".concat(query));
+            final TypedQuery<BudgetDetail> q = entityManager.createQuery(
+                    new StringBuffer(" from BudgetDetail bd")
+                    .append(" where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type")
+                    .append(" and bd.budgetGroup.id in (:bgId)").append(query).toString(), BudgetDetail.class);
             if (budgetService.hasApprovedReForYear(financialyearid))
-                q.setParameter("type", "RE", StringType.INSTANCE);
+                q.setParameter("type", "RE");
             else
-                q.setParameter("type", "BE", StringType.INSTANCE);
-            q.setParameter("finYearId", financialyearid, LongType.INSTANCE);
-            q.setParameterList("bgId", budgetheadid, LongType.INSTANCE);
-            final List<BudgetDetail> bdList = q.list();
+                q.setParameter("type", "BE");
+            q.setParameter("finYearId", financialyearid);
+            q.setParameter("bgId", budgetheadid);
+            final List<BudgetDetail> bdList = q.getResultList();
 
             if (bdList.isEmpty()) {
                 if (LOGGER.isDebugEnabled())
@@ -624,7 +620,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     private String prepareAgregateQuery(final Integer departmentid, final Long functionid, final Integer functionaryid,
-                                        final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
+            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
         StringBuilder query = new StringBuilder(EMPTY_STRING);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside the prepareAgregateQuery... " + departmentid + " >>>" + fundid);
@@ -647,7 +643,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     private String prepareQuery(final Integer departmentid, final Long functionid, final Integer functionaryid,
-                                final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
+            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
         StringBuilder query = new StringBuilder(EMPTY_STRING);
 
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
@@ -700,9 +696,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         return " and bd.budget.status.description = 'Approved' and bd.status.description = 'Approved'  ".concat(query.toString());
     }
 
-
     private String prepareQueryToGetBudgetDetails(final Integer departmentid, final Long functionid, final Integer functionaryid,
-                                                  final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
+            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
         StringBuilder query = new StringBuilder();
 
         if (departmentid != null) {
@@ -772,8 +767,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      */
     @Override
     public BigDecimal getPlanningBudgetAvailable(final Long financialyearid, final Integer departmentid,
-                                                 final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-                                                 final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+            final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
+            final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
         try {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("financialyearid===" + financialyearid + ",departmentid===" + departmentid
@@ -821,8 +816,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
     @Override
     public List<BudgetDetail> getBudgetAvailableDetail(final Long financialyearid, final Integer departmentid,
-                                                       final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-                                                       final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+            final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
+            final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
         try {
 
             String query = prepareQueryToGetBudgetDetails(departmentid, functionid, functionaryid, schemeid, subschemeid,
@@ -830,7 +825,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             if (budgetheadid != null && !budgetheadid.isEmpty())
                 query.concat(" and bd.budgetGroup.id in (:budgetheadid) ");
-            final String finalquery = "select bd from BudgetDetail bd where bd.budget.isbere = :type and bd.budget.financialYear.id = :financialyearid".concat(query);
+            final String finalquery = "select bd from BudgetDetail bd where bd.budget.isbere = :type and bd.budget.financialYear.id = :financialyearid"
+                    .concat(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
@@ -853,12 +849,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * API to load the budget consumed for the previous year/current year. it'll
-     * return the transaction amount consumed for the current year based on
-     * asOnDate or previous financial year and other given parameters from
-     * Generalledger. Transaction amount calculation for Income and Liabilities
-     * -> sum(creditamt) - sum (debitamt) Transaction amount calculation for
-     * Expense and Assets -> sum(debitamt) - sum (creditamt)
+     * API to load the budget consumed for the previous year/current year. it'll return the transaction amount consumed for the
+     * current year based on asOnDate or previous financial year and other given parameters from Generalledger. Transaction amount
+     * calculation for Income and Liabilities -> sum(creditamt) - sum (debitamt) Transaction amount calculation for Expense and
+     * Assets -> sum(debitamt) - sum (creditamt)
      *
      * @return transaction amount
      */
@@ -991,12 +985,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * API to load the budget consumed for the previous year/current year. it'll
-     * return the transaction amount consumed for the current year based on
-     * asOnDate or previous financial year and other given parameters from
-     * Generalledger. Transaction amount calculation for Income and Liabilities
-     * -> sum(creditamt) - sum (debitamt) Transaction amount calculation for
-     * Expense and Assets -> sum(debitamt) - sum (creditamt)
+     * API to load the budget consumed for the previous year/current year. it'll return the transaction amount consumed for the
+     * current year based on asOnDate or previous financial year and other given parameters from Generalledger. Transaction amount
+     * calculation for Income and Liabilities -> sum(creditamt) - sum (debitamt) Transaction amount calculation for Expense and
+     * Assets -> sum(debitamt) - sum (creditamt)
      *
      * @return transaction amount
      */
@@ -1034,8 +1026,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (paramMap.get(Constants.BOUNDARYID) != null)
                 boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
             /*
-             * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid =
-             * (Long)paramMap.get(BUDGETHEADID);
+             * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid = (Long)paramMap.get(BUDGETHEADID);
              */
             if (paramMap.get(Constants.ASONDATE) != null)
                 asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
@@ -1171,10 +1162,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This parameter HashMap contains deptid,functionid,
-     * functionaryid,schemeid,
-     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the
-     * budgeted amount based on the parameters.
+     * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
+     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the budgeted amount based on the parameters.
      *
      * @param paramMap
      * @return budgeted amount @
@@ -1261,10 +1250,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This parameter HashMap contains deptid,functionid,
-     * functionaryid,schemeid,
-     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the
-     * budgeted amount based on the parameters.
+     * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
+     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the budgeted amount based on the parameters.
      *
      * @param paramMap
      * @return budgeted amount @
@@ -1427,11 +1414,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This parameter HashMap contains deptid,functionid,
-     * functionaryid,schemeid,
-     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the
-     * budgeted amount based on the parameters. Only financial year parameter
-     * will be considered mandatory here.
+     * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
+     * subschemeid,boundaryid,budgetheadid,financialyearid it'll get the budgeted amount based on the parameters. Only financial
+     * year parameter will be considered mandatory here.
      *
      * @param paramMap
      * @return budgeted amount @
@@ -1490,9 +1475,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             // exist, take BE's Approved Amount
             StringBuilder finalquery = new StringBuilder();
             if (budgetService.hasApprovedReForYear(financialyearid))
-                finalquery.append(" from BudgetDetail bd where bd.budget.isbere = 'RE' ").append(query).append(" order by bd.executingDepartment ");
+                finalquery.append(" from BudgetDetail bd where bd.budget.isbere = 'RE' ").append(query)
+                        .append(" order by bd.executingDepartment ");
             else
-                finalquery.append(" from BudgetDetail bd where bd.budget.isbere = 'BE' ").append(query).append(" order by bd.executingDepartment ");
+                finalquery.append(" from BudgetDetail bd where bd.budget.isbere = 'BE' ").append(query)
+                        .append(" order by bd.executingDepartment ");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
@@ -1559,21 +1546,14 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     /**
      * This API is handling the budget checking
      *
-     * @param paramMap paramMap contains 1. debitAmt (mandatory) 2. creditAmt
-     *                 (mandatory) 3. deptid (optional) 4. functionid (optional) 5.
-     *                 functionaryid (optional) 6. schemeid (optional) 7. subschemeid
-     *                 (optional) 8. boundaryid (optional) 9. glcode (mandatory) -
-     *                 based on the glcode, we can get the budgetheadid 10. asondate
-     *                 (manadtory) - to get the actuals, we need asondate 11.
-     *                 mis.budgetcheckreq-Boolean- (optional) to skip budget check if
-     *                 set to false.Default is true Budget checking will be enabled
-     *                 or disabled by these levels and in the order a. Application -
-     *                 uses set up "Budget Control Type" b. Voucherlevel - uses
-     *                 budgetcheckreq column of vouchermis table for perticular
-     *                 voucher c. Debit or Credit level - uses Budgetgroup.budgetting
-     *                 type for debit side only ,credit side or both d. Glcode level
-     *                 - Uses chartofaccounts.budgetcheckreq fieled to decide budget
-     *                 checking .
+     * @param paramMap paramMap contains 1. debitAmt (mandatory) 2. creditAmt (mandatory) 3. deptid (optional) 4. functionid
+     * (optional) 5. functionaryid (optional) 6. schemeid (optional) 7. subschemeid (optional) 8. boundaryid (optional) 9. glcode
+     * (mandatory) - based on the glcode, we can get the budgetheadid 10. asondate (manadtory) - to get the actuals, we need
+     * asondate 11. mis.budgetcheckreq-Boolean- (optional) to skip budget check if set to false.Default is true Budget checking
+     * will be enabled or disabled by these levels and in the order a. Application - uses set up "Budget Control Type" b.
+     * Voucherlevel - uses budgetcheckreq column of vouchermis table for perticular voucher c. Debit or Credit level - uses
+     * Budgetgroup.budgetting type for debit side only ,credit side or both d. Glcode level - Uses chartofaccounts.budgetcheckreq
+     * fieled to decide budget checking .
      * @return @
      */
     @Override
@@ -1644,8 +1624,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * To check budget available for the glcode with other parameters. if txnamt
-     * is less than the budget available, it would return true, otherwise false.
+     * To check budget available for the glcode with other parameters. if txnamt is less than the budget available, it would
+     * return true, otherwise false.
      *
      * @param paramMap
      * @return @
@@ -1831,8 +1811,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * To get the Budgetgroup for the glcode at detailcode level or minorcode
-     * level or major code level.
+     * To get the Budgetgroup for the glcode at detailcode level or minorcode level or major code level.
      *
      * @param coa
      * @return @
@@ -1867,9 +1846,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("getBudgetHeadByGlcode minorcode query=====" + query);
                 // persistenceService.setType(BudgetGroup.class);
-                bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode().substring(0, minorcodelength), coa.getGlcode().substring(0, minorcodelength));
+                bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode().substring(0, minorcodelength),
+                        coa.getGlcode().substring(0, minorcodelength));
                 if (bgList.isEmpty()) {
-                    query = new StringBuilder(" from BudgetGroup bg where bg.majorCode.glcode = ?1 and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true ");
+                    query = new StringBuilder(
+                            " from BudgetGroup bg where bg.majorCode.glcode = ?1 and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true ");
                     bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode().substring(0, majorcodelength));
                     if (bgList.isEmpty())
                         throw new ValidationException(EMPTY_STRING,
@@ -1891,8 +1872,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * To get the Budgetgroup for the glcode at detailcode level for a list of
-     * COA codes
+     * To get the Budgetgroup for the glcode at detailcode level for a list of COA codes
      *
      * @param coa
      * @return @
@@ -1918,7 +1898,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             }
             final String query = new StringBuilder(" from BudgetGroup bg where ")
                     .append(coaQry)
-                    .append(" and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true order by bg.name").toString();
+                    .append(" and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true order by bg.name")
+                    .toString();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
             return persistenceService.findAllBy(query);
@@ -1955,14 +1936,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     /**
      * This API is handling the budget checking
      *
-     * @param paramMap paramMap contains 1. debitAmt (mandatory) 2. creditAmt
-     *                 (mandatory) 3. deptid (optional) 4. functionid (optional) 5.
-     *                 functionaryid (optional) 6. schemeid (optional) 7. subschemeid
-     *                 (optional) 8. boundaryid (optional) 9. glcode (mandatory) -
-     *                 based on the glcode, we can get the budgetheadid 10. asondate
-     *                 (manadtory) - to get the actuals, we need asondate
-     *                 11.mis.budgetcheckreq-Boolean-(optional) set to false if
-     *                 budget check not to be done for this bill default is True.
+     * @param paramMap paramMap contains 1. debitAmt (mandatory) 2. creditAmt (mandatory) 3. deptid (optional) 4. functionid
+     * (optional) 5. functionaryid (optional) 6. schemeid (optional) 7. subschemeid (optional) 8. boundaryid (optional) 9. glcode
+     * (mandatory) - based on the glcode, we can get the budgetheadid 10. asondate (manadtory) - to get the actuals, we need
+     * asondate 11.mis.budgetcheckreq-Boolean-(optional) set to false if budget check not to be done for this bill default is
+     * True.
      * @return @
      */
     @Override
@@ -2269,11 +2247,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 query.append(" and  br.billdate >= ?").append(i++).append(" ");
 
             query.append(" and bd.glcodeid = ?").append(i++).append(" ");
-            query1 = new StringBuilder("select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end) ")
-                    .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis ")
-                    .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq = true)")
-                    .append(" and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') ")
-                    .append(query);
+            query1 = new StringBuilder(
+                    "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end) ")
+                            .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis ")
+                            .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq = true)")
+                            .append(" and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') ")
+                            .append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
@@ -2304,8 +2283,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This API is to get the total bill amount where bill vouchers are created
-     * but cancelled later.
+     * This API is to get the total bill amount where bill vouchers are created but cancelled later.
      *
      * @param query
      * @param fromdate
@@ -2314,14 +2292,15 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      */
 
     private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate,
-                                                           final Date asondate, final Long glcodeId) {
+            final Date asondate, final Long glcodeId) {
 
-        final StringBuilder newQuery = new StringBuilder("select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0")
-                .append(" else bd.creditamount end )  ")
-                .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  ")
-                .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)")
-                .append(" and bmis.voucherHeader = vh.id and upper(br.status.description) not in ('CANCELLED') and vh.status = 4  ")
-                .append(query);
+        final StringBuilder newQuery = new StringBuilder(
+                "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0")
+                        .append(" else bd.creditamount end )  ")
+                        .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  ")
+                        .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)")
+                        .append(" and bmis.voucherHeader = vh.id and upper(br.status.description) not in ('CANCELLED') and vh.status = 4  ")
+                        .append(query);
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getBillAmountWhereCancelledVouchers query============" + newQuery);
@@ -2338,10 +2317,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * This parameter HashMap contains deptid,functionid,
-     * functionaryid,schemeid,
-     * subschemeid,boundaryid,budgetheadid,financialyearid,typeBeRe it'll get
-     * the budgeted amount based on the parameters.
+     * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
+     * subschemeid,boundaryid,budgetheadid,financialyearid,typeBeRe it'll get the budgeted amount based on the parameters.
      *
      * @param paramMap
      * @return budgeted amount @
@@ -2395,7 +2372,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
             query.append(getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear = "));
 
-            final String finalquery = " from BudgetDetail bd where bd.budget.isbere = '".concat(typeBeRe).concat("' ").concat(query.toString());
+            final String finalquery = " from BudgetDetail bd where bd.budget.isbere = '".concat(typeBeRe).concat("' ")
+                    .concat(query.toString());
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("finalquery  =" + finalquery);
@@ -2416,14 +2394,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
     /**
      * @param paramMap Map contains deptid,functionid, functionaryid,schemeid,
-     *                 subschemeid,boundaryid,budgetheadid,financialyearid,fundid
-     *                 it'll get the budgeted amount based on the parameters.
+     * subschemeid,boundaryid,budgetheadid,financialyearid,fundid it'll get the budgeted amount based on the parameters.
      * @return Sanctioned Planning Budget amount @
-     * @description - returns the Sanctioned Planning Budget amount based on
-     * various parameters. For an year if there is an approved RE,
-     * then the RE sanctioned planning amount will be returned else
-     * the sanctioned BE amount will be returned. This will take
-     * care of the re-appropriations also.
+     * @description - returns the Sanctioned Planning Budget amount based on various parameters. For an year if there is an
+     * approved RE, then the RE sanctioned planning amount will be returned else the sanctioned BE amount will be returned. This
+     * will take care of the re-appropriations also.
      */
     @Override
     public BigDecimal getSanctionedPlanningBudget(final Map<String, Object> paramMap) {
@@ -2448,25 +2423,16 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * @param queryParamMap - HashMap<String, Object> queryParamMap will have data
-     *                      required for the query the queryParamMap contain values :- the
-     *                      mis attribute values passed in the query map will be validated
-     *                      with the appconfig value of key=budgetaryCheck_groupby_values
-     *                      financialyearid - optional ExecutionDepartmentId - mandatory
-     *                      -if:department present in the app config value - optional
-     *                      -else fundId - mandatory -if:fund present in the app config
-     *                      value - optional -else schemeId - mandatory -if:Scheme present
-     *                      in the app config value - optional -else functionId -
-     *                      mandatory -if:function present in the app config value -
-     *                      optional -else subschemeId - mandatory -if:Subscheme present
-     *                      in the app config value - optional -else functionaryId -
-     *                      mandatory -if:functionary present in the app config value -
-     *                      optional -else boundaryId - mandatory -if:boundary present in
-     *                      the app config value - optional -else moduleId - optional
-     *                      financialYearId -optional budgetgroupId -optional fromDate
-     *                      -optional toDate -optional Order By - optional if passed then
-     *                      only Budgetary appropriation number and reference number is
-     *                      accepted, if not passed then default order by is date.
+     * @param queryParamMap - HashMap<String, Object> queryParamMap will have data required for the query the queryParamMap
+     * contain values :- the mis attribute values passed in the query map will be validated with the appconfig value of
+     * key=budgetaryCheck_groupby_values financialyearid - optional ExecutionDepartmentId - mandatory -if:department present in
+     * the app config value - optional -else fundId - mandatory -if:fund present in the app config value - optional -else schemeId
+     * - mandatory -if:Scheme present in the app config value - optional -else functionId - mandatory -if:function present in the
+     * app config value - optional -else subschemeId - mandatory -if:Subscheme present in the app config value - optional -else
+     * functionaryId - mandatory -if:functionary present in the app config value - optional -else boundaryId - mandatory
+     * -if:boundary present in the app config value - optional -else moduleId - optional financialYearId -optional budgetgroupId
+     * -optional fromDate -optional toDate -optional Order By - optional if passed then only Budgetary appropriation number and
+     * reference number is accepted, if not passed then default order by is date.
      * @return
      * @description - get the list of BudgetUsage based on various parameters
      */
@@ -2507,7 +2473,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 throw new ValidationException(EMPTY_STRING, "Department is required");
             else {
                 query.append(" and bd.executingDepartment.id = :execDeptId");
-                params.put("execDeptId", Integer.valueOf(queryParamMap.get("ExecutionDepartmentId").toString()));
+                params.put("execDeptId", Long.valueOf(queryParamMap.get("ExecutionDepartmentId").toString()));
             }
         if (!isNull(grpByVls.get("function")))
             if (isNull(queryParamMap.get("functionId")))
@@ -2575,27 +2541,26 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Budget Usage Query >>>>>>>> " + query.toString());
-        final Query query1 = getCurrentSession().createQuery(query.toString());
+        final javax.persistence.Query query1 = entityManager.createQuery(query.toString());
         params.keySet().forEach(key -> query1.setParameter(key, params.get(key)));
         if (!isNull(queryParamMap.get("fromDate")))
-            query1.setParameter("from", (Date) queryParamMap.get("fromDate"), TimestampType.INSTANCE);
+            query1.setParameter("from", (Date) queryParamMap.get("fromDate"), TemporalType.TIMESTAMP);
         if (!isNull(queryParamMap.get("toDate"))) {
             Calendar date = Calendar.getInstance();
             date.setTime((Date) queryParamMap.get("toDate"));
             date.set(Calendar.MINUTE, 59);
             date.set(Calendar.HOUR_OF_DAY, 23);
             date.set(Calendar.SECOND, 59);
-            query1.setParameter("to", date, TimestampType.INSTANCE);
+            query1.setParameter("to", date.getTime(), TemporalType.TIMESTAMP);
         }
 
-        return query1.list();
+        return query1.getResultList();
 
     }
 
     /**
-     * returns sum(approved BE/RE amount + appropriated (addition-deduction)
-     * amount)* mutliplicationFactor if budget and reappropriation both doesnot
-     * exist it will return zero
+     * returns sum(approved BE/RE amount + appropriated (addition-deduction) amount)* mutliplicationFactor if budget and
+     * reappropriation both doesnot exist it will return zero
      *
      * @param fundId
      * @param deptId
@@ -2627,10 +2592,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             LOGGER.debug("Approved " + isbere + " Amount" + amount);
         amount = amount == null ? BigDecimal.ZERO : amount;
         // 4. Reappropriated amounts
-        BigDecimal reappAmount = (BigDecimal) persistenceService.find(new StringBuilder("select sum(additionAmount-deductionAmount)")
+        BigDecimal reappAmount = (BigDecimal) persistenceService.find(
+                new StringBuilder("select sum(additionAmount-deductionAmount)")
                         .append(" from BudgetReAppropriation br")
                         .append(" where br.budgetDetail.executingDepartment.id = ?1 and br.budgetDetail.fund.id = ?2 and br.budgetDetail.budget.financialYear = ?3")
-                        .append(" and br.budgetDetail.budget.isbere = ?4 and br.status.description='Approved' and to_date(br.modifiedDate) <= ?5 ").toString(),
+                        .append(" and br.budgetDetail.budget.isbere = ?4 and br.status.description='Approved' and to_date(br.modifiedDate) <= ?5 ")
+                        .toString(),
                 deptId, fundId, finYear, isbere, asOnDate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Approved Reappropriation Amount" + reappAmount);
@@ -2644,8 +2611,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     }
 
     /**
-     * Returns a list of Functions having entry in budget detail with the given
-     * fund and department .
+     * Returns a list of Functions having entry in budget detail with the given fund and department .
      *
      * @param fund,function,department and account type @
      */
