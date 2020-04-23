@@ -196,6 +196,7 @@ public class WaterTaxConstants {
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
     public static final String SUBMITWORKFLOWACTION = "Submit";
+    public static final String PROCEEDWITHOUTDONATION = "Proceed Without Donation";
     public static final String EXECUTIVEENGINEERFORWARDED = "Engineer Executive Forwarded";
     public static final String SUPERINTENDANTENGINEERFORWARDED = "Superintendent Executive Forwarded";
 

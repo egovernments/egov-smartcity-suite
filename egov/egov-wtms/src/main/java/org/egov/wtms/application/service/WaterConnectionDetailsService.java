@@ -118,6 +118,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_EE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_ME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_SE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDWITHOUTDONATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PTIS_DETAILS_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
@@ -191,6 +192,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
@@ -199,10 +201,6 @@ import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.search.elasticsearch.entity.ApplicationIndex;
-import org.egov.search.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.search.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -217,6 +215,7 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -228,6 +227,10 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.search.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
@@ -262,10 +265,10 @@ import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -409,6 +412,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     public WaterConnectionDetails findBy(Long waterConnectionId) {
         return waterConnectionDetailsRepository.findOne(waterConnectionId);
@@ -2035,4 +2041,34 @@ public class WaterConnectionDetailsService {
                 }
                 return updatedApplicationNo;
         }
+        
+    public boolean isValidApprover(WaterConnectionDetails waterConnectionDetails, Long approvalPosition, String workFlowAction) {
+        boolean isValidApprover = true;
+        String additionalRule = EMPTY;
+        WorkFlowMatrix workflowMatrix = null;
+        Position nextStateOwner = positionMasterService.getPositionById(approvalPosition);
+        String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
+        if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            additionalRule = CLOSECONNECTION;
+        else
+            additionalRule = waterConnectionDetails.getApplicationType().getCode();
+
+        if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
+            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
+        else if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction))
+            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
+                    loggedInUserDesignation);
+
+        if (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner))
+            isValidApprover = false;
+
+        return isValidApprover;
+    }
+
+    public Boolean isApplicationOwner(User currentUser, StateAware state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
+    }
 }

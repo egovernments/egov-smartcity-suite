@@ -87,6 +87,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDWITHOUTDONATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_NONMETER_EST_AMT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
@@ -174,7 +175,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/application")
 public class UpdateConnectionController extends GenericConnectionController {
 
-    private static final String PROCEEDWITHOUTDONATION = "Proceed Without Donation";
     private static final String PENALTY_AMOUNT = "penaltyAmount";
     private static final String SAVE = "Save";
     private static final String ADD_DEMAND = "addDemand";
@@ -194,6 +194,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String MSG_WATER_CHARGES_DUE = "msg.watercharges.amount.due";
     private static final String MSG_APPLICATION_PROCESSED = "msg.application.already.exist";
     private static final String MSG_WATER_ESTIMATION_CHARGES_DUE = "msg.waterestimation.amount.due";
+    private static final String NOT_AUTHORIZED = "notAuthorized";
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -254,6 +255,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
+        if (!waterConnectionDetailsService.isApplicationOwner(securityUtils.getCurrentUser(), waterConnectionDetails))
+            return NOT_AUTHORIZED;
         if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && updateWaterConnectionValidator.validateRegularizationAmount(waterConnectionDetails)) {
@@ -572,7 +575,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
                 ? request.getParameter(WORKFLOW_ACTION)
                 : EMPTY;
-
+        Long approvalPosition = isNotBlank(request.getParameter(APPRIVALPOSITION))
+                ? Long.valueOf(request.getParameter(APPRIVALPOSITION))
+                : 0l;        
         if (isNotBlank(workFlowAction))
             request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
 
@@ -589,6 +594,19 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
 
+        if (isNotBlank(workFlowAction) && (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                || PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)) && approvalPosition != null
+                && approvalPosition != 0) {
+            boolean isValidApprover = waterConnectionDetailsService.isValidApprover(waterConnectionDetails, approvalPosition,
+                    workFlowAction);
+            if (!isValidApprover) {
+                model.addAttribute("approverError", "Invalid approver");
+                model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
+                model.addAttribute(MODE, ERROR);
+                return NEWCONNECTION_EDIT;
+            }
+        }
+        
         if (updateWaterConnectionValidator.applicationInProgress(waterConnectionDetails,
                 request.getParameter("wfstateDesc"), request.getParameter("statuscode"),
                 request.getParameter("ownerPosition"), workFlowAction)) {
@@ -674,10 +692,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getStatus().getCode() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID))
             updateWaterConnectionValidator.validate(waterConnectionDetails, resultBinder);
-
-        Long approvalPosition = isNotBlank(request.getParameter(APPRIVALPOSITION))
-                ? Long.valueOf(request.getParameter(APPRIVALPOSITION))
-                : 0l;
 
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))

@@ -405,6 +405,11 @@ $(document).ready(
     		return false;
     	}
 
+        if ($('#approverError').val()) {
+			bootbox.alert($('#approverError').val());
+			$('#approverDetailHeading').hide();
+			return false;
+		}
 
     });
 
