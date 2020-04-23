@@ -68,6 +68,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class MBHeader extends StateAware<Position> {
 
@@ -76,10 +77,12 @@ public class MBHeader extends StateAware<Position> {
 
     @Required(message = "mbheader.workorder.null")
     private WorkOrder workOrder;
+    @SafeHtml
     @Required(message = "mbheader.mbrefno.null")
     @Length(max = 50, message = "mbheader.mbrefno.length")
     private String mbRefNo;
 
+    @SafeHtml
     @Length(max = 400, message = "mbheader.contractorComments.length")
     private String contractorComments;
 
@@ -88,6 +91,7 @@ public class MBHeader extends StateAware<Position> {
     @DateFormat(message = "invalid.fieldvalue.mbDate")
     private Date mbDate;
 
+    @SafeHtml
     @Length(max = 400, message = "mbheader.mbabstract.length")
     private String mbAbstract;
 
@@ -103,6 +107,7 @@ public class MBHeader extends StateAware<Position> {
 
     @Valid
     private List<MBDetails> mbDetails = new LinkedList<>();
+    @SafeHtml
     private String owner;
     private List<String> mbActions = new ArrayList<>();
     private EgwStatus egwStatus;

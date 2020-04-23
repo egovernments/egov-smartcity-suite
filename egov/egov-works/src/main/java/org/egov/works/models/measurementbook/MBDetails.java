@@ -59,6 +59,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.workorder.WorkOrderActivity;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class MBDetails extends BaseModel {
@@ -71,6 +72,7 @@ public class MBDetails extends BaseModel {
     @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")
     private double quantity;
     private double rate;
+    @SafeHtml
     @Length(max = 400, message = "mbdetails.remark.length")
     private String remarks;
 
@@ -80,6 +82,7 @@ public class MBDetails extends BaseModel {
     private double amtForCurrQuantity;
     private double cumlvAmtForCurrCumlvQuantity;
     private Date mbdetailsDate;
+    @SafeHtml
     @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITH_SLASH, message = "mbdetails.ordernumber")
     private String OrderNumber;
     // -------------------------------------------------------------------

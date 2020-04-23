@@ -47,17 +47,24 @@
  */
 package org.egov.works.models.measurementbook;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class MeasurementBookPDF {
+	@SafeHtml
     private String scheduleNo;
+	@SafeHtml
     private String workDescription;
     private Double completedMeasurement;
     private Double unitRate;
+    @SafeHtml
     private String uom;
     private Double completedCost;
+    @SafeHtml
     private String pageNo;
     private Double prevMeasurement;
     private Double currentMeasurement;
     private Double currentCost;
+    @SafeHtml
     private String revisionType;
 
     public String getScheduleNo() {

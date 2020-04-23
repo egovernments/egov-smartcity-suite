@@ -49,11 +49,17 @@ package org.egov.works.models.measurementbook;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class ApprovalDetails {
+	@SafeHtml
     private String statusDesc;
+	@SafeHtml
     private String emplName;
+	@SafeHtml
     private String desgName;
     private Date date;
+    @SafeHtml
     private String text;
 
     public String getStatusDesc() {
