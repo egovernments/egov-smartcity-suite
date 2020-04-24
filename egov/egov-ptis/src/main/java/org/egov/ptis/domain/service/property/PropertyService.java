@@ -219,10 +219,10 @@ public class PropertyService {
     private static final String CURR_TAX = "CURR_TAX";
     private static final String AND_PMV_HOUSE_NO_LIKE = " and pmv.houseNo like ?";
     private static final String WHERE_PMV_IS_ACTIVE_TRUE = "where pmv.isActive = true ";
-    private static final String SELECT_COUNT_DISTINCT_PMV = "select count(distinct pmv) ";
-    private static final String SELECT_DISTINCT_PMV = "select distinct pmv ";
+    private static final String SELECT_COUNT_PMV = "select count(pmv) ";
+    private static final String SELECT_PMV = "select pmv ";
     private static final String FROM_PROPERTY_MATERLIZE_VIEW_PMV = "from PropertyMaterlizeView pmv ";
-    private static final String MV_QUERY = "select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ";
+    private static final String MV_QUERY = "select pmv from PropertyMaterlizeView pmv where pmv.isActive = true ";
     private static final String OWNER_NAME = "OwnerName";
     private static final String HOUSE_NO = "HouseNo";
     private static final String NEW_PROPERTY = ", newProperty: ";
@@ -2654,7 +2654,7 @@ public class PropertyService {
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd>=:fromDemand ")
+                "select pmv from PropertyMaterlizeView pmv where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd>=:fromDemand ")
                 .append("and pmv.aggrCurrFirstHalfDmd<=:toDemand and pmv.isActive = true ");
 		final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString())
 				.setParameter("fromDemand", new BigDecimal(fromDemand))
@@ -2670,7 +2670,7 @@ public class PropertyService {
     public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum,
             final String oldMuncipalNum, final String ownerName, final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(" where pmv.isActive = true ");
+        queryStr.append("select pmv from PropertyMaterlizeView pmv ").append(" where pmv.isActive = true ");
         if (assessmentNum != null && !assessmentNum.trim().isEmpty())
             queryStr.append(" and pmv.propertyId=:assessmentNum ");
 
@@ -2707,7 +2707,7 @@ public class PropertyService {
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
             final String ownerName) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ")
+        queryStr.append("select pmv from PropertyMaterlizeView pmv ")
                 .append(" where pmv.locality.id=:locationId and pmv.isActive = true ");
         if (houseNo != null && !houseNo.trim().isEmpty())
             queryStr.append("and pmv.houseNo like :HouseNo ");
@@ -2736,7 +2736,7 @@ public class PropertyService {
             final String ownerName, final String houseNum) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select distinct pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
+                "select pmv from PropertyMaterlizeView pmv, BasicPropertyImpl bp where pmv.basicPropertyID=bp.id ")
                 .append("and bp.active='Y' ");
         if (null != zoneId && zoneId != -1)
             queryStr.append(" and pmv.zone.id=:ZoneID");
@@ -2791,8 +2791,8 @@ public class PropertyService {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ?1 ";
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
         map.put(COUNT, count.append(from).append(where).toString());
         map.put(PARAMS, Arrays.asList(oldMuncipalNum));
@@ -2815,8 +2815,8 @@ public class PropertyService {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final String where = "where pmv.isActive = true and pmv.houseNo like ?1 ";
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
         map.put(COUNT, count.append(from).append(where).toString());
         map.put(PARAMS, Arrays.asList(doorNo + "%"));
@@ -2827,8 +2827,8 @@ public class PropertyService {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final String where = "where pmv.isActive = true and pmv.mobileNumber = ?1 ";
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
         map.put(COUNT, count.append(from).append(where).toString());
         map.put(PARAMS, Arrays.asList(mobileNumber));
@@ -2839,8 +2839,8 @@ public class PropertyService {
             final String houseNum) {
 
         final Map<String, Object> map = new HashMap<>();
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
 
@@ -2872,8 +2872,8 @@ public class PropertyService {
     public Map<String, Object> getLocationQuery(final Long locationId, final String houseNo, final String ownerName) {
 
         final Map<String, Object> map = new HashMap<>();
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
 
@@ -2901,8 +2901,8 @@ public class PropertyService {
     public Map<String, Object> getDemandQuery(final String fromDemand, final String toDemand) {
 
         final Map<String, Object> map = new HashMap<>();
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(
                 "where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ?1 ")
@@ -2919,8 +2919,8 @@ public class PropertyService {
 
         final Map<String, Object> map = new HashMap<>();
         final List params = new ArrayList();
-        final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
-        final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
+        final StringBuilder search = new StringBuilder(SELECT_PMV);
+        final StringBuilder count = new StringBuilder(SELECT_COUNT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
         int i=0;

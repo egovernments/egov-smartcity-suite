@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Exemption_Municpal_Muncipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="92"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="commissioner" class="java.lang.String"/>
+	<parameter name="noticeDate" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="doorNumber" class="java.lang.String"/>
+	<parameter name="AssessmentNumber" class="java.lang.String"/>
+	<parameter name="Locality" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<title>
+		<band height="320" splitType="Stretch">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="46" y="58" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:" ")+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="85" y="12" width="407" height="18" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROCEEDINGS OF COMMISSIONER, "+$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="2" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="false" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="168" y="30" width="258" height="16" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
+				<textElement textAlignment="Left" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{commissioner}+"\n\tCommissioner"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="54" y="140" width="456" height="90" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="8" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tIn the subject read above, Exemption is grated for Property bearing Door No.<style forecolor=\"#000000\" isBold=\"true\">"+($P{doorNumber}!=null?$P{doorNumber}:" ")+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style>, Locality<style forecolor=\"#000000\" isBold=\"true\"> "+($P{Locality}!=null?$P{Locality}:" ")+"</style> on grounds that the property belongs to the <style forecolor=\"#000000\" isBold=\"true\">"+$P{cityName}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="385" y="58" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="57" y="81" width="453" height="19" uuid="b74daa26-aad1-44cc-8428-431acdbd6a13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Sub: Property Tax – Exemption of Property Tax for Municipal Property – Orders – Issued. ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="58" y="100" width="202" height="20" uuid="a068c0a0-1016-4953-9d65-5f5ab4527df1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ref: Application Dt: "+$P{applicationDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="54" y="120" width="95" height="17" uuid="ca01b28c-74f9-4dbc-82be-0faad04035a3"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Order:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="151" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="329" y="3" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="320" y="59" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="198" y="80" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

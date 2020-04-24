@@ -86,6 +86,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_MUNICIPALITY_PROPERTY_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_MUNICIPALITY_PROPERTY;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -734,6 +736,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             reportInput = new ReportRequest(REPORT_CHOULTRY_EXEMPTION_NOTICE, propertyNotice, reportParams);
         else if (EXEMPTION_PUBLIC_WORSHIP.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE, propertyNotice, reportParams);
+        else if (EXEMPTION_MUNICIPALITY_PROPERTY.equalsIgnoreCase(exemptionReason))
+            reportInput = new ReportRequest(REPORT_MUNICIPALITY_PROPERTY_EXEMPTION, propertyNotice, reportParams);
         return reportInput;
     }
 

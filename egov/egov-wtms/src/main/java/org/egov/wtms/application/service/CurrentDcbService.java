@@ -212,22 +212,22 @@ public class CurrentDcbService {
         StringBuilder fromQuery;
         final StringBuilder whereQuery = new StringBuilder();
         selectQuery.append(
-                "select consumernumber, propertyid, username, mobileno, address, donation_demand, donation_coll, donation_balance");
-        fromQuery = new StringBuilder(" from egwtr_mv_donation_dcb_view ");
-        whereQuery.append(" where donation_demand is not null ");
+                "select hscno, propertyid, username, mobileno, address, donationcharges, donation_coll, donation_bal");
+        fromQuery = new StringBuilder(" from egwtr_mv_dcb_view ");
+        whereQuery.append(" where donationcharges is not null and donationcharges > 0 ");
 
         if (chargesDCBReportSearch.getFromDate() != null)
             whereQuery.append(" and applicationdate >=:fromDate");
         if (chargesDCBReportSearch.getToDate() != null)
             whereQuery.append(" and applicationdate <=:toDate");
         if (chargesDCBReportSearch.getFromAmount() != null && !chargesDCBReportSearch.getFromAmount().equals(BigDecimal.ZERO))
-            whereQuery.append(" and donation_demand >=:fromAmount");
+            whereQuery.append(" and donationcharges >=:fromAmount");
         if (chargesDCBReportSearch.getToAmount() != null && !chargesDCBReportSearch.getToAmount().equals(BigDecimal.ZERO))
-            whereQuery.append(" and donation_demand <=:toAmount ");
+            whereQuery.append(" and donationcharges <=:toAmount ");
         if (chargesDCBReportSearch.getPendingForPaymentOnly() != null && chargesDCBReportSearch.getPendingForPaymentOnly())
-            whereQuery.append(" and (donation_demand-donation_coll) >0 ");
+            whereQuery.append(" and (donationcharges-donation_coll) >0 ");
         else
-            whereQuery.append(" and (donation_demand-donation_coll) >=0 ");
+            whereQuery.append(" and (donationcharges-donation_coll) >=0 ");
         selectQuery = selectQuery.append(fromQuery).append(whereQuery);
         final NativeQuery sqlQuery = entityManager.unwrap(Session.class).createNativeQuery(selectQuery.toString());
         if (chargesDCBReportSearch.getFromDate() != null)

@@ -1652,6 +1652,7 @@ public interface PropertyTaxConstants {
     public static final String EXEMPTION_EDU_INST = "EDU_INST";
     public static final String EXEMPTION_PENSIONER = "PENSIONER";
     public static final String EXEMPTION_NGO = "NGO";
+    public static final String EXEMPTION_MUNICIPALITY_PROPERTY = "MUN_PROP";
     public static final String REPORT_NGO_EXEMPTION_NOTICE = "mainNGOExemptionNotice";
     public static final String REPORT_RETIRED_EXEMPTION_NOTICE = "mainRetiredAssociationExemptionNotice";
     public static final String REPORT_EDU_INST_EXEMPTION_NOTICE = "mainEduInstExemptionNotice";
@@ -1660,7 +1661,7 @@ public interface PropertyTaxConstants {
     public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE = "OwnershipCertificate_MultipleOwner";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_SINGLE = "OwnershipCertificate_SingleOwner";
-
+    public static final String REPORT_MUNICIPALITY_PROPERTY_EXEMPTION = "mainMunicipalExemption";
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
         {

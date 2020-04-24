@@ -528,8 +528,10 @@ public class ReportGenerationService {
 			reportParams.put("pipeSize", waterConnectionDetails.getPipeSize().getCode());
 			reportParams.put("category", waterConnectionDetails.getCategory().getName());
 			reportParams.put("usageType", waterConnectionDetails.getUsageType().getName());
-			reportParams.put("monthlyRate", connectionDemandService
-					.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
+			reportParams.put("monthlyRate",
+					BigDecimal.valueOf(connectionDemandService
+							.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate())
+							.setScale(2, BigDecimal.ROUND_HALF_UP));
 
 			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
 			double donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit()
@@ -548,15 +550,17 @@ public class ReportGenerationService {
 				totalCharges = donation;
 				balance = balance - estimationAmounts.get("materialCharges").doubleValue();
 			}
-			reportParams.put(DONATION_CHARGES, donation);
-			reportParams.put("materialCharges", materialCharges);
-			reportParams.put("totalCharges", totalCharges);
-			reportParams.put("collectedAmount", waterEstimationChargesPaymentService
-					.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
-			reportParams.put("balance", balance);
-			double amountPerInstallment = Math.ceil(totalCharges / 8);
-			reportParams.put("amountPerInstallment", amountPerInstallment);
-			reportParams.put("dueInstallments", Math.ceil(balance / amountPerInstallment));
+            reportParams.put(DONATION_CHARGES, BigDecimal.valueOf(donation).setScale(2, BigDecimal.ROUND_HALF_UP));
+            reportParams.put("materialCharges", BigDecimal.valueOf(materialCharges).setScale(2, BigDecimal.ROUND_HALF_UP));
+            reportParams.put("totalCharges", BigDecimal.valueOf(totalCharges).setScale(2, BigDecimal.ROUND_HALF_UP));
+            reportParams.put("collectedAmount", BigDecimal.valueOf(waterEstimationChargesPaymentService
+                    .getCollectedEstimationCharges(waterConnectionDetails).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP));
+            reportParams.put("balance", BigDecimal.valueOf(balance).setScale(2, BigDecimal.ROUND_HALF_UP));
+            BigDecimal amountPerInstallment = BigDecimal.valueOf(Math.ceil(totalCharges / 8)).setScale(2,
+                    BigDecimal.ROUND_HALF_UP);
+            reportParams.put("amountPerInstallment", amountPerInstallment.setScale(2, BigDecimal.ROUND_HALF_UP));
+            reportParams.put("dueInstallments", BigDecimal.valueOf(Math.ceil(balance / amountPerInstallment.doubleValue()))
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
 
 			reportInput = new ReportRequest("GO_estimationNotice", waterConnectionDetails.getEstimationDetails(),
 					reportParams);

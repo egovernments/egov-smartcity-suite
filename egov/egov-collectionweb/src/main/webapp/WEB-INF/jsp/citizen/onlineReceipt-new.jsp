@@ -679,7 +679,7 @@ function rePay(transactionid){
 
 
 																<td><input type="submit" class="buttonsubmit"
-																	name="repay" id="repay" value="Repay"
+																	name="repay" id="repay" value="Reconcile"
 																	onclick='rePay(<s:property value="%{id}"/>);' /> <%-- 	<s:text name="onlineReceipt.repay" /> --%>
 																</td>
 																<td width="10%">&nbsp;</td>
