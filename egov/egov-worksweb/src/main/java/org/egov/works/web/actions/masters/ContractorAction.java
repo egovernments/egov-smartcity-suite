@@ -75,6 +75,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.master.service.ContractorGradeService;
@@ -185,6 +186,7 @@ public class ContractorAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/contractor-viewResult")
+    @ValidationErrorPage(SEARCH_CONTRACTOR)
     public String viewResult() {
         setPageSize(WorksConstants.PAGE_SIZE);
         contractorList = contractorService.getContractorListForCriterias(createCriteriaMap());
