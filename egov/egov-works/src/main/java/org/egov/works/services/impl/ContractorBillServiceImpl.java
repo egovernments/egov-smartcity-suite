@@ -1699,7 +1699,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 .append(" OR (mis.VOUCHERHEADERID IS NOT NULL AND EXISTS (SELECT id FROM voucherheader WHERE id=mis.VOUCHERHEADERID")
                 .append(" AND status = :status)))");
 
-        List<BigDecimal> billAmountResult = entityManager.createNativeQuery(payQuery.toString(), BigDecimal.class)
+        List<BigDecimal> billAmountResult = entityManager.createNativeQuery(payQuery.toString())
                 .setParameter("projCodeIds", projectCodeIdsList)
                 .setParameter("date", asOnDate, TemporalType.DATE)
                 .setParameter("billStatus", WorksConstants.CANCELLED_STATUS)

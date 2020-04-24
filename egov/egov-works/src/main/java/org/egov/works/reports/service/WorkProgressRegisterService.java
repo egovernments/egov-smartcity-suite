@@ -138,7 +138,7 @@ public class WorkProgressRegisterService {
             final EstimateAbstractReport estimateAbstractReport) {
 
         Query query = entityManager
-                .createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport), EstimateAbstractReport.class);
+                .createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
         return query.getResultList();
 
@@ -230,12 +230,10 @@ public class WorkProgressRegisterService {
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport),
-                    EstimateAbstractReport.class);
+            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
         } else {
-            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport),
-                    EstimateAbstractReport.class);
+            query = entityManager.createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
         }
