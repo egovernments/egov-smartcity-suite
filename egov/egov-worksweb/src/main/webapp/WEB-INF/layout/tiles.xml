@@ -105,7 +105,7 @@
     </definition>
 
     <definition name="lineestimate-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
+        <put-attribute name="page-title" value="title.new.lineestimate.ack" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/lineestimate-success.jsp"/>
     </definition>
 
