@@ -198,7 +198,7 @@
 						               </ul>
 						               <form:hidden path="percentageSign" name="percentageSign" id="percentageSign" />
 						            </div>
-						            <input name="revisedValue" id="revisedValue" type="text" class="form-control patternvalidation" maxlength="8" required="required" value="${revisedValue }" />
+						            <input name="revisedValue" id="revisedValue" type="number" class="form-control patternvalidation" min="0" maxlength="8" required="required" value="${revisedValue }" />
 						        </div> 
 							</div>
 							<div class="col-xs-3 add-margin">
