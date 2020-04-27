@@ -51,9 +51,37 @@
  */
 package org.egov.dao.budget;
 
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_ALL;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_CREDIT;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_DEBIT;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.commons.*;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -82,26 +110,9 @@ import org.egov.services.budget.BudgetUsageService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.TimestampType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.egov.utils.FinancialConstants.*;
 
 /**
  * @author Administrator TODO To change the template for this generated type comment go to Window - Preferences - Java - Code
@@ -122,7 +133,6 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     protected GenericSequenceNumberGenerator sequenceGenerator;
     @PersistenceContext
     private EntityManager entityManager;
-    private Session session;
     @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
@@ -157,23 +167,27 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         super();
     }
 
+    @Override
     @Transactional
     public BudgetDetail update(final BudgetDetail entity) {
         getCurrentSession().update(entity);
         return entity;
     }
 
+    @Override
     @Transactional
     public BudgetDetail create(final BudgetDetail entity) {
         getCurrentSession().persist(entity);
         return entity;
     }
 
+    @Override
     @Transactional
     public void delete(BudgetDetail entity) {
         getCurrentSession().delete(entity);
     }
 
+    @Override
     public List<BudgetDetail> findAll() {
         return entityManager.createQuery("from BudgetDetail", BudgetDetail.class).getResultList();
     }
@@ -316,6 +330,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 appropriationnumber);
     }
 
+    @SuppressWarnings("unchecked")
     private BigDecimal getDetails(final Map<String, Object> detailsMap) {
         Long financialyearid = null;
         Integer moduleid = null;
@@ -537,18 +552,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("budget available after consuming/releasing=" + amtavailable);
             if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
-                    .equals(budgetCheckConfigService.getConfigValue())) {
+                    .equals(budgetCheckConfigService.getConfigValue()))
                 if (amtavailable.compareTo(BigDecimal.ZERO) < 0)
                     return null;
-            }
 
             // need to update budget details
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid,
                     boundaryid, fundid);
             final TypedQuery<BudgetDetail> q = entityManager.createQuery(
                     new StringBuffer(" from BudgetDetail bd")
-                    .append(" where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type")
-                    .append(" and bd.budgetGroup.id in (:bgId)").append(query).toString(), BudgetDetail.class);
+                            .append(" where  bd.budget.financialYear.id = :finYearId and bd.budget.isbere = :type")
+                            .append(" and bd.budgetGroup.id in (:bgId)").append(query).toString(),
+                    BudgetDetail.class);
             if (budgetService.hasApprovedReForYear(financialyearid))
                 q.setParameter("type", "RE");
             else
@@ -602,18 +617,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             throw new ValidationException(EMPTY_STRING, "Function id is null or empty");
         if (budgetheadid == null || budgetheadid.size() == 0)
             throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-        session = getCurrentSession();
+        getCurrentSession();
         // fetch mandatory parameters
-        final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
+        final CFinancialYear financialyear = financialYearHibDAO.findById(financialyearid, false);
         if (financialyear == null)
             throw new ValidationException(EMPTY_STRING, "Financial year is null or empty");
 
-        final CFunction function = (CFunction) functionDAO.findById(functionid, false);
+        final CFunction function = functionDAO.findById(functionid, false);
         if (function == null)
             throw new ValidationException(EMPTY_STRING, "Function is null or empty");
 
         for (final Long bgId : budgetheadid) {
-            final BudgetGroup budgetGroup = budgetGroupService.findById(bgId, false);
+            final BudgetGroup budgetGroup = entityManager.find(BudgetGroup.class, bgId);
             if (budgetGroup == null)
                 throw new ValidationException(EMPTY_STRING, "Budget head is null or empty");
         }
@@ -700,39 +715,21 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
         StringBuilder query = new StringBuilder();
 
-        if (departmentid != null) {
+        if (departmentid != null)
             query.append(getQuery(Department.class, departmentid.longValue(), " and bd.executingDepartment = "));
-        }
-        if (functionid != null) {
+        if (functionid != null)
             query.append(getQuery(CFunction.class, functionid, " and bd.function = "));
-        }
-        if (functionaryid != null) {
+        if (functionaryid != null)
             query.append(getQuery(Functionary.class, functionaryid, " and bd.functionary = "));
-        }
-        if (fundid != null) {
+        if (fundid != null)
             query.append(getQuery(Fund.class, fundid, " and bd.fund = "));
-        }
-        if (schemeid != null) {
+        if (schemeid != null)
             query.append(getQuery(Scheme.class, schemeid, " and bd.scheme = "));
-        }
-        if (subschemeid != null) {
+        if (subschemeid != null)
             query.append(getQuery(SubScheme.class, subschemeid, " and bd.subScheme = "));
-        }
-        if (boundaryid != null) {
+        if (boundaryid != null)
             query.append(getQuery(Boundary.class, boundaryid.longValue(), " and bd.boundary = "));
-        }
         return query.append(" and bd.budget.status.description = 'Approved' and bd.status.description = 'Approved'  ").toString();
-    }
-
-    private Object findById(final Class clazz, final Serializable id) {
-        if (id == null)
-            throw new ValidationException(EMPTY_STRING, clazz.getSimpleName() + " id is null or empty");
-
-        final Object object = session.get(clazz, id);
-        if (object == null)
-            throw new ValidationException(EMPTY_STRING,
-                    clazz.getSimpleName() + " is not defined for this id [ " + id.toString() + " ]");
-        return object;
     }
 
     protected List<String> getFieldConfigValues() {
@@ -780,31 +777,30 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             final String query = prepareQuery(departmentid, functionid, functionaryid, schemeid, subschemeid,
                     boundaryid, fundid);
 
-            session = getCurrentSession();
-            final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
+            final CFinancialYear financialyear = financialYearHibDAO.findById(financialyearid, false);
 
             // check any RE is available for the passed parameters.if RE is not
             // exist, take BE's available Amount
-            final StringBuilder finalquery = new StringBuilder("select sum (budgetAvailable)")
+            final StringBuilder finalquery = new StringBuilder("select sum(budgetAvailable)")
                     .append(" from BudgetDetail bd")
                     .append(" where bd.budget.isbere = :type and bd.budget.financialYear.id = :financialyearid")
                     .append(" and bd.budgetGroup.id in (:budgetheadid) ").append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
-            final Query q = getCurrentSession().createQuery(finalquery.toString());
+            final TypedQuery<BigDecimal> q = entityManager.createQuery(finalquery.toString(), BigDecimal.class);
             if (budgetService.hasApprovedReForYear(financialyearid))
-                q.setParameter("type", "RE", StringType.INSTANCE);
+                q.setParameter("type", "RE");
             else
-                q.setParameter("type", "BE", StringType.INSTANCE);
-            q.setParameter("financialyearid", financialyearid, LongType.INSTANCE);
-            q.setParameterList("budgetheadid", budgetheadid, LongType.INSTANCE);
-            final Object obj = q.uniqueResult();
+                q.setParameter("type", "BE");
+            q.setParameter("financialyearid", financialyearid);
+            q.setParameter("budgetheadid", budgetheadid);
+            final BigDecimal obj = q.getSingleResult();
             if (obj == null)
                 throw new ValidationException("no.budget.defined.for.given.parameters",
                         "No Budget is defined for the parameters for this year->" + financialyear.getFinYearRange());
             else
-                return (BigDecimal) obj;
+                return obj;
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getPlanningBudgetAvailable API()===" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -825,20 +821,22 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             if (budgetheadid != null && !budgetheadid.isEmpty())
                 query.concat(" and bd.budgetGroup.id in (:budgetheadid) ");
-            final String finalquery = "select bd from BudgetDetail bd where bd.budget.isbere = :type and bd.budget.financialYear.id = :financialyearid"
-                    .concat(query);
+            final StringBuffer finalquery = new StringBuffer("select bd")
+                    .append(" from BudgetDetail bd")
+                    .append(" where bd.budget.isbere = :type and bd.budget.financialYear.id = :financialyearid")
+                    .append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
-            final Query q = getCurrentSession().createQuery(finalquery);
+            final TypedQuery<BudgetDetail> q = entityManager.createQuery(finalquery.toString(), BudgetDetail.class);
             if (budgetService.hasApprovedReForYear(financialyearid))
-                q.setParameter("type", "RE", StringType.INSTANCE);
+                q.setParameter("type", "RE");
             else
-                q.setParameter("type", "BE", StringType.INSTANCE);
-            q.setParameter("financialyearid", financialyearid, LongType.INSTANCE);
+                q.setParameter("type", "BE");
+            q.setParameter("financialyearid", financialyearid);
             if (budgetheadid != null && !budgetheadid.isEmpty())
-                q.setParameterList("budgetheadid", budgetheadid, LongType.INSTANCE);
-            return q.list();
+                q.setParameter("budgetheadid", budgetheadid);
+            return q.getResultList();
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getPlanningBudgetAvailable API()===" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -918,9 +916,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     .append(getQuery(Fund.class, fundid, " and vh.fundId = "))
                     .append(getQuery(Boundary.class, boundaryid, " and vmis.divisionid = "));
 
-            if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
+            if (budgetheadid == null)
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-            budgetgroup = (BudgetGroup) budgetGroupService.findById(budgetheadid, false);
+            budgetgroup = entityManager.find(BudgetGroup.class, budgetheadid);
             if (budgetgroup == null || budgetgroup.getId() == null)
                 throw new ValidationException(EMPTY_STRING,
                         "Budget Head is not defined for this id [ " + budgetheadid + " ]");
@@ -962,19 +960,20 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             final String voucherstatusExclude = list.get(0).getValue();
 
             select.append(" FROM CGeneralLedger gl, CVoucherHeader vh, Vouchermis vmis")
-                    .append(" where vh.id = gl.voucherHeaderId.id AND vh.id = vmis.voucherheaderid and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq = true)")
+                    .append(" where vh.id = gl.voucherHeaderId.id AND vh.id = vmis.voucherheaderid")
+                    .append(" and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq = true)")
                     .append(" and vh.status not in (")
                     .append(voucherstatusExclude)
-                    .append(") and vh.voucherDate >= ?1 and vh.voucherDate <= ?2 ")
+                    .append(") and vh.voucherDate >= :fromDate and vh.voucherDate <= :asOnDate ")
                     .append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("loadActualBudget query============" + query);
-            final Object ob = persistenceService.find(select.toString(), fromdate, asondate);
-            if (ob == null)
-                return BigDecimal.ZERO;
-            else
-                return new BigDecimal(ob.toString());
+            final BigDecimal ob = entityManager.createQuery(select.toString(), BigDecimal.class)
+                    .setParameter("fromDate", fromdate, TemporalType.DATE)
+                    .setParameter("asOnDate", asondate, TemporalType.DATE)
+                    .getSingleResult();
+            return ob == null ? BigDecimal.ZERO : ob;
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getActualBudgetUtilized API()####" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -1081,7 +1080,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (EMPTY_STRING.equals(glcode))
                 throw new ValidationException(EMPTY_STRING, "Glcode is null");
 
-            query.append(" and gl.glcode = ?3");
+            query.append(" and gl.glcode = :glCode");
 
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
             if (coa == null)
@@ -1101,17 +1100,19 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             list.get(0).getValue();
 
             select.append(" FROM CGeneralLedger gl, CVoucherHeader vh, Vouchermis vmis")
-                    .append(" where vh.id = gl.voucherHeaderId.id AND vh.id = vmis.voucherheaderid and (vmis.budgetCheckReq = null or vmis.budgetCheckReq = true)")
-                    .append(" and vh.status != 4 and vh.voucherDate >= ?1 and vh.voucherDate <= ?2 ")
+                    .append(" where vh.id = gl.voucherHeaderId.id AND vh.id = vmis.voucherheaderid")
+                    .append(" and (vmis.budgetCheckReq = null or vmis.budgetCheckReq = true)")
+                    .append(" and vh.status != 4 and vh.voucherDate >= :fromDate and vh.voucherDate <= :asOnDate ")
                     .append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("loadActualBudget query============" + query);
-            final Object ob = persistenceService.find(select.toString(), fromdate, asondate, glcode);
-            if (ob == null)
-                return BigDecimal.ZERO;
-            else
-                return new BigDecimal(ob.toString());
+            final BigDecimal ob = entityManager.createQuery(select.toString(), BigDecimal.class)
+                    .setParameter("fromDate", fromdate, TemporalType.DATE)
+                    .setParameter("asOnDate", asondate, TemporalType.DATE)
+                    .setParameter("glCode", glcode)
+                    .getSingleResult();
+            return ob == null ? BigDecimal.ZERO : ob;
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + v.getErrors());
             throw new ValidationException(v.getErrors());
@@ -1134,19 +1135,27 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             LOGGER.debug("Budget Detail =" + bd.getUniqueNo() + " budget= " + bd.getBudget().getId() + " FinYear="
                     + bd.getBudget().getFinancialYear().getId());
 
-        final List<Long> budgetDetailIds = persistenceService.findAllBy(
-                "select id from BudgetDetail bd where uniqueNo = ?1 and bd.budget.financialYear.id = ?2 and bd.status.code = 'Approved' ",
-                bd.getUniqueNo(), bd.getBudget().getFinancialYear().getId());
+        final List<Long> budgetDetailIds = entityManager.createQuery(
+                new StringBuffer("select id")
+                        .append(" from BudgetDetail bd")
+                        .append(" where uniqueNo = :uniqueNo and bd.budget.financialYear.id = :finYearId")
+                        .append(" and bd.status.code = 'Approved' ").toString(),
+                Long.class)
+                .setParameter("uniqueNo", bd.getUniqueNo())
+                .setParameter("finYearId", bd.getBudget().getFinancialYear().getId())
+                .getResultList();
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ids returned if be then 1 id should return else 2 ids should return =" + budgetDetailIds);
         if (budgetDetailIds == null || budgetDetailIds.size() == 0)
             return BigDecimal.ZERO;
         else {
-            final Query sumQuery = getCurrentSession().createQuery(
-                    "select sum(consumedAmount)-sum(releasedAmount) from BudgetUsage WHERE budgetDetail.id in ( :IDS )");
-            sumQuery.setParameterList("IDS", budgetDetailIds, LongType.INSTANCE);
-            final Double planningbudgetusage = (Double) sumQuery.list().get(0);
+            final Double planningbudgetusage = entityManager.createQuery(
+                    new StringBuffer("select sum(consumedAmount)-sum(releasedAmount)")
+                            .append(" from BudgetUsage WHERE budgetDetail.id in :bdIds").toString(),
+                    Double.class)
+                    .setParameter("bdIds", budgetDetailIds)
+                    .getSingleResult();
 
             if (planningbudgetusage == null) {
                 if (LOGGER.isDebugEnabled())
@@ -1168,6 +1177,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      * @param paramMap
      * @return budgeted amount @
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getBudgetedAmtForYear(final Map<String, Object> paramMap) {
         Long deptid = null;
@@ -1216,7 +1226,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             query.append(getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear = "));
             if (budgetHeadList == null || budgetHeadList.size() == 0)
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-            query.append(" and bd.budgetGroup in ( :budgetHeadList )");
+            query.append(" and bd.budgetGroup in :budgetHeadList ");
 
             // check any RE is available for the passed parameters.if RE is not
             // exist, take BE's Approved Amount
@@ -1229,11 +1239,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
 
-            final Query hibQuery = getCurrentSession().createQuery(finalquery.toString());
-
-            hibQuery.setParameterList("budgetHeadList", budgetHeadList);
-            final List<BudgetDetail> bdList = hibQuery.list();
-            if (bdList == null || bdList.size() == 0)
+            final List<BudgetDetail> bdList = entityManager.createQuery(finalquery.toString(), BudgetDetail.class)
+                    .setParameter("budgetHeadList", budgetHeadList)
+                    .getResultList();
+            if (bdList.isEmpty())
                 // return BigDecimal.ZERO;
                 throw new ValidationException(
                         new ValidationError("Budget Check failed: Budget not defined for the given combination.",
@@ -1256,6 +1265,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      * @param paramMap
      * @return budgeted amount @
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getBudgetedAmtForYearAsOnDate(final Map<String, Object> paramMap, final Date asOnDate) {
         Integer deptid = null;
@@ -1303,7 +1313,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             query.append(getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear = "));
             if (budgetHeadList == null || budgetHeadList.size() == 0)
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-            query.append(" and bd.budgetGroup in ( :budgetHeadList )");
+            query.append(" and bd.budgetGroup in :budgetHeadList ");
 
             // check any RE is available for the passed parameters.if RE is not
             // exist, take BE's Approved Amount
@@ -1316,11 +1326,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
 
-            final Query hibQuery = getCurrentSession().createQuery(finalquery.toString());
-
-            hibQuery.setParameterList("budgetHeadList", budgetHeadList);
-            final List<BudgetDetail> bdList = hibQuery.list();
-            if (bdList == null || bdList.size() == 0)
+            final List<BudgetDetail> bdList = entityManager.createQuery(finalquery.toString(), BudgetDetail.class)
+                    .setParameter("budgetHeadList", budgetHeadList)
+                    .getResultList();
+            if (bdList.isEmpty())
                 return BigDecimal.ZERO;
             else
                 return getApprovedAmtAsOnDate(bdList, asOnDate);
@@ -1333,6 +1342,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public BigDecimal getPlanningPercentForYear(final Map<String, Object> paramMap) {
         Integer deptid = null;
@@ -1380,7 +1390,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             query.append(getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear = "));
             if (budgetHeadList == null || budgetHeadList.size() == 0)
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-            query.append(" and bd.budgetGroup in ( :budgetHeadList )");
+            query.append(" and bd.budgetGroup in :budgetHeadList ");
 
             // check any RE is available for the passed parameters.if RE is not
             // exist, take BE's Approved Amount
@@ -1393,11 +1403,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
 
-            final Query hibQuery = getCurrentSession().createQuery(finalquery.toString());
-
-            hibQuery.setParameterList("budgetHeadList", budgetHeadList);
-            final List<BudgetDetail> bdList = hibQuery.list();
-            if (bdList == null || bdList.size() == 0)
+            final List<BudgetDetail> bdList = entityManager.createQuery(finalquery.toString(), BudgetDetail.class)
+                    .setParameter("budgetHeadList", budgetHeadList)
+                    .getResultList();
+            if (bdList.isEmpty())
                 return BigDecimal.ZERO;
             else if (bdList.size() > 1) {
                 LOGGER.error("returned multiple rows");
@@ -1421,6 +1430,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      * @param paramMap
      * @return budgeted amount @
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Map<String, BigDecimal> getAggregateBudgetedAmtForYear(final Map<String, Object> paramMap) {
         Integer deptid = null;
@@ -1432,7 +1442,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Integer fundid = null;
         List<Long> budgetHeadList = null;
         Long financialyearid = null;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> retMap = new HashMap<>();
         StringBuilder query = new StringBuilder(EMPTY_STRING);
         try {
             if (paramMap.get(Constants.DEPTID) != null)
@@ -1469,7 +1479,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             // ValidationException(EMPTY_STRING,"Budget head id is null or
             // empty");
             if (budgetHeadList != null && budgetHeadList.size() != 0)
-                query.append(" and bd.budgetGroup.id in ( :budgetHeadList )");
+                query.append(" and bd.budgetGroup.id in :budgetHeadList ");
 
             // check any RE is available for the passed parameters.if RE is not
             // exist, take BE's Approved Amount
@@ -1483,11 +1493,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Final query=" + finalquery);
-            final Query hibQuery = getCurrentSession().createQuery(finalquery.toString());
+            final TypedQuery<BudgetDetail> hibQuery = entityManager.createQuery(finalquery.toString(), BudgetDetail.class);
             if (budgetHeadList != null && budgetHeadList.size() != 0)
-                hibQuery.setParameterList("budgetHeadList", budgetHeadList);
-            final List<BudgetDetail> bdList = hibQuery.list();
-            if (bdList == null || bdList.size() == 0)
+                hibQuery.setParameter("budgetHeadList", budgetHeadList);
+            final List<BudgetDetail> bdList = hibQuery.getResultList();
+            if (bdList.isEmpty())
                 return retMap;
             else
                 return getApprovedAmtDeptwise(bdList);
@@ -1524,7 +1534,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     private Map<String, BigDecimal> getApprovedAmtDeptwise(final List<BudgetDetail> bdList) {
         BigDecimal approvedAmt = BigDecimal.ZERO;
         String deptName = null;
-        final Map<String, BigDecimal> deptBudget = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> deptBudget = new HashMap<>();
 
         for (final BudgetDetail bd : bdList) {
             approvedAmt = BigDecimal.ZERO;
@@ -1721,8 +1731,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 EgBillregister bill = null;
 
                 if (paramMap.get("bill") != null)
-                    bill = (EgBillregister) persistenceService.find("from EgBillregister where id=? ",
-                            (Long) paramMap.get("bill"));
+                    bill = entityManager.find(EgBillregister.class, (Long) paramMap.get("bill"));
                 if (bill != null && bill.getEgBillregistermis().getBudgetaryAppnumber() != null) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug(
@@ -1742,14 +1751,13 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 // BigDecimal diff = budgetedAmt.subtract(actualAmt);
 
                 if (budgetCheckConfigService.getConfigValue()
-                        .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString())) {
+                        .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
                     if (txnAmt.compareTo(diff) <= 0) {
 
                         generateBanNumber(paramMap, bill);
                         return true;
                     } else
                         return false;
-                }
                 if (budgetCheckConfigService.getConfigValue()
                         .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString())) {
                     generateBanNumber(paramMap, bill);
@@ -1787,7 +1795,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      */
     public String getBudgetApprNumber(final Map<String, Object> paramMap) {
 
-        BanNumberGenerator b = (BanNumberGenerator) beanResolver.getAutoNumberServiceFor(BanNumberGenerator.class);
+        BanNumberGenerator b = beanResolver.getAutoNumberServiceFor(BanNumberGenerator.class);
         final String budgetApprNumber = b.getNextNumber();
         return budgetApprNumber;
     }
@@ -1835,23 +1843,33 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             // check the budget group is defined at detailcode level or
             // detailcode within the range
-            StringBuilder query = new StringBuilder(" from BudgetGroup bg" +
-                    " where bg.minCode.glcode <= ?1 and bg.maxCode.glcode >= ?2 and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true");
+            StringBuilder query = new StringBuilder(" from BudgetGroup bg")
+                    .append(" where bg.minCode.glcode <= :minCode and bg.maxCode.glcode >= :maxCode")
+                    .append(" and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadByGlcode detailcode query=====" + query);
-            List bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode(), coa.getGlcode());
+            List<BudgetGroup> bgList = entityManager.createQuery(query.toString(), BudgetGroup.class)
+                    .setParameter("minCode", coa.getGlcode())
+                    .setParameter("maxCode", coa.getGlcode())
+                    .getResultList();
             if (bgList.isEmpty()) {
-                query = new StringBuilder(" from BudgetGroup bg where bg.minCode.glcode <= ?1 and bg.maxCode.glcode >= ?2")
+                query = new StringBuilder(" from BudgetGroup bg")
+                        .append(" where bg.minCode.glcode <= :minCode and bg.maxCode.glcode >= :maxCode")
                         .append(" and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("getBudgetHeadByGlcode minorcode query=====" + query);
                 // persistenceService.setType(BudgetGroup.class);
-                bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode().substring(0, minorcodelength),
-                        coa.getGlcode().substring(0, minorcodelength));
+                bgList = entityManager.createQuery(query.toString(), BudgetGroup.class)
+                        .setParameter("minCode", coa.getGlcode().substring(0, minorcodelength))
+                        .setParameter("maxCode", coa.getGlcode().substring(0, minorcodelength))
+                        .getResultList();
                 if (bgList.isEmpty()) {
-                    query = new StringBuilder(
-                            " from BudgetGroup bg where bg.majorCode.glcode = ?1 and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true ");
-                    bgList = persistenceService.findAllBy(query.toString(), coa.getGlcode().substring(0, majorcodelength));
+                    query = new StringBuilder(" from BudgetGroup bg")
+                            .append(" where bg.majorCode.glcode = :majorCode and bg in (select budgetGroup from BudgetDetail)")
+                            .append(" and bg.isActive = true ");
+                    bgList = entityManager.createQuery(query.toString(), BudgetGroup.class)
+                            .setParameter("majorCode", coa.getGlcode().substring(0, majorcodelength))
+                            .getResultList();
                     if (bgList.isEmpty())
                         throw new ValidationException(EMPTY_STRING,
                                 "Budget Check failed: Budget not defined for the given combination.");
@@ -1862,7 +1880,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             } else
                 return bgList;
         } catch (final ValidationException v) {
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", v.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
@@ -1880,29 +1898,25 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Override
     public List<BudgetGroup> getBudgetHeadForGlcodeList(final List<CChartOfAccounts> coa) {
         try {
-            String coaQry = "bg.minCode.glcode in(";
 
             if (coa.isEmpty()) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("No COA is been passed");
                 throw new ValidationException(EMPTY_STRING,
                         "No Chartofaccount code is been passed for getting the budget heads");
-            } else {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("COA list size passed " + coa.size());
-                for (Integer i = 0; i < coa.size(); i++)
-                    if (i != coa.size() - 1)
-                        coaQry = coaQry + coa.get(i).getGlcode() + ",";
-                    else
-                        coaQry = coaQry + coa.get(i).getGlcode() + ")";
             }
+
+            final List<String> glcodes = coa.stream().map(m -> m.getGlcode()).collect(Collectors.toList());
+
             final String query = new StringBuilder(" from BudgetGroup bg where ")
-                    .append(coaQry)
+                    .append(" bg.minCode.glcode in :glcodes")
                     .append(" and bg in (select budgetGroup from BudgetDetail) and bg.isActive = true order by bg.name")
                     .toString();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBudgetHeadForGlcodeList detailcode query=====" + query);
-            return persistenceService.findAllBy(query);
+            return entityManager.createQuery(query, BudgetGroup.class)
+                    .setParameter("glocodes", glcodes)
+                    .getResultList();
 
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getBudgetHeadForGlcodeList API()=" + v.getErrors());
@@ -1913,21 +1927,21 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String getQuery(final Class clazz, final Serializable id, final String queryString) {
 
-        session = getCurrentSession();
         String query = EMPTY_STRING;
         if (id == null)
             return query;
         try {
-            final Object o = findById(clazz, id);
+            final Object o = entityManager.find(clazz, id);
             if (o != null)
                 query = queryString + id;
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getQuery==" + v.getErrors());
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.equals("Exp in getQuery==" + e.getMessage());
+            LOGGER.error("Exp in getQuery==" + e.getMessage());
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return query;
@@ -1943,6 +1957,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      * True.
      * @return @
      */
+    @SuppressWarnings("unused")
     @Override
     public boolean budgetaryCheckForBill(final Map<String, Object> paramMap) {
         String cashbasedbudgetType = EMPTY_STRING, txnType = EMPTY_STRING;
@@ -2091,21 +2106,19 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
                     final BigDecimal diff = budgetedAmt.subtract(actualAmt).subtract(billAmt); // get
                     // diff
-                    if (LOGGER.isDebugEnabled()) {
+                    if (LOGGER.isDebugEnabled())
                         LOGGER.debug("......................diff amount......................" + diff);
-                    }
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("************ BudgetCheck Details For bill End *********************");
 
                     if (budgetCheckConfigService.getConfigValue()
-                            .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString())) {
+                            .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
                         if (txnAmt.compareTo(diff) <= 0) {
                             if (paramMap.get("bill") != null)
                                 getAppNumberForBill(paramMap);
                             return true;
                         } else
                             return false;
-                    }
                     if (budgetCheckConfigService.getConfigValue()
                             .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString())) {
                         getAppNumberForBill(paramMap);
@@ -2240,27 +2253,30 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         throw new ValidationException(EMPTY_STRING,
                                 "budgetaryCheck_groupby_values is not matching=" + value);
             }
-            int i = 1;
             if (asondate != null)
-                query.append(" and br.billdate <= ?").append(i++).append(" ");
+                query.append(" and br.billdate <= :asOnDate ");
             if (fromdate != null)
-                query.append(" and  br.billdate >= ?").append(i++).append(" ");
+                query.append(" and  br.billdate >= :fromDate ");
 
-            query.append(" and bd.glcodeid = ?").append(i++).append(" ");
-            query1 = new StringBuilder(
-                    "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end) ")
-                            .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis ")
-                            .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq = true)")
-                            .append(" and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') ")
-                            .append(query);
+            query.append(" and bd.glcodeid = :glCode ");
+            query1 = new StringBuilder("select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end - case")
+                    .append(" when bd.creditamount is null then 0 else bd.creditamount end) ")
+                    .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis ")
+                    .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id")
+                    .append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq = true)")
+                    .append(" and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') ")
+                    .append(query);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
-            Object ob = null;
+            final TypedQuery<BigDecimal> typedQuery = entityManager.createQuery(query1.toString(), BigDecimal.class);
+            if (asondate != null)
+                typedQuery.setParameter("asOnDate", asondate, TemporalType.DATE);
             if (fromdate != null)
-                ob = persistenceService.find(query1.toString(), asondate, fromdate, glcodeid);
-            else
-                ob = persistenceService.find(query1.toString(), asondate, glcodeid);
+                typedQuery.setParameter("fromDate", fromdate, TemporalType.DATE);
+            typedQuery.setParameter("glCode", glcodeid);
+
+            final BigDecimal ob = typedQuery.getSingleResult();
 
             final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query.toString(), fromdate,
                     asondate, glcodeid);
@@ -2295,20 +2311,26 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             final Date asondate, final Long glcodeId) {
 
         final StringBuilder newQuery = new StringBuilder(
-                "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0")
+                "select sum(case when bd.debitamount is null then 0 else bd.debitamount end")
+                        .append(" - case when bd.creditamount is null then 0")
                         .append(" else bd.creditamount end )  ")
                         .append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  ")
-                        .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)")
-                        .append(" and bmis.voucherHeader = vh.id and upper(br.status.description) not in ('CANCELLED') and vh.status = 4  ")
+                        .append(" where br.id = bd.egBillregister.id and br.id = bmis.egBillregister.id")
+                        .append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)")
+                        .append(" and bmis.voucherHeader = vh.id and upper(br.status.description)")
+                        .append(" not in ('CANCELLED') and vh.status = 4  ")
                         .append(query);
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getBillAmountWhereCancelledVouchers query============" + newQuery);
-        Object ob = null;
+        final TypedQuery<BigDecimal> typedQuery = entityManager.createQuery(newQuery.toString(), BigDecimal.class);
         if (fromdate != null)
-            ob = persistenceService.find(newQuery.toString(), asondate, fromdate, glcodeId);
-        else
-            ob = persistenceService.find(newQuery.toString(), asondate, glcodeId);
+            typedQuery.setParameter("fromDate", fromdate, TemporalType.DATE);
+        if (asondate != null)
+            typedQuery.setParameter("asOnDate", asondate, TemporalType.DATE);
+        typedQuery.setParameter("glCode", glcodeId);
+
+        final BigDecimal ob = typedQuery.getSingleResult();
         if (ob == null)
             return BigDecimal.ZERO;
         else
@@ -2372,12 +2394,15 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
             query.append(getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear = "));
 
-            final String finalquery = " from BudgetDetail bd where bd.budget.isbere = '".concat(typeBeRe).concat("' ")
-                    .concat(query.toString());
+            final String finalquery = new StringBuffer(" from BudgetDetail bd")
+                    .append(" where bd.budget.isbere = :isbere")
+                    .append(query).toString();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("finalquery  =" + finalquery);
-            final List<BudgetDetail> bdList = persistenceService.findAllBy(finalquery);
+            final List<BudgetDetail> bdList = entityManager.createQuery(finalquery, BudgetDetail.class)
+                    .setParameter("isbere", typeBeRe)
+                    .getResultList();
 
             if (bdList == null || bdList.size() == 0)
                 return BigDecimal.ZERO;
@@ -2443,7 +2468,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
         final StringBuilder query = new StringBuilder();
         final Map<String, Object> params = new HashMap<>();
-        final Map<String, String> grpByVls = new HashMap<String, String>();
+        final Map<String, String> grpByVls = new HashMap<>();
         query.append("select bu from BudgetUsage bu, BudgetDetail bd where  bu.budgetDetail.id = bd.id");
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
                 BUDGETARY_CHECK_GROUPBY_VALUES);
@@ -2523,12 +2548,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             query.append(" and bd.budgetGroup.id = :budgetGroupId");
             params.put("budgetGroupId", Long.valueOf(queryParamMap.get("budgetgroupId").toString()));
         }
-        if (!isNull(queryParamMap.get("fromDate"))) {
+        if (!isNull(queryParamMap.get("fromDate")))
             query.append(" and bu.updatedTime >= :from");
-        }
-        if (!isNull(queryParamMap.get("toDate"))) {
+        if (!isNull(queryParamMap.get("toDate")))
             query.append(" and bu.updatedTime <= :to");
-        }
         if (!isNull(queryParamMap.get("Order By"))) {
             if (queryParamMap.get("Order By").toString().indexOf("appropriationnumber") == -1
                     && queryParamMap.get("Order By").toString().indexOf("referenceNumber") == -1)
@@ -2578,27 +2601,38 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         if (asOnDate1 != null)
             asOnDate = asOnDate1;
 
-        BigDecimal amount;
         // 1. get the FinancialYear for the date
         final CFinancialYear finYear = financialYearHibDAO.getFinYearByDate(asOnDate);
         // 2. check does approved RE Existis and set budgeting type
         final boolean hasApprovedReForYear = budgetService.hasApprovedReAsonDate(finYear.getId(), asOnDate);
         String isbere = hasApprovedReForYear ? "RE" : "BE";
         // 3. get Budget approvedAmount
-        amount = (BigDecimal) persistenceService
-                .find("select sum(approvedAmount) from BudgetDetail bd where  bd.executingDepartment.id = ?1 and bd.fund.id = ?2"
-                        + " and bd.budget.financialYear = ?3 and bd.budget.isbere = ?4 ", deptId, fundId, finYear, isbere);
+        BigDecimal amount = entityManager.createQuery(new StringBuffer("select sum(approvedAmount)")
+                .append(" from BudgetDetail bd")
+                .append(" where  bd.executingDepartment.id = :execDeptId and bd.fund.id = :fundId")
+                .append(" and bd.budget.financialYear = :finYear and bd.budget.isbere = :isbere ").toString(), BigDecimal.class)
+                .setParameter("execDeptId", deptId)
+                .setParameter("fundId", fundId)
+                .setParameter("finYear", finYear)
+                .setParameter("isbere", isbere)
+                .getSingleResult();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Approved " + isbere + " Amount" + amount);
         amount = amount == null ? BigDecimal.ZERO : amount;
         // 4. Reappropriated amounts
-        BigDecimal reappAmount = (BigDecimal) persistenceService.find(
-                new StringBuilder("select sum(additionAmount-deductionAmount)")
-                        .append(" from BudgetReAppropriation br")
-                        .append(" where br.budgetDetail.executingDepartment.id = ?1 and br.budgetDetail.fund.id = ?2 and br.budgetDetail.budget.financialYear = ?3")
-                        .append(" and br.budgetDetail.budget.isbere = ?4 and br.status.description='Approved' and to_date(br.modifiedDate) <= ?5 ")
-                        .toString(),
-                deptId, fundId, finYear, isbere, asOnDate);
+        BigDecimal reappAmount = entityManager.createQuery(new StringBuilder("select sum(additionAmount-deductionAmount)")
+                .append(" from BudgetReAppropriation br")
+                .append(" where br.budgetDetail.executingDepartment.id = :deptId")
+                .append(" and br.budgetDetail.fund.id = :fundId and br.budgetDetail.budget.financialYear = :finYear")
+                .append(" and br.budgetDetail.budget.isbere = :isbere and br.status.description='Approved'")
+                .append(" and to_date(br.modifiedDate) <= :asOnDate ")
+                .toString(), BigDecimal.class)
+                .setParameter("deptId", deptId)
+                .setParameter("fundId", fundId)
+                .setParameter("finYear", finYear)
+                .setParameter("isbere", isbere)
+                .setParameter("asOnDate", asOnDate, TemporalType.DATE)
+                .getSingleResult();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Approved Reappropriation Amount" + reappAmount);
         reappAmount = reappAmount == null ? BigDecimal.ZERO : reappAmount;
@@ -2618,7 +2652,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Override
     public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department) {
 
-        List<CFunction> functionsList = new ArrayList<CFunction>();
+        List<CFunction> functionsList = new ArrayList<>();
         try {
             final StringBuilder qryStr = new StringBuilder();
             final StringBuilder filtersQryStr = new StringBuilder();
@@ -2627,16 +2661,15 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (department != null)
                 filtersQryStr.append(" and bd.executingDepartment.id = :department ");
 
-            qryStr.append(" select distinct bd.function from BudgetDetail bd  where bd.id is not null  ");
-            qryStr.append(filtersQryStr);
-            session = getCurrentSession();
-            final Query qry = session.createQuery(qryStr.toString());
+            qryStr.append(" select distinct bd.function from BudgetDetail bd  where bd.id is not null  ")
+                    .append(filtersQryStr);
+            final TypedQuery<CFunction> qry = entityManager.createQuery(qryStr.toString(), CFunction.class);
             if (fund != null)
-                qry.setParameter("fund", fund, IntegerType.INSTANCE);
+                qry.setParameter("fund", fund);
             if (department != null)
-                qry.setParameter("department", department, LongType.INSTANCE);
+                qry.setParameter("department", department);
 
-            functionsList = qry.list();
+            functionsList = qry.getResultList();
 
             if (functionsList.isEmpty())
                 throw new ValidationException(EMPTY_STRING, "No Functions mapped for the given fund and department  ");
@@ -2664,10 +2697,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         this.sequenceGenerator = sequenceGenerator;
     }
 
+    @SuppressWarnings("rawtypes")
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
