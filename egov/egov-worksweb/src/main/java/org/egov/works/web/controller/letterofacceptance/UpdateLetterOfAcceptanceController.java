@@ -135,6 +135,9 @@ public class UpdateLetterOfAcceptanceController {
 
         final Double revisedWorkOrderAmount = Double.valueOf(request.getParameter("revisedWorkOrderAmount"));
         final Double revisedValue = Double.valueOf(request.getParameter("revisedValue"));
+		if (revisedValue <= 0) {
+			resultBinder.reject("revisedValue", "error.revised.amount.invalid");
+		}
         Double balanceAmount = 0.0;
         Double grossBillAmount = 0.0;
         final DecimalFormat df = new DecimalFormat("0.00");
