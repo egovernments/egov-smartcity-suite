@@ -430,7 +430,7 @@ public class LineEstimateService {
         final HashMap<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!history.isEmpty() && history != null)
-                Collections.reverse(history);
+				Collections.sort(history, (state1, state2) -> state1.getLastModifiedDate().compareTo(state2.getLastModifiedDate()));
             for (final StateHistory<Position> stateHistory : history) {
                 final HashMap<String, Object> workflowHistory = new HashMap<>(0);
                 workflowHistory.put("date", stateHistory.getDateInfo());
