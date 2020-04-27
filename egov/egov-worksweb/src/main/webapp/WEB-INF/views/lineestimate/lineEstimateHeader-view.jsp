@@ -177,7 +177,7 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin" id = "subTypeOfWork">
+					<div class="col-xs-3 add-margin" id = "subTypeOfWork-Id">
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content" id = "subTypeOfWork-value">
@@ -227,7 +227,7 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin" id = "budgetHead">
+					<div class="col-xs-3 add-margin" id = "budgetHead-Id">
 						<spring:message code="lbl.budgethead" />
 					</div>
 					<div class="col-xs-3 add-margin view-content" id = "budgetHead-value">
