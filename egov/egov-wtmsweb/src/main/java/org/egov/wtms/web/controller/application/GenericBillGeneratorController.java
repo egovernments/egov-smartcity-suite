@@ -129,7 +129,7 @@ public class GenericBillGeneratorController {
     }
 
     @PostMapping(value = "/generatebill/{applicationCode}")
-    public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
+    public String payTax(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
                          @RequestParam String applicationTypeCode, Model model) {
         WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
