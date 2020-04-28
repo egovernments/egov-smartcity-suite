@@ -219,7 +219,7 @@
 					<div class="col-xs-3 add-margin view-content" id = "fund-value">
 						<c:out default="N/A" value="${lineEstimate.fund.name}"></c:out>
 					</div>
-					<div class="col-xs-3 add-margin" id = "function">
+					<div class="col-xs-3 add-margin" id = "function-Id">
 						<spring:message code="lbl.function" />
 					</div>
 					<div class="col-xs-3 add-margin view-content" id = "function-value">
