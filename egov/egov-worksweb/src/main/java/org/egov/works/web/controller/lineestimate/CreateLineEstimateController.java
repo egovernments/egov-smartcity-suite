@@ -60,6 +60,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.Scheme;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -217,7 +218,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             String approvalComment = "";
             if (request.getParameter("approvalComment") != null)
                 approvalComment = request.getParameter("approvalComent");
-            if(approvalComment == "" || approvalComment == null) {
+            if(!StringUtils.isNotBlank(approvalComment)) {
             	approvalComment = lineEstimate.getApprovalComent();
             }
             if (request.getParameter("workFlowAction") != null)
