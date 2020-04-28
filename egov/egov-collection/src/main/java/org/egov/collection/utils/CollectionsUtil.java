@@ -242,14 +242,14 @@ public class CollectionsUtil {
     public List<EgwStatus> getAllReceiptHeaderStatus() {
         return egwStatusDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
-    
-    public List<EgwStatus> getStatusByModuleAndExcludeCodeList(String moduleType, List codeList)
-    {
-            Query query = persistenceService
-                    .getSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code not in(:codeList)  order by S.code");
-            query.setString("moduleType", moduleType);
-            query.setParameterList("codeList", codeList);
-            return query.list();
+
+    public List<EgwStatus> getStatusByModuleAndExcludeCodeList(String moduleType, List codeList) {
+        Query query = persistenceService
+                .getSession()
+                .createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code not in(:codeList)  order by S.code");
+        query.setString("moduleType", moduleType);
+        query.setParameterList("codeList", codeList);
+        return query.list();
     }
 
     /**
@@ -1046,8 +1046,8 @@ public class CollectionsUtil {
     public TreeMap<Long, String> getUserList() {
         TreeMap<Long, String> userMap = new TreeMap<>();
         StringBuilder queryString = new StringBuilder(
-                "select distinct(u.id) as userrid,u.name as name from egcl_collectionheader ch,"
-                        + " eg_user u where ch.createdby=u.id and u.type not in('CITIZEN','SYSTEM') order by u.name");
+                "select distinct(u.id) as userrid,u.name as name from  eg_user u where u.type in ('BUSINESS','EMPLOYEE') "
+                        + " and exists (select ch.* from egcl_collectionheader ch where ch.createdby=u.id) order by u.name");
 
         final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
         List<Object[]> queryResult = query.list();
