@@ -51,6 +51,7 @@ package org.egov.stms.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -79,6 +80,7 @@ public class SewerageDemandGenerationLog extends AbstractAuditable {
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
     private String installmentYear;
 
     @Enumerated(EnumType.STRING)

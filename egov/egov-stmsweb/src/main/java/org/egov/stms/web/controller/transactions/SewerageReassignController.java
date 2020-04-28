@@ -108,7 +108,7 @@ public class SewerageReassignController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
+    public String update(@Valid @ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
                          @Valid final BindingResult errors, final HttpServletRequest request) {
         String[] selectedId = request.getParameter("approvalPosition").split("-");
         Long positionId = Long.valueOf(selectedId[1]);

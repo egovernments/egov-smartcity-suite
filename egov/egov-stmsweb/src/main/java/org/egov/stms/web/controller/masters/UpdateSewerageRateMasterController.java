@@ -62,6 +62,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.validation.Valid;
+
 import static org.egov.stms.utils.constants.SewerageTaxConstants.DATEFORMATHYPEN;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MESSAGE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_RATES_SUCCESS_PAGE;
@@ -88,7 +90,7 @@ public class UpdateSewerageRateMasterController {
     }
 
     @PostMapping("update/{id}")
-    public String update(@ModelAttribute final SewerageRatesMaster sewerageRatesMaster, final Model model,
+    public String update(@Valid @ModelAttribute final SewerageRatesMaster sewerageRatesMaster, final Model model,
                          final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
         final SimpleDateFormat newFormat = new SimpleDateFormat(DATEFORMATHYPEN);
         final String todaysDate = newFormat.format(new Date());

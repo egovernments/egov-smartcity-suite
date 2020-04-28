@@ -51,6 +51,7 @@ package org.egov.stms.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -84,6 +85,7 @@ public class SewerageDemandGenerationLogDetail extends AbstractPersistable<Long>
     @Enumerated(EnumType.STRING)
     private SewerageProcessStatus status;
 
+    @SafeHtml
     private String detail;
 
     @ManyToOne(cascade = CascadeType.ALL)
