@@ -1622,13 +1622,13 @@ public class PropertyTaxUtil {
                 + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.id in (:installments) and drm.code in (:codes)";
 
-        Object amount = 0;
+        Object amount = Double.valueOf(0);
         if (currentDemand != null)
             amount = persistenceService.getSession().createSQLQuery(selectQuery)
                     .setLong("currentDemandId", currentDemand.getId())
                     .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
                     .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
-        return amount != null ? new BigDecimal((Double) amount) : BigDecimal.ZERO;
+        return amount != null ? BigDecimal.valueOf(((Double) amount)) : BigDecimal.ZERO;
     }
 
     /**

@@ -381,7 +381,6 @@ public class PropTaxDashboardService {
      * @param currFinYear
      */
     public void pushAchievements() {
-        LOGGER.error("entering pushAchievements method");
         List<TaxPayerDetails> taxPayersList = prepareDataToLoadAchievementsIndex();
         for (TaxPayerDetails taxPayerDetails : taxPayersList) {
             final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
