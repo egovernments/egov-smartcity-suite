@@ -611,7 +611,6 @@ public class WaterConnectionSmsAndEmailService {
     public String emailBodyByCodeAndArgsWithType(final String code, final WaterConnectionDetails waterConnectionDetails,
             final String applicantName, final String type) {
         String emailBody = "";
-        final BigDecimal waterTaxDue = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         final DecimalFormat amountFormat = new DecimalFormat("#.00");
         if (Arrays.asList(SMSEMAILTYPENEWCONNCREATE, SMSEMAILTYPEADDITONALCONNCREATE)
                 .contains(type))
@@ -679,7 +678,7 @@ public class WaterConnectionSmsAndEmailService {
                 SMSEMAILTYPEADDCONNFEEPAID,
                 SMSEMAILTYPECHANGEOFUSEFEEPAID)
                 .contains(type)
-                && waterTaxDue.compareTo(BigDecimal.ZERO) == 0) {
+                && waterConnectionDetailsService.getTotalAmount(waterConnectionDetails).compareTo(BigDecimal.ZERO) == 0) {
             final String amountToDisplay = String
                     .valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
                             + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));
@@ -742,7 +741,6 @@ public class WaterConnectionSmsAndEmailService {
     public String smsBodyByCodeAndArgsWithType(final String code, final WaterConnectionDetails waterConnectionDetails,
             final String applicantName, final String type) {
         String smsMsg = "";
-        final BigDecimal waterTaxDue = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         final DecimalFormat amountFormat = new DecimalFormat("#.00");
         if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATE)
                 || type.equalsIgnoreCase(SMSEMAILTYPEADDITONALCONNCREATE))
@@ -810,7 +808,7 @@ public class WaterConnectionSmsAndEmailService {
         else if ((type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPEADDCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPECHANGEOFUSEFEEPAID))
-                && waterTaxDue.compareTo(BigDecimal.ZERO) == 0) {
+                &&  waterConnectionDetailsService.getTotalAmount(waterConnectionDetails).compareTo(BigDecimal.ZERO) == 0) {
             final String amountToDisplay = String
                     .valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
                             + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()));

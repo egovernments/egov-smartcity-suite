@@ -706,15 +706,14 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setFileStore(fileStore);
         }
 
-        WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
-                .save(waterConnectionDetails);
+        waterConnectionDetailsRepository.save(waterConnectionDetails);
         ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         if (waterConnectionDetails.getCloseConnectionType() != null)
             additionalRule = CLOSECONNECTION;
 
         if (waterConnectionDetails.getReConnectionReason() != null)
             additionalRule = RECONNECTION;
-        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedWaterConnectionDetails,
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
         // To backUpdate waterConnectiondetails after ClosureConnection is
@@ -731,7 +730,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setApplicationType(
                     applicationTypeService.findByCode(waterConnectionDetails.getPreviousApplicationType()));
             updateIndexes(waterConnectionDetails);
-            updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
+            waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
         // back to CLoserSanctioned Status if Reconnection is Rejected 2 times
         if (waterConnectionDetails.getReConnectionReason() != null
@@ -744,7 +743,7 @@ public class WaterConnectionDetailsService {
                     waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
             waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(CLOSINGCONNECTION));
             updateIndexes(waterConnectionDetails);
-            updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
+            waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
@@ -770,7 +769,7 @@ public class WaterConnectionDetailsService {
                 && getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
             updatePortalMessage(waterConnectionDetails);
 
-        return updatedWaterConnectionDetails;
+        return waterConnectionDetails;
     }
 
         /**
