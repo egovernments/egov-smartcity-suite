@@ -80,7 +80,7 @@ public class WaterDemandConnection extends AbstractAuditable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "connectiondetails")
+    @JoinColumn(name = "connectiondetails", updatable = false)
     private WaterConnectionDetails waterConnectionDetails;
 
     @Override
