@@ -1628,7 +1628,7 @@ public class PropertyTaxUtil {
                     .setLong("currentDemandId", currentDemand.getId())
                     .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
                     .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
-        return amount != null ? BigDecimal.valueOf(((Double) amount)) : BigDecimal.ZERO;
+        return amount != null ? BigDecimal.valueOf((Double) amount) : BigDecimal.ZERO;
     }
 
     /**
