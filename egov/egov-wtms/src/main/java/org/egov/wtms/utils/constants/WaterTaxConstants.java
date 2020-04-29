@@ -478,8 +478,6 @@ public class WaterTaxConstants {
             add(NEWCONNECTION);
             add(ADDNLCONNECTION);
             add(CHANGEOFUSE);
-            add(CLOSINGCONNECTION);
-            add(RECONNECTION);
         }
     };
     public static final String WARDSECRETARY_OPERATOR_ROLE = "WardSecretary Operator";
