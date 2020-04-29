@@ -53,7 +53,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(name = "worksApplicationProperties", value = { "classpath:config/application-config-works.properties",
+@PropertySource(name = "worksApplicationProperties", value = { "classpath:config/works-application-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
