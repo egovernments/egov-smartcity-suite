@@ -304,7 +304,7 @@ public class PropertyTaxElasticSearchIndexService {
                 taxPayerDetails.setUlbCode(city.getCitycode());
             }
         } catch (Exception e) {
-            LOGGER.error("Error while preparing Data For Achievements Index " + e);
+            LOGGER.error("Error while preparing Data For Achievements Index " + e.getMessage());
         }
         return userWiseTaxPayerDetails;
     }
@@ -647,7 +647,7 @@ public class PropertyTaxElasticSearchIndexService {
                 taxPayers.add(taxDetail);
             }
         } catch (Exception e) {
-            LOGGER.error("Error while returning Ulb Wise Aggregation Results " + e);
+            LOGGER.error("Error while returning Ulb Wise Aggregation Results " + e.getMessage());
         }
         // If for Bill Collector, then fetch details for all wards, else limit
         // the results size
@@ -846,7 +846,7 @@ public class PropertyTaxElasticSearchIndexService {
                                     .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
                     }
         } catch (Exception e) {
-            LOGGER.error("Error while preparing Bill CollectorWise Map Data " + e);
+            LOGGER.error("Error while preparing Bill CollectorWise Map Data " + e.getMessage());
         }
     }
 
@@ -956,7 +956,7 @@ public class PropertyTaxElasticSearchIndexService {
                 billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
             }
         } catch (Exception e) {
-            LOGGER.error("Error while preparing Taxers Info For BillCollectors " + e);
+            LOGGER.error("Error while preparing Taxers Info For BillCollectors " + e.getMessage());
         }
     }
 
