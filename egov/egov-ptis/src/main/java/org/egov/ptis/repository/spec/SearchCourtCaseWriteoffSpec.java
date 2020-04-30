@@ -73,8 +73,14 @@ public class SearchCourtCaseWriteoffSpec {
             if (searchCourtCaseWriteoffRequest.getFromDate() != null && searchCourtCaseWriteoffRequest.getToDate() != null) {
                 predicate.getExpressions()
                         .add(builder.greaterThanOrEqualTo(root.get("createdDate"), searchCourtCaseWriteoffRequest.getFromDate()));
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(searchCourtCaseWriteoffRequest.getToDate());
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                cal.set(Calendar.MILLISECOND, 999);
                 predicate.getExpressions()
-                        .add(builder.lessThanOrEqualTo(root.get("createdDate"), searchCourtCaseWriteoffRequest.getToDate()));
+                        .add(builder.lessThanOrEqualTo(root.get("createdDate"), cal.getTime()));
             }
             predicate.getExpressions()
                     .add(builder.equal(root.get("property").get("propertyModifyReason"), "COURTVERDICT"));
