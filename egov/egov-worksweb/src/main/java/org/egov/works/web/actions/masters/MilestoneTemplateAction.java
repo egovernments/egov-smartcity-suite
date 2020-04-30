@@ -63,7 +63,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.service.MilestoneTemplateService;
@@ -117,15 +119,21 @@ public class MilestoneTemplateAction extends SearchFormAction {
         addRelatedEntity("subTypeOfWork", EgwTypeOfWork.class);
     }
 
-    @Override
-    public void prepare() {
-        if (id != null)
-            template = milestoneTemplateService.getMilestoneTemplateById(id);
-        super.prepare();
-        setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
-        addDropdownData("parentCategoryList", typeOfWorkService.findAll());
-        populateCategoryList(template.getTypeOfWork() != null);
-    }
+	@Override
+	public void prepare() {
+		if (id != null)
+			template = milestoneTemplateService.getMilestoneTemplateById(id);
+		try {
+			super.prepare();
+		} catch (NumberFormatException nfEx) {
+			addActionError("Invalid data. " + nfEx.getMessage());
+		} catch (Exception ex) {
+			throw new ApplicationRuntimeException("Invalid data.", ex);
+		}
+		setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
+		addDropdownData("parentCategoryList", typeOfWorkService.findAll());
+		populateCategoryList(template.getTypeOfWork() != null);
+	}
 
     @Override
     public Object getModel() {
@@ -152,6 +160,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/milestoneTemplate-save")
+    @ValidationErrorPage(NEW)
     public String save() {
         populateActivities();
         template = milestoneTemplateService.save(template);
@@ -179,7 +188,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/milestoneTemplate-edit")
-    @SkipValidation
+    @ValidationErrorPage(EDIT)
     public String edit() {
         template = milestoneTemplateService.getMilestoneTemplateById(id);
         if (mode.equals("edit"))
