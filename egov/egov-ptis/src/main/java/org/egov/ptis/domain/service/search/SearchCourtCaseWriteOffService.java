@@ -63,7 +63,7 @@ public class SearchCourtCaseWriteOffService {
                 final User stateOwner = propertyService.getOwnerName(details);
                 searchCourtCaseWriteoffReq.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
                 searchCourtCaseWriteoffReq.setApplicantName(details.getBasicProperty().getPrimaryOwner().getName());
-                searchCourtCaseWriteoffReq.setUrl(format(APPLICATION_VIEW_URL, details.getState().getNatureOfTask(),
+                searchCourtCaseWriteoffReq.setUrl(format(APPLICATION_VIEW_URL, details.getApplicationNumber(),
                         searchCourtCaseWriteoffRequest.getApplicationType()));
                 list.add(searchCourtCaseWriteoffReq);
             }
@@ -81,7 +81,7 @@ public class SearchCourtCaseWriteOffService {
                 final User stateOwner = propertyService.getOwnerName(courtDetails);
                 searchCourtCaseWriteoffReq.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
                 searchCourtCaseWriteoffReq.setApplicantName(courtDetails.getBasicProperty().getPrimaryOwner().getName());
-                searchCourtCaseWriteoffReq.setUrl(format(APPLICATION_VIEW_URL, courtDetails.getState().getNatureOfTask(),
+                searchCourtCaseWriteoffReq.setUrl(format(APPLICATION_VIEW_URL, courtDetails.getApplicationNumber(),
                         searchCourtCaseWriteoffRequest.getApplicationType()));
                 list.add(searchCourtCaseWriteoffReq);
             }

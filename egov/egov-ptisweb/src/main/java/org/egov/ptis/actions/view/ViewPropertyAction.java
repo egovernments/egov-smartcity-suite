@@ -82,6 +82,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
@@ -89,7 +90,10 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.WriteOff;
+import org.egov.ptis.domain.repository.courtverdict.CourtVerdictRepository;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
+import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
@@ -147,6 +151,10 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient List<HashMap<String, Object>> historyMap = new ArrayList<>();
     
     private transient List<Document> documents = new ArrayList<>();
+    @Autowired
+    private transient WriteOffRepository writeOffRepository;
+    @Autowired
+    private transient CourtVerdictRepository courtVerdictRepository;
        
     @Override
     public StateAware getModel() {
@@ -352,6 +360,19 @@ public class ViewPropertyAction extends BaseFormAction {
                 setHistoryMap(propService.populateHistory(vacancyRemission));
                 property = vacancyRemission.getBasicProperty().getActiveProperty();
                 property.setDocuments(vacancyRemission.getDocuments());
+            }
+            else if (appType.equalsIgnoreCase(NATURE_WRITE_OFF)) {
+                final WriteOff writeOff= writeOffRepository.getWriteOffByApplicationNo(appNo);
+                setBasicProperty(writeOff.getBasicProperty());
+                setHistoryMap(propService.populateHistory(writeOff));
+                property = writeOff.getBasicProperty().getActiveProperty();
+                property.setDocuments(writeOff.getDocuments());
+            }
+            else if (appType.equalsIgnoreCase(NATURE_COURT_VERDICT)) {
+                final CourtVerdict courtVerdict= courtVerdictRepository.getCourtCaseByApplicationNo(appNo);
+                setBasicProperty(courtVerdict.getBasicProperty());
+                setHistoryMap(propService.populateHistory(courtVerdict));
+                property = courtVerdict.getBasicProperty().getActiveProperty();
             }
         endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(appNo);
     }

@@ -18,5 +18,7 @@ public interface WriteOffRepository extends JpaRepository<WriteOff, Long>, JpaSp
 
     @Query("select DT from DocumentType DT where DT.name=:name")
     public DocumentType findDocumentTypeByName(@Param("name") String name);
-
+    
+    @Query("select wo from WriteOff wo where wo.applicationNumber=:appNo")
+    WriteOff getWriteOffByApplicationNo(@Param("appNo") String name);
 }

@@ -94,6 +94,7 @@ jQuery(document).ready(function($) {
 
 			else {
 				document.forms[0].submit;
+				callAjaxByBoundary();
 				return true;
 			}
 		}
@@ -101,18 +102,34 @@ jQuery(document).ready(function($) {
 			bootbox.alert("Please select Application Type.");
 			return false;
 		}
-		if ($('#applicationStatus').val() == '') {
-			bootbox.alert("Please select Application Status.");
-			return false;
-		}
 		callAjaxByBoundary();
 	});
 
-	$('#searchapp').keyup(function() {
-		drillDowntableContainer.fnFilter(this.value);
-	});
-
 });
+$('#searchapp').keyup(function() {
+	drillDowntableContainer.fnFilter(this.value);
+});
+
+$('#applicationSearchResults')
+		.on(
+				'click',
+				'tbody tr',
+				function(e) {
+					var elementType = $(e.target).prop('nodeName');
+
+					if (elementType != 'BUTTON') {
+						drillDowntableContainer.$('tr.row_selected')
+								.removeClass('row_selected');
+						$(this).addClass('row_selected');
+						var url = drillDowntableContainer.fnGetData(this, 8);
+						$('#applicationSearchForm').attr('method', 'get');
+						$('#applicationSearchForm').attr('action', url);
+						window
+								.open(url, 'window',
+										'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+					}
+
+				});
 
 $(document).on("keypress", 'form', function(e) {
 	var code = e.keyCode || e.which;

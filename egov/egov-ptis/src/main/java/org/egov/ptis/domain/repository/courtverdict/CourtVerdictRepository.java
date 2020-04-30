@@ -50,9 +50,13 @@ package org.egov.ptis.domain.repository.courtverdict;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long>, JpaSpecificationExecutor<CourtVerdict> {
 
+    @Query("select cv from CourtVerdict cv where cv.applicationNumber=:appNo")
+    CourtVerdict getCourtCaseByApplicationNo(@Param("appNo") String name);
 }

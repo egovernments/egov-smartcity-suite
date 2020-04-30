@@ -22,6 +22,7 @@ public class SearchWriteoffCourtCaseAdapter implements JsonSerializer<SearchCour
             jsonObject.addProperty("applicationAddress", searchReport.getApplicationAddress());
             jsonObject.addProperty("applicationStatus", searchReport.getApplicationStatus());
             jsonObject.addProperty("ownerName", searchReport.getOwnerName());
+            jsonObject.addProperty("url", searchReport.getUrl());
             
         }
         return jsonObject;

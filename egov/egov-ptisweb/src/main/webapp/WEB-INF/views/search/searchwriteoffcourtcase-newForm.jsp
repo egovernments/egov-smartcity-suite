@@ -122,7 +122,7 @@
 						<label for="field-1" class="col-sm-2 control-label"> <spring:message
 								code="lbl.toDate" /></label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="toDate"
+							<input type="text" name="toDate" 
 								class="form-control datepicker today" data-date-end-date="0d"
 								id="end_date" data-inputmask="'mask': 'd/m/y'" />
 						</div>
