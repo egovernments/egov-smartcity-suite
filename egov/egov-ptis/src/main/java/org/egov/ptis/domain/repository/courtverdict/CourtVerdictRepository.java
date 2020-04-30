@@ -49,9 +49,10 @@ package org.egov.ptis.domain.repository.courtverdict;
 
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long> {
+public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long>, JpaSpecificationExecutor<CourtVerdict> {
 
 }

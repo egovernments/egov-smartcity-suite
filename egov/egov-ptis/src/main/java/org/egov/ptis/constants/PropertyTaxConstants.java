@@ -1891,5 +1891,16 @@ public interface PropertyTaxConstants {
   //Appeal Report
     public static final String APPEAL_FINANCIAL_START_DATE = "01/04/2019";
     public static final String APPEAL_REPORT_TEMPLATE = "appealPetition-registerreport";
-   
+    
+    //courtcase writeoff search application   
+    public static final List<String> APPLICATIONTYPES = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            add(NATURE_COURT_VERDICT);
+            add(NATURE_WRITE_OFF);
+        }
+    };
+    
+    public static final List<String> APPLICATION_STATUS_LIST = ImmutableList.of("Open", "Closed", "All");
+
 }
