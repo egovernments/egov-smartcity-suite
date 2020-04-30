@@ -101,11 +101,15 @@ jQuery(document).ready(function($) {
 			bootbox.alert("Please select Application Type.");
 			return false;
 		}
+		if ($('#applicationType').val() == '') {
+			bootbox.alert("Please select Application Type.");
+			return false;
+		}
 		callAjaxByBoundary();
 	});
 
 	$('#searchapp').keyup(function() {
-		tableContainer.fnFilter(this.value);
+		drillDowntableContainer.fnFilter(this.value);
 	});
 
 });
@@ -169,6 +173,11 @@ function callAjaxByBoundary() {
 					sTitle : "Current Owner",
 					name : "ownerName",
 					data : "ownerName"
-				} ],
+				}, {
+					title : "url",
+					data : "url",
+					name : "url",
+					"bVisible" : false
+				}, ],
 			});
 }

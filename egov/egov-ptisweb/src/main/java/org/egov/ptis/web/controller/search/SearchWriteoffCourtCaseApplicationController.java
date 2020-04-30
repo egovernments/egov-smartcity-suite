@@ -92,7 +92,7 @@ public class SearchWriteoffCourtCaseApplicationController {
     @RequestMapping(method = RequestMethod.GET)
     public String getSearchCourtCaseApplication(final Model model) {
         model.addAttribute("SearchCourtCaseWriteoffRequest", new SearchCourtCaseWriteoffRequest());
-        return "wo-cc-search-application";
+        return "searchwriteoffcourtcaseapplication";
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.POST, produces = TEXT_PLAIN_VALUE)
