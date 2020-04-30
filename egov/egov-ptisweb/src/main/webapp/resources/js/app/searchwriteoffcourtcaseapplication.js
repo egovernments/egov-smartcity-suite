@@ -101,8 +101,8 @@ jQuery(document).ready(function($) {
 			bootbox.alert("Please select Application Type.");
 			return false;
 		}
-		if ($('#applicationType').val() == '') {
-			bootbox.alert("Please select Application Type.");
+		if ($('#applicationStatus').val() == '') {
+			bootbox.alert("Please select Application Status.");
 			return false;
 		}
 		callAjaxByBoundary();

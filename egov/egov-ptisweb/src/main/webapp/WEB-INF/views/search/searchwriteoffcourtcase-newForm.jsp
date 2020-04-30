@@ -189,5 +189,5 @@
 	type="text/javascript"></script>
 
 <script
-	src="<cdn:url  value='/resources/js/app/writoff_courtcase_searchapplication.js?rnd=${app_release_no}'/>"
+	src="<cdn:url  value='/resources/js/app/searchwriteoffcourtcaseapplication.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
