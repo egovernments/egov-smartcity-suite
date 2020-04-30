@@ -123,13 +123,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
 	public void prepare() {
 		if (id != null)
 			template = milestoneTemplateService.getMilestoneTemplateById(id);
-		try {
-			super.prepare();
-		} catch (NumberFormatException nfEx) {
-			addActionError("Invalid data. " + nfEx.getMessage());
-		} catch (Exception ex) {
-			throw new ApplicationRuntimeException("Invalid data.", ex);
-		}
+		super.prepare();
 		setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
 		addDropdownData("parentCategoryList", typeOfWorkService.findAll());
 		populateCategoryList(template.getTypeOfWork() != null);

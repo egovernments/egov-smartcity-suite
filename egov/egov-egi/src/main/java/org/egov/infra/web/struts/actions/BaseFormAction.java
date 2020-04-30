@@ -121,7 +121,9 @@ public abstract class BaseFormAction extends ActionSupport
         for (final Entry<String, Class> rel : relationships.entrySet())
             try {
                 setRelationship(rel.getKey(), rel.getValue());
-            } catch (IntrospectionException e) {
+			} catch (NumberFormatException nfEx) {
+				addActionError("Invalid data. " + nfEx.getMessage());
+			} catch (IntrospectionException e) {
                 throw new ApplicationRuntimeException(String.format("Could not set relationship for key %s of class %s",
                         rel.getKey(), rel.getValue().getSimpleName()), e);
             }
