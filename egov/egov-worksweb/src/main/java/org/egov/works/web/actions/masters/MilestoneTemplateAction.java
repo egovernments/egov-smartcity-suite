@@ -123,7 +123,11 @@ public class MilestoneTemplateAction extends SearchFormAction {
 	public void prepare() {
 		if (id != null)
 			template = milestoneTemplateService.getMilestoneTemplateById(id);
-		super.prepare();
+		try {
+			super.prepare();
+		} catch (NumberFormatException nfEx) {
+			addActionError("Invalid data. " + nfEx.getMessage());
+		}
 		setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
 		addDropdownData("parentCategoryList", typeOfWorkService.findAll());
 		populateCategoryList(template.getTypeOfWork() != null);
@@ -154,7 +158,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/milestoneTemplate-save")
-    @ValidationErrorPage(NEW)
     public String save() {
         populateActivities();
         template = milestoneTemplateService.save(template);
@@ -182,7 +185,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/milestoneTemplate-edit")
-    @ValidationErrorPage(EDIT)
+    @SkipValidation
     public String edit() {
         template = milestoneTemplateService.getMilestoneTemplateById(id);
         if (mode.equals("edit"))
@@ -198,6 +201,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     }
 
     @Action(value = "/masters/milestoneTemplate-searchDetails")
+    @ValidationErrorPage(SEARCH)
     @SkipValidation
     public String searchDetails() {
         if (template.getTypeOfWork() == null || template.getTypeOfWork().getId() == -1) {
