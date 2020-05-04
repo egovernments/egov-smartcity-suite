@@ -53,10 +53,10 @@ jQuery('#btnsearch').click(function(e) {
 	var adminSanctionToDate = '';
 						
 	if ($('#department').val() === ""
-							|| $('#adminSanctionFromDate').val() === ""
-							|| $('#adminSanctionToDate').val() === ""
-							|| $('#workIdentificationNumber').val() === ""
-							|| $('#contractor').val() === "") {
+							&& $('#adminSanctionFromDate').val() === ""
+							&& $('#adminSanctionToDate').val() === ""
+							&& $('#workIdentificationNumber').val() === ""
+							&& $('#contractor').val() === "") {
 						bootbox.alert('Please enter any one value to search.');
 						return false;
 					}
