@@ -94,4 +94,5 @@
 			</div>
 		</div>
 	</div>
+  <label class="control-label text-center"><font color="red"><spring:message code="lbl.report.note" /></font></label>
 </div>

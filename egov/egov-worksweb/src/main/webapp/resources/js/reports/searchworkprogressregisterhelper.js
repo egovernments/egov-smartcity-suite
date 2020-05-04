@@ -51,6 +51,15 @@ jQuery('#btnsearch').click(function(e) {
 	$('#btndownloadexcel').hide();
 	var adminSanctionFromDate = '';
 	var adminSanctionToDate = '';
+						
+	if ($('#department').val() === ""
+							|| $('#adminSanctionFromDate').val() === ""
+							|| $('#adminSanctionToDate').val() === ""
+							|| $('#workIdentificationNumber').val() === ""
+							|| $('#contractor').val() === "") {
+						bootbox.alert('Please enter any one value to search.');
+						return false;
+					}
 	if($('#adminSanctionFromDate').val() != "") {
 		adminSanctionFromDate = $('#adminSanctionFromDate').data('datepicker').date;
 	}
