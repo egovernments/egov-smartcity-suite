@@ -237,8 +237,8 @@ function callAjaxSearch() {
 					return row;
 				},
 				aaSorting: [],				
-				columns : [ { 
-					/*"data" : "", "sClass" : "text-center"} ,{ */
+				/*columns : [ { 
+					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "departmentName", "sClass" : "text-center"} ,{
 					"data" : "lineEstimates", "sClass" : "text-right"} ,{
 					"data" : "adminSanctionedEstimates", "sClass" : "text-right"} ,{ 
@@ -249,7 +249,8 @@ function callAjaxSearch() {
 					"data" : "workInProgress", "sClass" : "text-right"} ,{ 
 					"data" : "workCompleted", "sClass" : "text-right"} ,{
 					"data" : "billsCreated", "sClass" : "text-right"} ,{
-					"data" : "billValueInCrores", "sClass" : "text-right"}]				
+					"data" : "billValueInCrores", "sClass" : "text-right"}
+					]	*/			
 				});
 }
 
