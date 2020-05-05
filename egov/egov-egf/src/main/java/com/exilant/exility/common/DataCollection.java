@@ -47,10 +47,10 @@
  */
 package com.exilant.exility.common;
 
-import org.apache.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 
 //import java.lang.reflect.Array;
 
@@ -71,13 +71,13 @@ public class DataCollection {
      * all primitive data stored as name/value pair in a hashmap
      */
     private static final Logger LOGGER = Logger.getLogger(DataCollection.class);
-    public HashMap values;
+    public HashMap<String, Object> values;
 
     // for all single dimension arraya
-    protected HashMap valueLists;
+    protected HashMap<String, String[]> valueLists;
 
     // two dimension arrays
-    protected HashMap grids;
+    protected HashMap<String, String[][]> grids;
 
     // three dimensional arrays :-) NO NO, No.. three dimensional arrays are not allaowed at Exilant
     // list of messages (error message, warnings etc..
@@ -88,9 +88,9 @@ public class DataCollection {
      */
     public DataCollection() {
         super();
-        values = new HashMap();
-        valueLists = new HashMap();
-        grids = new HashMap();
+        values = new HashMap<>();
+        valueLists = new HashMap<>();
+        grids = new HashMap<>();
         messageList = new MessageList();
     }
 
@@ -126,7 +126,7 @@ public class DataCollection {
 
     private void addValueHelper(final String name, final Object value) {
         if (null == values)
-            values = new HashMap();
+            values = new HashMap<>();
         values.put(name, value);
     }
 
@@ -144,7 +144,7 @@ public class DataCollection {
         try {
             return Float.parseFloat(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getFloat",e1);
+            LOGGER.error("Inside getFloat", e1);
             return 0;
         }
     }
@@ -156,7 +156,7 @@ public class DataCollection {
         try {
             return Double.parseDouble(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getDouble",e1);
+            LOGGER.error("Inside getDouble", e1);
             return 0;
         }
     }
@@ -168,7 +168,7 @@ public class DataCollection {
         try {
             return Integer.parseInt(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getInt",e1);
+            LOGGER.error("Inside getInt", e1);
             return 0;
         }
     }
@@ -180,7 +180,7 @@ public class DataCollection {
         try {
             return Long.parseLong(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getLong",e1);
+            LOGGER.error("Inside getLong", e1);
             return 0;
         }
     }
@@ -202,9 +202,9 @@ public class DataCollection {
 
     public String[] getValueList(final String name) {
         try {
-            return (String[]) valueLists.get(name);
+            return valueLists.get(name);
         } catch (final Exception e) {
-            LOGGER.error("Inside getValueList",e);
+            LOGGER.error("Inside getValueList", e);
         }
         final String[] arr = new String[0];
         return arr;
@@ -219,7 +219,7 @@ public class DataCollection {
         try {
             return (String[][]) obj;
         } catch (final Exception e) {
-            LOGGER.error("Typecasting error in getGrid",e);
+            LOGGER.error("Typecasting error in getGrid", e);
         }
         final String[][] arr = new String[0][0];
         return arr;
@@ -276,16 +276,16 @@ public class DataCollection {
         return messageList;
     }
 
-    public Iterator getFieldNames() {
+    public Iterator<String> getFieldNames() {
         return values.keySet().iterator();
     }
 
-    public Iterator getListNames() {
+    public Iterator<String> getListNames() {
         return valueLists.keySet().iterator();
 
     }
 
-    public Iterator getGridNames() {
+    public Iterator<String> getGridNames() {
         return grids.keySet().iterator();
     }
 

@@ -53,18 +53,18 @@
  */
 package com.exilant.eGov.src.common;
 
+import java.sql.Connection;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.type.StringType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Connection;
-import java.util.List;
 
 /**
  * @author Administrator
@@ -75,15 +75,16 @@ import java.util.List;
 public class LoadSubLedgerData extends AbstractTask {
     private final static Logger LOGGER = Logger.getLogger(LoadSubLedgerData.class);
     private static TaskFailedException taskExc;
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @SuppressWarnings("unchecked")
     @Override
     public void execute(final String taskName,
-                        final String gridName, final DataCollection dc,
-                        final Connection con, final boolean errorOnNoData,
-                        final boolean gridHasColumnHeading, final String prefix) throws TaskFailedException {
+            final String gridName, final DataCollection dc,
+            final Connection con, final boolean errorOnNoData,
+            final boolean gridHasColumnHeading, final String prefix) throws TaskFailedException {
         //
         int noOfRec = 0;
 
@@ -94,13 +95,15 @@ public class LoadSubLedgerData extends AbstractTask {
             String relationBillTable = "";
             String relationBillID = "";
             String chequeId = "";
-            StringBuilder sql = new StringBuilder("select sph.type, sph.chequeid from subledgerpaymentheader sph, voucherheader vh where sph.voucherheaderid = vh.id and vh.cgn = :cgn");
+            StringBuilder sql = new StringBuilder("select sph.type, sph.chequeid")
+                    .append(" from subledgerpaymentheader sph, voucherheader vh")
+                    .append(" where sph.voucherheaderid = vh.id and vh.cgn = :cgn");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
 
-            List<Object[]> rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("cgn", cgn, StringType.INSTANCE)
-                    .list();
+            List<Object[]> rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("cgn", cgn)
+                    .getResultList();
             for (final Object[] element : rset) {
                 relationType = element[0].toString();
                 chequeId = element[1].toString();
@@ -115,14 +118,15 @@ public class LoadSubLedgerData extends AbstractTask {
             relationBillID = relationType.concat("billid");
             sql = new StringBuilder("select sph.type as \"pay_type\",").append(relationTypeID)
                     .append(" as \"payToid\", paidby as \"paidByid\", bankaccountid as \"accId\",")
-                    .append(" worksdetailid as \"worksDetailid\", f.name as \"fund_name\", f.id as \"fund_id\", fsrc.name as \"fundSource_id\", fsrc.name as \"fundSource_name\"")
+                    .append(" worksdetailid as \"worksDetailid\", f.name as \"fund_name\", f.id as \"fund_id\",")
+                    .append(" fsrc.name as \"fundSource_id\", fsrc.name as \"fundSource_name\"")
                     .append(" from subledgerpaymentheader sph, voucherheader vh, fund f, fundsource fsrc")
                     .append(" where sph.voucherheaderid = vh.id and f.id = vh.fundid and fsrc.id = vh.fundsourceid and vh.cgn= :cgn");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("cgn", cgn, StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("cgn", cgn)
+                    .getResultList();
             for (final Object[] element : rset) {
                 dc.addValue("pay_type", element[0].toString());
                 dc.addValue("payToid", element[1].toString());
@@ -140,9 +144,9 @@ public class LoadSubLedgerData extends AbstractTask {
                     .append(" where a.cashinhand = b.id and a.id = :paidBy");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("paidBy", dc.getValue("paidByid"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("paidBy", dc.getValue("paidByid"))
+                    .getResultList();
             for (final Object[] element : rset) {
                 dc.addValue("paidBy", element[0].toString());
                 dc.addValue("billCollector_cashInHandDesc", element[1].toString());
@@ -152,18 +156,19 @@ public class LoadSubLedgerData extends AbstractTask {
             sql = new StringBuilder("select name  as \"payTo\" from relation where id= :payTo");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString()).
-                    setParameter("payTo", dc.getValue("payToid"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("payTo", dc.getValue("payToid"))
+                    .getResultList();
             for (final Object[] element : rset)
                 dc.addValue("payTo", element[0].toString());
             // workorder
-            sql = new StringBuilder("select name as \"worksDetail_id\", advanceamount as \"worksDetail_advanceAmount\" from worksDetail where id = :worksDetailId");
+            sql = new StringBuilder("select name as \"worksDetail_id\", advanceamount as \"worksDetail_advanceAmount\"")
+                    .append(" from worksDetail where id = :worksDetailId");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("worksDetailId", dc.getValue("worksDetailid"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("worksDetailId", dc.getValue("worksDetailid"))
+                    .getResultList();
             for (final Object[] element : rset) {
                 dc.addValue("worksDetail_id", element[0].toString());
                 dc.addValue("worksDetail_advanceAmount", element[1].toString());
@@ -174,18 +179,18 @@ public class LoadSubLedgerData extends AbstractTask {
                     .append(" where a.id = b.bankid and b.id = c.branchid and c.id = :accId");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("accId", dc.getValue("accId"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("accId", dc.getValue("accId"))
+                    .getResultList();
             for (final Object[] element : rset)
                 dc.addValue("subLedgerPaymentHeader_bankId", element[0].toString());
             // acount number
             sql = new StringBuilder("select accountnumber as \"branchAccountId\" from bankaccount where id= :accId");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("accId", dc.getValue("accId"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("accId", dc.getValue("accId"))
+                    .getResultList();
             for (final Object[] element : rset)
                 dc.addValue("branchAccountId", element[0].toString());
             sql = new StringBuilder("select count(*)")
@@ -201,32 +206,38 @@ public class LoadSubLedgerData extends AbstractTask {
                     .append(" and a.worksdetailid = :workDetailId order by a.billDate");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("cgn", cgn, StringType.INSTANCE)
-                    .setParameter("payTo", dc.getValue("payToid"), StringType.INSTANCE)
-                    .setParameter("fundId", dc.getValue("fund_id"), StringType.INSTANCE)
-                    .setParameter("workDetailId", dc.getValue("worksDetailid"), StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("cgn", cgn)
+                    .setParameter("payTo", dc.getValue("payToid"))
+                    .setParameter("fundId", dc.getValue("fund_id"))
+                    .setParameter("workDetailId", dc.getValue("worksDetailid"))
+                    .getResultList();
             for (final Object[] element : rset)
                 noOfRec = Integer.parseInt(element[0].toString());
             if (noOfRec > 0) {
                 final String[][] grid = new String[noOfRec + 1][13];
-                sql = new StringBuilder("select a.id as \"billNoId\", billNumber as\"billNo\", vouchernumber as \"d_voucherNo\", to_char(billdate,'dd-Mon-yyyy') as \"billDate\",")
-                        .append(" a.PassedAmount as \"passedAmount\", advadjamt as \"advance\", TDSamount as \"tds\", OtherRecoveries as \"otherRecoveries\",")
-                        .append(" a.passedAmount-(advadjamt+tdsamount+otherrecoveries) as \"net\", a.PaidAmount - sph.paidamount as \"earlierPayment\", sph.paidamount as \"slph_paidAmount\",")
+                sql = new StringBuilder("select a.id as \"billNoId\", billNumber as\"billNo\", vouchernumber as \"d_voucherNo\",")
+                        .append(" to_char(billdate,'dd-Mon-yyyy') as \"billDate\",")
+                        .append(" a.PassedAmount as \"passedAmount\", advadjamt as \"advance\", TDSamount as \"tds\",")
+                        .append(" OtherRecoveries as \"otherRecoveries\",")
+                        .append(" a.passedAmount-(advadjamt+tdsamount+otherrecoveries) as \"net\",")
+                        .append(" a.PaidAmount - sph.paidamount as \"earlierPayment\", sph.paidamount as \"slph_paidAmount\",")
                         .append(" rownum as \"slNo\", '1' as \"billSelect\"")
-                        .append(" from ").append(relationBillTable).append(" a, voucherheader b, subledgerpaymentheader sph")
-                        .append(" where b.id = a.voucherheaderid and sph.").append(relationBillID).append(" = a.id and sph.voucherheaderid = (select id from voucherheader where cgn= :cgn)")
-                        .append(" and passedamount > (a.paidamount + tdsamount + advadjamt) - sph.paidamount and a.").append(relationTypeID).append(" = :payTo and b.fundid = :fundId")
+                        .append(" from ").append(relationBillTable)
+                        .append(" a, voucherheader b, subledgerpaymentheader sph")
+                        .append(" where b.id = a.voucherheaderid and sph.").append(relationBillID)
+                        .append(" = a.id and sph.voucherheaderid = (select id from voucherheader where cgn= :cgn)")
+                        .append(" and passedamount > (a.paidamount + tdsamount + advadjamt) - sph.paidamount and a.")
+                        .append(relationTypeID).append(" = :payTo and b.fundid = :fundId")
                         .append(" and a.worksdetailid = :worksDetailId order by a.billDate");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(sql);
-                rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                        .setParameter("cgn", cgn, StringType.INSTANCE)
-                        .setParameter("payTo", dc.getValue("payToid"), StringType.INSTANCE)
-                        .setParameter("fundId", dc.getValue("fund_id"), StringType.INSTANCE)
-                        .setParameter("worksDetailId", dc.getValue("worksDetailid"), StringType.INSTANCE)
-                        .list();
+                rset = entityManager.createNativeQuery(sql.toString())
+                        .setParameter("cgn", cgn)
+                        .setParameter("payTo", dc.getValue("payToid"))
+                        .setParameter("fundId", dc.getValue("fund_id"))
+                        .setParameter("worksDetailId", dc.getValue("worksDetailid"))
+                        .getResultList();
                 // grid[0][x] we filled control name
                 for (final Object[] element : rset) {
                     dc.addValue("billNoId", element[0].toString());
@@ -262,21 +273,25 @@ public class LoadSubLedgerData extends AbstractTask {
                 }
                 dc.addGrid(gridName, grid);
             }
-            sql = new StringBuilder("select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\", to_char(voucherdate,'dd-Mon-yyyy') as \"voucherHeader_voucherDate\",")
-                    .append(" chequenumber as \"chequeDetail_chequeNumber\", to_char(chequedate,'dd-Mon-yyyy') as \"chequeDetail_chequeDate\", vh.description as \"narration\",")
+            sql = new StringBuilder("select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\",")
+                    .append(" to_char(voucherdate,'dd-Mon-yyyy') as \"voucherHeader_voucherDate\",")
+                    .append(" chequenumber as \"chequeDetail_chequeNumber\",")
+                    .append(" to_char(chequedate,'dd-Mon-yyyy') as \"chequeDetail_chequeDate\", vh.description as \"narration\",")
                     .append(" vh.fundsourceid as \"fundsource_id\"")
                     .append(" from voucherheader vh, subledgerpaymentheader sph, chequedetail cq")
-                    .append(" where sph.voucherheaderid = vh.id and cq.id = sph.chequeid and chequeid > 0 and chequeid is not null and vh.cgn = :cgn")
+                    .append(" where sph.voucherheaderid = vh.id and cq.id = sph.chequeid and chequeid > 0")
+                    .append(" and chequeid is not null and vh.cgn = :cgn")
                     .append(" union")
-                    .append(" select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\", to_char(voucherdate,'dd-Mon-yyyy') as \"voucherHeader_voucherDate\", '','',")
+                    .append(" select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\",")
+                    .append(" to_char(voucherdate,'dd-Mon-yyyy') as \"voucherHeader_voucherDate\", '','',")
                     .append(" vh.description as \"narration\", vh.fundsourceid as \"fundsource_id\"")
                     .append(" from voucherheader vh, subledgerpaymentheader sph")
                     .append(" where sph.voucherheaderid = vh.id and (chequeid is null or chequeid = 0) and vh.cgn = :cgn");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
-            rset = persistenceService.getSession().createNativeQuery(sql.toString())
-                    .setParameter("cgn", cgn, StringType.INSTANCE)
-                    .list();
+            rset = entityManager.createNativeQuery(sql.toString())
+                    .setParameter("cgn", cgn)
+                    .getResultList();
             for (final Object[] element : rset) {
                 dc.addValue("voucherHeader_cgn", element[0].toString());
                 dc.addValue("voucherHeader_voucherNumber", element[1].toString());
