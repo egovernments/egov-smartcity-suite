@@ -7,8 +7,13 @@ import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.view.SearchCourtCaseWriteoffRequest;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.Calendar;
+import java.util.Date;
 
 public class SearchCourtCaseWriteoffSpec {
+
+    private static final String PROPERTY = "property";
+    private static final String STATUS = "status";
+    private static final String CREATED_DATE = "createdDate";
 
     private SearchCourtCaseWriteoffSpec() {
 
@@ -29,24 +34,21 @@ public class SearchCourtCaseWriteoffSpec {
                     && !searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("All"))
                 if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open"))
                     predicate.getExpressions()
-                            .add(builder.equal(root.get("property").get("status"), 'W'));
-                else
+                            .add(builder.equal(root.get(PROPERTY).get(STATUS), 'W'));
+                else {
                     predicate.getExpressions()
-                            .add(builder.notEqual(root.get("property").get("status"), 'W'));
+                            .add(builder.notEqual(root.get(PROPERTY).get(STATUS), 'W'));
+                    predicate.getExpressions()
+                            .add(builder.equal(root.get("state").get("value"), "Closed"));
+                }
             if (searchCourtCaseWriteoffRequest.getFromDate() != null && searchCourtCaseWriteoffRequest.getToDate() != null) {
                 predicate.getExpressions()
-                        .add(builder.greaterThanOrEqualTo(root.get("createdDate"), searchCourtCaseWriteoffRequest.getFromDate()));
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(searchCourtCaseWriteoffRequest.getToDate());
-                cal.set(Calendar.HOUR_OF_DAY, 23);
-                cal.set(Calendar.MINUTE, 59);
-                cal.set(Calendar.SECOND, 59);
-                cal.set(Calendar.MILLISECOND, 999);
+                        .add(builder.greaterThanOrEqualTo(root.get(CREATED_DATE), searchCourtCaseWriteoffRequest.getFromDate()));
                 predicate.getExpressions()
-                        .add(builder.lessThanOrEqualTo(root.get("createdDate"), cal.getTime()));
+                        .add(builder.lessThanOrEqualTo(root.get(CREATED_DATE), getDate(Calendar.getInstance())));
             }
             predicate.getExpressions()
-                    .add(builder.equal(root.get("property").get("propertyModifyReason"), "WRITE_OFF"));
+                    .add(builder.equal(root.get(PROPERTY).get("propertyModifyReason"), "WRITE_OFF"));
             return predicate;
         };
     }
@@ -66,25 +68,30 @@ public class SearchCourtCaseWriteoffSpec {
                     && !searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("All"))
                 if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open"))
                     predicate.getExpressions()
-                            .add(builder.equal(root.get("property").get("status"), 'W'));
-                else
+                            .add(builder.equal(root.get(PROPERTY).get(STATUS), 'W'));
+                else {
                     predicate.getExpressions()
-                            .add(builder.notEqual(root.get("property").get("status"), 'W'));
+                            .add(builder.notEqual(root.get(PROPERTY).get(STATUS), 'W'));
+                    predicate.getExpressions()
+                            .add(builder.equal(root.get("state").get("value"), "Closed"));
+                }
             if (searchCourtCaseWriteoffRequest.getFromDate() != null && searchCourtCaseWriteoffRequest.getToDate() != null) {
                 predicate.getExpressions()
-                        .add(builder.greaterThanOrEqualTo(root.get("createdDate"), searchCourtCaseWriteoffRequest.getFromDate()));
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(searchCourtCaseWriteoffRequest.getToDate());
-                cal.set(Calendar.HOUR_OF_DAY, 23);
-                cal.set(Calendar.MINUTE, 59);
-                cal.set(Calendar.SECOND, 59);
-                cal.set(Calendar.MILLISECOND, 999);
+                        .add(builder.greaterThanOrEqualTo(root.get(CREATED_DATE), searchCourtCaseWriteoffRequest.getFromDate()));
                 predicate.getExpressions()
-                        .add(builder.lessThanOrEqualTo(root.get("createdDate"), cal.getTime()));
+                        .add(builder.lessThanOrEqualTo(root.get(CREATED_DATE), getDate(Calendar.getInstance())));
             }
             predicate.getExpressions()
-                    .add(builder.equal(root.get("property").get("propertyModifyReason"), "COURTVERDICT"));
+                    .add(builder.equal(root.get(PROPERTY).get("propertyModifyReason"), "COURTVERDICT"));
             return predicate;
         };
+    }
+
+    public static Date getDate(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
     }
 }
