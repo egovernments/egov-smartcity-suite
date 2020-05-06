@@ -124,7 +124,7 @@
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text name="citizen.prop.doorno" /> :</td>
 					<td class="bluebox"><s:textfield name="doorNo" id="doorNo"
-							value="%{doorNo}" maxlength="10" /></td>
+							value="%{doorNo}" maxlength="32" /></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
 
