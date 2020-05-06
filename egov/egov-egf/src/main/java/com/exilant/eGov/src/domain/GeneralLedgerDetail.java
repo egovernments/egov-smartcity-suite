@@ -52,29 +52,28 @@
 
 package com.exilant.eGov.src.domain;
 
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 @Transactional(readOnly = true)
 public class GeneralLedgerDetail {
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerDetail.class);
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     private String id = null;
     private String glId = null;
     private String detailKeyId = null;
     private String detailTypeId = null;
     private String detailAmt = "0";
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public int getId() {
         return Integer.valueOf(id).intValue();
@@ -120,15 +119,16 @@ public class GeneralLedgerDetail {
     public void insert() throws SQLException {
         setId(String.valueOf(PrimaryKeyGenerator.getNextKey("GeneralLedgerDetail")));
 
-        final StringBuilder insertQuery = new StringBuilder("INSERT INTO GeneralLedgerDetail(id, generalLedgerId, detailKeyId, detailTypeId, amount)")
-                .append(" VALUES ( :id, :generalLedgerId, :detailKeyId, :detailTypeId, :amount)");
+        final StringBuilder insertQuery = new StringBuilder(
+                "INSERT INTO GeneralLedgerDetail(id, generalLedgerId, detailKeyId, detailTypeId, amount)")
+                        .append(" VALUES ( :id, :generalLedgerId, :detailKeyId, :detailTypeId, :amount)");
 
-        persistenceService.getSession().createNativeQuery(insertQuery.toString())
-                .setParameter("id", Long.valueOf(id), LongType.INSTANCE)
-                .setParameter("generalLedgerId", Long.valueOf(glId), LongType.INSTANCE)
-                .setParameter("detailKeyId", Long.valueOf(detailKeyId), LongType.INSTANCE)
-                .setParameter("detailTypeId", Long.valueOf(detailTypeId), LongType.INSTANCE)
-                .setParameter("amount", new BigDecimal(detailAmt), BigDecimalType.INSTANCE)
+        entityManager.createNativeQuery(insertQuery.toString())
+                .setParameter("id", Long.valueOf(id))
+                .setParameter("generalLedgerId", Long.valueOf(glId))
+                .setParameter("detailKeyId", Long.valueOf(detailKeyId))
+                .setParameter("detailTypeId", Long.valueOf(detailTypeId))
+                .setParameter("amount", new BigDecimal(detailAmt))
                 .executeUpdate();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);

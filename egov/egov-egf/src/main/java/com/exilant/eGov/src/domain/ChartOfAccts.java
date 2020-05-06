@@ -52,22 +52,6 @@
 
 package com.exilant.eGov.src.domain;
 
-
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.HibernateException;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -75,6 +59,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 @Transactional(readOnly = true)
 public class ChartOfAccts {
@@ -107,13 +106,15 @@ public class ChartOfAccts {
     private String paymentoperation = null;
     private String budgetCheckReqd = null;
     private boolean isId = false, isField = false;
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    private @Autowired
-    EGovernCommon eGovernCommon;
+
+    @Autowired
+    private EGovernCommon eGovernCommon;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public String getId() {
         return id;
@@ -253,31 +254,33 @@ public class ChartOfAccts {
             setId(String.valueOf(PrimaryKeyGenerator
                     .getNextKey("ChartOfAccounts")));
 
-            final StringBuilder insertQuery = new StringBuilder("INSERT INTO ChartOfAccounts (id, glCode, name, description, isActiveForPosting, parentId, lastModified, modifiedBy,")
+            final StringBuilder insertQuery = new StringBuilder("INSERT INTO ChartOfAccounts (id, glCode, name, description,")
+                    .append(" isActiveForPosting, parentId, lastModified, modifiedBy,")
                     .append(" created, purposeid, functionreqd, operation, type, classification, class, budgetCheckReq, majorcode)")
-                    .append(" values (:id, :glCode, :name, :description, :isActiveForPosting, :parentId, :lastModified, :modifiedBy, :created, :purposeid, :functionreqd, :operation,")
+                    .append(" values (:id, :glCode, :name, :description, :isActiveForPosting, :parentId, :lastModified,")
+                    .append(" :modifiedBy, :created, :purposeid, :functionreqd, :operation,")
                     .append(" :type, :classification, :class, :budgetCheckReq, :majorcode)");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
 
-            persistenceService.getSession().createNativeQuery(insertQuery.toString())
-                    .setParameter("id", Integer.parseInt(id), IntegerType.INSTANCE)
-                    .setParameter("glCode", removeSingleQuotes(glCode), StringType.INSTANCE)
-                    .setParameter("name", removeSingleQuotes(name), StringType.INSTANCE)
-                    .setParameter("description", removeSingleQuotes(description), StringType.INSTANCE)
-                    .setParameter("isActiveForPosting", removeSingleQuotes(isActiveForPosting), StringType.INSTANCE)
-                    .setParameter("parentId", removeSingleQuotes(parentId), StringType.INSTANCE)
-                    .setParameter("lastModified", removeSingleQuotes(lastModified), StringType.INSTANCE)
-                    .setParameter("modifiedBy", removeSingleQuotes(modifiedBy), StringType.INSTANCE)
-                    .setParameter("created", removeSingleQuotes(created), StringType.INSTANCE)
-                    .setParameter("purposeid", removeSingleQuotes(purposeid), StringType.INSTANCE)
-                    .setParameter("functionreqd", removeSingleQuotes(functionreqd), StringType.INSTANCE)
-                    .setParameter("operation", removeSingleQuotes(operation), StringType.INSTANCE)
-                    .setParameter("type", removeSingleQuotes(type), StringType.INSTANCE)
-                    .setParameter("classification", removeSingleQuotes(classification), StringType.INSTANCE)
-                    .setParameter("class", removeSingleQuotes(classname), StringType.INSTANCE)
-                    .setParameter("budgetCheckReq", removeSingleQuotes(budgetCheckReqd), StringType.INSTANCE)
-                    .setParameter("majorcode", removeSingleQuotes(getMajorCode(glCode)), StringType.INSTANCE)
+            entityManager.createNativeQuery(insertQuery.toString())
+                    .setParameter("id", Integer.parseInt(id))
+                    .setParameter("glCode", removeSingleQuotes(glCode))
+                    .setParameter("name", removeSingleQuotes(name))
+                    .setParameter("description", removeSingleQuotes(description))
+                    .setParameter("isActiveForPosting", removeSingleQuotes(isActiveForPosting))
+                    .setParameter("parentId", removeSingleQuotes(parentId))
+                    .setParameter("lastModified", removeSingleQuotes(lastModified))
+                    .setParameter("modifiedBy", removeSingleQuotes(modifiedBy))
+                    .setParameter("created", removeSingleQuotes(created))
+                    .setParameter("purposeid", removeSingleQuotes(purposeid))
+                    .setParameter("functionreqd", removeSingleQuotes(functionreqd))
+                    .setParameter("operation", removeSingleQuotes(operation))
+                    .setParameter("type", removeSingleQuotes(type))
+                    .setParameter("classification", removeSingleQuotes(classification))
+                    .setParameter("class", removeSingleQuotes(classname))
+                    .setParameter("budgetCheckReq", removeSingleQuotes(budgetCheckReqd))
+                    .setParameter("majorcode", removeSingleQuotes(getMajorCode(glCode)))
                     .executeUpdate();
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting the data  ", new HibernateException(e.getMessage()));
@@ -375,53 +378,53 @@ public class ChartOfAccts {
         query.deleteCharAt(lastIndexOfComma);
         query.append(" where id = :id");
         try {
-            NativeQuery nativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
+            Query nativeQuery = entityManager.createNativeQuery(query.toString());
 
             if (glCode != null)
-                nativeQuery.setParameter("glCode", glCode, StringType.INSTANCE);
+                nativeQuery.setParameter("glCode", glCode);
             if (name != null)
-                nativeQuery.setParameter("name", name, StringType.INSTANCE);
+                nativeQuery.setParameter("name", name);
             if (description != null)
-                nativeQuery.setParameter("description", description, StringType.INSTANCE);
+                nativeQuery.setParameter("description", description);
             if (isActiveForPosting != null)
-                nativeQuery.setParameter("isActiveForPosting", isActiveForPosting, StringType.INSTANCE);
+                nativeQuery.setParameter("isActiveForPosting", isActiveForPosting);
             if (parentId != null)
-                nativeQuery.setParameter("parentId", parentId, StringType.INSTANCE);
+                nativeQuery.setParameter("parentId", parentId);
             if (lastModified != null)
-                nativeQuery.setParameter("lastModified", lastModified, StringType.INSTANCE);
+                nativeQuery.setParameter("lastModified", lastModified);
             if (modifiedBy != null)
-                nativeQuery.setParameter("modifiedBy", modifiedBy, StringType.INSTANCE);
+                nativeQuery.setParameter("modifiedBy", modifiedBy);
             if (created != null)
-                nativeQuery.setParameter("created", created, StringType.INSTANCE);
+                nativeQuery.setParameter("created", created);
             if (purposeid != null)
-                nativeQuery.setParameter("purposeId", purposeid, StringType.INSTANCE);
+                nativeQuery.setParameter("purposeId", purposeid);
             if (operation != null)
-                nativeQuery.setParameter("operation", operation, StringType.INSTANCE);
+                nativeQuery.setParameter("operation", operation);
             if (FIEoperation != null)
-                nativeQuery.setParameter("fieOperation", FIEoperation, StringType.INSTANCE);
+                nativeQuery.setParameter("fieOperation", FIEoperation);
             if (type != null)
-                nativeQuery.setParameter("type", type, StringType.INSTANCE);
+                nativeQuery.setParameter("type", type);
             if (classname != null)
-                nativeQuery.setParameter("class", classname, StringType.INSTANCE);
+                nativeQuery.setParameter("class", classname);
             if (classification != null)
-                nativeQuery.setParameter("classification", classification, StringType.INSTANCE);
+                nativeQuery.setParameter("classification", classification);
             if (functionreqd != null)
-                nativeQuery.setParameter("functionReqd", functionreqd, StringType.INSTANCE);
+                nativeQuery.setParameter("functionReqd", functionreqd);
             if (scheduleId != null)
-                nativeQuery.setParameter("scheduleId", scheduleId, StringType.INSTANCE);
+                nativeQuery.setParameter("scheduleId", scheduleId);
             if (FIEscheduleId != null)
-                nativeQuery.setParameter("fieScheduleId", FIEscheduleId, IntegerType.INSTANCE);
+                nativeQuery.setParameter("fieScheduleId", FIEscheduleId);
             if (receiptscheduleid != null)
-                nativeQuery.setParameter("receiptScheduleId", receiptscheduleid, StringType.INSTANCE);
+                nativeQuery.setParameter("receiptScheduleId", receiptscheduleid);
             if (receiptoperation != null)
-                nativeQuery.setParameter("receiptOperation", receiptoperation, StringType.INSTANCE);
+                nativeQuery.setParameter("receiptOperation", receiptoperation);
             if (paymentscheduleid != null)
-                nativeQuery.setParameter("paymentScheduleId", paymentscheduleid, StringType.INSTANCE);
+                nativeQuery.setParameter("paymentScheduleId", paymentscheduleid);
             if (paymentoperation != null)
-                nativeQuery.setParameter("paymentOperation", paymentoperation, StringType.INSTANCE);
+                nativeQuery.setParameter("paymentOperation", paymentoperation);
             if (budgetCheckReqd != null)
-                nativeQuery.setParameter("budgetCheckReq", budgetCheckReqd, StringType.INSTANCE);
-            nativeQuery.setParameter("id", id, StringType.INSTANCE);
+                nativeQuery.setParameter("budgetCheckReq", budgetCheckReqd);
+            nativeQuery.setParameter("id", id);
             nativeQuery.executeUpdate();
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting the data  ", new HibernateException(e.getMessage()));

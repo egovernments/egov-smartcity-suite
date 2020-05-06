@@ -53,16 +53,16 @@
  */
 package com.exilant.eGov.src.domain;
 
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.type.StringType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Connection;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
 
 /**
  * @author sahinab
@@ -72,10 +72,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class User {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     private static final Logger LOGGER = Logger.getLogger(User.class);
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     private String userName;
     private String role;
 
@@ -116,15 +116,16 @@ public class User {
     }
 
     // this method gets the assigned role for the user from the database.
+    @SuppressWarnings("unchecked")
     public String getRole(final Connection con) throws TaskFailedException {
         final StringBuilder query = new StringBuilder("select r.Role_name as role")
                 .append(" from EG_ROLES r, EG_USER u, EG_USERROLE ur")
                 .append(" where u.user_name = :userName and ur.id_role = r.id_role and u.id_user = ur.id_user ");
         String role = "";
         try {
-            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("userName", userName, StringType.INSTANCE)
-                    .list();
+            final List<Object[]> rs = entityManager.createNativeQuery(query.toString())
+                    .setParameter("userName", userName)
+                    .getResultList();
             for (final Object[] element : rs)
                 role = element[0].toString();
         } catch (final Exception ex) {
@@ -134,15 +135,16 @@ public class User {
         return role;
     }
 
+    @SuppressWarnings("unchecked")
     public int getId() throws TaskFailedException {
         final StringBuilder query = new StringBuilder("select id_user")
                 .append(" from EG_USER")
                 .append(" where user_name = :userName ");
         int userId = 0;
         try {
-            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("userName", userName, StringType.INSTANCE)
-                    .list();
+            final List<Object[]> rs = entityManager.createNativeQuery(query.toString())
+                    .setParameter("userName", userName)
+                    .getResultList();
             for (final Object[] element : rs)
                 userId = Integer.parseInt(element[0].toString());
         } catch (final Exception ex) {

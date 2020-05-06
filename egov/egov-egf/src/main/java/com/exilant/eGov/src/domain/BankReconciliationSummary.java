@@ -48,59 +48,62 @@
 
 package com.exilant.eGov.src.domain;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 @Component
 public class BankReconciliationSummary {
 
     private static final Logger LOGGER = Logger.getLogger(BankReconciliationSummary.class);
-    @Autowired
-    @Qualifier("persistenceService")
-    protected PersistenceService persistenceService;
-    String defaultStatusExclude = null;
-    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @SuppressWarnings("unchecked")
     public String getUnReconciledDrCr(Integer bankAccId, Date fromDate, Date toDate) {
 
-        StringBuilder totalQuery = new StringBuilder("SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end)) AS \"brs_creditTotal\",")
-                .append(" (sum( case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end)) AS \"brs_debitTotal\"")
-                .append(" FROM egf_instrumentheader ih WHERE ih.bankAccountId = :bankAccountId AND IH.INSTRUMENTDATE >= :fromDate AND IH.INSTRUMENTDATE <= :toDate")
-                .append(" AND ((ih.ispaycheque = '0' and ih.id_status = (select id from egw_status where moduletype = 'Instrument' and description = 'Deposited'))")
-                .append(" or (ih.ispaycheque = '1' and ih.id_status = (select id from egw_status where moduletype = 'Instrument' and description = 'New')))")
-                .append(" and ih.instrumentnumber is not null");
-        //see u might need to exclude brs entries here
+        StringBuilder totalQuery = new StringBuilder(
+                "SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end)) AS \"brs_creditTotal\",")
+                        .append(" (sum( case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end)) AS \"brs_debitTotal\"")
+                        .append(" FROM egf_instrumentheader ih WHERE ih.bankAccountId = :bankAccountId AND IH.INSTRUMENTDATE >= :fromDate")
+                        .append(" AND IH.INSTRUMENTDATE <= :toDate AND ((ih.ispaycheque = '0' and ih.id_status =")
+                        .append(" (select id from egw_status where moduletype = 'Instrument' and description = 'Deposited'))")
+                        .append(" or (ih.ispaycheque = '1' and ih.id_status = (select id from egw_status")
+                        .append(" where moduletype = 'Instrument' and description = 'New')))")
+                        .append(" and ih.instrumentnumber is not null");
+        // see u might need to exclude brs entries here
 
-        StringBuilder otherTotalQuery = new StringBuilder(" SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end)) AS \"brs_creditTotalOthers\",")
-                .append(" (sum(case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end )) AS \"brs_debitTotalOthers\"")
-                .append(" FROM egf_instrumentheader ih WHERE ih.bankAccountId = :bankAccountId AND IH.transactiondate >= :fromDate AND IH.transactiondate <= :toDate")
-                .append(" AND ((ih.ispaycheque = '0' and ih.id_status = (select id from egw_status where moduletype = 'Instrument' and description = 'Deposited'))")
-                .append(" or (ih.ispaycheque = '1' and ih.id_status = (select id from egw_status where moduletype = 'Instrument' and description = 'New')))")
-                .append(" AND ih.transactionnumber is not null");
+        StringBuilder otherTotalQuery = new StringBuilder(
+                " SELECT (sum(case when ih.ispaycheque = '1' then ih.instrumentAmount else 0 end)) AS \"brs_creditTotalOthers\",")
+                        .append(" (sum(case when ih.ispaycheque = '0' then ih.instrumentAmount else 0 end )) AS \"brs_debitTotalOthers\"")
+                        .append(" FROM egf_instrumentheader ih WHERE ih.bankAccountId = :bankAccountId AND IH.transactiondate >= :fromDate")
+                        .append(" AND IH.transactiondate <= :toDate AND ((ih.ispaycheque = '0' and ih.id_status =")
+                        .append(" (select id from egw_status where moduletype = 'Instrument' and description = 'Deposited'))")
+                        .append(" or (ih.ispaycheque = '1' and ih.id_status = (select id from egw_status where moduletype = 'Instrument'")
+                        .append(" and description = 'New'))) AND ih.transactionnumber is not null");
 
-        StringBuilder brsEntryQuery = new StringBuilder(" select (sum(case when be.type = 'Receipt' then (case when be.voucherheaderid is null then be.txnamount else 0 end) else 0 end))")
-                .append(" AS \"brs_creditTotalBrsEntry\", (sum(case when be.type = 'Payment' then (case when be.voucherheaderid is null then be.txnamount else 0 end) else 0 end))")
-                .append(" AS \"brs_debitTotalBrsEntry\"")
-                .append(" FROM bankentries be")
-                .append(" WHERE be.bankAccountId = :bankAccountId and be.voucherheaderid is null AND be.txndate >= :fromDate AND be.txndate <= :toDate");
+        StringBuilder brsEntryQuery = new StringBuilder(
+                " select (sum(case when be.type = 'Receipt' then (case when be.voucherheaderid is null then be.txnamount else 0 end)")
+                        .append(" else 0 end)) AS \"brs_creditTotalBrsEntry\", (sum(case when be.type = 'Payment'")
+                        .append(" then (case when be.voucherheaderid is null then be.txnamount else 0 end) else 0 end))")
+                        .append(" AS \"brs_debitTotalBrsEntry\"")
+                        .append(" FROM bankentries be")
+                        .append(" WHERE be.bankAccountId = :bankAccountId and be.voucherheaderid is null AND be.txndate >= :fromDate")
+                        .append(" AND be.txndate <= :toDate");
 
-        if (LOGGER.isInfoEnabled()) LOGGER.info("  query  for  total : " + totalQuery);
-        if (LOGGER.isInfoEnabled()) LOGGER.info("  query  for other than cheque/DD: " + otherTotalQuery);
-        if (LOGGER.isInfoEnabled()) LOGGER.info("  query  for bankEntries: " + brsEntryQuery);
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("  query  for  total : " + totalQuery);
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("  query  for other than cheque/DD: " + otherTotalQuery);
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("  query  for bankEntries: " + brsEntryQuery);
 
         String unReconciledDrCr = "";
         String creditTotal = null;
@@ -111,45 +114,52 @@ public class BankReconciliationSummary {
         String debitTotalBrsEntry = null;
 
         try {
-            NativeQuery totalNativeQuery = persistenceService.getSession().createNativeQuery(totalQuery.toString());
-            totalNativeQuery.setParameter("bankAccountId", bankAccId, IntegerType.INSTANCE)
-                    .setParameter("fromDate", fromDate, DateType.INSTANCE)
-                    .setParameter("toDate", toDate, DateType.INSTANCE);
-            List list = totalNativeQuery.list();
+            List<Object[]> list = entityManager.createNativeQuery(totalQuery.toString())
+                    .setParameter("bankAccountId", bankAccId)
+                    .setParameter("fromDate", fromDate, TemporalType.DATE)
+                    .setParameter("toDate", toDate, TemporalType.DATE)
+                    .getResultList();
+
             if (!list.isEmpty()) {
-                if (LOGGER.isDebugEnabled()) LOGGER.debug(list.get(0));
-                Object[] my = (Object[]) list.get(0);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug(list.get(0));
+                Object[] my = list.get(0);
                 creditTotal = my[0] != null ? my[0].toString() : null;
                 debitTotal = my[1] != null ? my[1].toString() : null;
             }
 
-            totalNativeQuery = persistenceService.getSession().createNativeQuery(otherTotalQuery.toString());
-            totalNativeQuery.setParameter("bankAccountId", bankAccId, IntegerType.INSTANCE)
-                    .setParameter("fromDate", fromDate, DateType.INSTANCE)
-                    .setParameter("toDate", toDate, DateType.INSTANCE);
-            list = totalNativeQuery.list();
+            list = entityManager.createNativeQuery(otherTotalQuery.toString())
+                    .setParameter("bankAccountId", bankAccId)
+                    .setParameter("fromDate", fromDate, TemporalType.DATE)
+                    .setParameter("toDate", toDate, TemporalType.DATE)
+                    .getResultList();
             if (!list.isEmpty()) {
-                if (LOGGER.isDebugEnabled()) LOGGER.debug(list.get(0));
-                Object[] my = (Object[]) list.get(0);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug(list.get(0));
+                Object[] my = list.get(0);
                 creditOthertotal = my[0] != null ? my[0].toString() : null;
                 debitOtherTotal = my[1] != null ? my[1].toString() : null;
             }
 
-            totalNativeQuery = persistenceService.getSession().createNativeQuery(brsEntryQuery.toString());
-            totalNativeQuery.setParameter("bankAccountId", bankAccId, IntegerType.INSTANCE)
-                    .setParameter("fromDate", fromDate, DateType.INSTANCE)
-                    .setParameter("toDate", toDate, DateType.INSTANCE)
-                    .list();
+            list = entityManager.createNativeQuery(brsEntryQuery.toString())
+                    .setParameter("bankAccountId", bankAccId)
+                    .setParameter("fromDate", fromDate, TemporalType.DATE)
+                    .setParameter("toDate", toDate, TemporalType.DATE)
+                    .getResultList();
             if (list.size() > 0) {
-                if (LOGGER.isDebugEnabled()) LOGGER.debug(list.get(0));
-                Object[] my = (Object[]) list.get(0);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug(list.get(0));
+                Object[] my = list.get(0);
                 creditTotalBrsEntry = my[0] != null ? my[0].toString() : null;
                 debitTotalBrsEntry = my[1] != null ? my[1].toString() : null;
             }
 
-            unReconciledDrCr = new StringBuilder((creditTotal != null ? creditTotal : "0")).append("/").append((creditOthertotal != null ? creditOthertotal : "0"))
-                    .append("/").append((debitTotal != null ? debitTotal : "0")).append("/").append((debitOtherTotal != null ? debitOtherTotal : "0")).append("")
-                    .append("/").append((creditTotalBrsEntry != null ? creditTotalBrsEntry : "0")).append("/").append((debitTotalBrsEntry != null ? debitTotalBrsEntry : "0"))
+            unReconciledDrCr = new StringBuilder(creditTotal != null ? creditTotal : "0").append("/")
+                    .append(creditOthertotal != null ? creditOthertotal : "0")
+                    .append("/").append(debitTotal != null ? debitTotal : "0").append("/")
+                    .append(debitOtherTotal != null ? debitOtherTotal : "0").append("")
+                    .append("/").append(creditTotalBrsEntry != null ? creditTotalBrsEntry : "0").append("/")
+                    .append(debitTotalBrsEntry != null ? debitTotalBrsEntry : "0")
                     .append("").toString();
         } catch (Exception e) {
             LOGGER.error("Exp in getUnReconciledDrCr", e);

@@ -48,10 +48,6 @@
 package com.exilant.eGov.src.domain;
 
 import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Iliyaraja
@@ -59,10 +55,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 public class BillRegisterBean {
-    private static final Logger LOGGER = Logger.getLogger(BillRegisterBean.class);
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     private String id = null;
     private String billNumber = null;
     private String billDate = null;
