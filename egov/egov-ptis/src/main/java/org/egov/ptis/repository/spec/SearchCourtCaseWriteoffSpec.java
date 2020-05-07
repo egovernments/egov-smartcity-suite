@@ -1,19 +1,23 @@
 package org.egov.ptis.repository.spec;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.persistence.criteria.Predicate;
 
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.view.SearchCourtCaseWriteoffRequest;
 import org.springframework.data.jpa.domain.Specification;
-import java.util.Calendar;
-import java.util.Date;
 
 public class SearchCourtCaseWriteoffSpec {
 
     private static final String PROPERTY = "property";
     private static final String STATUS = "status";
     private static final String CREATED_DATE = "createdDate";
+    private static final String STATE = "state";
+    private static final String VALUE = "value";
+    private static final String CLOSED = "Closed";
 
     private SearchCourtCaseWriteoffSpec() {
 
@@ -32,14 +36,14 @@ public class SearchCourtCaseWriteoffSpec {
                         .add(builder.equal(root.get("applicationNumber"), searchCourtCaseWriteoffRequest.getApplicationNumber()));
             if (searchCourtCaseWriteoffRequest.getApplicationStatus() != null
                     && !searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("All"))
-                if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open"))
+                if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open")) {
                     predicate.getExpressions()
-                            .add(builder.equal(root.get(PROPERTY).get(STATUS), 'W'));
-                else {
+                            .add(builder.notEqual(root.get(STATE).get(VALUE), CLOSED));
+                } else {
                     predicate.getExpressions()
                             .add(builder.notEqual(root.get(PROPERTY).get(STATUS), 'W'));
                     predicate.getExpressions()
-                            .add(builder.equal(root.get("state").get("value"), "Closed"));
+                            .add(builder.equal(root.get(STATE).get(VALUE), CLOSED));
                 }
             if (searchCourtCaseWriteoffRequest.getFromDate() != null && searchCourtCaseWriteoffRequest.getToDate() != null) {
                 predicate.getExpressions()
@@ -66,14 +70,14 @@ public class SearchCourtCaseWriteoffSpec {
                         .add(builder.equal(root.get("applicationNumber"), searchCourtCaseWriteoffRequest.getApplicationNumber()));
             if (searchCourtCaseWriteoffRequest.getApplicationStatus() != null
                     && !searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("All"))
-                if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open"))
+                if (searchCourtCaseWriteoffRequest.getApplicationStatus().equalsIgnoreCase("Open")) {
                     predicate.getExpressions()
-                            .add(builder.equal(root.get(PROPERTY).get(STATUS), 'W'));
-                else {
+                            .add(builder.notEqual(root.get(STATE).get(VALUE), CLOSED));
+                } else {
                     predicate.getExpressions()
                             .add(builder.notEqual(root.get(PROPERTY).get(STATUS), 'W'));
                     predicate.getExpressions()
-                            .add(builder.equal(root.get("state").get("value"), "Closed"));
+                            .add(builder.equal(root.get(STATE).get(VALUE), CLOSED));
                 }
             if (searchCourtCaseWriteoffRequest.getFromDate() != null && searchCourtCaseWriteoffRequest.getToDate() != null) {
                 predicate.getExpressions()
