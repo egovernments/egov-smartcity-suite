@@ -165,6 +165,8 @@ public class CouncilPreamble extends StateAware<Position> {
     
     @Column
     private String statusMessage;
+    
+    private BigDecimal budgetBalance;
 
     @Override
     public Long getId() {
@@ -349,5 +351,14 @@ public class CouncilPreamble extends StateAware<Position> {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+	public BigDecimal getBudgetBalance() {
+		return budgetBalance;
+	}
+
+	public void setBudgetBalance(BigDecimal budgetBalance) {
+		this.budgetBalance = budgetBalance;
+	}
+    
     
 }

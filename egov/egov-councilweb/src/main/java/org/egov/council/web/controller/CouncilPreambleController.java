@@ -57,6 +57,7 @@ import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +78,7 @@ import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilThirdPartyService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
+import org.egov.egf.commons.FinancialMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -156,6 +158,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private AppConfigValueService appConfigValueService;
     @Autowired
     private BidderService bidderService;
+    
+    @Autowired
+	private FinancialMasterService financialMasterService;
 
     @ModelAttribute("departments")
     public List<Department> getDepartmentList() {
@@ -195,6 +200,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute("additionalRule", COUNCIL_COMMON_WORKFLOW);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute(CURRENT_STATE, "NEW");
+        addFiancialData(model);
         return COUNCILPREAMBLE_NEW;
     }
 
@@ -257,8 +263,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request
                     .getParameter(APPROVAL_POSITION));
-
-        councilPreambleService.create(councilPreamble, approvalPosition,
+		if (request.getParameter("budgetBalance") != null) {
+			final BigDecimal budgetBalance;
+			budgetBalance = BigDecimal.valueOf(Long.valueOf(request.getParameter("budgetBalance")));
+			councilPreamble.setBudgetBalance(budgetBalance);
+		}
+		councilPreambleService.create(councilPreamble, approvalPosition,
                 approvalComment, workFlowAction);
 
         String message = messageSource.getMessage("msg.councilPreamble.create",
@@ -503,5 +513,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         return councilPreambleService.autoGenerationModeEnabled(
                 MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
     }
+
+	private void addFiancialData(Model model) {
+		model.addAttribute("funds", financialMasterService.getAllActiveFunds());
+		model.addAttribute("functions", financialMasterService.getFunctions());
+		model.addAttribute("financialYears", financialMasterService.getAllActiveFinYears());
+	}
 
 }
