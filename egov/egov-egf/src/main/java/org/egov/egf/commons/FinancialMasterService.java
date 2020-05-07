@@ -117,7 +117,10 @@ public class FinancialMasterService {
 	public List<BudgetDetails> getBudgetDetails(final String finYear, String deptId, String fundId, String functionId,
 			String glCodeId) {
 		List<BudgetDetails> budgetDetails;
-		String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId";
+		String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable "
+				+ "from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id "
+				+ "and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId "
+				+ "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId and bd.isbere = 'BE'";
 		javax.persistence.Query searchQry = entityManager.createNativeQuery(queryStr);
 		searchQry.setParameter("finYearId", Long.valueOf(finYear));
 		searchQry.setParameter("fundId", Long.valueOf(fundId));
@@ -148,7 +151,7 @@ public class FinancialMasterService {
 					.createQuery("from CFinancialYear where id=:finYearId", CFinancialYear.class)
 					.setParameter("finYearId", detail.getFinYearId()).getSingleResult();
 			DateTime fromDate = new DateTime(financialYear.getStartingDate());
-			DateTime toDate = new DateTime(new Date());
+			DateTime toDate = new DateTime(financialYear.getEndingDate());
 			String voucherFromDate = fromDate.toString(dtf);
 			String voucherToDate = toDate.toString(dtf);
 			final BigDecimal billsAmount = fetchActualsForFYDate(detail.getBudgetDetailId(), voucherFromDate,
