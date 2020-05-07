@@ -200,6 +200,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute("additionalRule", COUNCIL_COMMON_WORKFLOW);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute(CURRENT_STATE, "NEW");
+        model.addAttribute("allowBudgetSearch", true);
         addFiancialData(model);
         return COUNCILPREAMBLE_NEW;
     }
