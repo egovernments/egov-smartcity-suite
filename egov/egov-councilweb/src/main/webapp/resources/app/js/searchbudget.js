@@ -98,7 +98,7 @@ $('#searchBudget')
 										+ "&fundId="
 										+ fundId
 										+ "&functionId="
-										+ functionId + "&glCode=" + glCodeId,
+										+ functionId + "&glCodeId=" + glCodeId,
 								type : "post",
 								// dataType: "json",
 								success : function(response) {
