@@ -168,7 +168,7 @@ public class FinancialMasterService {
 	private BigDecimal fetchTotalBillsCreatedAmount(Long functionId, Long glCodeId, String fromDate, String toDate) {
 		final StringBuilder billAmountQuery = new StringBuilder();
 		billAmountQuery.append(
-				"select bd.glcodeid,coalesce(sum(bd.creditamount),0) from eg_billregister br,eg_billdetails bd where bd.billid=br.id and br.billstatus = 'APPROVED' and bd.glcodeid=:glCodeId and bd.functionid=:functionId and br.createddate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and br.createddate <=to_timestamp(:toDate, 'YYYY-MM-dd') group by bd.glcodeid");
+				"select bd.glcodeid,coalesce(sum(bd.debitamount),0) from eg_billregister br,eg_billdetails bd where bd.billid=br.id and br.billstatus = 'APPROVED' and bd.glcodeid=:glCodeId and bd.functionid=:functionId and br.createddate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and br.createddate <=to_timestamp(:toDate, 'YYYY-MM-dd') group by bd.glcodeid");
 		javax.persistence.Query searchQry = entityManager.createNativeQuery(billAmountQuery.toString());
 
 		searchQry.setParameter("fromDate", fromDate);
