@@ -191,12 +191,11 @@
 							</s:else>
 							"reappropriation_amount":'<s:property value="approvedReAppropriationsTotal.setScale(2).toString()"/>',
 							"approved_amount":'<s:property value="%{calculateTotal(#p)}"/>',
-							"":'',
 							<s:if test="%{budgetDetailIdsAndAmount[#p.id.toString()] != null}">
-								"available_balance":'<s:property value="budgetAvailable-budgetDetailIdsAndAmount[#p.id.toString()]"/>',
+								"available_balance":'<s:property value="approvedAmount-budgetDetailIdsAndAmount[#p.id.toString()]"/>',
 							</s:if>
 							<s:else>
-								"available_balance":'<s:property value="budgetAvailable"/>',
+								"available_balance":'<s:property value="approvedAmount"/>',
 							</s:else>
 							"comment":'<s:property value="comment"/>',
 							/* "document":'<input type="submit" class="buttonsubmit" value="View" onclick="'+'viewDocumentManager(<s:property value="#p.documentNumber"/>);return false;"/>' */
