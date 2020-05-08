@@ -50,7 +50,6 @@ package org.egov.egf.commons;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,10 +116,10 @@ public class FinancialMasterService {
 	public List<BudgetDetails> getBudgetDetails(final String finYear, String deptId, String fundId, String functionId,
 			String glCodeId) {
 		List<BudgetDetails> budgetDetails;
-		String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable "
+		String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable,bd.isbere "
 				+ "from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id "
 				+ "and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId "
-				+ "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId and bd.isbere = 'BE'";
+				+ "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId";
 		javax.persistence.Query searchQry = entityManager.createNativeQuery(queryStr);
 		searchQry.setParameter("finYearId", Long.valueOf(finYear));
 		searchQry.setParameter("fundId", Long.valueOf(fundId));
@@ -135,15 +134,18 @@ public class FinancialMasterService {
 			budgetDetails = results.stream()
 					.map(result -> new BudgetDetails(Long.valueOf(result[0].toString()),
 							Long.valueOf(result[1].toString()), (BigDecimal) result[2], (BigDecimal) result[3],
-							(BigDecimal) result[4]))
+							(BigDecimal) result[4],result[5].toString()))
 					.collect(Collectors.toList());
 
-			prepareBudgetAmountDeatils(budgetDetails);
+			if (budgetDetails.size() > 1) {
+				budgetDetails.removeIf(budget -> "BE".equals(budget.getIsBere()));
+			}
+			setBillAmountDeatils(budgetDetails, Long.valueOf(functionId), Long.valueOf(glCodeId));
 			return budgetDetails;
 		}
 	}
 
-	private void prepareBudgetAmountDeatils(List<BudgetDetails> budgetDetails) {
+	private void setBillAmountDeatils(List<BudgetDetails> budgetDetails, final Long functionId, final Long glCodeId) {
 
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
 		for (BudgetDetails detail : budgetDetails) {
@@ -154,7 +156,7 @@ public class FinancialMasterService {
 			DateTime toDate = new DateTime(financialYear.getEndingDate());
 			String voucherFromDate = fromDate.toString(dtf);
 			String voucherToDate = toDate.toString(dtf);
-			final BigDecimal billsAmount = fetchActualsForFYDate(detail.getBudgetDetailId(), voucherFromDate,
+			final BigDecimal billsAmount = fetchTotalBillsCreatedAmount(functionId, glCodeId, voucherFromDate,
 					voucherToDate);
 			detail.setBillsCreatedAmount(billsAmount);
 			detail.setBudgetBalance(detail.getApprovedAmount().subtract(billsAmount));
@@ -163,32 +165,22 @@ public class FinancialMasterService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private BigDecimal fetchActualsForFYDate(Long budgetDtId, String voucherFromDate, String voucherToDate) {
-		final StringBuilder budgetGroupQuery = new StringBuilder();
+	private BigDecimal fetchTotalBillsCreatedAmount(Long functionId, Long glCodeId, String fromDate, String toDate) {
+		final StringBuilder billAmountQuery = new StringBuilder();
+		billAmountQuery.append(
+				"select bd.glcodeid,sum(bd.creditamount) from eg_billregister br,eg_billdetails bd where bd.billid=br.id and br.billstatus = 'APPROVED' and bd.glcodeid=:glCodeId and bd.functionid=:functionId and br.createddate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and br.createddate <=to_timestamp(:toDate, 'YYYY-MM-dd') group by bd.glcodeid");
+		javax.persistence.Query searchQry = entityManager.createNativeQuery(billAmountQuery.toString());
 
-		budgetGroupQuery.append(" (select bg1.id as id,bg1.accounttype as accounttype, c1.glcode "
-				+ "as mincode,c2.glcode as maxcode,c3.glcode as majorcode "
-				+ "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-				+ "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
-		StringBuilder query = new StringBuilder();
-		query = query
-				.append("select bd.id,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh, vouchermis vmis,")
-				.append(budgetGroupQuery)
-				.append(" ,egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and vh.status not in (4) and vh.voucherDate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and vh.voucherDate <=to_timestamp(:toDate, 'YYYY-MM-dd') and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) and bd.id=:budgetDtId group by bd.id union select bd.id,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,vouchermis vmis,")
-				.append(budgetGroupQuery)
-				.append(" ,egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in (4) and vh.voucherDate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and vh.voucherDate <=to_timestamp(:toDate, 'YYYY-MM-dd') and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) and bd.id=:budgetDtId group by bd.id");
-
-		javax.persistence.Query searchQry = entityManager.createNativeQuery(query.toString());
-
-		searchQry.setParameter("fromDate", voucherFromDate);
-		searchQry.setParameter("toDate", voucherToDate);
-		searchQry.setParameter("budgetDtId", budgetDtId);
+		searchQry.setParameter("fromDate", fromDate);
+		searchQry.setParameter("toDate", toDate);
+		searchQry.setParameter("glCodeId", glCodeId);
+		searchQry.setParameter("functionId", functionId);
 
 		final List<Object[]> result = searchQry.getResultList();
-		if (result.isEmpty()) {
+		if (result.isEmpty() || result.get(0) == null) {
 			return BigDecimal.ZERO;
 		} else {
-			return new BigDecimal(result.get(0)[1].toString());
+			return (BigDecimal) result.get(0)[1];
 		}
 	}
 }

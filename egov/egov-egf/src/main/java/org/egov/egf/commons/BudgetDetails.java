@@ -59,15 +59,17 @@ public class BudgetDetails {
 	private BigDecimal budgetAvailable;
 	private BigDecimal billsCreatedAmount;
 	private BigDecimal budgetBalance;
+	private String isBere;
 
 	public BudgetDetails(Long budgetDetailId, Long finYearId, BigDecimal originalAmount, BigDecimal approvedAmount,
-			BigDecimal budgetAvailable) {
+			BigDecimal budgetAvailable,String isBere) {
 		super();
 		this.budgetDetailId = budgetDetailId;
 		this.finYearId = finYearId;
 		this.originalAmount = originalAmount;
 		this.approvedAmount = approvedAmount;
 		this.budgetAvailable = budgetAvailable;
+		this.isBere = isBere;
 	}
 
 	public Long getBudgetDetailId() {
@@ -124,6 +126,14 @@ public class BudgetDetails {
 
 	public void setBillsCreatedAmount(BigDecimal billsCreatedAmount) {
 		this.billsCreatedAmount = billsCreatedAmount;
+	}
+
+	public String getIsBere() {
+		return isBere;
+	}
+
+	public void setIsBere(String isBere) {
+		this.isBere = isBere;
 	}
 
 }
