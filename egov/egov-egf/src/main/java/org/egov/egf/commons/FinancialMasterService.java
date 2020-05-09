@@ -75,112 +75,112 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FinancialMasterService {
 
-	@Autowired
-	private FundService fundService;
+    @Autowired
+    private FundService fundService;
 
-	@Autowired
-	private FunctionService functionService;
+    @Autowired
+    private FunctionService functionService;
 
-	@Autowired
-	private FinancialYearHibernateDAO financialYearDAO;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
-	@Autowired
-	@Qualifier("budgetDetailService")
-	protected BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetDetailService")
+    protected BudgetDetailService budgetDetailService;
 
-	@Autowired
-	private EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
 
-	public List<CFinancialYear> getAllActiveFinYears() {
-		return financialYearDAO.getAllActiveFinancialYearList();
-	}
+    public List<CFinancialYear> getAllActiveFinYears() {
+        return financialYearDAO.getAllActiveFinancialYearList();
+    }
 
-	public List<Fund> getAllActiveFunds() {
-		return fundService.getByIsActive(true);
-	}
+    public List<Fund> getAllActiveFunds() {
+        return fundService.getByIsActive(true);
+    }
 
-	public List<CFunction> getFunctions() {
-		return functionService.findAllActive();
-	}
+    public List<CFunction> getFunctions() {
+        return functionService.findAllActive();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<CChartOfAccounts> findAccountCodesByGlcodeNameLike(String searchString) {
-		final javax.persistence.Query qry = entityManager.createQuery(
-				"from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
-		qry.setParameter("glCode", searchString + "%");
-		qry.setParameter("name", "%" + searchString.toUpperCase() + "%");
-		return (List<CChartOfAccounts>) qry.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<CChartOfAccounts> findAccountCodesByGlcodeNameLike(String searchString) {
+        final javax.persistence.Query qry = entityManager.createQuery(
+                "from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
+        qry.setParameter("glCode", searchString + "%");
+        qry.setParameter("name", "%" + searchString.toUpperCase() + "%");
+        return (List<CChartOfAccounts>) qry.getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<BudgetDetails> getBudgetDetails(final String finYear, String deptId, String fundId, String functionId,
-			String glCodeId) {
-		List<BudgetDetails> budgetDetails;
-		String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable,bd.isbere "
-				+ "from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id "
-				+ "and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId "
-				+ "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId";
-		javax.persistence.Query searchQry = entityManager.createNativeQuery(queryStr);
-		searchQry.setParameter("finYearId", Long.valueOf(finYear));
-		searchQry.setParameter("fundId", Long.valueOf(fundId));
-		searchQry.setParameter("functionId", Long.valueOf(functionId));
-		searchQry.setParameter("deptId", Long.valueOf(deptId));
-		searchQry.setParameter("glCodeId", Long.valueOf(glCodeId));
+    @SuppressWarnings("unchecked")
+    public List<BudgetDetails> getBudgetDetails(final String finYear, String deptId, String fundId, String functionId,
+            String glCodeId) {
+        List<BudgetDetails> budgetDetails;
+        String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable,bd.isbere "
+                + "from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id "
+                + "and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId "
+                + "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId";
+        javax.persistence.Query searchQry = entityManager.createNativeQuery(queryStr);
+        searchQry.setParameter("finYearId", Long.valueOf(finYear));
+        searchQry.setParameter("fundId", Long.valueOf(fundId));
+        searchQry.setParameter("functionId", Long.valueOf(functionId));
+        searchQry.setParameter("deptId", Long.valueOf(deptId));
+        searchQry.setParameter("glCodeId", Long.valueOf(glCodeId));
 
-		List<Object[]> results = searchQry.getResultList();
-		if (results.isEmpty()) {
-			return Collections.emptyList();
-		} else {
-			budgetDetails = results.stream()
-					.map(result -> new BudgetDetails(Long.valueOf(result[0].toString()),
-							Long.valueOf(result[1].toString()), (BigDecimal) result[2], (BigDecimal) result[3],
-							(BigDecimal) result[4],result[5].toString()))
-					.collect(Collectors.toList());
+        List<Object[]> results = searchQry.getResultList();
+        if (results.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            budgetDetails = results.stream()
+                    .map(result -> new BudgetDetails(Long.valueOf(result[0].toString()),
+                            Long.valueOf(result[1].toString()), (BigDecimal) result[2], (BigDecimal) result[3],
+                            (BigDecimal) result[4], result[5].toString()))
+                    .collect(Collectors.toList());
 
-			if (budgetDetails.size() > 1) {
-				budgetDetails.removeIf(budget -> "BE".equals(budget.getIsBere()));
-			}
-			setBillAmountDeatils(budgetDetails, Long.valueOf(functionId), Long.valueOf(glCodeId));
-			return budgetDetails;
-		}
-	}
+            if (budgetDetails.size() > 1) {
+                budgetDetails.removeIf(budget -> "BE".equals(budget.getIsBere()));
+            }
+            setBillAmountDeatils(budgetDetails, Long.valueOf(functionId), Long.valueOf(glCodeId));
+            return budgetDetails;
+        }
+    }
 
-	private void setBillAmountDeatils(List<BudgetDetails> budgetDetails, final Long functionId, final Long glCodeId) {
+    private void setBillAmountDeatils(List<BudgetDetails> budgetDetails, final Long functionId, final Long glCodeId) {
 
-		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-		for (BudgetDetails detail : budgetDetails) {
-			CFinancialYear financialYear = entityManager
-					.createQuery("from CFinancialYear where id=:finYearId", CFinancialYear.class)
-					.setParameter("finYearId", detail.getFinYearId()).getSingleResult();
-			DateTime fromDate = new DateTime(financialYear.getStartingDate());
-			DateTime toDate = new DateTime(financialYear.getEndingDate());
-			String voucherFromDate = fromDate.toString(dtf);
-			String voucherToDate = toDate.toString(dtf);
-			final BigDecimal billsAmount = fetchTotalBillsCreatedAmount(functionId, glCodeId, voucherFromDate,
-					voucherToDate);
-			detail.setBillsCreatedAmount(billsAmount);
-			detail.setBudgetBalance(detail.getApprovedAmount().subtract(billsAmount));
-		}
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+        for (BudgetDetails detail : budgetDetails) {
+            CFinancialYear financialYear = entityManager
+                    .createQuery("from CFinancialYear where id=:finYearId", CFinancialYear.class)
+                    .setParameter("finYearId", detail.getFinYearId()).getSingleResult();
+            DateTime fromDate = new DateTime(financialYear.getStartingDate());
+            DateTime toDate = new DateTime(financialYear.getEndingDate());
+            String voucherFromDate = fromDate.toString(dtf);
+            String voucherToDate = toDate.toString(dtf);
+            final BigDecimal billsAmount = fetchTotalBillsCreatedAmount(functionId, glCodeId, voucherFromDate,
+                    voucherToDate);
+            detail.setBillsCreatedAmount(billsAmount);
+            detail.setBudgetBalance(detail.getApprovedAmount().subtract(billsAmount));
+        }
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	private BigDecimal fetchTotalBillsCreatedAmount(Long functionId, Long glCodeId, String fromDate, String toDate) {
-		final StringBuilder billAmountQuery = new StringBuilder();
-		billAmountQuery.append(
-				"select bd.glcodeid,coalesce(sum(bd.debitamount),0) from eg_billregister br,eg_billdetails bd where bd.billid=br.id and br.billstatus = 'APPROVED' and bd.glcodeid=:glCodeId and bd.functionid=:functionId and br.createddate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and br.createddate <=to_timestamp(:toDate, 'YYYY-MM-dd') group by bd.glcodeid");
-		javax.persistence.Query searchQry = entityManager.createNativeQuery(billAmountQuery.toString());
+    @SuppressWarnings("unchecked")
+    private BigDecimal fetchTotalBillsCreatedAmount(Long functionId, Long glCodeId, String fromDate, String toDate) {
+        final StringBuilder billAmountQuery = new StringBuilder();
+        billAmountQuery.append(
+                "select bd.glcodeid,coalesce(sum(bd.debitamount),0) from eg_billregister br,eg_billdetails bd where bd.billid=br.id and br.billstatus = 'APPROVED' and bd.glcodeid=:glCodeId and bd.functionid=:functionId and br.createddate>=to_timestamp(:fromDate, 'YYYY-MM-dd') and br.createddate <=to_timestamp(:toDate, 'YYYY-MM-dd') group by bd.glcodeid");
+        javax.persistence.Query searchQry = entityManager.createNativeQuery(billAmountQuery.toString());
 
-		searchQry.setParameter("fromDate", fromDate);
-		searchQry.setParameter("toDate", toDate);
-		searchQry.setParameter("glCodeId", glCodeId);
-		searchQry.setParameter("functionId", functionId);
+        searchQry.setParameter("fromDate", fromDate);
+        searchQry.setParameter("toDate", toDate);
+        searchQry.setParameter("glCodeId", glCodeId);
+        searchQry.setParameter("functionId", functionId);
 
-		final List<Object[]> result = searchQry.getResultList();
-		if (result.isEmpty() || result.get(0) == null) {
-			return BigDecimal.ZERO;
-		} else {
-			return new BigDecimal(result.get(0)[1].toString());
-		}
-	}
+        final List<Object[]> result = searchQry.getResultList();
+        if (result.isEmpty() || result.get(0) == null) {
+            return BigDecimal.ZERO;
+        } else {
+            return new BigDecimal(result.get(0)[1].toString());
+        }
+    }
 }

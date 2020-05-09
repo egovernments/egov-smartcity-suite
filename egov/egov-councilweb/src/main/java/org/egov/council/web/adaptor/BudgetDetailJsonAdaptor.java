@@ -58,33 +58,33 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class BudgetDetailJsonAdaptor implements JsonSerializer<BudgetDetails> {
-	@Override
-	public JsonElement serialize(final BudgetDetails budgetDetails, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (budgetDetails != null) {
+    @Override
+    public JsonElement serialize(final BudgetDetails budgetDetails, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (budgetDetails != null) {
 
-			if (budgetDetails.getApprovedAmount() != null)
-				jsonObject.addProperty("ApprovedAmount", budgetDetails.getApprovedAmount());
-			else
-				jsonObject.addProperty("ApprovedAmount", "");
+            if (budgetDetails.getApprovedAmount() != null)
+                jsonObject.addProperty("ApprovedAmount", budgetDetails.getApprovedAmount());
+            else
+                jsonObject.addProperty("ApprovedAmount", "");
 
-			if (budgetDetails.getBudgetAvailable() != null)
-				jsonObject.addProperty("BudgetAvailable", budgetDetails.getBudgetAvailable());
-			else
-				jsonObject.addProperty("BudgetAvailable", "");
+            if (budgetDetails.getBudgetAvailable() != null)
+                jsonObject.addProperty("BudgetAvailable", budgetDetails.getBudgetAvailable());
+            else
+                jsonObject.addProperty("BudgetAvailable", "");
 
-			if (budgetDetails.getBillsCreatedAmount() != null)
-				jsonObject.addProperty("BillsCreatedAmount", budgetDetails.getBillsCreatedAmount());
-			else
-				jsonObject.addProperty("BillsCreatedAmount", "");
+            if (budgetDetails.getBillsCreatedAmount() != null)
+                jsonObject.addProperty("BillsCreatedAmount", budgetDetails.getBillsCreatedAmount());
+            else
+                jsonObject.addProperty("BillsCreatedAmount", "");
 
-			if (budgetDetails.getBudgetBalance() != null)
-				jsonObject.addProperty("BudgetBalance", budgetDetails.getBudgetBalance());
-			else
-				jsonObject.addProperty("BudgetBalance", "");
-		}
-		return jsonObject;
-	}
+            if (budgetDetails.getBudgetBalance() != null)
+                jsonObject.addProperty("BudgetBalance", budgetDetails.getBudgetBalance());
+            else
+                jsonObject.addProperty("BudgetBalance", "");
+        }
+        return jsonObject;
+    }
 
 }

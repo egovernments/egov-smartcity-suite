@@ -162,10 +162,10 @@ public class CouncilPreamble extends StateAware<Position> {
 
     @Transient
     private Long approvalPosition;
-    
+
     @Column
     private String statusMessage;
-    
+
     private BigDecimal budgetBalance;
 
     @Override
@@ -352,13 +352,12 @@ public class CouncilPreamble extends StateAware<Position> {
         this.statusMessage = statusMessage;
     }
 
-	public BigDecimal getBudgetBalance() {
-		return budgetBalance;
-	}
+    public BigDecimal getBudgetBalance() {
+        return budgetBalance;
+    }
 
-	public void setBudgetBalance(BigDecimal budgetBalance) {
-		this.budgetBalance = budgetBalance;
-	}
-    
+    public void setBudgetBalance(BigDecimal budgetBalance) {
+        this.budgetBalance = budgetBalance;
+    }
     
 }

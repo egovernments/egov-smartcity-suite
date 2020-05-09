@@ -158,9 +158,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private AppConfigValueService appConfigValueService;
     @Autowired
     private BidderService bidderService;
-    
+
     @Autowired
-	private FinancialMasterService financialMasterService;
+    private FinancialMasterService financialMasterService;
 
     @ModelAttribute("departments")
     public List<Department> getDepartmentList() {
@@ -264,12 +264,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request
                     .getParameter(APPROVAL_POSITION));
-		if (request.getParameter("budgetBalance") != null) {
-			final BigDecimal budgetBalance;
-			budgetBalance = BigDecimal.valueOf(Long.valueOf(request.getParameter("budgetBalance")));
-			councilPreamble.setBudgetBalance(budgetBalance);
-		}
-		councilPreambleService.create(councilPreamble, approvalPosition,
+        if (request.getParameter("budgetBalance") != null) {
+            final BigDecimal budgetBalance;
+            budgetBalance = BigDecimal.valueOf(Long.valueOf(request.getParameter("budgetBalance")));
+            councilPreamble.setBudgetBalance(budgetBalance);
+        }
+        councilPreambleService.create(councilPreamble, approvalPosition,
                 approvalComment, workFlowAction);
 
         String message = messageSource.getMessage("msg.councilPreamble.create",
@@ -515,10 +515,10 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
     }
 
-	private void addFiancialData(Model model) {
-		model.addAttribute("funds", financialMasterService.getAllActiveFunds());
-		model.addAttribute("functions", financialMasterService.getFunctions());
-		model.addAttribute("financialYears", financialMasterService.getAllActiveFinYears());
-	}
+    private void addFiancialData(Model model) {
+        model.addAttribute("funds", financialMasterService.getAllActiveFunds());
+        model.addAttribute("functions", financialMasterService.getFunctions());
+        model.addAttribute("financialYears", financialMasterService.getAllActiveFinYears());
+    }
 
 }
