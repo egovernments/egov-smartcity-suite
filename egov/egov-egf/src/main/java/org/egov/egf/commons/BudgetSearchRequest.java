@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,46 +45,61 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.egf.commons;
 
-package org.egov.council.web.adaptor;
+import javax.validation.constraints.NotNull;
 
-import java.lang.reflect.Type;
+public class BudgetSearchRequest {
 
-import org.egov.egf.commons.BudgetDetails;
+    @NotNull
+    private Long finYearId;
+    @NotNull
+    private Long departmentId;
+    @NotNull
+    private Long fundId;
+    @NotNull
+    private Long functionId;
+    @NotNull
+    private Long glCodeId;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+    public Long getFinYearId() {
+        return finYearId;
+    }
 
-public class BudgetDetailJsonAdaptor implements JsonSerializer<BudgetDetails> {
-    @Override
-    public JsonElement serialize(final BudgetDetails budgetDetails, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (budgetDetails != null) {
+    public void setFinYearId(Long finYearId) {
+        this.finYearId = finYearId;
+    }
 
-            if (budgetDetails.getApprovedAmount() != null)
-                jsonObject.addProperty("ApprovedAmount", budgetDetails.getApprovedAmount());
-            else
-                jsonObject.addProperty("ApprovedAmount", "");
+    public Long getDepartmentId() {
+        return departmentId;
+    }
 
-            if (budgetDetails.getBudgetAvailable() != null)
-                jsonObject.addProperty("BudgetAvailable", budgetDetails.getBudgetAvailable());
-            else
-                jsonObject.addProperty("BudgetAvailable", "");
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
 
-            if (budgetDetails.getBillsCreatedAmount() != null)
-                jsonObject.addProperty("BillsCreatedAmount", budgetDetails.getBillsCreatedAmount());
-            else
-                jsonObject.addProperty("BillsCreatedAmount", "");
+    public Long getFundId() {
+        return fundId;
+    }
 
-            if (budgetDetails.getBudgetBalance() != null)
-                jsonObject.addProperty("BudgetBalance", budgetDetails.getBudgetBalance());
-            else
-                jsonObject.addProperty("BudgetBalance", "");
-        }
-        return jsonObject;
+    public void setFundId(Long fundId) {
+        this.fundId = fundId;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public Long getGlCodeId() {
+        return glCodeId;
+    }
+
+    public void setGlCodeId(Long glCodeId) {
+        this.glCodeId = glCodeId;
     }
 
 }

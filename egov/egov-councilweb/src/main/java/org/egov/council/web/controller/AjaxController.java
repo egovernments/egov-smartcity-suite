@@ -48,44 +48,46 @@
 
 package org.egov.council.web.controller;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.commons.CChartOfAccounts;
-import org.egov.council.web.adaptor.BudgetDetailJsonAdaptor;
 import org.egov.egf.commons.BudgetDetails;
+import org.egov.egf.commons.BudgetSearchRequest;
 import org.egov.egf.commons.FinancialMasterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AjaxController {
 
-	@Autowired
-	private FinancialMasterService financialMasterService;
+    @Autowired
+    private FinancialMasterService financialMasterService;
 
-	@GetMapping("/coa/getallaccountcodes")
-	@ResponseBody
-	public List<CChartOfAccounts> getFunctions(@RequestParam("glCode") String glCode) {
-		return financialMasterService.findAccountCodesByGlcodeNameLike(glCode);
-	}
+    @GetMapping("/coa/getallaccountcodes")
+    @ResponseBody
+    public List<CChartOfAccounts> getFunctions(@RequestParam("glCode") String glCode) {
+        return financialMasterService.findAccountCodesByGlcodeNameLike(glCode);
+    }
 
-	@RequestMapping(value = "/budget/getbudgetdetails", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String getbudgetdetails(@RequestParam("finYearId") String finYearId, @RequestParam("deptId") String deptId,
-			@RequestParam("fundId") String fundId, @RequestParam("functionId") String functionId,
-			@RequestParam("glCodeId") String glCodeId) {
-		List<BudgetDetails> budgetDetails = financialMasterService.getBudgetDetails(finYearId, deptId, fundId, functionId,
-				glCodeId);
-		return new StringBuilder("{\"data\":").append(toJSON(budgetDetails, BudgetDetails.class, BudgetDetailJsonAdaptor.class))
-				.append("}").toString();
-	}
+    @PostMapping(value = "/budget/getbudgetdetails")
+    @ResponseBody
+    public ResponseEntity<Object> getbudgetdetails1(@ModelAttribute @Valid BudgetSearchRequest budgetSearchRequest,
+            final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Invalid input data.", HttpStatus.BAD_REQUEST);
+        }
+        List<BudgetDetails> budgetDetails = financialMasterService.getBudgetDetails(budgetSearchRequest);
+        return new ResponseEntity<>(budgetDetails, HttpStatus.OK);
+    }
 
 }

@@ -86,27 +86,23 @@ $('#searchBudget')
 						bootbox.alert("Please enter account head.");
 						return false;
 					} 	
-
-
-
-					    	$
+						 	$
 							.ajax({
 								url : "/council/budget/getbudgetdetails?finYearId="
 										+ finYear
-										+ "&deptId="
+										+ "&departmentId="
 										+ deptId
 										+ "&fundId="
 										+ fundId
 										+ "&functionId="
 										+ functionId + "&glCodeId=" + glCodeId,
-								type : "post",
-								// dataType: "json",
+								type : "POST",
 								success : function(response) {
 									$('#budgetDetailsTable tbody').empty();
 									$('#hideTable').attr('disabled', false);
-									// console.log(response);
-									var budgetDetails = JSON.parse(response);
-									if (budgetDetails.data.length == 0) {
+									//console.log(response[0]);
+									var budgetDetails = response;
+									if (budgetDetails.length == 0) {
 										$('#budgetDetails').hide();
 										$('#hideTable').attr('disabled', true);
 										bootbox.alert("No budget available.");
@@ -114,10 +110,10 @@ $('#searchBudget')
 									}
 									$('#budgetDetails').show();
 
-									$.each(budgetDetails.data,
+									$.each(budgetDetails,
 													function(index, budget) {
 														$('#budgetBalance')
-																.val(budget.BudgetBalance);
+																.val(budget.budgetBalance);
 														$('#budgetDetailsTable tbody')
 																.append(
 																		$('<tr>')
@@ -127,23 +123,30 @@ $('#searchBudget')
 																								+ '</td>')
 																				.append(
 																						'<td align="right">'
-																								+ budget.ApprovedAmount
+																								+ budget.approvedAmount
 																								+ '</td>')
 																				.append(
 																						'<td align="right">'
-																								+ budget.BillsCreatedAmount
+																								+ budget.billsCreatedAmount
 																								+ '</td>')
 																				.append(
 																						'<td align="right">'
-																								+ budget.BudgetBalance
+																								+ budget.budgetBalance
 																								+ '</td>'));
 
 													});
 								},
 								error : function(response) {
+									
+									if(response.status===400){
+										bootbox
+										.alert(response.responseJSON);
+									}else{
 									bootbox
-											.alert("An error occured while fetching the budget.");
-									console.log("failed");
+											.alert("An error occured while fetching the budget details.");
+									}
+									//console.log(response);
+
 								}
 							});
 

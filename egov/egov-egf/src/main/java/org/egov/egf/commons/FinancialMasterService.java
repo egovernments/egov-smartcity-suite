@@ -75,6 +75,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FinancialMasterService {
 
+    private static final int BUDGET_MIN_RESULT_SIZE = 1;
+    private static final String BUDGET_TYPE_BE = "BE";
+
     @Autowired
     private FundService fundService;
 
@@ -113,19 +116,18 @@ public class FinancialMasterService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<BudgetDetails> getBudgetDetails(final String finYear, String deptId, String fundId, String functionId,
-            String glCodeId) {
+    public List<BudgetDetails> getBudgetDetails(BudgetSearchRequest budgetSearchRequest) {
         List<BudgetDetails> budgetDetails;
         String queryStr = "select bdt.id,bd.financialyearid,bdt.originalamount,bdt.approvedamount,bdt.budgetavailable,bd.isbere "
                 + "from egf_budget bd,egf_budgetdetail bdt,egf_budgetgroup bg where bdt.budget=bd.id and bdt.budgetgroup= bg.id "
                 + "and bd.financialyearid=:finYearId and  bdt.fund=:fundId and bdt.function=:functionId "
                 + "and bdt.executing_department=:deptId and bg.maxcode=:glCodeId and bg.mincode=:glCodeId";
         javax.persistence.Query searchQry = entityManager.createNativeQuery(queryStr);
-        searchQry.setParameter("finYearId", Long.valueOf(finYear));
-        searchQry.setParameter("fundId", Long.valueOf(fundId));
-        searchQry.setParameter("functionId", Long.valueOf(functionId));
-        searchQry.setParameter("deptId", Long.valueOf(deptId));
-        searchQry.setParameter("glCodeId", Long.valueOf(glCodeId));
+        searchQry.setParameter("finYearId", budgetSearchRequest.getFinYearId());
+        searchQry.setParameter("deptId", budgetSearchRequest.getDepartmentId());
+        searchQry.setParameter("fundId", budgetSearchRequest.getFundId());
+        searchQry.setParameter("functionId", budgetSearchRequest.getFunctionId());
+        searchQry.setParameter("glCodeId", budgetSearchRequest.getGlCodeId());
 
         List<Object[]> results = searchQry.getResultList();
         if (results.isEmpty()) {
@@ -137,10 +139,10 @@ public class FinancialMasterService {
                             (BigDecimal) result[4], result[5].toString()))
                     .collect(Collectors.toList());
 
-            if (budgetDetails.size() > 1) {
-                budgetDetails.removeIf(budget -> "BE".equals(budget.getIsBere()));
+            if (budgetDetails.size() > BUDGET_MIN_RESULT_SIZE) {
+                budgetDetails.removeIf(budget -> BUDGET_TYPE_BE.equals(budget.getIsBere()));
             }
-            setBillAmountDeatils(budgetDetails, Long.valueOf(functionId), Long.valueOf(glCodeId));
+            setBillAmountDeatils(budgetDetails, budgetSearchRequest.getFunctionId(), budgetSearchRequest.getGlCodeId());
             return budgetDetails;
         }
     }
