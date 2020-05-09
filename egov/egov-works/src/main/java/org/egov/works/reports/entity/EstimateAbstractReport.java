@@ -117,6 +117,29 @@ public class EstimateAbstractReport {
     private String subTypeOfWorkName;
     
     private Set<Department> departments = new HashSet<>();
+    
+	private Long lineEstimateDetails;
+
+	public EstimateAbstractReport(String typeOfWorkName, String subTypeOfWorkName, String departmentName,
+			Long lineEstimates, Long lineEstimateDetails, String adminSanctionedAmountInCrores,
+			Long adminSanctionedEstimates, Long technicalSanctionedEstimates, Long loaCreated,
+			String agreementValueInCrores, Long workInProgress, Long WorkCompleted, Long billsCreated,
+			String BillValueInCrores) {
+		this.typeOfWorkName = typeOfWorkName;
+		this.subTypeOfWorkName = subTypeOfWorkName;
+		this.departmentName = departmentName;
+		this.lineEstimates = lineEstimates;
+		this.lineEstimateDetails = lineEstimateDetails;
+		this.adminSanctionedAmountInCrores = adminSanctionedAmountInCrores;
+		this.adminSanctionedEstimates = adminSanctionedEstimates;
+		this.technicalSanctionedEstimates = technicalSanctionedEstimates;
+		this.loaCreated = loaCreated;
+		this.agreementValueInCrores = agreementValueInCrores;
+		this.workInProgress = workInProgress;
+		this.WorkCompleted = WorkCompleted;
+		this.billsCreated = billsCreated;
+		this.BillValueInCrores = BillValueInCrores;
+	}
 
     public Long getFinancialYear() {
         return financialYear;
@@ -293,6 +316,9 @@ public class EstimateAbstractReport {
     public void setBillValueInCrores(String billValueInCrores) {
         BillValueInCrores = billValueInCrores;
     }
+    public EstimateAbstractReport(){
+    	
+    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -349,5 +375,13 @@ public class EstimateAbstractReport {
     public void setSubTypeOfWorkName(String subTypeOfWorkName) {
         this.subTypeOfWorkName = subTypeOfWorkName;
     }
+
+	public Long getLineEstimateDetails() {
+		return lineEstimateDetails;
+	}
+
+	public void setLineEstimateDetails(Long lineEstimateDetails) {
+		this.lineEstimateDetails = lineEstimateDetails;
+	}
 
 }

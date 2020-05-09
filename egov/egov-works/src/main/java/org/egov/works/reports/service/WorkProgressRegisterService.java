@@ -47,9 +47,12 @@
  */
 package org.egov.works.reports.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -140,7 +143,11 @@ public class WorkProgressRegisterService {
         Query query = entityManager
                 .createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
-        return query.getResultList();
+		List<Object[]> results = query.getResultList();
+		if (results.isEmpty()) {
+			return Collections.emptyList();
+		} else
+			return prepareEstimateAbstractReportDetails(results, true);
 
     }
 
@@ -226,7 +233,6 @@ public class WorkProgressRegisterService {
     @Transactional
     public List<EstimateAbstractReport> searchEstimateAbstractReportByTypeOfWorkWise(
             final EstimateAbstractReport estimateAbstractReport) {
-
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
@@ -237,9 +243,13 @@ public class WorkProgressRegisterService {
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
         }
-        return query.getResultList();
 
-    }
+		List<Object[]> results = query.getResultList();
+		if (results.isEmpty()) {
+			return Collections.emptyList();
+		} else
+			return prepareEstimateAbstractReportDetails(results, false);
+	}
 
     private String getQueryForDepartmentWiseReport(EstimateAbstractReport estimateAbstractReport) {
         StringBuilder workInProgessCondition = new StringBuilder();
@@ -683,5 +693,38 @@ public class WorkProgressRegisterService {
         query.append(mainGroupByQuery.toString());
         return query.toString();
     }
+    
+	private List<EstimateAbstractReport> prepareEstimateAbstractReportDetails(List<Object[]> results,
+			final boolean isByDepartment) {
+		List<EstimateAbstractReport> estimateAbstractReportList;
+		for (Object[] obj : results) {
+			for (int i = 0; i < obj.length; i++) {
+				if (obj[i] == null) {
+					obj[i] = "NA";
+				}
+			}
+		}
+		if (isByDepartment) {
+			estimateAbstractReportList = results.stream().map(result -> new EstimateAbstractReport("NA", "NA",
+					result[0].toString(), new BigDecimal(result[1].toString()).longValue(),
+					new BigDecimal(result[2].toString()).longValue(), result[3].toString(),
+					new BigDecimal(result[4].toString()).longValue(), new BigDecimal(result[5].toString()).longValue(),
+					new BigDecimal(result[6].toString()).longValue(), result[7].toString(),
+					new BigDecimal(result[8].toString()).longValue(), new BigDecimal(result[9].toString()).longValue(),
+					new BigDecimal(result[10].toString()).longValue(), result[11].toString()))
+					.collect(Collectors.toList());
+		} else
+			estimateAbstractReportList = results.stream().map(result -> new EstimateAbstractReport(result[0].toString(),
+					result[1].toString(), result[2].toString(), new BigDecimal(result[3].toString()).longValue(),
+					new BigDecimal(result[4].toString()).longValue(), result[5].toString(),
+					new BigDecimal(result[6].toString()).longValue(), new BigDecimal(result[7].toString()).longValue(),
+					new BigDecimal(result[8].toString()).longValue(), result[9].toString(),
+					new BigDecimal(result[10].toString()).longValue(),
+					new BigDecimal(result[11].toString()).longValue(),
+					new BigDecimal(result[12].toString()).longValue(), result[13].toString()))
+					.collect(Collectors.toList());
+
+		return estimateAbstractReportList;
+	}
 
 }
