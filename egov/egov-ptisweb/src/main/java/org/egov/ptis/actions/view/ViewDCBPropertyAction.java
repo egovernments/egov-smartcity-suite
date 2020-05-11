@@ -161,12 +161,14 @@ import org.springframework.context.ApplicationContext;
 
     @Override
     public void prepare() {
-        setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster()!=null?
-                basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode():"")) {
-            serviceCode = SERVICE_CODE_VACANTLANDTAX;
-        } else {
-            serviceCode = SERVICE_CODE_PROPERTYTAX;
+        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+        if (basicProperty != null) {
+            if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
+                    ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode() : "")) {
+                serviceCode = SERVICE_CODE_VACANTLANDTAX;
+            } else {
+                serviceCode = SERVICE_CODE_PROPERTYTAX;
+            }
         }
     }
 
