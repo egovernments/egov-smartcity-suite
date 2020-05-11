@@ -1216,6 +1216,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         + ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
                         + ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
+			if (LOGGER.isInfoEnabled())
+				LOGGER.info("deptid " + deptid + ",functionid " + functionid + ",functionaryid " + functionaryid
+						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
+						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
+
             query.append(prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid,
                     boundaryid != null ? boundaryid.intValue() : null, fundid));
 
