@@ -171,9 +171,9 @@ public class DailyWTCollectionReportService {
             final StringBuilder queryString = new StringBuilder();
             queryString
                     .append("select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
-                            .concat(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '")
-                            .concat(receiptHeader.getConsumerCode().toString()) .concat("'") );
+                            .concat(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = :consumerCode"));
             final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryString.toString());
+            finalQuery.setParameter("consumerCode", receiptHeader.getConsumerCode());
             finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
             List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
             listforWardAndHsc = finalQuery.list();

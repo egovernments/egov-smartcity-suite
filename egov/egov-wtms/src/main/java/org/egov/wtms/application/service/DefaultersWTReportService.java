@@ -85,19 +85,27 @@ public class DefaultersWTReportService {
                 .append("from egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
 
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount ");
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=").concat(toAmount) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount "
+            		.concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <= :toAmount "));
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'"));
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.id = '" .concat(ward)  .concat("'") );
+            queryStr.append(" and wardboundary.id = :ward ");
 
-        queryStr.append(" and dcbinfo.demand IS NOT NULL");
-        if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
-        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
-        finalQuery.setFirstResult(startsFrom);
+        queryStr.append(" and dcbinfo.demand IS NOT NULL ");
+		if (!topDefaulters.isEmpty())
+			queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
+		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
+		if (Double.parseDouble(toAmount) == 0)
+			finalQuery.setParameter("fromAmount", fromAmount);
+		else {
+			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("toAmount", toAmount);
+		}
+		if (ward != null && !ward.isEmpty())
+			finalQuery.setParameter("ward", ward);
+		finalQuery.setFirstResult(startsFrom);
         finalQuery.setMaxResults(maxResults);
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
         return finalQuery.list();
@@ -110,14 +118,22 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount ");
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=")  .concat(toAmount) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount "
+                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <= :toAmount ")); 
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'") );
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.id = '".concat(ward.toString()).concat("'") );
-        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
+            queryStr.append(" and wardboundary.id = :ward "); 
+		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
+		if (ward != null && !ward.isEmpty())
+			finalQuery.setParameter("ward", ward);
+		if (Double.parseDouble(toAmount) == 0)
+			finalQuery.setParameter("fromAmount", fromAmount);
+		else {
+			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("toAmount", toAmount);
+		}
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
     }
@@ -130,17 +146,25 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount ");
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=").concat(toAmount));
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >= :fromAmount " 
+                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <= :toAmount "));
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'"));
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.id = '" .concat(ward).concat("'") );
+            queryStr.append(" and wardboundary.id = :ward ");
         if (!topDefaulters.isEmpty())
             queryStr.append(" limit ".concat(topDefaulters) );
         queryStr.append(") as count");
-        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
+		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
+		if (Double.parseDouble(toAmount) == 0)
+			finalQuery.setParameter("fromAmount", fromAmount);
+		else {
+			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("toAmount", toAmount);
+		}
+		if (ward != null && !ward.isEmpty())
+			finalQuery.setParameter("ward", ward);
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
     }

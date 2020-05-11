@@ -87,9 +87,11 @@ public class DataEntryConnectionReportService {
                         + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  INNER JOIN eg_boundary blockboundary on dcbinfo.block = blockboundary.id");
         queryStr.append(
                 " where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true and dcbinfo.approvalnumber IS NULL  and dcbinfo.connectiontype = 'NON_METERED' ");
-        if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = '".concat(ward).concat("'"));
-        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
+		if (ward != null && !ward.isEmpty())
+			queryStr.append(" and wardboundary.name =:ward");
+		final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
+		if (ward != null && !ward.isEmpty())
+			query.setParameter("ward", ward);
         query.setResultTransformer(new AliasToBeanResultTransformer(DataEntryConnectionReport.class));
         return query.list();
 
