@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,18 +45,95 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.repository.courtverdict;
 
-import org.egov.ptis.domain.entity.property.CourtVerdict;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+package org.egov.egf.commons;
 
-@Repository
-public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long>, JpaSpecificationExecutor<CourtVerdict> {
+import java.math.BigDecimal;
 
-    @Query("select cv from CourtVerdict cv where cv.applicationNumber=:appNo")
-    CourtVerdict getCourtCaseByApplicationNo(@Param("appNo") String name);
+public class BudgetDetails {
+
+    private Long budgetDetailId;
+    private Long finYearId;
+    private BigDecimal originalAmount;
+    private BigDecimal approvedAmount;
+    private BigDecimal budgetAvailable;
+    private BigDecimal billsCreatedAmount;
+    private BigDecimal budgetBalance;
+    private String isBere;
+
+    public BudgetDetails(Long budgetDetailId, Long finYearId, BigDecimal originalAmount, BigDecimal approvedAmount,
+            BigDecimal budgetAvailable, String isBere) {
+        super();
+        this.budgetDetailId = budgetDetailId;
+        this.finYearId = finYearId;
+        this.originalAmount = originalAmount;
+        this.approvedAmount = approvedAmount;
+        this.budgetAvailable = budgetAvailable;
+        this.isBere = isBere;
+    }
+
+    public Long getBudgetDetailId() {
+        return budgetDetailId;
+    }
+
+    public void setBudgetDetailId(Long budgetDetailId) {
+        this.budgetDetailId = budgetDetailId;
+    }
+
+    public Long getFinYearId() {
+        return finYearId;
+    }
+
+    public void setFinYearId(Long finYearId) {
+        this.finYearId = finYearId;
+    }
+
+    public BigDecimal getOriginalAmount() {
+        return originalAmount;
+    }
+
+    public void setOriginalAmount(BigDecimal originalAmount) {
+        this.originalAmount = originalAmount;
+    }
+
+    public BigDecimal getApprovedAmount() {
+        return approvedAmount;
+    }
+
+    public void setApprovedAmount(BigDecimal approvedAmount) {
+        this.approvedAmount = approvedAmount;
+    }
+
+    public BigDecimal getBudgetAvailable() {
+        return budgetAvailable;
+    }
+
+    public void setBudgetAvailable(BigDecimal budgetAvailable) {
+        this.budgetAvailable = budgetAvailable;
+    }
+
+    public BigDecimal getBudgetBalance() {
+        return budgetBalance;
+    }
+
+    public void setBudgetBalance(BigDecimal budgetBalance) {
+        this.budgetBalance = budgetBalance;
+    }
+
+    public BigDecimal getBillsCreatedAmount() {
+        return billsCreatedAmount;
+    }
+
+    public void setBillsCreatedAmount(BigDecimal billsCreatedAmount) {
+        this.billsCreatedAmount = billsCreatedAmount;
+    }
+
+    public String getIsBere() {
+        return isBere;
+    }
+
+    public void setIsBere(String isBere) {
+        this.isBere = isBere;
+    }
+
 }

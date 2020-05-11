@@ -169,13 +169,15 @@ public class CouncilPreamble extends StateAware<Position> {
 
     @Transient
     private Long approvalPosition;
-    
+
     @Column
     @SafeHtml
     private String statusMessage;
     
     @Transient
     private boolean validApprover = true;
+
+    private BigDecimal budgetBalance;
 
     @Override
     public Long getId() {
@@ -361,12 +363,20 @@ public class CouncilPreamble extends StateAware<Position> {
         this.statusMessage = statusMessage;
     }
 
-	public boolean isValidApprover() {
-		return validApprover;
-	}
+    public boolean isValidApprover() {
+	return validApprover;
+    }
 
-	public void setValidApprover(boolean validApprover) {
-		this.validApprover = validApprover;
-	}
+    public void setValidApprover(boolean validApprover) {
+	this.validApprover = validApprover;
+    }
+
+    public BigDecimal getBudgetBalance() {
+        return budgetBalance;
+    }
+
+    public void setBudgetBalance(BigDecimal budgetBalance) {
+        this.budgetBalance = budgetBalance;
+    }
     
 }

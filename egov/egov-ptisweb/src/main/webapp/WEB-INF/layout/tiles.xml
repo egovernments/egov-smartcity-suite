@@ -916,4 +916,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/billcollectorscollectionbook-form.jsp" />
 	</definition>
+	<definition name="searchwriteoffcourtcaseapplication" extends="base_layout">
+        <put-attribute name="page-title" value="title.wo.cc.application.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/search/searchwriteoffcourtcase-newForm.jsp"/>
+    </definition>
 </tiles-definitions> 

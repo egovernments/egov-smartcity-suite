@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,18 +45,61 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.repository.courtverdict;
+package org.egov.egf.commons;
 
-import org.egov.ptis.domain.entity.property.CourtVerdict;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import javax.validation.constraints.NotNull;
 
-@Repository
-public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long>, JpaSpecificationExecutor<CourtVerdict> {
+public class BudgetSearchRequest {
 
-    @Query("select cv from CourtVerdict cv where cv.applicationNumber=:appNo")
-    CourtVerdict getCourtCaseByApplicationNo(@Param("appNo") String name);
+    @NotNull
+    private Long finYearId;
+    @NotNull
+    private Long departmentId;
+    @NotNull
+    private Long fundId;
+    @NotNull
+    private Long functionId;
+    @NotNull
+    private Long glCodeId;
+
+    public Long getFinYearId() {
+        return finYearId;
+    }
+
+    public void setFinYearId(Long finYearId) {
+        this.finYearId = finYearId;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public Long getFundId() {
+        return fundId;
+    }
+
+    public void setFundId(Long fundId) {
+        this.fundId = fundId;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public Long getGlCodeId() {
+        return glCodeId;
+    }
+
+    public void setGlCodeId(Long glCodeId) {
+        this.glCodeId = glCodeId;
+    }
+
 }

@@ -83,34 +83,143 @@
 				<form:hidden path="type" id="type" value="${councilPreamble.type}" />
 				<input type="hidden" id="validationMessage" value="${validationMessage}" />
 			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.department" /> <span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="department" id="department"
-						cssClass="form-control" cssErrorClass="form-control error"
-						required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${departments}" itemValue="id"
-							itemLabel="name" />
-					</form:select>
-					<form:errors path="department" cssClass="error-msg" />
-				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.amount" /></label>
-				<div class="col-sm-3 add-margin">
-					<form:input path="sanctionAmount"
-						class="form-control text-left patternvalidation"
-						data-pattern="number" />
-					<form:errors path="sanctionAmount" cssClass="error-msg" />
-				</div>
-				<form:hidden path="" id="URL" name="URL" value="${URL}" />
-				<a
-					onclick="window.open('${URL}','name','width=800, height=600,scrollbars=yes')">Click
-					here to Check Budget</a>
-			</div>
+			<c:choose>
+				<c:when test="${allowBudgetSearch}">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.financialyear" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="" id="financialYear" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${financialYears}" itemValue="id"
+									itemLabel="finYearRange" />
+							</form:select>
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.department" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="department" id="department"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${departments}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="department" cssClass="error-msg" />
+						</div>
+
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.fund" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="" id="fund" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${funds}" itemValue="id" itemLabel="name" />
+							</form:select>
+							<form:errors path="" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.function" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="" id="function" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${functions}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="" cssClass="error-msg" />
+						</div>
+
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.accounthead" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path=""
+								class="form-control text-left patternvalidation"
+								data-pattern="number" id="accountHead"
+								placeholder="Enter first 3 numbers of COA code." />
+							<form:errors path="" cssClass="error-msg" />
+							<input type="hidden" id="accountHeadId" value="" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.amount" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="sanctionAmount"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" />
+							<form:errors path="sanctionAmount" cssClass="error-msg" />
+						</div>
+						<input type="hidden" name="budgetBalance" id="budgetBalance"
+							value="0" /> <input type="button" class="btn btn-primary"
+							id="searchBudget" value="Search Budget"></input> <input
+							type="button" class="btn btn-primary" id="hideTable" value="Hide"></input>
+
+					</div>
+					<div class="form-group" id="budgetDetails">
+						<div class="col-sm-2 add-margin">
+							<label class="col-sm-12 control-label text-right"><spring:message
+									code="lbl.budget.detail" /> </label>
+						</div>
+
+						<div class="col-sm-8 add-margin">
+							<table cellpadding="10"
+								class="table table-bordered datatable dt-responsive multiheadertbl"
+								role="grid" id="budgetDetailsTable" sortable="sortable">
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th><spring:message code="lbl.budget.allotted" /></th>
+										<th><spring:message code="lbl.budget.bills.created" /></th>
+										<th><spring:message code="lbl.budget.balance" /></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div class="col-sm-2 add-margin"></div>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="form-group">
+
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.department" /> <span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="department" id="department"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${departments}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="department" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.amount" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="sanctionAmount"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" />
+							<form:errors path="sanctionAmount" cssClass="error-msg" />
+						</div>
+					</div>
+				</c:otherwise>
+			</c:choose>
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.gistofpreamble" /><span class="mandatory"></span></label>
@@ -123,7 +232,7 @@
 				</div>
 
 			</div>
-			
+
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.upload" /><span class="mandatory"></span></label>
@@ -178,7 +287,7 @@
 				</div>
 				<input type="hidden" name="wardsHiddenIds" id="wardsHdnIds"
 					class="wardsHdnIds">
-			
+
 			</div>
 			<div>Note: After getting the council preamble prepared and
 				approved by the head of the section, the same should be uploaded

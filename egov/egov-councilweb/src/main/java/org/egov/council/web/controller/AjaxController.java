@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,18 +45,49 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.repository.courtverdict;
 
-import org.egov.ptis.domain.entity.property.CourtVerdict;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+package org.egov.council.web.controller;
 
-@Repository
-public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long>, JpaSpecificationExecutor<CourtVerdict> {
+import java.util.List;
 
-    @Query("select cv from CourtVerdict cv where cv.applicationNumber=:appNo")
-    CourtVerdict getCourtCaseByApplicationNo(@Param("appNo") String name);
+import javax.validation.Valid;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.egf.commons.BudgetDetails;
+import org.egov.egf.commons.BudgetSearchRequest;
+import org.egov.egf.commons.FinancialMasterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class AjaxController {
+
+    @Autowired
+    private FinancialMasterService financialMasterService;
+
+    @GetMapping("/coa/getallaccountcodes")
+    @ResponseBody
+    public List<CChartOfAccounts> getFunctions(@RequestParam("glCode") String glCode) {
+        return financialMasterService.findAccountCodesByGlcodeNameLike(glCode);
+    }
+
+    @PostMapping(value = "/budget/getbudgetdetails")
+    @ResponseBody
+    public ResponseEntity<Object> getbudgetdetails1(@ModelAttribute @Valid BudgetSearchRequest budgetSearchRequest,
+            final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Invalid input data.", HttpStatus.BAD_REQUEST);
+        }
+        List<BudgetDetails> budgetDetails = financialMasterService.getBudgetDetails(budgetSearchRequest);
+        return new ResponseEntity<>(budgetDetails, HttpStatus.OK);
+    }
+
 }

@@ -102,8 +102,7 @@ public class WaterDemandConnectionService {
     
 	public WaterDemandConnection getCurrentDemand(WaterConnectionDetails waterConnectionDetails) {
 		WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-		List<WaterDemandConnection> waterDemandConnectionList = findByWaterConnectionDetails(waterConnectionDetails);
-		for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+		for (WaterDemandConnection waterDemandConnection : waterConnectionDetails.getWaterDemandConnection())
 			if (waterDemandConnection.getDemand().getIsHistory()
 					.equalsIgnoreCase(WaterTaxConstants.DEMAND_ISHISTORY_N)) {
 				waterdemandConnection = waterDemandConnection;
