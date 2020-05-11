@@ -70,6 +70,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 @ParentPackage("egov")
@@ -92,7 +94,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
     private DishonoredChequeBean dishonoredChequeReport = new DishonoredChequeBean();
     private DishonoredChequeReport dishonoredCheque = new DishonoredChequeReport();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected ArrayList dishonoredChequeDisplayList = new ArrayList();
+    protected List<Map<String,String>> dishonoredChequeDisplayList = new ArrayList<>();
     String heading = "";
     private String showMode = "";
 
@@ -199,11 +201,11 @@ public class DishonoredChequeReportAction extends BaseFormAction {
         this.dishonoredCheque = dishonoredCheque;
     }
 
-    public ArrayList getDishonoredChequeDisplayList() {
+    public List getDishonoredChequeDisplayList() {
         return dishonoredChequeDisplayList;
     }
 
-    public void setDishonoredChequeDisplayList(final ArrayList dishonoredChequeDisplayList) {
+    public void setDishonoredChequeDisplayList(final List dishonoredChequeDisplayList) {
         this.dishonoredChequeDisplayList = dishonoredChequeDisplayList;
     }
 

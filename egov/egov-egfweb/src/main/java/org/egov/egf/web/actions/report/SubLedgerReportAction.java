@@ -48,6 +48,7 @@
 
 package org.egov.egf.web.actions.report;
 
+import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
 import com.exilant.exility.common.TaskFailedException;
@@ -74,6 +75,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "search", location = "subLedgerReport-search.jsp") })
@@ -87,7 +89,7 @@ public class SubLedgerReportAction extends BaseFormAction {
     @Qualifier("generalLedgerReport")
     private GeneralLedgerReport generalLedgerReport;
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected LinkedList subLedgerDisplayList = new LinkedList();
+    protected List<GeneralLedgerBean> subLedgerDisplayList = new LinkedList<>();
     String heading = "";
     private String drillDownFromSchedule;
 
@@ -207,11 +209,11 @@ public class SubLedgerReportAction extends BaseFormAction {
         this.generalLedgerReport = generalLedgerReport;
     }
 
-    public LinkedList getSubLedgerDisplayList() {
+    public List getSubLedgerDisplayList() {
         return subLedgerDisplayList;
     }
 
-    public void setSubLedgerDisplayList(final LinkedList subLedgerDisplayList) {
+    public void setSubLedgerDisplayList(final List subLedgerDisplayList) {
         this.subLedgerDisplayList = subLedgerDisplayList;
     }
 

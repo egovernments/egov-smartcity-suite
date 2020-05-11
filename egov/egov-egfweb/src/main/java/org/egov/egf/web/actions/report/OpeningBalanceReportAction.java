@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 import com.exilant.eGov.src.reports.OpeningBalance;
+import com.exilant.eGov.src.reports.OpeningBalanceBean;
 import com.exilant.eGov.src.reports.OpeningBalanceInputBean;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -75,6 +76,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @ParentPackage("egov")
@@ -92,7 +94,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
     private OpeningBalanceInputBean openingBalanceReport = new OpeningBalanceInputBean();
     private OpeningBalance openingBalance;
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected ArrayList openingBalanceDisplayList = new ArrayList();
+    protected List<OpeningBalanceBean> openingBalanceDisplayList = new ArrayList<>();
     String heading = "";
 
     public OpeningBalanceReportAction() {
@@ -206,11 +208,11 @@ public class OpeningBalanceReportAction extends BaseFormAction {
         this.openingBalance = openingBalance;
     }
 
-    public ArrayList getOpeningBalanceDisplayList() {
+    public List getOpeningBalanceDisplayList() {
         return openingBalanceDisplayList;
     }
 
-    public void setOpeningBalanceDisplayList(final ArrayList openingBalanceDisplayList) {
+    public void setOpeningBalanceDisplayList(final List openingBalanceDisplayList) {
         this.openingBalanceDisplayList = openingBalanceDisplayList;
     }
 

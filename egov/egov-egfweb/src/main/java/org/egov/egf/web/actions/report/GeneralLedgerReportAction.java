@@ -47,6 +47,7 @@
  */
 package org.egov.egf.web.actions.report;
 
+import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -74,6 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.LinkedList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -99,7 +101,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     private transient GeneralLedgerReport generalLedgerReport;
 
     private transient GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
-    private LinkedList generalLedgerDisplayList = new LinkedList();
+    private List<GeneralLedgerBean> generalLedgerDisplayList = new LinkedList<>();
     private String heading = "";
 
     @Override
@@ -241,11 +243,11 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         this.heading = heading;
     }
 
-    public LinkedList getGeneralLedgerDisplayList() {
+    public List getGeneralLedgerDisplayList() {
         return generalLedgerDisplayList;
     }
 
-    public void setGeneralLedgerDisplayList(final LinkedList generalLedgerDisplayList) {
+    public void setGeneralLedgerDisplayList(final List generalLedgerDisplayList) {
         this.generalLedgerDisplayList = generalLedgerDisplayList;
     }
 
