@@ -61,6 +61,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -72,6 +73,7 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
@@ -93,6 +95,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/reports/estimateappropriationregister")
 public class EstimateAppropriationRegisterPDFController {
 
+	private static final Logger logger = Logger.getLogger(EstimateAppropriationRegisterService.class);
+	
     @Autowired
     private ReportService reportService;
 
@@ -164,11 +168,13 @@ public class EstimateAppropriationRegisterPDFController {
         if (searchRequest != null && searchRequest.getAsOnDate() != null)
             queryParamMap.put("fromDate",
                     financialYearHibernateDAO.getFinancialYearById(searchRequest.getFinancialYear()).getStartingDate());
-
-        totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
-        queryParamMap.put("deptid", searchRequest.getDepartment().intValue());
-        planningBudgetPerc = budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
-
+        try {
+        	totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
+        	queryParamMap.put("deptid", searchRequest.getDepartment().intValue());
+        	planningBudgetPerc = budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
+        } catch (final ValidationException valEx) {
+	        logger.error(valEx);
+	    }
         if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
             totalGrantPerc = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
             queryParamMap.put("totalGrantPerc", totalGrantPerc);
