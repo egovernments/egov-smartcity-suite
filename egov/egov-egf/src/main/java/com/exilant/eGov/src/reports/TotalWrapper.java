@@ -47,20 +47,20 @@
  */
 package com.exilant.eGov.src.reports;
 
-import com.exilant.GLEngine.DayBook;
+import java.text.DecimalFormat;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.displaytag.decorator.TableDecorator;
 
-import java.text.DecimalFormat;
-import java.util.List;
+import com.exilant.GLEngine.DayBook;
 
 /**
  * This decorator only does a summing of different groups in the reporting style examples...
  * @author Sumit
  *
  */
-public class TotalWrapper extends TableDecorator
-{
+public class TotalWrapper extends TableDecorator {
     private static final Logger LOGGER = Logger.getLogger(TotalWrapper.class);
 
     /**
@@ -128,9 +128,9 @@ public class TotalWrapper extends TableDecorator
      * "javascript:"+"void(window.open('DayBook.jsp'))"; return "<a href=\"link\">" + object.getVouchernumber() + "</a>"; }
      */
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public final String finishRow()
-    {
+    public final String finishRow() {
         ((List) getDecoratedObject()).indexOf(getCurrentRowObject());
 
         final DayBook reportableObject = (DayBook) getCurrentRowObject();
@@ -154,13 +154,13 @@ public class TotalWrapper extends TableDecorator
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getViewIndex() is :" + getViewIndex());
-        if (flag == 12)
-        {
+        if (flag == 12) {
             // added by raja
             // buffer.append( "<div STYLE=display:table-footer-group>");
             buffer.append("<display: table-footer-group>");
             buffer.append("<tr><td colspan=\"9\"><hr></td></tr>");
-            buffer.append("<tr><td colspan=\"7\" align=\"left\"><strong>Page Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
+            buffer.append(
+                    "<tr><td colspan=\"7\" align=\"left\"><strong>Page Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
             buffer.append(moneyFormat.format(Math.round(pageDbTotal)));
             buffer.append("</td><td><div align=\"right\" valign=\"center\" class=\"normaltext\" >");
             buffer.append(moneyFormat.format(Math.round(pageCrTotal)));
@@ -175,11 +175,11 @@ public class TotalWrapper extends TableDecorator
                 LOGGER.debug("Hi%%%%!!!!!!!!!!:getListIndex" + getViewIndex());
         } else
             flag++;
-        if (getListIndex() == ((List) getDecoratedObject()).size() - 1 && getListIndex() != 12)
-        {
+        if (getListIndex() == ((List) getDecoratedObject()).size() - 1 && getListIndex() != 12) {
             // buffer.append("<display: table-footer-group>");
             buffer.append("<tr><td colspan=\"9\"><hr></td></tr>");
-            buffer.append("<tr><td colspan=\"7\" align=\"left\"><strong>Page Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
+            buffer.append(
+                    "<tr><td colspan=\"7\" align=\"left\"><strong>Page Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
             buffer.append(moneyFormat.format(Math.round(pageDbTotal)));
             buffer.append("</td><td><div align=\"right\" valign=\"center\" class=\"normaltext\" >");
             buffer.append(moneyFormat.format(Math.round(pageCrTotal)));
@@ -190,10 +190,10 @@ public class TotalWrapper extends TableDecorator
             pageDbTotal = 0;
 
         }
-        if (getListIndex() == ((List) getDecoratedObject()).size() - 1)
-        {
+        if (getListIndex() == ((List) getDecoratedObject()).size() - 1) {
             buffer.append("<tr><td colspan=\"9\"><hr></td></tr>");
-            buffer.append("<tr><td colspan=\"7\" align=\"left\"><strong>Grand Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
+            buffer.append(
+                    "<tr><td colspan=\"7\" align=\"left\"><strong>Grand Total</strong></td><td><div align=\"right\" valign=\"center\" class=\"normaltext\">");
             buffer.append(moneyFormat.format(Math.round(grandDbTotal)));
             buffer.append("</td><td><div align=\"right\" valign=\"center\" class=\"normaltext\" >");
             buffer.append(moneyFormat.format(Math.round(grandCrTotal)));

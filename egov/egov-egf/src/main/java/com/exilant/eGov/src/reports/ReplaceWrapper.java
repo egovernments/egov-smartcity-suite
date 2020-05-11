@@ -53,8 +53,8 @@ import org.displaytag.decorator.ColumnDecorator;
  * Simple column decorator which Which replace the string.
  * @author Sumit
  */
-public class ReplaceWrapper implements ColumnDecorator
-{
+@SuppressWarnings("deprecation")
+public class ReplaceWrapper implements ColumnDecorator {
     static String replace(final String str, final String pattern, final String replace) {
         int s = 0;
         int e = 0;
@@ -70,8 +70,7 @@ public class ReplaceWrapper implements ColumnDecorator
     }
 
     @Override
-    public final String decorate(final Object columnValue)
-    {
+    public final String decorate(final Object columnValue) {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("columnValue:"+columnValue);
 
         final String Rep = String.valueOf(columnValue);

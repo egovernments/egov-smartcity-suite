@@ -368,7 +368,6 @@ public class GeneralLedgerReportBean {
         this.isConfirmedCount = isConfirmedCount;
     }
 
-
     /**
      * @return Returns the reportType.
      */

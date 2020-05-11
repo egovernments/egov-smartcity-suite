@@ -51,12 +51,20 @@
  */
 package com.exilant.eGov.src.reports;
 
-import com.exilant.GLEngine.GeneralLedgerBean;
-import com.exilant.eGov.src.chartOfAccounts.CodeValidator;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.ExilPrecision;
-import com.exilant.eGov.src.transactions.OpBal;
-import com.exilant.exility.common.TaskFailedException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
@@ -64,20 +72,15 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.query.Query;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.exilant.GLEngine.GeneralLedgerBean;
+import com.exilant.eGov.src.chartOfAccounts.CodeValidator;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.eGov.src.transactions.ExilPrecision;
+import com.exilant.eGov.src.transactions.OpBal;
+import com.exilant.exility.common.TaskFailedException;
 
 @Service
 public class GeneralLedgerReport {
@@ -96,16 +99,15 @@ public class GeneralLedgerReport {
     @Autowired
     EGovernCommon eGovernCommon;
     @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-    @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private ReportEngine engine;
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-    private @Autowired
-    CommnFunctions commnFunctions;
+    private @Autowired CommnFunctions commnFunctions;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public GeneralLedgerReport() {
     }
@@ -137,8 +139,9 @@ public class GeneralLedgerReport {
      * @throws TaskFailedException
      */
 
-    public LinkedList getGeneralLedgerList(final GeneralLedgerReportBean reportBean) throws TaskFailedException {
-        final LinkedList dataList = new LinkedList();
+    @SuppressWarnings("unchecked")
+    public List<GeneralLedgerBean> getGeneralLedgerList(final GeneralLedgerReportBean reportBean) throws TaskFailedException {
+        final List<GeneralLedgerBean> dataList = new LinkedList<>();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Indise the loop..........");
         new CashBook(null);
@@ -167,22 +170,19 @@ public class GeneralLedgerReport {
         final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
         Date dt = new Date();
         String endDate1 = reportBean.getEndDate();
-        if (endDate1 == "" || endDate1.length() == 0) {
+        if (endDate1 == "" || endDate1.length() == 0)
             endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
-        }
         Boolean isCurDte = isCurDate(endDate1);
-        if(isCurDte == false) {
-        	endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
-        }
+        if (isCurDte == false)
+            endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         try {
             endDate = reportBean.getEndDate();
-            if (endDate == "" || endDate.length() == 0) {
+            if (endDate == "" || endDate.length() == 0)
                 endDate = endDate1;
-            }
             dt = sdf.parse(endDate);
             formendDate = formatter1.format(dt);
         } catch (final Exception e) {
-            LOGGER.error("inside the try-startdate" , e);
+            LOGGER.error("inside the try-startdate", e);
             throw taskExc;
         }
         try {
@@ -216,7 +216,7 @@ public class GeneralLedgerReport {
             dt = formatter1.parse(startDateformat);
             startDateformat1 = sdf.format(dt);
         } catch (final Exception e) {
-            LOGGER.error("Parse Exception" , e);
+            LOGGER.error("Parse Exception", e);
             throw taskExc;
         }
         Date dd = new Date();
@@ -243,11 +243,11 @@ public class GeneralLedgerReport {
         engine.getVouchersListQuery(reBean);
         final String functionId = reBean.getFunctionId();
         try {
-            final List list = getQuery(glCode1, accEntityId, accEntityKey, reportBean.getFieldId(),
+            final List<Object[]> list = getQuery(glCode1, accEntityId, accEntityKey, reportBean.getFieldId(),
                     reBean.getFunctionId(), reBean.getQuery(), reBean.getParams());
             resultset1 = list;
             list.toArray();
-            final ArrayList data = new ArrayList();
+            final List<String[]> data = new ArrayList<>();
             String accCode = "", vcNum = "", vcDate = "", narration = "", vcTypeName = "", voucherHeaderId = "";
             StringBuffer detail = new StringBuffer();
             StringBuffer amount = new StringBuffer();
@@ -256,9 +256,8 @@ public class GeneralLedgerReport {
             double txnDebit = 0, txnCredit = 0, previousDebit = 0, previousCredit = 0;
             String code = "", currCode = "", accCodePrevious = "", cgn = "";
             /**
-             * When using ResultSet.TYPE_SCROLL_INSENSITIVE in createStatement
-             * if no records are there, rs.next() will return true but when
-             * trying to access (rs.getXXX()), it will throw an error
+             * When using ResultSet.TYPE_SCROLL_INSENSITIVE in createStatement if no records are there, rs.next() will return true
+             * but when trying to access (rs.getXXX()), it will throw an error
              **/
             int totalCount = 0, isConfirmedCount = 0;
             String vn2 = "";
@@ -283,9 +282,9 @@ public class GeneralLedgerReport {
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode = :glCode";
-                pstmt = persistenceService.getSession().createNativeQuery(sqlString);
-                pstmt.setParameter("glCode", glCode1, StringType.INSTANCE);
-                final List res = pstmt.list();
+                pstmt = entityManager.createNativeQuery(sqlString)
+                        .setParameter("glCode", glCode1);
+                final List<Object[]> res = pstmt.getResultList();
                 String aName = "";
                 if (res != null)
                     aName = res.get(0).toString();
@@ -357,8 +356,7 @@ public class GeneralLedgerReport {
                     vhId = Integer.parseInt(element[2].toString());
 
                     /**
-                     * When the main GLCODES are changing.We need to get the
-                     * opening balance first.
+                     * When the main GLCODES are changing.We need to get the opening balance first.
                      */
                     if (!code.equals(currCode)) {
                         // glType=resultset1.getString("glType");
@@ -373,9 +371,9 @@ public class GeneralLedgerReport {
                         final StringBuilder sqlString1 = new StringBuilder("select name as \"glname\"")
                                 .append(" from chartofaccounts")
                                 .append(" where glcode = :glCode");
-                        List<Object[]> res = persistenceService.getSession().createNativeQuery(sqlString1.toString())
-                                .setParameter("glCode", code, StringType.INSTANCE)
-                                .list();
+                        List<Object[]> res = entityManager.createNativeQuery(sqlString1.toString())
+                                .setParameter("glCode", code)
+                                .getResultList();
                         String aName = "";
                         if (res != null)
                             aName = res.get(0).toString();
@@ -495,14 +493,10 @@ public class GeneralLedgerReport {
                     }
                 } else if (!accEntityKey.equals("")) {
                     /*
-                     * if(slCrAmount.compareTo(BigDecimal.ZERO)!=0) { detail=
-                     * detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
-                     * element[8].toString()); slCrAmount=new
-                     * BigDecimal("0.00"); } else
-                     * if(slDrAmount.compareTo(BigDecimal.ZERO)!=0) { detail=
-                     * detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
-                     * element[8].toString()); slDrAmount=new
-                     * BigDecimal("0.00"); }
+                     * if(slCrAmount.compareTo(BigDecimal.ZERO)!=0) { detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
+                     * element[8].toString()); slCrAmount=new BigDecimal("0.00"); } else
+                     * if(slDrAmount.compareTo(BigDecimal.ZERO)!=0) { detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
+                     * element[8].toString()); slDrAmount=new BigDecimal("0.00"); }
                      */
                     // detail= detail.append(" " + glCode1+"&nbsp;&nbsp;&nbsp;"+
                     // element[8].toString());
@@ -597,9 +591,9 @@ public class GeneralLedgerReport {
                     if (accCode.equalsIgnoreCase(code)) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
                         if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious) // &&
-                            // (StringUtils.isEmpty(reBean.getFunctionId())
-                            // ||
-                            // reBean.getFunctionId().equals(resultset1.getString("functionid")))
+                        // (StringUtils.isEmpty(reBean.getFunctionId())
+                        // ||
+                        // reBean.getFunctionId().equals(resultset1.getString("functionid")))
                         ) {
                             vcDate = element[4].toString();
                             vcNum = element[5].toString();
@@ -624,8 +618,7 @@ public class GeneralLedgerReport {
                                 txnCredit = 0;
                             narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                             /*
-                             * previousDebit=currentDebit;
-                             * previousCredit=currentCredit;
+                             * previousDebit=currentDebit; previousCredit=currentCredit;
                              */
                             previousDebit = txnDebit;
                             previousCredit = txnCredit;
@@ -650,14 +643,13 @@ public class GeneralLedgerReport {
                             narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                         }
                         /*
-                         * else { detail= detail.append(" " +
-                         * element[6].toString()+"&nbsp;&nbsp;&nbsp;"+
-                         * element[8].toString()); }
+                         * else { detail= detail.append(" " + element[6].toString()+"&nbsp;&nbsp;&nbsp;"+ element[8].toString());
+                         * }
                          */
                     } else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious) // &&
-                        // (StringUtils.isEmpty(reBean.getFunctionId())
-                        // ||
-                        // reBean.getFunctionId().equals(resultset1.getString("functionid")))
+                    // (StringUtils.isEmpty(reBean.getFunctionId())
+                    // ||
+                    // reBean.getFunctionId().equals(resultset1.getString("functionid")))
                     ) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
                         String debitAmount = "", creditAmount = "";
@@ -804,7 +796,7 @@ public class GeneralLedgerReport {
             gridData[0][13] = "creditVoucherTypeName";
             gridData[0][14] = "vhId";
             for (int i = 1; i <= data.size(); i++)
-                gridData[i] = (String[]) data.get(i - 1);
+                gridData[i] = data.get(i - 1);
 
             for (int i = 1; i <= data.size(); i++) {
                 final GeneralLedgerBean generalLedgerBean = new GeneralLedgerBean();
@@ -849,15 +841,16 @@ public class GeneralLedgerReport {
             }
 
         } catch (final Exception ex) {
-            LOGGER.error("ERROR in getGeneralLedgerList " , ex);
+            LOGGER.error("ERROR in getGeneralLedgerList ", ex);
             throw taskExc;
         }
         return dataList;
     }
 
     @SuppressWarnings("unchecked")
-    private List getQuery(final String glCode1, final String accEntityId, final String accEntityKey, final String fieldId, final String functionId,
-                          String queryString, Map<String, Object> params) throws TaskFailedException {
+    private List<Object[]> getQuery(final String glCode1, final String accEntityId, final String accEntityKey,
+            final String fieldId, final String functionId,
+            String queryString, Map<String, Object> params) throws TaskFailedException {
         StringBuilder query;
         StringBuilder addTableToQuery = new StringBuilder("");
         StringBuilder entityCondition = new StringBuilder("");
@@ -871,41 +864,53 @@ public class GeneralLedgerReport {
         if (!StringUtils.isEmpty(functionId))
             functionCondition.append(" and gl.functionid = :functionId");
         if (!accEntityKey.equals(""))
-            query = new StringBuilder("SELECT gl.glcode as \"code\", (select ca.type from chartofaccounts ca where glcode = gl.glcode) as \"glType\",")
-                    .append(" vh.id AS \"vhid\", vh.voucherDate AS \"vDate\", TO_CHAR(vh.voucherDate, 'dd-Mon-yyyy') AS \"voucherdate\",")
-                    .append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", coa.name|| (CASE WHEN (GLDET.GENERALLEDGERID = GL.ID)")
-                    .append(" THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name = 'Creditor')")
-                    .append(" THEN (select name from Supplier where id = gldet.detailkeyid) ELSE (CASE WHEN gldet.detailtypeid =")
-                    .append(" (select id from accountdetailtype where name = 'EMPLOYEE') THEN (select name from eg_user where id = gldet.detailkeyid)")
-                    .append(" ELSE (select name from accountentitymaster where id = gldet.detailkeyid) END) END)||']' ELSE NULL END) as \"Name\",")
-                    .append(" CASE WHEN gl.glcode = :glCode1 THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr') ELSE (gldet.amount||'.00dr') END)")
-                    .append(" ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END) END as \"amount\",")
-                    .append(" gl.description as \"narration\", vh .type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)'")
-                    .append(" ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", CASE WHEN gl.glcode = :glCode1")
-                    .append(" THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0")
-                    .append(" ELSE gl.debitamount END) END as \"debitamount\", CASE WHEN gl.glcode = :glCode1 THEN (CASE WHEN gl.creditAMOUNT = 0")
-                    .append(" THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END) END as \"creditamount\",")
-                    .append(" f.name as \"fundName\", vh.isconfirmed as \"isconfirmed\", case when (gldet.generalledgerid = gl.id)")
-                    .append(" then gldet.detailkeyid else null end as \"DetailKeyId\", vh.type||'-'||vh.name as \"vouchertypename\"")
-                    .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa, generalledgerdetail gldet, chartofaccountdetail cdet, fund f")
-                    .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id and cdet.glcodeid = coa.id and gl.glcode = :glCode1")
-                    .append(" AND f.id = vh.fundId ")
-                    .append(entityCondition)
-                    .append(" and exists (")
-                    .append(queryString)
-                    .append(" and voucher.id = vh.id) AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
-                    .append(" order by vh.id asc , gl.glCode");
+            query = new StringBuilder(
+                    "SELECT gl.glcode as \"code\", (select ca.type from chartofaccounts ca where glcode = gl.glcode) as \"glType\",")
+                            .append(" vh.id AS \"vhid\", vh.voucherDate AS \"vDate\", TO_CHAR(vh.voucherDate, 'dd-Mon-yyyy')")
+                            .append(" AS \"voucherdate\", vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\",")
+                            .append(" coa.name|| (CASE WHEN (GLDET.GENERALLEDGERID = GL.ID) THEN '-['||(CASE WHEN gldet.detailtypeid =")
+                            .append(" (select id from accountdetailtype where name = 'Creditor')")
+                            .append(" THEN (select name from Supplier where id = gldet.detailkeyid) ELSE (CASE WHEN gldet.detailtypeid =")
+                            .append(" (select id from accountdetailtype where name = 'EMPLOYEE') THEN (select name from eg_user where id =")
+                            .append(" gldet.detailkeyid) ELSE (select name from accountentitymaster where id = gldet.detailkeyid) END)")
+                            .append(" END)||']' ELSE NULL END) as \"Name\",")
+                            .append(" CASE WHEN gl.glcode = :glCode1 THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr')")
+                            .append(" ELSE (gldet.amount||'.00dr') END)")
+                            .append(" ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END)")
+                            .append(" END as \"amount\", gl.description as \"narration\", vh .type || '-' || vh.name||CASE WHEN status = 1")
+                            .append(" THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\",")
+                            .append(" CASE WHEN gl.glcode = :glCode1")
+                            .append(" THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0")
+                            .append(" THEN 0 ELSE gl.debitamount END) END as \"debitamount\", CASE WHEN gl.glcode = :glCode1")
+                            .append(" THEN (CASE WHEN gl.creditAMOUNT = 0")
+                            .append(" THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END)")
+                            .append(" END as \"creditamount\", f.name as \"fundName\", vh.isconfirmed as \"isconfirmed\",")
+                            .append(" case when (gldet.generalledgerid = gl.id)")
+                            .append(" then gldet.detailkeyid else null end as \"DetailKeyId\", vh.type||'-'||vh.name as \"vouchertypename\"")
+                            .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa, generalledgerdetail gldet,")
+                            .append(" chartofaccountdetail cdet, fund f")
+                            .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id and cdet.glcodeid = coa.id")
+                            .append(" and gl.glcode = :glCode1")
+                            .append(" AND f.id = vh.fundId ")
+                            .append(entityCondition)
+                            .append(" and exists (")
+                            .append(queryString)
+                            .append(" and voucher.id = vh.id) AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
+                            .append(" order by vh.id asc , gl.glCode");
         else {
             query = new StringBuilder("SELECT gl.glcode as \"code\", (select ca.type from chartofaccounts ca")
                     .append(" where glcode = gl.glcode) as \"glType\", vh.id AS \"vhid\", vh.voucherDate AS \"vDate\",")
-                    .append(" TO_CHAR(vh.voucherDate,'dd-Mon-yyyy') AS voucherdate, vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", ")
-                    .append(" coa.name AS \"name\", CASE WHEN gl.debitAmount = 0 THEN (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr'")
+                    .append(" TO_CHAR(vh.voucherDate,'dd-Mon-yyyy') AS voucherdate, vh.voucherNumber AS \"vouchernumber\",")
+                    .append(" gl.glCode AS \"glcode\", coa.name AS \"name\", CASE WHEN gl.debitAmount = 0")
+                    .append(" THEN (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr'")
                     .append(" when floor(gl.creditamount) then gl.creditAmount||'.00cr' else gl.creditAmount||'cr' end)")
-                    .append(" ELSE (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount) then gl.debitamount||'.00dr'")
-                    .append(" else gl.debitamount||'dr' end) END AS \"amount\", gl.description AS \"narration\", vh.type || '-' || vh.name||CASE")
-                    .append(" WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", ")
-                    .append(" gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\", f.name as \"fundName\",")
-                    .append(" vh.isconfirmed as \"isconfirmed\", gl.functionid as \"functionid\", vh.type||'-'||vh.name as \"vouchertypename\" ")
+                    .append(" ELSE (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)")
+                    .append(" then gl.debitamount||'.00dr' else gl.debitamount||'dr' end) END AS \"amount\",")
+                    .append(" gl.description AS \"narration\", vh.type || '-' || vh.name||CASE")
+                    .append(" WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END)")
+                    .append(" END AS \"type\", gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\",")
+                    .append(" f.name as \"fundName\", vh.isconfirmed as \"isconfirmed\", gl.functionid as \"functionid\",")
+                    .append(" vh.type||'-'||vh.name as \"vouchertypename\" ")
                     .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa,  fund f ")
                     .append(addTableToQuery)
                     .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id AND f.id = vh.fundid")
@@ -923,25 +928,24 @@ public class GeneralLedgerReport {
                 LOGGER.debug("____________________________________________________________" + query.toString());
         }
         try {
-            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-            pstmt.setParameter("glCode1", glCode1, StringType.INSTANCE);
-            if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")){
-                pstmt.setParameter("accEntityId", Long.valueOf(accEntityId), LongType.INSTANCE);
-            }
-            if (!StringUtils.isEmpty(functionId)){
-                pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
-            }
+            pstmt = entityManager.createNativeQuery(query.toString())
+                    .setParameter("glCode1", glCode1);
+            if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
+                pstmt.setParameter("accEntityId", Long.valueOf(accEntityId));
+            if (!StringUtils.isEmpty(functionId))
+                pstmt.setParameter("functionId", Long.valueOf(functionId));
             params.entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue()));
-            return pstmt.list();
+            return pstmt.getResultList();
         } catch (final Exception e) {
             LOGGER.error("Exception in getQuery:", e);
             throw taskExc;
         }
     }
 
+    @SuppressWarnings("unchecked")
     private OpBal getOpeningBalance(final String glCode, final String fundId, final String fundSourceId,
-                                    final String fyId, final String accEntityId, final String accEntityKey, final String tillDate,
-                                    final String functionId, final String deptId) throws TaskFailedException {
+            final String fyId, final String accEntityId, final String accEntityKey, final String tillDate,
+            final String functionId, final String deptId) throws TaskFailedException {
         String fundCondition = "";
         String fundSourceCondition = "";
         String accEntityCondition = "";
@@ -966,36 +970,38 @@ public class GeneralLedgerReport {
             accEntityCondition = " accountDetailTypeid = :accountDetailTypeId AND accountDetailKey = :accountDetailKey AND";
         if (!StringUtils.isEmpty(functionId))
             functionCondition = " functionid = :functionId AND";
-        final StringBuilder queryYearOpBal = new StringBuilder("SELECT CASE WHEN sum(openingDebitBalance) is null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", ")
-                .append(" CASE WHEN sum(openingCreditBalance) is null THEN 0 ELSE sum(openingCreditBalance) END AS \"openingCreditBalance\"")
-                .append(" FROM transactionSummary")
-                .append(" WHERE ")
-                .append(fundCondition)
-                .append(fundSourceCondition)
-                .append(functionCondition)
-                .append(accEntityCondition)
-                .append(deptCondition)
-                .append(" financialYearId = :financialYearId ")
-                .append(" AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in(:glCode))");
+        final StringBuilder queryYearOpBal = new StringBuilder(
+                "SELECT CASE WHEN sum(openingDebitBalance) is null THEN 0 ELSE sum(openingDebitBalance) END AS \"openingDebitBalance\", ")
+                        .append(" CASE WHEN sum(openingCreditBalance) is null THEN 0 ELSE sum(openingCreditBalance) END")
+                        .append(" AS \"openingCreditBalance\"")
+                        .append(" FROM transactionSummary")
+                        .append(" WHERE ")
+                        .append(fundCondition)
+                        .append(fundSourceCondition)
+                        .append(functionCondition)
+                        .append(accEntityCondition)
+                        .append(deptCondition)
+                        .append(" financialYearId = :financialYearId ")
+                        .append(" AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in(:glCode))");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         try {
-            pstmt = persistenceService.getSession().createNativeQuery(queryYearOpBal.toString());
+            pstmt = entityManager.createNativeQuery(queryYearOpBal.toString());
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
+                pstmt.setParameter("fundId", Long.valueOf(fundId));
             if (!fundSourceId.equalsIgnoreCase(""))
-                pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
+                pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId));
             if (!StringUtils.isEmpty(functionId))
-                pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
+                pstmt.setParameter("functionId", Long.valueOf(functionId));
             if (!accEntityId.equalsIgnoreCase("")) {
-                pstmt.setParameter("accountDetailTypeId", Long.valueOf(accEntityId), LongType.INSTANCE);
-                pstmt.setParameter("accountDetailKey", Long.valueOf(accEntityKey), LongType.INSTANCE);
+                pstmt.setParameter("accountDetailTypeId", Long.valueOf(accEntityId));
+                pstmt.setParameter("accountDetailKey", Long.valueOf(accEntityKey));
             }
             if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
-            pstmt.setParameter("financialYearId", Long.valueOf(fyId), LongType.INSTANCE)
-                    .setParameter("glCode", glCode, StringType.INSTANCE);
-            final List list = pstmt.list();
+                pstmt.setParameter("departmentId", Long.valueOf(deptId));
+            pstmt.setParameter("financialYearId", Long.valueOf(fyId))
+                    .setParameter("glCode", glCode);
+            final List<Object[]> list = pstmt.getResultList();
             resultset = list;
             for (final Object[] element : resultset) {
                 opDebit = Double.parseDouble(element[0] != null ? element[0].toString() : "0");
@@ -1025,7 +1031,8 @@ public class GeneralLedgerReport {
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
 
         if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
-            accEntityCondition = " AND gl.id = gldet.generalledgerid AND gldet.detailtypeid = :detailTypeId AND gldet.detailkeyid = :detailKeyId";
+            accEntityCondition = " AND gl.id = gldet.generalledgerid AND gldet.detailtypeid = :detailTypeId"
+                    + " AND gldet.detailkeyid = :detailKeyId";
 
             queryTillDateOpBal = new StringBuilder("SELECT coa.glcode, (SELECT SUM(gldet.amount)")
                     .append(" FROM generalLedger gl, voucherHeader vh ")
@@ -1038,7 +1045,8 @@ public class GeneralLedgerReport {
                     .append(accEntityCondition)
                     .append(" AND ")
                     .append(deptWhereCondition)
-                    .append(" vh.voucherDate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherDate < to_date(:endDate, 'dd/mm/yyyy') AND vh.status not in (")
+                    .append(" vh.voucherDate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherDate < to_date(:endDate, 'dd/mm/yyyy')")
+                    .append(" AND vh.status not in (")
                     .append(defaultStatusExclude).append(")")
                     .append(" AND ")
                     .append(" gl.DEBITamount > 0) AS \"debitAmount\", (SELECT SUM(gldet.amount)")
@@ -1053,75 +1061,76 @@ public class GeneralLedgerReport {
                     .append(fundSourceCondition)
                     .append(functionCondition)
                     .append(accEntityCondition)
-                    .append(" AND vh.voucherDate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherDate < to_date(:endDate,'dd/mm/yyyy') AND vh.status not in (")
+                    .append(" AND vh.voucherDate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherDate < to_date(:endDate,'dd/mm/yyyy')")
+                    .append(" AND vh.status not in (")
                     .append(defaultStatusExclude)
                     .append(") AND")
                     .append(" gl.CREDITamount > 0) AS \"creditAmount\" FROM chartofaccounts coa WHERE coa.glcode IN (:glCode)");
 
         } else
-            queryTillDateOpBal = new StringBuilder("SELECT CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END AS \"debitAmount\", ")
-                    .append(" CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END AS \"creditAmount\" ")
-                    .append(" FROM generalLedger gl, voucherHeader vh ")
-                    .append(deptFromCondition)
-                    .append(" WHERE vh.id = gl.voucherHeaderId AND ")
-                    .append(deptWhereCondition)
-                    .append(" gl.glCode IN (:glCode)")
-                    .append(" ")
-                    .append(fundCondition)
-                    .append(fundSourceCondition)
-                    .append(functionCondition)
-                    .append(" AND vh.voucherDate >= to_date(:startDate,'dd/MM/YYYY') AND vh.voucherDate < to_date(:endDate,'dd/MM/YYYY') AND vh.status not in (")
-                    .append(defaultStatusExclude)
-                    .append(")");
+            queryTillDateOpBal = new StringBuilder(
+                    "SELECT CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END AS \"debitAmount\", ")
+                            .append(" CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END AS \"creditAmount\" ")
+                            .append(" FROM generalLedger gl, voucherHeader vh ")
+                            .append(deptFromCondition)
+                            .append(" WHERE vh.id = gl.voucherHeaderId AND ")
+                            .append(deptWhereCondition)
+                            .append(" gl.glCode IN (:glCode)")
+                            .append(" ")
+                            .append(fundCondition)
+                            .append(fundSourceCondition)
+                            .append(functionCondition)
+                            .append(" AND vh.voucherDate >= to_date(:startDate,'dd/MM/YYYY')")
+                            .append(" AND vh.voucherDate < to_date(:endDate,'dd/MM/YYYY') AND vh.status not in (")
+                            .append(defaultStatusExclude)
+                            .append(")");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
         try {
-            pstmt = persistenceService.getSession().createNativeQuery(queryTillDateOpBal.toString());
+            pstmt = entityManager.createNativeQuery(queryTillDateOpBal.toString());
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
-                if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId), LongType.INSTANCE);
-                    pstmt.setParameter("detailKeyId", Long.valueOf(accEntityKey), LongType.INSTANCE);
-                }
+                    pstmt.setParameter("functionId", Long.valueOf(functionId));
+                if (!accEntityId.equalsIgnoreCase(""))
+                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId))
+                            .setParameter("detailKeyId", Long.valueOf(accEntityKey));
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
-                pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
-                pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId));
+                pstmt.setParameter("startDate", startDate)
+                        .setParameter("endDate", tillDate);
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId));
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
-                if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId), LongType.INSTANCE);
-                    pstmt.setParameter("detailKeyId", Long.valueOf(accEntityKey), LongType.INSTANCE);
-                }
-                pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
-                pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
-                pstmt.setParameter("glCode", glCode, StringType.INSTANCE);
+                    pstmt.setParameter("functionId", Long.valueOf(functionId));
+                if (!accEntityId.equalsIgnoreCase(""))
+                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId))
+                            .setParameter("detailKeyId", Long.valueOf(accEntityKey));
+                pstmt.setParameter("startDate", startDate)
+                        .setParameter("endDate", tillDate)
+                        .setParameter("glCode", glCode);
             } else {
 
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
-                pstmt.setParameter("glCode", glCode, StringType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId));
+                pstmt.setParameter("glCode", glCode);
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId));
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId));
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
-                pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
-                pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
+                    pstmt.setParameter("functionId", Long.valueOf(functionId));
+                pstmt.setParameter("startDate", startDate)
+                        .setParameter("endDate", tillDate);
             }
-            final List<Object[]> list = pstmt.list();
+            final List<Object[]> list = pstmt.getResultList();
             resultset = list;
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase(""))
                 for (final Object[] element : resultset) {
@@ -1148,16 +1157,16 @@ public class GeneralLedgerReport {
         return opBal;
     }
 
+    @SuppressWarnings("unchecked")
     private String getAccountName(final String glCode) throws TaskFailedException {
         String accountName = "";
-        Query pst = null;
         try {
             final StringBuilder query = new StringBuilder("select name as \"name\"")
                     .append(" from  CHARTOFACCOUNTS")
                     .append(" where GLCODE = :glCode");
-            List<Object[]> list = persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("glCode", glCode, StringType.INSTANCE)
-                    .list();
+            List<Object[]> list = entityManager.createNativeQuery(query.toString())
+                    .setParameter("glCode", glCode)
+                    .getResultList();
             final Object[] objects = list.toArray();
             accountName = objects[0].toString();
 
@@ -1169,6 +1178,7 @@ public class GeneralLedgerReport {
         return accountName;
     }
 
+    @SuppressWarnings("unchecked")
     private String getFundName(final String fundId) throws TaskFailedException {
         String fundName = "";
         Query pst = null;
@@ -1176,12 +1186,12 @@ public class GeneralLedgerReport {
             final StringBuilder query = new StringBuilder("select name  as \"name\"")
                     .append(" from fund")
                     .append(" where id = :fundId");
-            pst = persistenceService.getSession().createNativeQuery(query.toString());
+            pst = entityManager.createNativeQuery(query.toString());
             if (fundId.isEmpty())
-                pst.setParameter("fundId", 0, IntegerType.INSTANCE);
+                pst.setParameter("fundId", 0);
             else
-                pst.setParameter("fundId", Integer.valueOf(fundId), IntegerType.INSTANCE);
-            final List<Object[]> list = pst.list();
+                pst.setParameter("fundId", Integer.valueOf(fundId));
+            final List<Object[]> list = pst.getResultList();
             final Object[] objects = list.toArray();
             if (objects.length == 0)
                 fundName = "";
@@ -1203,18 +1213,21 @@ public class GeneralLedgerReport {
             final String[] dt1 = VDate.split("/");
 
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1
-                    : Integer.parseInt(dt2[2]) < Integer.parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer
-                            .parseInt(dt1[1]) ? 1 : Integer.parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1 : Integer
-                                    .parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1) {
-                                    	return false;
-                                        //throw taskExc;
-                                    }else {
-                                    	return true;
-                                    }
+                    : Integer.parseInt(dt2[2]) < Integer.parseInt(dt1[2]) ? -1
+                            : Integer.parseInt(dt2[1]) > Integer
+                                    .parseInt(dt1[1]) ? 1
+                                            : Integer.parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                                                    : Integer
+                                                            .parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1
+                                                                    : Integer.parseInt(dt2[0]) < Integer
+                                                                            .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                return false;
+            // throw taskExc;
+            else
+                return true;
         } catch (final Exception ex) {
-            LOGGER.error("Exception in isCurDate():" , ex);
+            LOGGER.error("Exception in isCurDate():", ex);
             throw new TaskFailedException("Date Should be within the today's date");
         }
 

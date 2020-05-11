@@ -51,7 +51,6 @@
  */
 package com.exilant.eGov.src.reports;
 
-
 public class OpeningBalanceInputBean {
     String obFund_id;
     String finYear;

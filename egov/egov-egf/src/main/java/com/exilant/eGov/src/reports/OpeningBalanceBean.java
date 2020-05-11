@@ -51,7 +51,6 @@
  */
 package com.exilant.eGov.src.reports;
 
-
 public class OpeningBalanceBean {
     private String fund;
     private String accCode;

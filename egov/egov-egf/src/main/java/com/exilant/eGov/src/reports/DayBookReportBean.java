@@ -47,7 +47,6 @@
  */
 package com.exilant.eGov.src.reports;
 
-
 public class DayBookReportBean {
     private String startDate;
     private String endDate;
@@ -107,7 +106,6 @@ public class DayBookReportBean {
     public void setTotalCount(final String totalCount) {
         this.totalCount = totalCount;
     }
-
 
     /**
      * @return Returns the fundId.

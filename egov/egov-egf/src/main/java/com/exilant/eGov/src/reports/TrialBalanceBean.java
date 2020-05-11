@@ -168,7 +168,7 @@ public class TrialBalanceBean {
         this.amount10 = amount10;
     }
 
-    List<BigDecimal> amoutList = new ArrayList<BigDecimal>();
+    List<BigDecimal> amoutList = new ArrayList<>();
 
     public List<BigDecimal> getAmoutList() {
         return amoutList;
@@ -327,7 +327,7 @@ public class TrialBalanceBean {
 
     public void addToAmountMap(final String fundWiseKey, final String amount2) {
         if (fundWiseMap == null)
-            fundWiseMap = new HashMap<String, String>();
+            fundWiseMap = new HashMap<>();
         fundWiseMap.put(fundWiseKey, amount2);
 
     }
@@ -345,7 +345,7 @@ public class TrialBalanceBean {
     public String toString() {
         final StringBuffer str = new StringBuffer(1024);
         str.append(accCode).append(":").append(accName).append(":").append(amount).append(":").append(creditAmount)
-        .append(":").append(debitAmount).append(":").append(fundWiseMap);
+                .append(":").append(debitAmount).append(":").append(fundWiseMap);
 
         return str.toString();
     }

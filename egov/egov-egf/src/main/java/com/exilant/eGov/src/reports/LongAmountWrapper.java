@@ -47,15 +47,16 @@
  */
 package com.exilant.eGov.src.reports;
 
-import org.displaytag.decorator.ColumnDecorator;
-
 import java.text.DecimalFormat;
+
+import org.displaytag.decorator.ColumnDecorator;
 
 /**
  * Simple column decorator which formats a Amount.
  *
  * @author Sumit
  */
+@SuppressWarnings("deprecation")
 public class LongAmountWrapper implements ColumnDecorator {
 
     private final DecimalFormat moneyFormat = new DecimalFormat("#,###,###.00");

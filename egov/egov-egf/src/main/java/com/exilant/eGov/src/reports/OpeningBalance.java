@@ -51,17 +51,6 @@
  */
 package com.exilant.eGov.src.reports;
 
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.query.Query;
-import org.hibernate.type.LongType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -70,21 +59,32 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import com.exilant.exility.common.TaskFailedException;
+
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Service
 public class OpeningBalance {
     private static final Logger LOGGER = Logger.getLogger(OpeningBalance.class);
     List<Object[]> resultset;
     Query pstmt = null;
-    ArrayList al = new ArrayList();
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
+    List<OpeningBalanceBean> al = new ArrayList<>();
     private String fundId = "", finYear = "", deptId = "";
     private double grandTotalDr = 0.0, grandTotalCr = 0.0;
     private String fund = "", checkFund = "";
     private String glcode = "", name = "", narration = "", deptcode = "", functioncode = "";
     private Double debit, credit, balance;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
@@ -106,7 +106,7 @@ public class OpeningBalance {
     }
 
     // This method is called by the OpeningBalance.jsp
-    public ArrayList getOBReport(final OpeningBalanceInputBean OPBean) throws TaskFailedException {
+    public List<OpeningBalanceBean> getOBReport(final OpeningBalanceInputBean OPBean) throws TaskFailedException {
         // String asOnDate1=OPBean.getAsOnDate();
         // isCurDate(con,asOnDate1);
         try {
@@ -122,13 +122,14 @@ public class OpeningBalance {
             getReport();
             formatReport();
         } catch (final SQLException exception) {
-            LOGGER.error("EXP=" , exception);
+            LOGGER.error("EXP=", exception);
         }
 
         return al;
 
     }
 
+    @SuppressWarnings("unchecked")
     private void getReport() throws SQLException {
         StringBuilder query = new StringBuilder();
         String fundCondition = "";
@@ -140,16 +141,21 @@ public class OpeningBalance {
             fundCondition = " and b.id = :fundId ";
         if (!deptId.equalsIgnoreCase(""))
             deptCondition = " and a.DEPARTMENTID = :departmentId ";
-        query.append("SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\", '' as \"narration\", SUM(a.openingdebitbalance) AS \"debit\",")
+        query.append("SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\", '' as \"narration\",")
+                .append(" SUM(a.openingdebitbalance) AS \"debit\",")
                 .append(" SUM(a.openingcreditbalance) AS \"credit\", dept.code AS \"deptcode\", fn.code AS \"functioncode\"")
                 .append(" FROM TRANSACTIONSUMMARY a, FUND b, CHARTOFACCOUNTS c, eg_department dept, function fn ")
-                .append(" WHERE c.id in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id and fn.id = a.functionid and a.financialyearid = :finYearId")
+                .append(" WHERE c.id in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id and fn.id = a.functionid")
+                .append(" and a.financialyearid = :finYearId")
                 .append(fundCondition).append(deptCondition)
-                .append(" AND a.fundid = b.id AND a.glcodeid = c.id AND (a.openingdebitbalance > 0 OR a.openingcreditbalance > 0) GROUP BY b.name, c.glcode, c.name, dept.code, fn.code")
-                .append(" union SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\", a.narration as \"narration\", SUM(a.openingdebitbalance) AS \"debit\",")
+                .append(" AND a.fundid = b.id AND a.glcodeid = c.id AND (a.openingdebitbalance > 0 OR a.openingcreditbalance > 0)")
+                .append(" GROUP BY b.name, c.glcode, c.name, dept.code, fn.code")
+                .append(" union SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\",")
+                .append(" a.narration as \"narration\", SUM(a.openingdebitbalance) AS \"debit\",")
                 .append(" SUM(a.openingcreditbalance) AS \"credit\", dept.code AS \"deptcode\", fn.code AS \"functioncode\"")
                 .append(" FROM TRANSACTIONSUMMARY a, FUND b, CHARTOFACCOUNTS c, eg_department dept, function fn")
-                .append(" WHERE c.id not in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id and fn.id = a.functionid and a.financialyearid = :finYearId")
+                .append(" WHERE c.id not in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id")
+                .append(" and fn.id = a.functionid and a.financialyearid = :finYearId")
                 .append(fundCondition).append(deptCondition)
                 .append(" AND a.fundid = b.id AND a.glcodeid = c.id AND (a.openingdebitbalance > 0 OR a.openingcreditbalance > 0)")
                 .append(" GROUP BY b.name, c.glcode, c.name, dept.code, fn.code, a.narration ");
@@ -158,13 +164,13 @@ public class OpeningBalance {
 
         try {
             OpeningBalanceBean ob = null;
-            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-            pstmt.setParameter("finYearId", Long.valueOf(finYear), LongType.INSTANCE);
+            pstmt = entityManager.createNativeQuery(query.toString())
+                    .setParameter("finYearId", Long.valueOf(finYear));
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
+                pstmt.setParameter("fundId", Long.valueOf(fundId));
             if (!deptId.equalsIgnoreCase(""))
-                pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
-            List<Object[]> list = pstmt.list();
+                pstmt.setParameter("departmentId", Long.valueOf(deptId));
+            List<Object[]> list = pstmt.getResultList();
             resultset = list;
 
             for (final Object[] element : resultset) {
@@ -200,7 +206,7 @@ public class OpeningBalance {
                     totalDr = 0.0;
                     totalCr = 0.0;
                 }
-                // if(LOGGER.isDebugEnabled()) LOGGER.debug("totalDr  "+totalDr+"  totalCr  "+totalCr);
+                // if(LOGGER.isDebugEnabled()) LOGGER.debug("totalDr "+totalDr+" totalCr "+totalCr);
                 fund = element[0].toString();
                 glcode = element[1].toString();
                 name = element[2].toString();
@@ -298,11 +304,13 @@ public class OpeningBalance {
         if (diff > 0) {
             grandTotalCr = grandTotalCr + diff;
             ob.setDebit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalDr).toString()).toString()).concat("</b><hr>"));
-            ob.setCredit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
+            ob.setCredit(
+                    "<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
         } else {
             grandTotalDr = grandTotalDr + diff * -1;
             ob.setDebit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalDr).toString()).toString()).concat("</b><hr>"));
-            ob.setCredit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
+            ob.setCredit(
+                    "<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
         }
         al.add(ob);
     }
@@ -314,16 +322,20 @@ public class OpeningBalance {
             final String[] dt2 = today.split("/");
             final String[] dt1 = VDate.split("/");
 
-            final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
-                    .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                    .parseInt(dt1[0]) ? -1 : 0;
+            final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1
+                    : Integer.parseInt(dt2[2]) < Integer
+                            .parseInt(dt1[2]) ? -1
+                                    : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1
+                                            : Integer
+                                                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                                                            : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1
+                                                                    : Integer.parseInt(dt2[0]) < Integer
+                                                                            .parseInt(dt1[0]) ? -1 : 0;
             if (ret == -1)
                 throw new Exception();
 
         } catch (final Exception ex) {
-            LOGGER.error("Exception " , ex);
+            LOGGER.error("Exception ", ex);
             throw new TaskFailedException("Date Should be within the today's date");
         }
 

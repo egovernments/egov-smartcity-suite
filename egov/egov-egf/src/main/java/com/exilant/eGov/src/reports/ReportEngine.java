@@ -47,14 +47,18 @@
  */
 package com.exilant.eGov.src.reports;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * @author Manikanta
@@ -186,18 +190,17 @@ public class ReportEngine {
             final List<Integer> defaultStatusExclude = new ArrayList<>();
             final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                     "statusexcludeReport");
-            if (null != listAppConfVal) {
+            if (null != listAppConfVal)
                 Arrays.asList(listAppConfVal.get(0).getValue().split(","))
                         .stream().forEach(rec -> defaultStatusExclude.add(Integer.valueOf(rec)));
-            }else
+            else
                 throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
             reportEngineQry.append(firstParam).append(" voucher.status not in (:defaultStatus)");
             if (reBean.getExcludeStatuses() != null && reBean.getExcludeStatuses().size() > 0) {
                 defaultStatusExclude.addAll(reBean.getExcludeStatuses());
                 firstParam = andParam;
-            } else {
+            } else
                 firstParam = andParam;
-            }
             params.put("defaultStatus", defaultStatusExclude);
 
             if (reBean.getIncludeStatuses() != null && reBean.getIncludeStatuses().size() > 0) {

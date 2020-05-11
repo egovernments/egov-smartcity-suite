@@ -54,14 +54,12 @@ import org.displaytag.decorator.TableDecorator;
  * data, creating dynamic links, and exercising some aspects of the display:table API functionality.
  * @author Sumit
  */
-public class Wrapper extends TableDecorator
-{
+public class Wrapper extends TableDecorator {
 
     /**
      * Creates a new Wrapper decorator who's job is to reformat some of the data located in our TestObject's.
      */
-    public Wrapper()
-    {
+    public Wrapper() {
         super();
 
         // Formats for displaying dates and money.
@@ -73,8 +71,7 @@ public class Wrapper extends TableDecorator
      * Test method which always returns a null value.
      * @return <code>null</code>
      */
-    public String getNullValue()
-    {
+    public String getNullValue() {
         return null;
     }
     /*

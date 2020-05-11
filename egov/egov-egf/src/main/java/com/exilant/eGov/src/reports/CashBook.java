@@ -51,19 +51,6 @@
  */
 package com.exilant.eGov.src.reports;
 
-
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.utils.EGovConfig;
-import org.hibernate.query.Query;
-import org.hibernate.type.StringType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -75,6 +62,20 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.utils.EGovConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+
+@SuppressWarnings("deprecation")
 class OpBalance {
     public double dr;
     public double cr;
@@ -93,14 +94,12 @@ public class CashBook {
     String startDate, endDate, effTime, rType = "gl";
     NumberFormat numberformatter = new DecimalFormat("##############0.00");
     @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-    @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-    private @Autowired
-    EGovernCommon eGovernCommon;
-    private @Autowired
-    ReportEngine engine;
+    private @Autowired EGovernCommon eGovernCommon;
+    private @Autowired ReportEngine engine;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public CashBook() {
     }
@@ -112,7 +111,7 @@ public class CashBook {
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = String.valueOf(strNumberToConvert.substring(1,strNumberToConvert.length()));
+            strNumber = String.valueOf(strNumberToConvert.substring(1, strNumberToConvert.length()));
             signBit = "-";
         } else
             strNumber = String.valueOf(strNumberToConvert);
@@ -128,11 +127,12 @@ public class CashBook {
         return strbNumber;
     }
 
-    public LinkedList getGeneralLedgerList(final GeneralLedgerReportBean reportBean)
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    public List<GeneralLedgerReportBean> getGeneralLedgerList(final GeneralLedgerReportBean reportBean)
             throws TaskFailedException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getGeneralLedgerList");
-        final LinkedList dataList = new LinkedList();
+        final List<GeneralLedgerReportBean> dataList = new LinkedList<>();
         try {
             String isconfirmed = "";
             String glCode1 = "";
@@ -204,14 +204,12 @@ public class CashBook {
                     dt = sdf.parse(endDate);
                 } catch (ParseException e) {
 
-
                 }
                 CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
                 // final String finId = commonFun.getFYID(formendDate);
-                //startDate = commonFun.getStartDate(Integer.parseInt(finId));
-                if (finYearByDate != null) {
+                // startDate = commonFun.getStartDate(Integer.parseInt(finId));
+                if (finYearByDate != null)
                     startDate = sdf.format(finYearByDate.getStartingDate());
-                }
 
             } else
                 startDate = formstartDate;
@@ -227,7 +225,6 @@ public class CashBook {
                 throw taskExc;
             }
 
-
             Date dt1 = new Date();
             try {
                 dt1 = sdf.parse(endDate);
@@ -235,7 +232,7 @@ public class CashBook {
             }
             CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt1);
             final String fyId = finYearByDate.getId().toString();
-            //final String fyId = commonFun.getFYID(endDate);
+            // final String fyId = commonFun.getFYID(endDate);
             if (fyId.equalsIgnoreCase("")) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Financial Year Not Valid");
@@ -256,13 +253,13 @@ public class CashBook {
                 LOGGER.debug("**************QUERY: " + query);
 
             try {
-                pstmt = persistenceService.getSession().createNativeQuery(query);
+                pstmt = entityManager.createNativeQuery(query);
                 reBean.getParams().entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue()));
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:", e);
                 throw taskExc;
             }
-            resultset1 = pstmt.list();
+            resultset1 = pstmt.getResultList();
             String accCode = "", vcNum = "", vcDate = "";
             StringBuffer detail = new StringBuffer();
             StringBuffer amount = new StringBuffer();
@@ -297,8 +294,10 @@ public class CashBook {
             chequecreditTotal = chequeOpeningBalance;
             final GeneralLedgerReportBean glbeanOpBal = new GeneralLedgerReportBean();
             glbeanOpBal.setRcptParticulars("<B>To Opening Balance</B>");
-            glbeanOpBal.setRcptcashInHandAmt("<B>".concat(numberToString(String.valueOf(cashOpeningBalance)).toString()).concat("</B>"));
-            glbeanOpBal.setRcptChqInHandAmt("<B>".concat(numberToString(String.valueOf(chequeOpeningBalance)).toString()).concat("</B>"));
+            glbeanOpBal.setRcptcashInHandAmt(
+                    "<B>".concat(numberToString(String.valueOf(cashOpeningBalance)).toString()).concat("</B>"));
+            glbeanOpBal.setRcptChqInHandAmt(
+                    "<B>".concat(numberToString(String.valueOf(chequeOpeningBalance)).toString()).concat("</B>"));
             dataList.add(glbeanOpBal);
 
             int count2skip1stRow = 0;
@@ -424,13 +423,18 @@ public class CashBook {
                             final GeneralLedgerReportBean glbean1 = new GeneralLedgerReportBean(
                                     "<hr>&nbsp;</hr>");
                             glbean1.setRcptVchrDate("<hr><B>Total</B></hr>");
-                            glbean1.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                            glbean1.setRcptcashInHandAmt(
+                                    "<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                                            .concat("</B></hr>"));
+                            glbean1.setPmtCashInHandAmt("<hr><B>"
+                                    .concat(String.valueOf(numberToString(
+                                            cashdebitTotal.add(cashcreditTotal.subtract(cashdebitTotal)).toString())))
                                     .concat("</B></hr>"));
-                            glbean1.setPmtCashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashdebitTotal.add(cashcreditTotal.
-                                    subtract(cashdebitTotal)).toString()))).concat("</B></hr>"));
-                            glbean1.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal.toString()))).concat("</B></hr>"));
-                            glbean1.setPmtChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
-                                    .subtract(chequedebitTotal)).toString()))).concat("</B></hr>"));
+                            glbean1.setRcptChqInHandAmt("<hr><B>"
+                                    .concat(String.valueOf(numberToString(chequecreditTotal.toString()))).concat("</B></hr>"));
+                            glbean1.setPmtChqInHandAmt(
+                                    "<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
+                                            .subtract(chequedebitTotal)).toString()))).concat("</B></hr>"));
                             dataList.add(glbean1);
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info(cashcreditTotal + ":crDr: "
@@ -442,8 +446,9 @@ public class CashBook {
                             // glbeanOb.setRcptChqInHandAmt("<hr><B>"+(numberformatter.format(chequecreditTotal.subtract(chequedebitTotal).doubleValue()))+"</B></hr>");
                             glbeanOb.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.subtract(
                                     cashdebitTotal).toString()))).concat("</B></hr>"));
-                            glbeanOb.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal.subtract(chequedebitTotal)
-                                    .toString()))).concat("</B></hr>"));
+                            glbeanOb.setRcptChqInHandAmt(
+                                    "<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal.subtract(chequedebitTotal)
+                                            .toString()))).concat("</B></hr>"));
                             dataList.add(glbeanOb);
                             cashcreditTotal = cashcreditTotal
                                     .subtract(cashdebitTotal);
@@ -635,13 +640,17 @@ public class CashBook {
                             final GeneralLedgerReportBean glbean1 = new GeneralLedgerReportBean(
                                     "<hr>&nbsp;</hr>");
                             glbean1.setRcptVchrDate("<hr><B>Total</B></hr>");
-                            glbean1.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                            glbean1.setRcptcashInHandAmt(
+                                    "<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                                            .concat("</B></hr>"));
+                            glbean1.setPmtCashInHandAmt("<hr><B>".concat(
+                                    String.valueOf(numberToString(cashdebitTotal.add(cashcreditTotal.subtract(cashdebitTotal))
+                                            .toString())))
                                     .concat("</B></hr>"));
-                            glbean1.setPmtCashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashdebitTotal.add(cashcreditTotal.subtract(cashdebitTotal))
-                                    .toString()))).concat("</B></hr>"));
                             glbean1.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal
                                     .toString()))).concat("</B></hr>"));
-                            glbean1.setPmtChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
+                            glbean1.setPmtChqInHandAmt(
+                                    "<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
                                             .subtract(chequedebitTotal)).toString()))).concat("</B></hr>"));
                             dataList.add(glbean1);
                             final GeneralLedgerReportBean glbeanOb = new GeneralLedgerReportBean(
@@ -666,7 +675,7 @@ public class CashBook {
                 }
 
         } catch (final SQLException ex) {
-            LOGGER.error("ERROR in  getGeneralLedgerList ",ex);
+            LOGGER.error("ERROR in  getGeneralLedgerList ", ex);
             throw taskExc;
         }
         if (LOGGER.isInfoEnabled())
@@ -675,26 +684,36 @@ public class CashBook {
     }
 
     private String getQuery(final String engineQry) {
-        return new StringBuilder("SELECT distinct gl1.glcode as \"code\", vh.type as \"vhType\", vh.cgn as \"CGN\", coa.purposeid as \"purposeid\",")
-                .append(" case coa.purposeid when 4 then 1 when 5 then 1 else 0 end as \"order\",")
-                .append(" (select ca.type from chartofaccounts ca where glcode=gl1.glcode) as \"glType\",")
-                .append(" (select name from fundsource where id=vh.FUNDSOURCEID) as \"fundsource\",(select name from function where id=gl.FUNCTIONID) as \"function\",")
-                .append(" vh.id AS \"vhid\", vh.voucherDate AS \"vDate\", to_char(vh.voucherDate, 'dd-Mon-yyyy') AS \"voucherdate\", vh.voucherNumber AS \"vouchernumber\",")
-                .append(" gl.glCode AS \"glcode\", coa.name||case vh.STATUS when 1 then '(Reversed)' when 2 then '(Reversal)' else '' end AS \"name\",")
-                .append(" case when gl.debitAmount = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount)")
-                .append(" then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr'")
-                .append(" when floor(gl.debitamount) then gl.debitamount||'.00dr' else gl.debitamount||'dr' end ) end AS \"amount\", ")
-                .append(" gl.description AS \"narration\", vh.name AS \"vhname\", gl.debitamount  AS \"debitamount\", gl.creditamount  AS \"creditamount\", f.name as \"fundName\",")
-                .append(" vh.isconfirmed as \"isconfirmed\"")
-                .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa, generalLedger gl1, fund f")
-                .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id AND gl.voucherHeaderId = vh.id AND gl.voucherHeaderId = gl1.voucherHeaderId AND f.id = vh.fundId ")
-                .append(effTime)
-                .append(" AND gl1.glcode in (SELECT GLCODE FROM CHARTOFACCOUNTS WHERE PURPOSEID = 4 or purposeid = 5) ")
-                .append(" AND exists (").append(engineQry).append(" and voucher.id = vh.id ) AND (gl.debitamount > 0 OR gl.creditamount > 0) order by \"vDate\", \"vhid\", \"order\" desc").toString();
+        return new StringBuilder(
+                "SELECT distinct gl1.glcode as \"code\", vh.type as \"vhType\", vh.cgn as \"CGN\", coa.purposeid as \"purposeid\",")
+                        .append(" case coa.purposeid when 4 then 1 when 5 then 1 else 0 end as \"order\",")
+                        .append(" (select ca.type from chartofaccounts ca where glcode=gl1.glcode) as \"glType\",")
+                        .append(" (select name from fundsource where id=vh.FUNDSOURCEID) as \"fundsource\",(select name")
+                        .append(" from function where id=gl.FUNCTIONID) as \"function\",")
+                        .append(" vh.id AS \"vhid\", vh.voucherDate AS \"vDate\", to_char(vh.voucherDate, 'dd-Mon-yyyy') AS \"voucherdate\",")
+                        .append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", coa.name||case vh.STATUS when 1")
+                        .append(" then '(Reversed)' when 2 then '(Reversal)' else '' end AS \"name\",")
+                        .append(" case when gl.debitAmount = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr'")
+                        .append(" when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end )")
+                        .append(" else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr'")
+                        .append(" when floor(gl.debitamount) then gl.debitamount||'.00dr' else gl.debitamount||'dr' end ) end AS \"amount\", ")
+                        .append(" gl.description AS \"narration\", vh.name AS \"vhname\", gl.debitamount  AS \"debitamount\",")
+                        .append(" gl.creditamount  AS \"creditamount\", f.name as \"fundName\",")
+                        .append(" vh.isconfirmed as \"isconfirmed\"")
+                        .append(" FROM generalLedger gl, voucherHeader vh, chartOfAccounts coa, generalLedger gl1, fund f")
+                        .append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id AND gl.voucherHeaderId = vh.id")
+                        .append(" AND gl.voucherHeaderId = gl1.voucherHeaderId AND f.id = vh.fundId ")
+                        .append(effTime)
+                        .append(" AND gl1.glcode in (SELECT GLCODE FROM CHARTOFACCOUNTS WHERE PURPOSEID = 4 or purposeid = 5) ")
+                        .append(" AND exists (").append(engineQry)
+                        .append(" and voucher.id = vh.id ) AND (gl.debitamount > 0 OR gl.creditamount > 0)")
+                        .append(" order by \"vDate\", \"vhid\", \"order\" desc")
+                        .toString();
     }
 
+    @SuppressWarnings("unchecked")
     private OpBalance getOpeningBalance(final String glCode, final String fundId,
-                                        final String fundSourceId, final String fyId, final String tillDate)
+            final String fundSourceId, final String fyId, final String tillDate)
             throws TaskFailedException, SQLException {
         String fundCondition = "";
         String fundSourceCondition = "";
@@ -705,26 +724,29 @@ public class CashBook {
             fundCondition = "fundId = :fundId AND ";
         if (!fundSourceId.equalsIgnoreCase(""))
             fundSourceCondition = "fundSourceId = :fundSourceId AND ";
-        final StringBuilder queryYearOpBal = new StringBuilder("SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end AS \"openingDebitBalance\", ")
-                .append("case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance) AS \"openingCreditBalance\" ")
-                .append(" FROM transactionSummary WHERE ")
-                .append(fundCondition)
-                .append(fundSourceCondition)
-                .append(" financialYearId = :financialYearId ")
-                .append(" AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in ( :glcode))");
+        final StringBuilder queryYearOpBal = new StringBuilder(
+                "SELECT case when sum(openingDebitBalance) = null then 0 else sum(openingDebitBalance) end AS \"openingDebitBalance\", ")
+                        .append("case when sum(openingCreditBalance) = null then 0 else sum(openingCreditBalance)")
+                        .append(" AS \"openingCreditBalance\" ")
+                        .append(" FROM transactionSummary")
+                        .append(" WHERE ")
+                        .append(fundCondition)
+                        .append(fundSourceCondition)
+                        .append(" financialYearId = :financialYearId ")
+                        .append(" AND glCodeId = (SELECT id FROM chartOfAccounts WHERE glCode in ( :glcode))");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("***********: OPBAL for glcode -->" + glCode
                     + " is-->: " + queryYearOpBal);
 
-        pstmt = persistenceService.getSession().createNativeQuery(queryYearOpBal.toString());
+        pstmt = entityManager.createNativeQuery(queryYearOpBal.toString());
         if (!fundId.equalsIgnoreCase(""))
-            pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
+            pstmt.setParameter("fundId", fundId);
         if (!fundSourceId.equalsIgnoreCase(""))
-            pstmt.setParameter("fundSourceId", fundSourceId, StringType.INSTANCE);
-        pstmt.setParameter("financialYearId", fyId, StringType.INSTANCE);
-        pstmt.setParameter("glcode", glCode, StringType.INSTANCE);
+            pstmt.setParameter("fundSourceId", fundSourceId);
+        pstmt.setParameter("financialYearId", fyId)
+                .setParameter("glcode", glCode);
 
-        resultset = pstmt.list();
+        resultset = pstmt.getResultList();
         for (final Object[] element : resultset) {
             opDebit = Double.parseDouble(element[0].toString());
             opCredit = Double.parseDouble(element[1].toString());
@@ -740,26 +762,28 @@ public class CashBook {
             String queryTillDateOpBal = "";
             // if(showRev.equalsIgnoreCase("on")){
 
-            queryTillDateOpBal = new StringBuilder("SELECT case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end AS \"debitAmount\",")
-                    .append(" case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end AS \"creditAmount\"")
-                    .append(" FROM generalLedger gl, voucherHeader vh")
-                    .append(" WHERE vh.id = gl.voucherHeaderId AND gl.glCode in(:glcode) ")
-                    .append(fundCondition).append(fundSourceCondition).append(effTime)
-                    .append(" AND vh.voucherDate >= :vStartDate AND vh.voucherDate < :vEndDate AND vh.status <> 4").toString();
+            queryTillDateOpBal = new StringBuilder(
+                    "SELECT case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end AS \"debitAmount\",")
+                            .append(" case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end AS \"creditAmount\"")
+                            .append(" FROM generalLedger gl, voucherHeader vh")
+                            .append(" WHERE vh.id = gl.voucherHeaderId AND gl.glCode in(:glcode) ")
+                            .append(fundCondition).append(fundSourceCondition).append(effTime)
+                            .append(" AND vh.voucherDate >= :vStartDate AND vh.voucherDate < :vEndDate AND vh.status <> 4")
+                            .toString();
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("***********: tilldate OPBAL for glcode -->"
                         + glCode + " is-->: " + queryTillDateOpBal);
 
-            pstmt = persistenceService.getSession().createNativeQuery(queryTillDateOpBal);
-            pstmt.setParameter("glcode", glCode, StringType.INSTANCE);
+            pstmt = entityManager.createNativeQuery(queryTillDateOpBal);
+            pstmt.setParameter("glcode", glCode);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
+                pstmt.setParameter("fundId", fundId);
             if (!fundSourceId.equalsIgnoreCase(""))
-                pstmt.setParameter("fundSourceId", fundSourceId, StringType.INSTANCE);
-            pstmt.setParameter("vStartDate", startDate, StringType.INSTANCE);
-            pstmt.setParameter("vEndDate", tillDate, StringType.INSTANCE);
-            resultset = pstmt.list();
+                pstmt.setParameter("fundSourceId", fundSourceId);
+            pstmt.setParameter("vStartDate", startDate);
+            pstmt.setParameter("vEndDate", tillDate);
+            resultset = pstmt.getResultList();
             for (final Object[] element : resultset) {
                 opDebit = opDebit + Double.parseDouble(element[0].toString());
                 opCredit = opCredit + Double.parseDouble(element[1].toString());
@@ -776,9 +800,10 @@ public class CashBook {
 
     /**
      * @param minGlCode
-     * @throws TaskFailedException if start date is not provided then set financial year startdate
-     *                             if end date is not provided then set financial year end date
+     * @throws TaskFailedException if start date is not provided then set financial year startdate if end date is not provided
+     * then set financial year end date
      */
+    @SuppressWarnings("unchecked")
     public String getMinCode(final String minGlCode) throws TaskFailedException {
 
         String minCode = "";
@@ -786,9 +811,9 @@ public class CashBook {
             final StringBuilder query = new StringBuilder("select glcode")
                     .append(" from chartofaccounts")
                     .append(" where glcode like :glCode|| '%' and classification = 4 order by glcode asc");
-            final List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("glCode", minGlCode, StringType.INSTANCE)
-                    .list();
+            final List<Object[]> rset = entityManager.createNativeQuery(query.toString())
+                    .setParameter("glCode", minGlCode)
+                    .getResultList();
             for (final Object[] element : rset)
                 minCode = element[0].toString();
         } catch (final Exception sqlex) {
@@ -800,15 +825,16 @@ public class CashBook {
         return minCode;
     }
 
+    @SuppressWarnings("unchecked")
     public String getMaxCode(final String maxGlCode) throws TaskFailedException {
         String maxCode = "";
         try {
             final StringBuilder query = new StringBuilder("select glcode")
                     .append(" from chartofaccounts")
                     .append(" where glcode like :glCode|| '%' and classification = 4 order by glcode desc");
-            final List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
+            final List<Object[]> rset = entityManager.createNativeQuery(query.toString())
                     .setParameter("glCode", maxGlCode)
-                    .list();
+                    .getResultList();
             for (final Object[] element : rset)
                 maxCode = element[0].toString();
         } catch (final Exception sqlex) {
@@ -820,6 +846,7 @@ public class CashBook {
         return maxCode;
     }
 
+    @SuppressWarnings("unchecked")
     public String getCGN(final String id) throws TaskFailedException {
         String cgn = "";
         pstmt = null;
@@ -828,9 +855,9 @@ public class CashBook {
                 final StringBuilder queryCgn = new StringBuilder("select CGN")
                         .append(" from VOUCHERHEADER")
                         .append(" where id = :id");
-                List<Object[]> rsCgn = persistenceService.getSession().createNativeQuery(queryCgn.toString())
-                        .setParameter("id", id, StringType.INSTANCE)
-                        .list();
+                List<Object[]> rsCgn = entityManager.createNativeQuery(queryCgn.toString())
+                        .setParameter("id", id)
+                        .getResultList();
                 for (final Object[] element : rsCgn)
                     cgn = element[0].toString();
 
@@ -852,14 +879,18 @@ public class CashBook {
 
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1
                     : Integer.parseInt(dt2[2]) < Integer.parseInt(dt1[2]) ? -1
-                    : Integer.parseInt(dt2[1]) > Integer
-                    .parseInt(dt1[1]) ? 1 : Integer
-                    .parseInt(dt2[1]) < Integer
-                    .parseInt(dt1[1]) ? -1 : Integer
-                    .parseInt(dt2[0]) > Integer
-                    .parseInt(dt1[0]) ? 1 : Integer
-                    .parseInt(dt2[0]) < Integer
-                    .parseInt(dt1[0]) ? -1 : 0;
+                            : Integer.parseInt(dt2[1]) > Integer
+                                    .parseInt(dt1[1]) ? 1
+                                            : Integer
+                                                    .parseInt(dt2[1]) < Integer
+                                                            .parseInt(dt1[1]) ? -1
+                                                                    : Integer
+                                                                            .parseInt(dt2[0]) > Integer
+                                                                                    .parseInt(dt1[0]) ? 1
+                                                                                            : Integer
+                                                                                                    .parseInt(dt2[0]) < Integer
+                                                                                                            .parseInt(dt1[0]) ? -1
+                                                                                                                    : 0;
             if (ret == -1)
                 throw new Exception();
 
@@ -871,6 +902,7 @@ public class CashBook {
 
     }
 
+    @SuppressWarnings("unchecked")
     private String[] getGlcode(final String bId) throws TaskFailedException {
         final String glcode[] = new String[2];
         try {
@@ -879,17 +911,17 @@ public class CashBook {
                     .append(" where id in (select cashinhand from codemapping where eg_boundaryid = :boundaryId)");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("boundaryId", bId, StringType.INSTANCE)
-                    .list();
+            List<Object[]> rs = entityManager.createNativeQuery(query.toString())
+                    .setParameter("boundaryId", bId)
+                    .getResultList();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
             final StringBuilder str = new StringBuilder("select glcode")
                     .append(" from chartofaccounts")
                     .append(" where id in (select chequeinHand from codemapping where eg_boundaryid = :boundaryId)");
-            rs = persistenceService.getSession().createNativeQuery(str.toString())
-                    .setParameter("boundaryId", bId, StringType.INSTANCE)
-                    .list();
+            rs = entityManager.createNativeQuery(str.toString())
+                    .setParameter("boundaryId", bId)
+                    .getResultList();
             for (final Object[] element : rs)
                 glcode[1] = element[0].toString();
         } catch (final Exception e) {
@@ -899,19 +931,19 @@ public class CashBook {
         return glcode;
     }
 
+    @SuppressWarnings("unchecked")
     private String getUlbDetails() throws TaskFailedException {
 
         List<Object[]> rs = null;
         String ulbName = "";
-        Query pstmt = null;
         try {
 
             final StringBuilder query = new StringBuilder("select name as \"name\"")
                     .append(" from companydetail");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            rs = persistenceService.getSession().createNativeQuery(query.toString())
-                    .list();
+            rs = entityManager.createNativeQuery(query.toString())
+                    .getResultList();
             for (final Object[] element : rs)
                 ulbName = element[0].toString();
         } catch (final Exception e) {
