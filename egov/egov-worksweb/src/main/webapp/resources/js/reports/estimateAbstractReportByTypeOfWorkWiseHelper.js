@@ -249,7 +249,11 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/reports/ajax-estimateabstractreportbytypeofworkwise",      
 					type: "POST",
-					"data":  postData
+					"data":  postData,
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"bDestroy" : true,
 				'bAutoWidth': false,

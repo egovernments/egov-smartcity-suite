@@ -206,8 +206,13 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/reports/ajax-estimateabstractreportbydepartmentwise",      
 					type: "POST",
-					"data":  postData
-				},
+					"data":  postData,
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
+				  },
+				
 				"bDestroy" : true,
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
