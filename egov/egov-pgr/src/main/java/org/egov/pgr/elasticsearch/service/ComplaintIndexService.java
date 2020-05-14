@@ -1447,7 +1447,7 @@ public class ComplaintIndexService {
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
             boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
-            return boolQuery;
+            //return boolQuery;
         }
         if (isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
