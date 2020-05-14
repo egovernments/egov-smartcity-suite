@@ -73,7 +73,7 @@ public interface SewerageRatesMasterRepository extends JpaRepository<SewerageRat
     @Query("select srm.monthlyRate from SewerageRatesMaster srm where srm.propertyType =:propertyType and srm.active = true and srm.fromDate <=current_date and (srm.toDate >= current_date or srm.toDate is null)")
     Double getSewerageMonthlyRatesByPropertytype(@Param("propertyType") PropertyType propertyType);
 
-    @Query("select S from SewerageRatesMaster S where S.propertyType=:propertyType and S.active=:active and (S.fromDate<=:date or (S.toDate is null or S.toDate<=:date)) order by S.fromDate desc")
+    @Query("select S from SewerageRatesMaster S where S.propertyType=:propertyType and S.active=:active and (S.fromDate<=:date or (S.toDate is null or S.toDate>=:date)) order by S.fromDate desc")
     List<SewerageRatesMaster> getLatestActiveRecord(@Param("propertyType") PropertyType propertyType,
                                                     @Param("active") boolean active, @Param("date") Date date);
 
