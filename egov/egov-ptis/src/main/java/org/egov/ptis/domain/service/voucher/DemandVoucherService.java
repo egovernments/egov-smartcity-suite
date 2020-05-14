@@ -235,12 +235,27 @@ public class DemandVoucherService {
         if (advance.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
                     putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        if (generalTax.compareTo(ZERO) != 0)
-            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_GENERAL_TAX),
-                    putAmountAndType(generalTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (vacantLandtax.compareTo(ZERO) != 0)
-            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_VACANT_TAX),
-                    putAmountAndType(vacantLandtax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (generalTax.compareTo(ZERO) != 0) {
+            if (!demandIncreased && generalTax.compareTo(ZERO) < 0
+                    || demandIncreased && generalTax.compareTo(ZERO) > 0)
+                voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_GENERAL_TAX),
+                        putAmountAndType(generalTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+            else
+                voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_GENERAL_TAX),
+                        putAmountAndType(generalTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        }
+
+        if (vacantLandtax.compareTo(ZERO) != 0) {
+            if (!demandIncreased && vacantLandtax.compareTo(ZERO) < 0
+                    || demandIncreased && vacantLandtax.compareTo(ZERO) > 0)
+                voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_VACANT_TAX),
+                        putAmountAndType(vacantLandtax.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? true : false));
+            else
+                voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_VACANT_TAX),
+                        putAmountAndType(vacantLandtax.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? false : true));
+        }
         if (libraryCess.compareTo(ZERO) != 0) {
             /*
              * if overall demand is decreased and library cess is increased or vice-versa, then library cess amount will go to
@@ -249,10 +264,12 @@ public class DemandVoucherService {
             if (!demandIncreased && libraryCess.compareTo(ZERO) < 0
                     || demandIncreased && libraryCess.compareTo(ZERO) > 0)
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
-                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? true : false));
             else
                 voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_LIBRARY_CESS),
-                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+                        putAmountAndType(libraryCess.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? false : true));
         }
         if (penalty.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
@@ -260,9 +277,17 @@ public class DemandVoucherService {
         if (penalty.compareTo(ZERO) < 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
-        if (priorIncome.compareTo(ZERO) != 0)
-            voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
-                    putAmountAndType(priorIncome.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (priorIncome.compareTo(ZERO) != 0) {
+            if (!demandIncreased && priorIncome.compareTo(ZERO) < 0
+                    || demandIncreased && priorIncome.compareTo(ZERO) > 0)
+                voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
+                        putAmountAndType(priorIncome.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? true : false));
+            else
+                voucherDetails.put(glCodeMap.get(PRIOR_INCOME),
+                        putAmountAndType(priorIncome.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
+                                demandIncreased ? false : true));
+        }
         if (arrearsTax.abs().compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(ARREAR_TAX),
                     putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
@@ -449,11 +474,11 @@ public class DemandVoucherService {
         if (oldDetails.getGeneralTax().compareTo(ZERO) > 0
                 && newDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setVacantTaxVariation(
-                    oldDetails.getVacantLandTax().subtract(newDetails.getGeneralTax()));
+                    oldDetails.getGeneralTax().subtract(newDetails.getVacantLandTax()));
         else if (newDetails.getGeneralTax().compareTo(ZERO) > 0
                 && oldDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setGeneralTaxVariation(
-                    oldDetails.getGeneralTax().subtract(newDetails.getVacantLandTax()));
+                    oldDetails.getVacantLandTax().subtract(newDetails.getGeneralTax()));
         else {
             demandVoucherDetails.setGeneralTaxVariation(
                     oldDetails.getGeneralTax().subtract(newDetails.getGeneralTax()));
