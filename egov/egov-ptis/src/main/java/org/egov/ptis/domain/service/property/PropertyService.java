@@ -1663,7 +1663,7 @@ public class PropertyService {
                 floor.setPropertyDetail(newProperty.getPropertyDetail());
                 floorProxy.add(floor);
             }
-        newProperty.setApplicationNo(objectionNum);
+        newProperty.setApplicationNo("");
         newProperty.getPropertyDetail().setFloorDetails(floorProxy);
         if (newProperty.getPropertyDetail().getPropertyOccupation() != null)
             newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
