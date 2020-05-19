@@ -466,7 +466,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
-        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+        Boolean isWardSecretaryRequest = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+        if (isWardSecretaryRequest) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return RESULT_NEW;
@@ -499,17 +500,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        // this should be appending to messgae
+        // this should be appending to message
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
+        else if (isWardSecretaryRequest)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
 
         propService.processAndStoreDocument(property.getAssessmentDocuments());
 
-        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+        if (isWardSecretaryRequest) {
             propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property,request, transactionId);
         } else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
@@ -539,12 +540,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         updatePropertyStatusValuesRemarks(nonVacantBasicProperty);
         PropertyImpl nonVacantProperty = null;
         PropertyImpl vacantProperty =null;
+        Boolean isWardSecretaryRequest = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
         try {
             nonVacantProperty = createNonVacantProperty(status, nonVacantBasicProperty);
             final BasicProperty vacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
             updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
             vacantProperty = createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
-            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (isWardSecretaryRequest) {
                 propertyThirdPartyService.publishEventForAppurTenant(transactionId, nonVacantProperty.getApplicationNo(),
                         vacantProperty.getApplicationNo(), true);
             }
@@ -555,7 +557,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             return RESULT_NEW;
         } catch (final Exception e) {
             logger.error("Exception while creating appurtenant property. ", e);
-            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (isWardSecretaryRequest) {
                 propertyThirdPartyService.publishEventForAppurTenant(transactionId,
                         nonVacantProperty == null ? "" : nonVacantProperty.getApplicationNo(),
                         vacantProperty == null ? "" : vacantProperty.getApplicationNo(), false);
