@@ -120,6 +120,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
+import static org.egov.ptis.constants.PropertyTaxConstants.COURTCASE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REJECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_CANCEL;
@@ -1137,7 +1138,9 @@ public class PropertyTaxCommonUtils {
 
         BigDecimal totalDemandVariationAmt = BigDecimal.ZERO;
         for (DemandDetailVariation demandDeatilVariation : demandDetail.getDemandDetailVariation())
-            totalDemandVariationAmt = totalDemandVariationAmt.add(demandDeatilVariation.getDramount());
+            if (demandDeatilVariation.getDemandreasonMaster().getCode().equals(WRITE_OFF)
+                    || demandDeatilVariation.getDemandreasonMaster().getCode().equals(COURTCASE))
+                totalDemandVariationAmt = totalDemandVariationAmt.add(demandDeatilVariation.getDramount());
 
         return demandDetail.getAmount().subtract(totalDemandVariationAmt);
 
