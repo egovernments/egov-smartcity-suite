@@ -186,10 +186,13 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
+    public String create(final RedirectAttributes redirectAttributes, final Model model,
+    		@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
+    	if (errors.hasErrors()) {
+            return "newLineEstimate-form";
+        }
         setDropDownValues(model);
         validateLineEstimate(lineEstimate, errors);
         validateBudgetHead(lineEstimate, errors);
