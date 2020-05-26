@@ -336,7 +336,8 @@ public class RevisionPetitionReportService {
         }
         return noticeDate;
     }
-
+    
+    @ReadOnly
     public PtNotice getNoticeDateByApplicationNum(String applicationNo) {
         Query qry = null;
         qry = getCurrentSession()
