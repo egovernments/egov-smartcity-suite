@@ -244,8 +244,8 @@ public class SearchReceiptAction extends SearchFormAction {
         }
 
         if (StringUtils.isNotBlank(getReceiptNumber())) {
-            criteriaString.append(" and upper(receiptNumber) like ? ");
-            params.add("%" + getReceiptNumber().toUpperCase() + "%");
+            criteriaString.append(" and receiptNumber = ? ");
+            params.add(getReceiptNumber());
         }
         if (StringUtils.isNotBlank(getManualReceiptNumber())) {
             criteriaString.append(" and upper(receipt.manualreceiptnumber) like ? ");
