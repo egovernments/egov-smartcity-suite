@@ -103,6 +103,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -204,7 +205,10 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(final Model model,
-            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
+            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest, final BindingResult errors) {
+    	if (errors.hasErrors()) {
+    		return "lineestimate-search";
+        }
         final List<LineEstimate> searchResultList = lineEstimateService.searchLineEstimates(lineEstimateSearchRequest);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateResultJson(searchResultList))
                 .append("}").toString();

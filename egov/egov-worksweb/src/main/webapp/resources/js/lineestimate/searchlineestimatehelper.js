@@ -91,8 +91,13 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/lineestimate/ajaxsearch",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					"data":  getFormData(jQuery('form')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
+				
 				"bDestroy" : true,
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
