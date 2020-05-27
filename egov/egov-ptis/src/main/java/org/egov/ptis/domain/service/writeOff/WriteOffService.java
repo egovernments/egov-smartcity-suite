@@ -312,6 +312,8 @@ public class WriteOffService extends GenericWorkFlowController {
                         loggedInUserDesignation);
                 writeOff.getProperty().setStatus(STATUS_ISACTIVE);
                 writeOff.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                propertyService.copyCollection(writeOff.getBasicProperty().getActiveProperty(),
+                        writeOff.getBasicProperty().getActiveProperty());
                 propertyService.copyCollection(writeOff.getBasicProperty().getActiveProperty(), writeOff.getProperty());
                 if (writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF"))
                     demandVoucherService.createDemandVoucher(

@@ -285,6 +285,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 property.setStatus(STATUS_ISACTIVE);
                 persistenceService.persist(property);
             }
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) oldProperty);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) property);
             demandVoucherService.createDemandVoucher((PropertyImpl) property, (PropertyImpl) oldProperty,
                     propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_DEMOLITION,
                             PropertyTaxConstants.NO_ACTION));

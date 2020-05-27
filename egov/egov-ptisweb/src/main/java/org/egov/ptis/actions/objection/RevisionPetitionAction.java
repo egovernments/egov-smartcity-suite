@@ -898,6 +898,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
                     PropertyTaxConstants.OBJECTION_ACCEPTED));
             Property oldProperty = objection.getBasicProperty().getProperty();
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) oldProperty);
             propService.copyCollection((PropertyImpl) oldProperty, objection.getProperty());
             objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
             objection.getProperty().setStatus(STATUS_ISACTIVE);

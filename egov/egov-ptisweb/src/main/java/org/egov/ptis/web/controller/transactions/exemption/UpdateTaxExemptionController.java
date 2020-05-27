@@ -329,6 +329,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) oldProperty);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) property);
             if (property.getIsExemptedFromTax())
                 demandVoucherService.createDemandVoucher(property, null,
                         propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_TAX_EXEMTION,

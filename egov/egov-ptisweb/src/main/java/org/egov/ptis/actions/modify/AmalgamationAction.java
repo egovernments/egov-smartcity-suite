@@ -1005,6 +1005,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         createPropertyStatusValues();
+        propertyService.copyCollection(oldProperty, oldProperty);
         propertyService.copyCollection(oldProperty, propertyModel);
         propertyModel.setStatus(STATUS_ISACTIVE);
         oldProperty.setStatus(STATUS_ISHISTORY);
