@@ -164,6 +164,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -384,6 +386,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                             previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
         String successMessage;
         if (property.getCreatedBy() != null)
@@ -452,6 +455,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                             exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+            propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
 
             successMessage = "Property Exemption rejected successfully and forwarded to "
