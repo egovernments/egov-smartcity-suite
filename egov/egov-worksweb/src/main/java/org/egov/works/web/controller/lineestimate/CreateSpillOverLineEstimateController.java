@@ -172,10 +172,13 @@ public class CreateSpillOverLineEstimateController {
     }
 
     @RequestMapping(value = "/create-spillover", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final Model model,
+    public String create(final Model model, @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, 
             final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             final BindingResult resultBinder) throws ApplicationException, IOException {
+    	if (resultBinder.hasErrors()) {
+    		return "spillOverLineEstimate-form";
+        }
         model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
         model.addAttribute("workdetailsadd",
                 WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
