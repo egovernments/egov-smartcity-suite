@@ -47,6 +47,9 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -106,8 +109,8 @@ public class CancelLineEstimateController {
             model.addAttribute("errorMessage", message);
             return "letterofacceptance-success";
         }
-
-        lineEstimate.setCancellationReason(cancellationReason);
+        String reasonOfCancel =  removeScriptContent(cancellationReason);
+        lineEstimate.setCancellationReason(reasonOfCancel);
         lineEstimate.setCancellationRemarks(cancellationRemarks);
         try {
             lineEstimate = lineEstimateService.cancel(lineEstimate);
@@ -117,6 +120,15 @@ public class CancelLineEstimateController {
         model.addAttribute("lineEstimate", lineEstimate);
         model.addAttribute("mode", "cancel");
         return "lineestimate-success";
+    }
+    
+    public String removeScriptContent(String cancellationReason) {
+        if(cancellationReason != null) {
+          String replacedReason = cancellationReason.replaceAll("\\<.*?\\>", "");
+          replacedReason = cancellationReason.replaceAll("\\W+","");
+          return replacedReason;
+       }
+       return null;
     }
 
 }

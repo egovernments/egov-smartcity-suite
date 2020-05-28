@@ -295,7 +295,10 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchLineEstimatesToCancel(final Model model,
-            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
+            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,  final BindingResult errors) {
+    	if (errors.hasErrors()) {
+    		return "searchlineestimate-cancel";
+        }
         final List<LineEstimate> lineestimates = lineEstimateService
                 .searchLineEstimatesToCancel(lineEstimateSearchRequest);
         final String result = new StringBuilder("{ \"data\":")
