@@ -56,17 +56,21 @@ import org.egov.commons.utils.EntityType;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @SuppressWarnings("deprecation")
 public class ProjectCode extends BaseModel implements EntityType {
 
     private static final long serialVersionUID = -1569796745047275070L;
+    @SafeHtml
     private String code;
     private Set<AbstractEstimate> estimates = new HashSet<>();
     private boolean active;
+    @SafeHtml
     @Length(max = 1024, message = "projectCode.description.length")
     private String description;
     // @Required(message="projectCode.name.null")
+    @SafeHtml
     @Length(max = 1024, message = "projectCode.name.length")
     private String codeName;
     private EgwStatus egwStatus;
