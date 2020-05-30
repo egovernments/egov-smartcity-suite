@@ -240,7 +240,7 @@ public class MeterDemandNoticeController {
         reportParams.put("propertyassesmentNumber", waterConnectionDetails.getConnection().getPropertyIdentifier());
         reportParams.put("consumerNumber", waterConnectionDetails.getConnection().getConsumerCode());
         reportParams.put("pipeSize", waterConnectionDetails.getPipeSize().getSizeInInch());
-        reportParams.put("mterSerialNumber", waterConnectionDetails.getConnection().getMeterSerialNumber());
+		reportParams.put("mterSerialNumber", waterConnectionDetails.getExistingConnection().getMeterNo());
         reportParams.put("applicantName", ownerName);
         reportParams.put("demandNoticeNumber", billObj != null && billObj.getBillNo() != null ? billObj.getBillNo()
                 : "");
