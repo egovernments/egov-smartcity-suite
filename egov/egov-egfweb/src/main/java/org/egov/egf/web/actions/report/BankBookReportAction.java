@@ -650,15 +650,11 @@ public class BankBookReportAction extends BaseFormAction {
                 +
                 " AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus  ";
         queryFrom = " FROM generalLedger gl,generalLedger gl1"
-                +
-                ",vouchermis vmis, VOUCHERHEADER vh left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate,"
-                +
-                "es.description,ih.transactionnumber,ih.transactiondate from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and "
-                +
-                "ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  "
-                +
-                "and gl.voucherheaderid  IN (SELECT voucherheaderid FROM generalledger gl WHERE glcode='" + glCode1
-                + "') AND gl.voucherheaderid = gl1.voucherheaderid AND gl.glcode <> '" + glCode1 + "' AND gl1.glcode = '"
+                +",vouchermis vmis, VOUCHERHEADER vh left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate,"
+                +"es.description,ih.transactionnumber,ih.transactiondate from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv "
+                +"where iv.instrumentheaderid=ih.id) ch on ch.voucherheaderid=vh.id WHERE  gl.voucherHeaderId = vh.id  AND "
+                +"vmis.VOUCHERHEADERID=vh.id and exists (SELECT gll.voucherheaderid FROM generalledger gll WHERE gll.glcode ='" + glCode1
+                + "' AND gll.voucherheaderid = gl1.voucherheaderid) AND gl1.glcode = '"
                 + glCode1 + "' and vh.voucherDate>='" + Constants.DDMMYYYYFORMAT1.format(startDate) + "' " +
                 "and vh.voucherDate<='" + Constants.DDMMYYYYFORMAT1.format(endDate) + "' and vh.status not in("
                 + voucherStatusToExclude + ") " + miscQuery + " ";
