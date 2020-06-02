@@ -138,7 +138,11 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajaxtrackmilestone-search",
 					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					"data" : getFormData(jQuery('form')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
