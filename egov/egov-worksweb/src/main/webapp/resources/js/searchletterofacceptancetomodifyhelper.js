@@ -89,7 +89,11 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/letterofacceptance/ajaxsearch-loatomodify",
 					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					"data" : getFormData(jQuery('form')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"bDestroy" : true,
 				'bAutoWidth': false,
