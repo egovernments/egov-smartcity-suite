@@ -103,7 +103,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.meterslno" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="existmeterNo" path="existingConnection.meterNo"  class="form-control text-left patternvalidation" maxlength="12" data-pattern="number"/>   
+		<form:input id="existmeterNo" path="existingConnection.meterNo"  class="form-control text-left patternvalidation" maxlength="12" data-pattern="alphanumericwithspace"/>   
 			<form:errors path="existingConnection.meterNo" cssClass="add-margin error-msg" />	
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
