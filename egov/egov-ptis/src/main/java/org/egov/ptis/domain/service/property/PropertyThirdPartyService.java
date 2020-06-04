@@ -76,6 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 
 import static java.lang.String.format;
 
@@ -321,19 +322,30 @@ public class PropertyThirdPartyService {
     @Transactional
     public void saveBasicPropertyAndPublishEvent(final BasicProperty basicProperty, final PropertyImpl property,
             final HttpServletRequest request, final String transactionId) {
+        String remarks = null;
         try {
             basicPropertyService.persist(basicProperty);
-            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
-                    property.getApplicationNo(),APPLICATION_TYPE_NEW_ASSESSENT);
+            if (PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(basicProperty.getPropertyMutationMaster().getCode())) {
+                remarks = "Child Property for Bifurcation Initiated";
+            } else {
+                remarks = "New Property Created";
+            }
 
-            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS,
-                    property.getApplicationNo(), ApplicationStatus.INPROGRESS, viewURL, "New Property Created");
+            String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL, WebUtils.extractRequestDomainURL(request, false),
+                    property.getApplicationNo(), APPLICATION_TYPE_NEW_ASSESSENT);
+
+            eventPublisher.publishWSEvent(transactionId, TransactionStatus.SUCCESS, property.getApplicationNo(),
+                    ApplicationStatus.INPROGRESS, viewURL, remarks);
 
         } catch (Exception ex) {
-
+            if (PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(basicProperty.getPropertyMutationMaster().getCode())) {
+                remarks = "Child Property for Bifurcation Failed";
+            } else
+                remarks = "Property Creation Failed";
+ 
             LOGGER.error("exception while saving basic proeprty", ex);
             eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
-                    property.getApplicationNo(), null, null, "Property Creation Failed");
+                    property.getApplicationNo(), null, null,remarks );
         }
     }
     
@@ -403,11 +415,23 @@ public class PropertyThirdPartyService {
         PropertyImpl appurtenantProperty = getAppurtenantPropertyByBasicProperty(basicProperty);
         String remarks;
         if (appurtenantProperty == null) {
-            if (isCancelled)
-                remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action) ? "New Property Rejected to Cancel"
-                        : "New Property Cancelled";
-            else
-                remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "New Property Approved" : "New Property Rejected";
+            if (isCancelled) {
+
+                if (PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(basicProperty.getPropertyMutationMaster().getCode())) {
+                    remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                            ? "Child Property for Bifurcation Rejected to Cancel"
+                            : "Child Property for Bifurcation Cancelled";
+                } else
+                    remarks = WFLOW_ACTION_STEP_REJECT_TO_CANCEL.equalsIgnoreCase(action)
+                            ? "New Property Rejected to Cancel" : "New Property Cancelled";
+            } else {
+                if (PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(basicProperty.getPropertyMutationMaster().getCode())) {
+                    remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action)
+                            ? "Child Property for Bifurcation Approved" : "Child Property for Bifurcation Rejected";
+                } else
+                    remarks = WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(action) ? "New Property Approved"
+                            : "New Property Rejected";
+            }
 
         } else {
             if (isCancelled)

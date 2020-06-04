@@ -240,6 +240,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
     private static final String NOTEXISTS_POSITION = "notexists.position";
+    private static final String WS_REQUEST_REASON_CODE="reason";
+    private static final String WS_APPLICATION_CHILD_BIFURCATION = "CHILD_BIFURCATION";
+    
     private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
@@ -341,7 +344,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
-
+    private String reasonForCreate;
+    
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
 
@@ -433,10 +437,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
-            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
-                getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+            } else if (Source.WARDSECRETARY.toString()
+                    .equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                if (request.getParameter(WS_REQUEST_REASON_CODE) != null && WS_APPLICATION_CHILD_BIFURCATION
+                        .equalsIgnoreCase(request.getParameter(WS_REQUEST_REASON_CODE))) {
+                    getMutationListByCode(PROP_CREATE_RSN_BIFUR);
+                } else {
+                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+                }
                 transactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
                 applicationSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+                reasonForCreate = request.getParameter(WS_REQUEST_REASON_CODE);
             }
 
         }
@@ -1201,6 +1212,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
                 getMutationListByCode(PROP_CREATE_RSN_BIFUR);
+        }
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(applicationSource)
+                && WS_APPLICATION_CHILD_BIFURCATION.equalsIgnoreCase(reasonForCreate)) {
+            mutationList = getPersistenceService().findAllBy(
+                    "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,
+                    PROP_CREATE_RSN_BIFUR);
         }
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
         final List<String> structureList = getPersistenceService()
@@ -2411,5 +2428,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setSitalArea(String sitalArea) {
         this.sitalArea = sitalArea;
+    }
+    
+
+    public String getReasonForCreate() {
+        return reasonForCreate;
+    }
+
+    public void setReasonForCreate(String reasonForCreate) {
+        this.reasonForCreate = reasonForCreate;
     }
 }
