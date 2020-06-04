@@ -143,7 +143,7 @@ public class WaterConnectionMaterialDemandController {
 
     @PostMapping(value = "/update/{applicationnumber}")
     public String updateApplicationDetails(@PathVariable("applicationnumber") final String applicationNumber,
-    		@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
+    		 @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
         if (waterConnectionDetails.getUlbMaterial() == null) {
             model.addAttribute("ulbMaterialDropdownValues", Arrays.asList(YES, NO));
             model.addAttribute("waterApplicationDetails", new WaterConnExecutionDetails());
