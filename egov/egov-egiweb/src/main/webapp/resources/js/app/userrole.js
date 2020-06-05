@@ -81,7 +81,8 @@ $(document).ready(
 							};
 						});
 					}
-				}
+				},
+				 limit: 10
 			});
 
 			userlist.initialize();
