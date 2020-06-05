@@ -276,9 +276,10 @@ public class ChangeOfUseController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
-            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
-                    .getPropertyIdentifier());
+		if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser
+				|| isWardSecretaryUser) {
+			final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
+					changeOfUse.getConnection().getPropertyIdentifier(), isWardSecretaryUser);
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
             else {

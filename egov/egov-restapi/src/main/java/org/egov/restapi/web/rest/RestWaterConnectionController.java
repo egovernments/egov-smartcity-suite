@@ -226,7 +226,7 @@ public class RestWaterConnectionController {
         if (connectionUnderChange != null) {
             waterConnectionDetails.setConnection(connectionUnderChange.getConnection());
             userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(connectionUnderChange.getConnection()
-                    .getPropertyIdentifier());
+                    .getPropertyIdentifier(), false);
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
         }
@@ -247,7 +247,7 @@ public class RestWaterConnectionController {
         if (!applicationCode.equals(WaterTaxConstants.CHANGEOFUSE)) {
             waterConnectionDetails = prepareNewAndAdditionalConnectionDetails(waterConnectionInfo, applicationCode);
             userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection()
-                    .getPropertyIdentifier());
+                    .getPropertyIdentifier(), false);
         }
 
         if (userPosition != null)

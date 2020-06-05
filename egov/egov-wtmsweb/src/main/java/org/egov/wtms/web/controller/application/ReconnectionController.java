@@ -292,7 +292,7 @@ public class ReconnectionController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser
                 || isAnonymousUser || isWardSecretaryUser) {
             final Position userPosition = waterTaxUtils
-                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier(), isWardSecretaryUser);
             if (userPosition == null) {
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
                 if (isWardSecretaryUser) {

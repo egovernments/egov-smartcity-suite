@@ -259,7 +259,7 @@ public class RegularisedConnectionController extends GenericConnectionController
         final boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
         if (applicationByOthers || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
-                    waterConnectionDetails.getConnection().getPropertyIdentifier());
+                    waterConnectionDetails.getConnection().getPropertyIdentifier(), false);
 
             if (userPosition == null) {
                 model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isConnectionAllowedIfPTDuePresent());

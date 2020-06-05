@@ -235,7 +235,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 for (Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(ROLE_SUPERUSER) || ROLE_APPROVERROLE.equals(userrole.getName())) {
                         Position positionuser = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
-                                waterConnectionDetails.getConnection().getPropertyIdentifier());
+                                waterConnectionDetails.getConnection().getPropertyIdentifier(), false);
                         if (positionuser != null) {
                             wfInitiator = assignmentService.getPrimaryAssignmentForPositionAndDate(positionuser.getId(),
                                     new Date());
@@ -251,7 +251,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     }
             } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 Position position = waterTaxUtils
-                        .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                        .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier(), false);
                 if (position != null) {
                     wfInitiator = assignmentService.getPrimaryAssignmentForPositionAndDate(position.getId(), new Date());
 
