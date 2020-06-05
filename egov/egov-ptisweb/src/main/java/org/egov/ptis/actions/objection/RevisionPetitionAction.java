@@ -605,7 +605,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(objection.getType()) && objection.getReasons()!=null)
                 objection.setAppealReasons(getAppealReasonDetails(objection));
             addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                    approverComments, approverName));
+                    approverComments, approverName,wsPortalRequest));
             checkToDisplayAckButton();
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
                 addActionMessage(getText("objection.success") + objection.getObjectionNumber());
@@ -694,7 +694,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 .generateNoticeNumber(objection.getType().equalsIgnoreCase(WFLOW_ACTION_APPEALPETITION)
                         ? NOTICE_TYPE_APPEALPETITION_HEARINGNOTICE : NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         reportOutput = revisionPetitionService.createHearingNoticeReport(reportOutput, objection, noticeNo);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             hearingNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -719,7 +719,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String generateHearingNotice() {
         objection.setGenerateSpecialNotice(Boolean.TRUE);
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         final PropertyImpl refNewProperty = propService.creteNewPropertyForObjectionWorkflow(
                 objection.getBasicProperty(), objection.getObjectionNumber(), objection.getRecievedOn(),
                 objection.getCreatedBy(), null, wfType);
@@ -771,7 +771,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
 
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         modifyBasicProp();
         propertyImplService.merge(objection.getProperty());
         revisionPetitionService.updateRevisionPetition(objection);
@@ -838,7 +838,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return "view";
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         if (superStructureRP(objection) && isEditOwnerDetails())
             basicPropertyService.update(objection.getBasicProperty());
         propertyImplService.merge(objection.getProperty());
@@ -856,7 +856,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return "view";
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
         return STRUTS_RESULT_MESSAGE;
@@ -877,7 +877,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             return "view";
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
         return STRUTS_RESULT_MESSAGE;
@@ -927,7 +927,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
 
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
         if(Source.WARDSECRETARY.toString().equalsIgnoreCase(objection.getSource()) && WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)){
@@ -1113,7 +1113,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 return "view";
             }
             addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId,
-                    workFlowAction, approverComments, approverName));
+                    workFlowAction, approverComments, approverName,wsPortalRequest));
         }
         reportOutput = revisionPetitionService.createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
@@ -1170,7 +1170,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         .withNextAction(null).withOwner(objection.getCurrentState().getOwnerPosition());
             } else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
                 addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                        approverComments, approverName));
+                        approverComments, approverName,wsPortalRequest));
 
         generateSpecialNotice(objection.getProperty(), (BasicPropertyImpl) objection.getBasicProperty());
 
@@ -1407,7 +1407,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         revisionPetitionService.updateRevisionPetition(objection);
 
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+                approverComments, approverName,wsPortalRequest));
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -1623,7 +1623,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String rejectToCancelRevisionPetition() {
         objection.getProperty().setStatus(PropertyTaxConstants.STATUS_CANCELLED);
         revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName);
+                approverComments, approverName,wsPortalRequest);
         revisionPetitionService.updateRevisionPetition(objection);
         revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
         if(Source.WARDSECRETARY.toString().equalsIgnoreCase(objection.getSource())){

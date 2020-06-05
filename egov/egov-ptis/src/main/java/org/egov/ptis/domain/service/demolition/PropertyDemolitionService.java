@@ -63,6 +63,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -167,6 +168,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Autowired
     private EventPublisher eventPublisher;
     
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+    
     public PropertyDemolitionService() {
         super(PropertyImpl.class);
     }
@@ -178,7 +182,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Transactional
     public BasicProperty saveProperty(final Property oldProperty, final Property newProperty, final Character status,
             final String comments,
-            final String workFlowAction, final Long approverPosition, final String additionalRule) throws TaxCalculatorExeption {
+            final String workFlowAction, final Long approverPosition, final String additionalRule,final boolean wsPortalRequest) throws TaxCalculatorExeption {
         PropertyImpl propertyModel;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
@@ -209,7 +213,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyModel.setPropertyModifyReason(DEMOLITION);
         basicProperty.addProperty(propertyModel);
         getSession().setFlushMode(FlushMode.MANUAL);
-        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
+        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule,wsPortalRequest);
         final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
 
         final Property modProperty = propertyService.createDemand(propertyModel, effectiveDate);
@@ -276,23 +280,23 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     public void updateProperty(final Property newProperty, final String comments, final String workFlowAction,
             final Long approverPosition,
             final String additionalRule) {
-        transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule);
+        transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,false);
         propertyPerService.update(newProperty.getBasicProperty());
         propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_DEMOLITION);
         getSession().flush();
     }
 
-    public Assignment getUserAssignment(final User user, final Property property) {
+    public Assignment getUserAssignment(final User user, final Property property,final boolean wsPortalRequest) {
         Assignment assignment;
-        if (propertyService.isCscOperator(user))
-            assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+        if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
+            assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
         else
             assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
         return assignment;
     }
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments, final String workFlowAction,
-            Long approverPosition, final String additionalRule) {
+            Long approverPosition, final String additionalRule,final boolean wsPortalRequest) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
@@ -306,7 +310,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         String currentState = "";
         if (isNotEmployee() || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
             currentState = "Created";
-            assignment = getUserAssignment(user, property);
+            assignment = getUserAssignment(user, property,wsPortalRequest);
             if (null != assignment) {
                 approverPosition = assignment.getPosition().getId();
                 approverDesignation = assignment.getDesignation().getName();
@@ -650,9 +654,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     public BasicProperty saveProperty(final Property oldProperty, final Property newProperty, final Character status,
             final String comments,
             final String workFlowAction, final Long approverPosition, final String additionalRule,
-            final Map<String, String> meesevaParams) throws TaxCalculatorExeption {
+            final Map<String, String> meesevaParams,final boolean wsPortalRequest) throws TaxCalculatorExeption {
          return saveProperty(oldProperty, newProperty, status, comments, workFlowAction,
-                approverPosition, DEMOLITION);
+                approverPosition, DEMOLITION,wsPortalRequest);
     }
     
     public void addEndorsementToModelAttribute(PropertyImpl property, final Model model) {
@@ -681,7 +685,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         try {
             basicProperty = saveProperty(oldProperty, newProperty, status,
                     comments,
-                    workFlowAction, approverPosition, additionalRule);
+                    workFlowAction, approverPosition, additionalRule,true);
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false),
                     newProperty.getApplicationNo(), APPLICATION_TYPE_DEMOLITION);

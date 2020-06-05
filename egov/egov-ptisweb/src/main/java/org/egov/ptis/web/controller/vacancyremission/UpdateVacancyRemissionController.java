@@ -202,7 +202,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             }
             if (!isWfReject(workFlowAction))
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                        workFlowAction, propertyByEmployee);
+                        workFlowAction, propertyByEmployee,false);
             propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             if (isWfNotNoticeGen(workFlowAction))
                 if (isWfApprove(workFlowAction))
@@ -270,7 +270,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             successMsg = "Vacancy Remission rejected successfully and forwarded to : "
                     + vacancyRemissionService.getInitiatorName(vacancyRemission);
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                    workFlowAction, propertyByEmployee);
+                    workFlowAction, propertyByEmployee,false);
         } else
             successMsg = PROPERTY_MODIFY_REJECT_FAILURE+vacancyRemission.getBasicProperty().getUpicNo();
         return successMsg;

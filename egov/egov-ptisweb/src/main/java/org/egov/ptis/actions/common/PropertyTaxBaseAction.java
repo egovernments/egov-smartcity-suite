@@ -126,6 +126,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -223,6 +224,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PropertyUsageService propertyUsageService;
     @Autowired
     protected PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+    
 
     private List<File> uploads = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
@@ -616,8 +620,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
                 || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser())) {
             currentState = "Created";
-            if (propertyService.isCscOperator(securityUtils.getCurrentUser()))
-                assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+            if (propertyService.isCscOperator(securityUtils.getCurrentUser())
+                    || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
+                assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
             else
                 assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment) {

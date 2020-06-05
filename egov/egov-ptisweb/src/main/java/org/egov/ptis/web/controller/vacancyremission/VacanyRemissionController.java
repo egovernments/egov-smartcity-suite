@@ -420,14 +420,14 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     vacancyRemission.setApplicationNumber(vacancyRemission.getMeesevaApplicationNumber());
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
-                        workFlowAction, propertyByEmployee, meesevaParams);
+                        workFlowAction, propertyByEmployee, meesevaParams,false);
             } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 vacancyRemissionService.saveVacancyRemissionAndPublishEvent(vacancyRemission, approvalPosition, approvalComent, workFlowAction,
                         propertyByEmployee, request);
 
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                        workFlowAction, propertyByEmployee);
+                        workFlowAction, propertyByEmployee,false);
             propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
                 propertyService.pushVacancyRemissionPortalMessage(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);

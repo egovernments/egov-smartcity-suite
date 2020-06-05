@@ -385,7 +385,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
                 propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
         String successMessage;
@@ -454,7 +454,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
             propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
 

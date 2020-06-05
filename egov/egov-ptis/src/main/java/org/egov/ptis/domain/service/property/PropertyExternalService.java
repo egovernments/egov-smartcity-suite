@@ -1697,7 +1697,7 @@ public class PropertyExternalService {
     }
 
     public Assignment getAssignment(PropertyImpl property, PropertyService propService) {
-        return propService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+        return propService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
     }
 
     @SuppressWarnings("unchecked")

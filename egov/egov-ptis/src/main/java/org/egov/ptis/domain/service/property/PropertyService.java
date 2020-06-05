@@ -2710,7 +2710,10 @@ public class PropertyService {
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
-    public Assignment getMappedAssignmentForCscOperator(final BasicProperty basicProperty) {
+    /*
+     * api to fetch the assignee details for business user request (CSC opertaor , Ward Secretary)
+     */
+    public Assignment getMappedAssignmentForBusinessUser(final BasicProperty basicProperty) {
         Assignment assignment;
         assignment = getAssignmentByDeptDesigElecWard(basicProperty);
         if (assignment == null)

@@ -286,16 +286,16 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 					property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
 				}
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
-						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams);
+						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams,false);
                      } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                                propertyDemolitionService.savePropertyAndPublishEvent(property.getBasicProperty().getActiveProperty(), property,
                                 status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
                      } else
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
-						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION);
+						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,false);
 
 			if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
-				Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property);
+				Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property,wsPortalRequest);
 				if (assignment != null)
 					approvalPosition = assignment.getPosition().getId();
 			}

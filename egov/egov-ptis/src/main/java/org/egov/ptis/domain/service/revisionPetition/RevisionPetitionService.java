@@ -165,6 +165,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -278,6 +279,9 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
 
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
     
     public RevisionPetitionService() {
         super(Petition.class);
@@ -779,7 +783,7 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     }
 
     public Map<String, String[]> updateStateAndStatus(final Petition petition, final Long approverPositionId,
-            final String workFlowAction, final String approverComments, final String approverName) {
+            final String workFlowAction, final String approverComments, final String approverName,final boolean wsPortalRequest) {
         Position position = null;
         WorkFlowMatrix wfmatrix;
         Assignment wfInitiator;
@@ -843,8 +847,8 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
         if (petition.getState() == null) {
             if (position == null && (approverPositionId == null || approverPositionId != -1)) {
                 Assignment assignment;
-                if (propertyService.isCscOperator(user))
-                    assignment = propertyService.getMappedAssignmentForCscOperator(petition.getBasicProperty());
+                if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
+                    assignment = propertyService.getMappedAssignmentForBusinessUser(petition.getBasicProperty());
                 else
                     assignment = propertyService.getUserPositionByZone(petition.getBasicProperty(), false);
                 if (assignment != null)
