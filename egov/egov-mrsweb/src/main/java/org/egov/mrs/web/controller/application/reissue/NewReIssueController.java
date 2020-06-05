@@ -254,7 +254,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
 
-        if (!isEmployee ||citizenPortalUser ) {
+        if (!isEmployee ||citizenPortalUser || isWardSecretaryUser) {
             final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(null, reIssue);
             if (assignment != null) {
                 workflowContainer.setApproverPositionId(assignment.getPosition().getId());
