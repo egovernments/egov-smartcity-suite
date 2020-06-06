@@ -349,7 +349,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");
-        else if (!Arrays.asList(BillTypes.values()).contains(contractorBillRegister.getBilltype())) {
+		else if (!Arrays.asList(BillTypes.Part_Bill.toString(), BillTypes.Final_Bill.toString())
+				.contains(contractorBillRegister.getBilltype())) {
 			resultBinder.rejectValue("billtype", "error.billtype.invalid");
 		}
         if (contractorBillRegister.getEgBillregistermis() != null
