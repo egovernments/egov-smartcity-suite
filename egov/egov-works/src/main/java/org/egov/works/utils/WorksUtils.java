@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -250,4 +252,12 @@ public class WorksUtils {
     public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
     }
+    
+	public boolean hasHtmlTags(String value) {
+		Pattern pattern;
+		Matcher matcher;
+		pattern = Pattern.compile(WorksConstants.HTML_TAG_FORMAT_PATTERN);
+		matcher = pattern.matcher(value);
+		return matcher.matches();
+	}
 }

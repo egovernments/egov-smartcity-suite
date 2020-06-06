@@ -52,6 +52,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -348,6 +349,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");
+        else if (!Arrays.asList(BillTypes.values()).contains(contractorBillRegister.getBilltype())) {
+			resultBinder.rejectValue("billtype", "error.billtype.invalid");
+		}
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
@@ -358,7 +362,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (contractorBillRegister.getMbHeader() != null) {
             if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
-
+			else if (worksUtils.hasHtmlTags(contractorBillRegister.getMbHeader().getMbRefNo())) {
+				resultBinder.rejectValue("mbHeader.mbRefNo", "error.invalid.data");
+			}
             if (contractorBillRegister.getMbHeader().getMbDate() == null)
                 resultBinder.rejectValue("mbHeader.mbDate", "error.mbdate.required");
 

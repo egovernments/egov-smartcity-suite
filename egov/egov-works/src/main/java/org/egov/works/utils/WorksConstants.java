@@ -344,4 +344,7 @@ public class WorksConstants {
     public final static String ACTIVE = "Active";
 
     public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+";
+
+	public static final String HTML_TAG_FORMAT_PATTERN = "<(\"[^\"]*\"|'[^']*'|[^'\">])*>";
+
 }
