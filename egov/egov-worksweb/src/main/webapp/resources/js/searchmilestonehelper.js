@@ -136,7 +136,11 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajax-search",
 					type : "POST",
-					data : getFormDataJson(jQuery('#searchRequestMilestone'))
+					data : getFormDataJson(jQuery('#searchRequestMilestone')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
