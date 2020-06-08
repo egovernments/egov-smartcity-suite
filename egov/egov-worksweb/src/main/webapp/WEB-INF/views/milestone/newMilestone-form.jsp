@@ -56,6 +56,7 @@
 <form:form name="milestoneForm" role="form" action="milestone-save" modelAttribute="milestone" id="milestone" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<form:hidden id="mode" path=""  value="${mode}"/>
 	<input type="hidden" value="${workOrder.id}" id="workOrderId" name="workOrderId"/>
+	<form:hidden id="estimateNumber" path=""  value="${lineEstimateDetails.estimateNumber}"/>
 	<input type="hidden" value="<spring:message code="error.milestone.altleastone.milestonedetails.needed" />" id="errorMilestoneDeatail" />
 	<input type="hidden" value="<spring:message code="error.milestone.total.percentage" />" id="errorTotalPercentage" />
 	<input type="hidden" value="<spring:message code="error.milestone.templatecode" />" id="errorTemplateCode" />
@@ -64,7 +65,15 @@
 	<input type="hidden" value="<spring:message code="error.milestone.scheduleenddates.startdate" />" id="errorScheduleEndDates" />
 		
 		<div class="row">
-		<div class="col-md-12">
+			<div>
+				<spring:hasBindErrors name="milestone">
+					<div class="alert alert-danger col-md-10 col-md-offset-1">
+						<form:errors path="*" />
+						<br />
+					</div>
+				</spring:hasBindErrors>
+			</div> 
+			<div class="col-md-12">
 			<c:if test="${mode == 'view'}">
 				<jsp:include page="milestoneTemplate-view.jsp" />
 			</c:if>

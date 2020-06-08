@@ -58,9 +58,12 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.MilestoneActivity;
+import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -94,6 +97,9 @@ public class CreateMilestoneController {
 
     @Autowired
     private EstimateService estimateService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
@@ -116,8 +122,20 @@ public class CreateMilestoneController {
 
     @RequestMapping(value = "/milestone-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("milestone") final Milestone milestone,
-            final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder)
-            throws ApplicationException, IOException {
+            final Model model, final BindingResult errors, final HttpServletRequest request)
+			throws ApplicationException, IOException {
+
+		validateMilestoneDetails(milestone, errors);
+		if (errors.hasErrors()) {
+			final String estimateNumber = request.getParameter("estimateNumber");
+			final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
+			final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
+			milestone.getActivities().clear();
+			model.addAttribute("workOrder", workOrder);
+			model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+			model.addAttribute("milestone", milestone);
+			return "newMilestone-form";
+		}
         final Long workOrderId = Long.valueOf(request.getParameter("workOrderId"));
         final String estimateNumber = request.getParameter("estimateNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(workOrderId);
@@ -134,4 +152,13 @@ public class CreateMilestoneController {
 
         return "milestone-success";
     }
+    
+	private void validateMilestoneDetails(final Milestone milestone, BindingResult errors) {
+
+		for (final MilestoneActivity ma : milestone.getActivities()) {
+			if (worksUtils.hasHtmlTags(ma.getDescription())) {
+				errors.reject("error.invalid.data", "error.invalid.data");
+			}
+		}
+	}
 }

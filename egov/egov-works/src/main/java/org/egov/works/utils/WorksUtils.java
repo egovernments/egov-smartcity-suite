@@ -253,7 +253,7 @@ public class WorksUtils {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
     }
     
-	public boolean hasHtmlTags(String value) {
+	public boolean hasHtmlTags(final String value) {
 		Pattern pattern;
 		Matcher matcher;
 		pattern = Pattern.compile(WorksConstants.HTML_TAG_FORMAT_PATTERN);
