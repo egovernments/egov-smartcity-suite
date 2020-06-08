@@ -64,6 +64,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,6 +94,9 @@ public class CreateLetterOfAcceptanceController {
 
     @Autowired
     private ContractorGradeService contractorGradeService;
+
+	@Autowired
+	private WorksUtils worksUtils;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -169,6 +173,8 @@ public class CreateLetterOfAcceptanceController {
     private void validateInput(final WorkOrder workOrder, final BindingResult resultBinder) {
         if (org.apache.commons.lang.StringUtils.isBlank(workOrder.getFileNumber()))
             resultBinder.rejectValue("fileNumber", "error.fileno.required");
+		else if (worksUtils.hasHtmlTags(workOrder.getFileNumber()))
+			resultBinder.rejectValue("fileNumber", "error.invalid.data");
         if (workOrder.getFileDate() == null)
             resultBinder.rejectValue("fileDate", "error.filedate.required");
         if (workOrder.getWorkOrderAmount() <= 0)
