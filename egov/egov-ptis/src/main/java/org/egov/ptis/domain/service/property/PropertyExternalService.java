@@ -590,8 +590,6 @@ public class PropertyExternalService {
                         }
             }
             final Property property = basicProperty.getProperty();
-            ptDemandDAO.getDemandCollMap(property);
-
             if (!StringUtils.isBlank(category)) {
                 String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
                 if (CATEGORY_TYPE_PROPERTY_TAX.equals(category)) {
@@ -615,7 +613,7 @@ public class PropertyExternalService {
                     return propertyTaxDetails;
                 }
             }
-            final List<PropertyOwnerInfo> propOwnerInfos = property.getBasicProperty().getPropertyOwnerInfo();
+            final List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
             propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
             OwnerDetails ow;
             for (int i = 0; i < propOwnerInfos.size(); i++) {
@@ -628,10 +626,10 @@ public class PropertyExternalService {
                     propertyTaxDetails.getOwnerDetails().add(ow);
                 }
             }
-            propertyTaxDetails.setPropertyAddress(property.getBasicProperty().getAddress().toString());
-            propertyTaxDetails.setAssessmentNo(property.getBasicProperty().getUpicNo());
-            propertyTaxDetails.setOldAssessmentNo(property.getBasicProperty().getOldMuncipalNum());
-            propertyTaxDetails.setLocalityName(property.getBasicProperty().getPropertyID().getLocality().getName());
+            propertyTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            propertyTaxDetails.setAssessmentNo(basicProperty.getUpicNo());
+            propertyTaxDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
+            propertyTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
 
             propertyTaxBillable.setBasicProperty(basicProperty);
             propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
