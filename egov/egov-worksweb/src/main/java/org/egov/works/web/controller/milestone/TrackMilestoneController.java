@@ -49,6 +49,7 @@ package org.egov.works.web.controller.milestone;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -177,8 +178,16 @@ public class TrackMilestoneController {
                                 messageSource.getMessage("error.trackmilestone.reasonfordelay.mandatory",
                                         new String[] {}, null));
                         flag = true;
-                    }
-                count++;
+					}
+				if (!Arrays
+						.asList(MilestoneActivityStatus.NOT_YET_STARTED.name(),
+								MilestoneActivityStatus.IN_PROGRESS.name(), MilestoneActivityStatus.COMPLETED.name())
+						.contains(tma.getStatus())) {
+					jsonObject.addProperty("currentStatus_" + count,
+							messageSource.getMessage("error.milestone.status.invalid.data", new String[] {}, null));
+					flag = true;
+				}
+			       count++;
                 if (flag)
                     break;
             }
