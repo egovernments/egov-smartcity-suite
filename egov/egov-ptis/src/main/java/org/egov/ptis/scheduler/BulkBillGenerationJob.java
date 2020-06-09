@@ -47,9 +47,13 @@
  */
 package org.egov.ptis.scheduler;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -65,6 +69,9 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
 
     @Autowired
     private transient ApplicationContext beanProvider;
+    
+    @Autowired
+    protected PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     public void executeJob() {
@@ -75,7 +82,8 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("DemandBillService implementation not found " + e);
         }
-        if (demandBillService != null)
+        if (demandBillService != null && "Y".equalsIgnoreCase(
+                propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED, PTMODULENAME)))
             demandBillService.bulkBillGeneration(modulo, billsCount);
     }
 
