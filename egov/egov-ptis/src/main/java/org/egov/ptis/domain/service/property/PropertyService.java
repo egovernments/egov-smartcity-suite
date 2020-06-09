@@ -3171,7 +3171,7 @@ public class PropertyService {
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
             final List<StateHistory<Position>> stateHistory = stateAware.getStateHistory();
-            if (null != state.getHistory() && !state.getHistory().isEmpty()) {
+            if (!stateHistory.isEmpty()) {
                 Collections.reverse(stateHistory);
                 for (final StateHistory<Position> historyState : stateHistory) {
                     final HashMap<String, Object> workflowHistory = new HashMap<>();
