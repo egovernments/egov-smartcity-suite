@@ -50,6 +50,7 @@ package org.egov.works.utils;
 
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -96,5 +97,10 @@ public class WorkFlowValidator {
         return eisCommonService.isValidAppover(wfmatrix, pos);
 
     }
+    
+	public Boolean isApplicationOwner(final User currentUser, final StateAware<?> state) {
+		return positionMasterService.getPositionsForEmployee(currentUser.getId())
+				.contains(state.getCurrentState().getOwnerPosition());
+	}
 
 }

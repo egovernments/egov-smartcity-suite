@@ -170,11 +170,14 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                         ? Boolean.TRUE
                         : Boolean.FALSE);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
-        lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
-            setDropDownValues(model);
-        return loadViewData(model, request, lineEstimate);
-    }
+        if(workFlowValidator.isApplicationOwner(securityUtils.getCurrentUser(), lineEstimate)){
+        	lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
+            if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
+                setDropDownValues(model);
+            return loadViewData(model, request, lineEstimate);
+		} else
+			throw new ApplicationRuntimeException("error.invalid.application.owner");
+	}
 
     @RequestMapping(value = "/view/{lineEstimateId}", method = RequestMethod.GET)
     public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,

@@ -63,6 +63,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.config.properties.WorksApplicationProperties;
@@ -113,7 +114,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     
     @Autowired
     private WorkFlowValidator workFlowValidator;
-
+    
+    @Autowired
+    private  SecurityUtils securityUtils;
+    
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
@@ -124,13 +128,20 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     @RequestMapping(value = "/update/{contractorBillRegisterId}", method = RequestMethod.GET)
     public String updateContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
             final HttpServletRequest request) throws ApplicationException {
+    	
+    	
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
         // if
         // (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
-        setDropDownValues(model);
-        model.addAttribute("createdbybydesignation",
-                worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
-        return loadViewData(model, request, contractorBillRegister);
+        
+		if (workFlowValidator.isApplicationOwner(securityUtils.getCurrentUser(), contractorBillRegister)) {
+			setDropDownValues(model);
+	        model.addAttribute("createdbybydesignation",
+	                worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
+	        return loadViewData(model, request, contractorBillRegister);
+		}else
+            throw new ApplicationRuntimeException("error.invalid.application.owner");
+        
     }
 
     @RequestMapping(value = "/update/{contractorBillRegisterId}", method = RequestMethod.POST)
