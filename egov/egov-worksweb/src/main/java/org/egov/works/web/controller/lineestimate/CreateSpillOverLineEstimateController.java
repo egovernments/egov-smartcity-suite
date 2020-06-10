@@ -86,6 +86,7 @@ import org.egov.works.master.service.LineEstimateUOMService;
 import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -149,6 +150,9 @@ public class CreateSpillOverLineEstimateController {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -241,13 +245,24 @@ public class CreateSpillOverLineEstimateController {
                 if (councilResolutionNumber != null)
                     errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber",
                             "error.councilresolutionnumber.unique");
+				else if (worksUtils.hasHtmlTags(lineEstimate.getCouncilResolutionNumber())) {
+					errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber",
+							"error.invalid.data");
+				}
             }
             final LineEstimateDetails workIdentificationNumber = lineEstimateDetailService
                     .getLineEstimateDetailsByProjectCode(led.getProjectCode().getCode());
             if (estimateNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
+			else if (worksUtils.hasHtmlTags(led.getEstimateNumber())) {
+				errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.invalid.data");
+			}
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
+			else if (worksUtils.hasHtmlTags(led.getProjectCode().getCode())) {
+				errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.invalid.data");
+
+			}
             if (led.getActualEstimateAmount() != null && !(led.getActualEstimateAmount().signum() == 1))
                 errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",
                         "error.actualestimateamount.required");
@@ -270,6 +285,9 @@ public class CreateSpillOverLineEstimateController {
                     .getLineEstimateByTechnicalSanctionNumber(lineEstimate.getTechnicalSanctionNumber());
             if (existingLineEstimate != null)
                 errors.rejectValue("technicalSanctionNumber", "error.technumber.unique");
+            else if (worksUtils.hasHtmlTags(lineEstimate.getTechnicalSanctionNumber())) {
+    			errors.rejectValue("technicalSanctionNumber", "error.invalid.data");
+    		}
         }
     }
 
@@ -284,14 +302,21 @@ public class CreateSpillOverLineEstimateController {
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionBy()))
             errors.rejectValue("adminSanctionBy", "error.adminsanctionby.notnull");
-        if (lineEstimate.getAdminSanctionNumber() != null) {
-            final LineEstimate checkLineEstimate = lineEstimateService
-                    .getLineEstimateByAdminSanctionNumber(lineEstimate.getAdminSanctionNumber());
+		else if (worksUtils.hasHtmlTags(lineEstimate.getAdminSanctionBy())) {
+			errors.rejectValue("adminSanctionBy", "error.invalid.data");
 
-            if (checkLineEstimate != null)
-                errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
-        }
-    }
+		}
+		if (lineEstimate.getAdminSanctionNumber() != null) {
+			final LineEstimate checkLineEstimate = lineEstimateService
+					.getLineEstimateByAdminSanctionNumber(lineEstimate.getAdminSanctionNumber());
+
+			if (checkLineEstimate != null)
+				errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
+			else if (worksUtils.hasHtmlTags(lineEstimate.getAdminSanctionNumber())) {
+				errors.rejectValue("adminSanctionNumber", "error.invalid.data");
+			}
+		}
+	}
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
@@ -376,6 +401,14 @@ public class CreateSpillOverLineEstimateController {
         if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")
                 && lineEstimate.getDescription() == null)
             errors.reject("error.description.required", "error.description.required");
+        
+		if (worksUtils.hasHtmlTags(lineEstimate.getSubject())) {
+			errors.reject("error.subject.invalid", "error.invalid.data");
+		}
+
+		if (worksUtils.hasHtmlTags(lineEstimate.getDescription())) {
+			errors.reject("error.description.invalid", "error.invalid.data");
+		}
 
     }
 }
