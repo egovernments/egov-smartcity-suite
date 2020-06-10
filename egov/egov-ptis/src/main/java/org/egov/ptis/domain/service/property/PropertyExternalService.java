@@ -584,7 +584,7 @@ public class PropertyExternalService {
                 final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
                 if (null != statusValues && !statusValues.isEmpty())
                     for (final PropertyStatusValues statusValue : statusValues)
-                        if (statusValue.getPropertyStatus().getStatusCode() == MARK_DEACTIVE) {
+                        if (statusValue.getPropertyStatus().getStatusCode().equals(MARK_DEACTIVE)) {
                             errorDetails.setErrorCode(PROPERTY_MARK_DEACTIVATE_ERR_CODE);
                             errorDetails.setErrorMessage(PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }

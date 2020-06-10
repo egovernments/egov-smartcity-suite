@@ -140,6 +140,14 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         }
         return basicProperty;
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<BasicProperty> getBasicPropertiesByPropertyIdList(List<String> propertyIdList) {
+        Query query = getCurrentSession().createQuery(
+                "from BasicPropertyImpl BP where BP.upicNo in(:propertyIdList) and BP.active='Y' ");
+        query.setParameterList("propertyIdList", propertyIdList);
+        return query.list();
+    }
 
     /*
      * By passing propertyId as parameter this method will give BasicProeprty Object.
@@ -523,10 +531,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         }
         List<String> list = query.setMaxResults(100).list();
         List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
-        if (null != list && !list.isEmpty()) {
-            for (String propertyid : list) {
-                basicProperties.add(getBasicPropertyByPropertyID(propertyid));
-            }
+        if (!list.isEmpty()) {
+            basicProperties = getBasicPropertiesByPropertyIdList(list);
         }
         return basicProperties;
     }
