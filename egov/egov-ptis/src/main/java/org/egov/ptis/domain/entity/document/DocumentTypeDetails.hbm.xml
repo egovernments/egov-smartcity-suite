@@ -66,9 +66,9 @@
 		<property name="signed" column="SIGNED" type="java.lang.Boolean" />
 		<property name="courtName" column="COURTNAME" type="java.lang.String" />
 		<many-to-one name="createdBy"
-			class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" />
+			class="org.egov.infra.admin.master.entity.User" fetch="select" column="CREATEDBY" />
 		<many-to-one name="modifiedBy"
-			class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" />
+			class="org.egov.infra.admin.master.entity.User" fetch="select" column="LASTMODIFIEDBY" />
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 	</class>

@@ -83,8 +83,8 @@
 		<property name="decreeDate" type="timestamp" column="DECREE_DATE"/>
 		<property name="courtName" column="COURT_NAME"/>
 		<many-to-one name="mutationRegistrationDetails" class="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" column="id_registration_details" cascade="all"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
-		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select" column="CREATEDBY"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select" column="LASTMODIFIEDBY"/>
 		<many-to-one name="mutationReason" column="MUTATIONREASON" class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" column="STATE"/>
 		<many-to-one name="basicProperty" column="BASICPROPERTY" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false" update="false"/>
