@@ -65,11 +65,11 @@
 			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
+			cascade="all" fetch="select">
 			<column name="CREATED_BY" />
 		</many-to-one>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
+			cascade="all" fetch="select">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="type" column="PROPERTY_TYPE" type="string" />

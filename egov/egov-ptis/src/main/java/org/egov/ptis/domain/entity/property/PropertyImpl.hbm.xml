@@ -48,11 +48,11 @@
 		</property>
 		<property name="applicationNo" column="applicationno" type="java.lang.String" />
 		<many-to-one name="createdBy"
-			class="org.egov.infra.admin.master.entity.User">
+			class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="CREATED_BY" />
 		</many-to-one>
 		<many-to-one name="lastModifiedBy"
-			class="org.egov.infra.admin.master.entity.User">
+			class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 
