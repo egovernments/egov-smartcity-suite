@@ -81,8 +81,8 @@
         </set>
         <property column="MODIFIEDDATE" name="lastModifiedDate" type="timestamp"/>
 		<property column="CREATEDDATE" name="createdDate"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
-		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select" column="CREATEDBY" />
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select" column="MODIFIEDBY" />
 	</class>
 </hibernate-mapping>
 						
