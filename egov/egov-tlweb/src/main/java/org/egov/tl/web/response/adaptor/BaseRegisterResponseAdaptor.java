@@ -90,8 +90,14 @@ public class BaseRegisterResponseAdaptor implements DataTableJsonAdapter<BaseReg
             baseRegisterJson.addProperty("curpenaltyfee", baseForm.getCurPenaltyFee());
             baseRegisterJson.addProperty("unitofmeasure", baseForm.getUnitOfMeasure());
             baseRegisterJson.addProperty("tradearea", baseForm.getTradeWt());
-            baseRegisterJson.addProperty("rate", baseForm.getRateVal());
-
+            if(baseForm.getRateVal().toBigInteger().intValueExact() != 0) {
+            	baseRegisterJson.addProperty("rate", baseForm.getRateVal());
+            }else if((baseForm.getCurLicenseFee().toBigInteger().intValueExact()) != 0) {
+            	baseRegisterJson.addProperty("rate", baseForm.getCurLicenseFee());
+            }else {
+            	baseRegisterJson.addProperty("rate", "Current Demand is Not Available");
+            }
+            
             baseRegisterResultData.add(baseRegisterJson);
         });
         return enhance(baseRegisterResultData, baseRegisterResponse);
