@@ -50,7 +50,6 @@ package org.egov.ptis.domain.dao.property;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -139,6 +138,14 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             basicProperty = (BasicProperty) qry.uniqueResult();
         }
         return basicProperty;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<BasicProperty> getBasicPropertiesByPropertyIdList(List<String> propertyIdList) {
+        Query query = getCurrentSession().createQuery(
+                "from BasicPropertyImpl BP where BP.upicNo in(:propertyIdList) and BP.active='Y' ");
+        query.setParameterList("propertyIdList", propertyIdList);
+        return query.list();
     }
 
     /*
@@ -522,10 +529,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         }
         List<String> list = query.setMaxResults(100).list();
         List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
-        if (null != list && !list.isEmpty()) {
-            for (String propertyid : list) {
-                basicProperties.add(getBasicPropertyByPropertyID(propertyid));
-            }
+        if (!list.isEmpty()) {
+            basicProperties = getBasicPropertiesByPropertyIdList(list);
         }
         return basicProperties;
     }

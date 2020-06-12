@@ -48,9 +48,7 @@
 
 package org.egov.ptis.config;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,20 +89,16 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         ptisScheduler.setAutoStartup(true);
         ptisScheduler.setOverwriteExistingJobs(true);
         List<Trigger> triggers = new ArrayList<>();
-
-        if ("Y".equalsIgnoreCase(
-                propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED, PTMODULENAME))) {
-            triggers.add(ptisBulkBillGenerationCronTrigger0().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger1().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger2().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger3().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger4().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger5().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger6().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger7().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger8().getObject());
-            triggers.add(ptisBulkBillGenerationCronTrigger9().getObject());
-        }
+        triggers.add(ptisBulkBillGenerationCronTrigger0().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger1().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger2().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger3().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger4().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger5().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger6().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger7().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger8().getObject());
+        triggers.add(ptisBulkBillGenerationCronTrigger9().getObject());
         triggers.add(demandActivationCronTrigger().getObject());
         triggers.add(collectionAchievementsCronTrigger().getObject());
         ptisScheduler.setTriggers(triggers.toArray(new Trigger[triggers.size()]));

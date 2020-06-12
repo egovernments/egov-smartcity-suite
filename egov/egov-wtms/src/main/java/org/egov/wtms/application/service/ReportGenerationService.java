@@ -57,6 +57,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_ORDER;
@@ -66,6 +67,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
@@ -78,6 +80,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -578,6 +581,7 @@ public class ReportGenerationService {
                                                   String sewApplicationNum) {
         ReportRequest reportInput = null;
         Map<String, Object> reportParams = new HashMap<>();
+        Date applicationDueDate = null;
         if (waterConnectionDetails != null) {
             AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -600,9 +604,20 @@ public class ReportGenerationService {
                 reportParams.put(APPLICATION_TYPE, "Integrated Application for New Water & Sewerage Connection");
                 reportParams.put("sewerageApplicationNo", sewApplicationNum);
             }
-            reportParams.put("applicationDueDate", appProcessTime == null ? null :
-                    toDefaultDateFormat(waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime)));
-            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress().replaceAll("\n", " "));
+            if(appProcessTime != null) {
+            	if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+    					|| RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())){
+                	Calendar c = Calendar.getInstance();
+                    c.setTime(new Date());
+                    c.add(Calendar.DATE, appProcessTime);
+                    applicationDueDate = c.getTime();
+                } else 
+                	applicationDueDate = waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime);
+            } else 
+            	applicationDueDate = null;
+            
+            reportParams.put("applicationDueDate", toDefaultDateFormat(applicationDueDate));
+            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("electionWard", assessmentDetails.getBoundaryDetails().getAdminWardName());
             reportInput = setReportParameters(reportParams, waterConnectionDetails);
         }
@@ -619,7 +634,11 @@ public class ReportGenerationService {
         reportParams.put(CITY_NAME, cityService.getMunicipalityName());
         reportParams.put(DISTRICT, districtName);
         reportParams.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
-        reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
+		reportParams.put(APPLICATION_DATE,
+				(CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+						|| RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+								? toDefaultDateFormat(new Date())
+								: toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
 
         reportParams.put(PROPERTYID, waterConnectionDetails.getConnection().getPropertyIdentifier());
 

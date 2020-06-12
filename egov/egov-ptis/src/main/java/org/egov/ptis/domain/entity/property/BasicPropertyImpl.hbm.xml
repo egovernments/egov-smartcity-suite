@@ -65,11 +65,11 @@
 			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			>
+			fetch="select">
 			<column name="CREATEDBY" />
 		</many-to-one>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			>
+			fetch="select">
 			<column name="MODIFIEDBY" />
 		</many-to-one>
 

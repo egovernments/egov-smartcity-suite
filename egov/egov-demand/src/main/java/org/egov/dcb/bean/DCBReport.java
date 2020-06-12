@@ -79,6 +79,7 @@ public class DCBReport {
 	private String PENALTY = "PENALTY";
 	private String FINES = "FINES";
 	private BigDecimal totalRcptAmt;
+	private String WTMTAX = "Water Tax Meter charges";
 
 	public Map<Installment, List<Receipt>> getReceipts() {
 		return receipts;
@@ -209,7 +210,7 @@ public class DCBReport {
 							totalRebate = totalRebate.add(record.getValue()
 									.getRebates().get(fieldName));
 						}
-						if (fieldName.equals(WTTAX)) {
+						if (fieldName.equals(WTTAX) || fieldName.equals(WTMTAX)) {
                                                     totalDmdTax = totalDmdTax.add(record.getValue()
                                                                     .getDemands().get(fieldName));
                                                     totalDmdVarTax = totalDmdVarTax.add(record.getValue()

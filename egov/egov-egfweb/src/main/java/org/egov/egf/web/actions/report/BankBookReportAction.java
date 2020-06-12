@@ -631,7 +631,7 @@ public class BankBookReportAction extends BaseFormAction {
         final Map<String, Object> queryParams = queryMapEntry.getValue();
         String OrderBy = "";
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
-        StringBuilder query1 = new StringBuilder("SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,")
+StringBuilder query1 = new StringBuilder("SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,")
                 .append(" gl.glcode||' - '||case when gl.debitAmount  = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' ")
                 .append("when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) ")
                 .append("when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' end ) end")
@@ -646,15 +646,14 @@ public class BankBookReportAction extends BaseFormAction {
                 .append(" left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate, es.description,ih.transactionnumber,ih.transactiondate")
                 .append(" from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and ")
                 .append("ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  ")
-                .append("and gl.voucherheaderid  IN (SELECT voucherheaderid FROM generalledger gl WHERE glcode=:glCode) AND gl.voucherheaderid = gl1.voucherheaderid")
-                .append(" AND gl.glcode <> :glCode AND gl1.glcode = :glCode and vh.voucherDate>=:startDate ")
+                .append("and exists (SELECT voucherheaderid FROM generalledger gl WHERE glcode=:glCode) AND gl.voucherheaderid = gl1.voucherheaderid")
+                .append(" AND gl1.glcode = :glCode and vh.voucherDate>=:startDate ")
                 .append("and vh.voucherDate<=:endDate and vh.status not in(")
                 .append(voucherStatusToExclude).append(") ").append(miscQuery).append(" ").toString();
         queryFromParams.put("glCode",glCode1);
-        queryFromParams.put("startDate",startDate);
-        queryFromParams.put("endDate",endDate);
-        queryFromParams.putAll(queryParams);
-        OrderBy = "order by voucherdate,vouchernumber";
+        queryFromParams.put("startDate",Constants.DDMMYYYYFORMAT1.format(startDate));
+        queryFromParams.put("endDate",Constants.DDMMYYYYFORMAT1.format(endDate));
+        queryFromParams.putAll(queryParams);        OrderBy = "order by voucherdate,vouchernumber";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Main query :" + query1.toString() + queryFrom + OrderBy);
 

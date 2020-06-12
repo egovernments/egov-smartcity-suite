@@ -603,14 +603,12 @@ public class PropertyExternalService {
                 final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
                 if (null != statusValues && !statusValues.isEmpty())
                     for (final PropertyStatusValues statusValue : statusValues)
-                        if (statusValue.getPropertyStatus().getStatusCode() == MARK_DEACTIVE) {
+                        if (statusValue.getPropertyStatus().getStatusCode().equals(MARK_DEACTIVE)) {
                             errorDetails.setErrorCode(PROPERTY_MARK_DEACTIVATE_ERR_CODE);
                             errorDetails.setErrorMessage(PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }
             }
             final Property property = basicProperty.getProperty();
-            ptDemandDAO.getDemandCollMap(property);
-
             if (!StringUtils.isBlank(category)) {
                 String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
                 if (CATEGORY_TYPE_PROPERTY_TAX.equals(category)) {
@@ -634,7 +632,7 @@ public class PropertyExternalService {
                     return propertyTaxDetails;
                 }
             }
-            final List<PropertyOwnerInfo> propOwnerInfos = property.getBasicProperty().getPropertyOwnerInfo();
+            final List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
             propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
             OwnerDetails ow;
             for (int i = 0; i < propOwnerInfos.size(); i++) {
@@ -647,10 +645,10 @@ public class PropertyExternalService {
                     propertyTaxDetails.getOwnerDetails().add(ow);
                 }
             }
-            propertyTaxDetails.setPropertyAddress(property.getBasicProperty().getAddress().toString());
-            propertyTaxDetails.setAssessmentNo(property.getBasicProperty().getUpicNo());
-            propertyTaxDetails.setOldAssessmentNo(property.getBasicProperty().getOldMuncipalNum());
-            propertyTaxDetails.setLocalityName(property.getBasicProperty().getPropertyID().getLocality().getName());
+            propertyTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            propertyTaxDetails.setAssessmentNo(basicProperty.getUpicNo());
+            propertyTaxDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
+            propertyTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
 
             propertyTaxBillable.setBasicProperty(basicProperty);
             propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
@@ -1661,7 +1659,7 @@ public class PropertyExternalService {
     }
 
     public Assignment getAssignment(PropertyImpl property, PropertyService propService) {
-        return propService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+        return propService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
     }
 
     @SuppressWarnings("unchecked")

@@ -163,6 +163,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     
     @Autowired
     private PropertyThirdPartyService propertyThirdPartyService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -331,6 +333,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) oldProperty);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) property);
             if (property.getIsExemptedFromTax())
                 demandVoucherService.createDemandVoucher(property, null,
                         propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_TAX_EXEMTION,
@@ -383,7 +387,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+                propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
         String successMessage;
         if (property.getCreatedBy() != null)
@@ -451,7 +456,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+            propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
 
             successMessage = "Property Exemption rejected successfully and forwarded to "

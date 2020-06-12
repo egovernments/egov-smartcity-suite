@@ -889,7 +889,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 				|| ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
 			currentState = getCurrentStateForThirdPartyWF(propertyMutation);
 			assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty,
-					user);
+					user,wsPortalRequest);
 			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER)){
 				 checkForMandatoryDocuments();
 			throw new ValidationException(

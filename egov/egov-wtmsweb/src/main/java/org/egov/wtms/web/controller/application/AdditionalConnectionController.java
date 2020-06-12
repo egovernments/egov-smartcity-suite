@@ -302,9 +302,10 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
+		if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser
+				|| isWardSecretaryUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
-                    .getPropertyIdentifier());
+                    .getPropertyIdentifier(), isWardSecretaryUser);
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
             else {

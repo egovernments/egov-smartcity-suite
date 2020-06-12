@@ -63,6 +63,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -188,6 +189,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     private TaxExemptionReasonService taxExemptionReasonService;
 
     private EventPublisher eventPublisher;
+    
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     Property property = null;
 
@@ -202,7 +206,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
-            final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule) {
+            final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule,final boolean wsPortalRequest) {
         TaxExemptionReason taxExemptionReason = null;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
@@ -262,7 +266,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
-                propertyByEmployee);
+                propertyByEmployee,wsPortalRequest);
         if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
             propertyService.pushPortalMessage(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString())) {
@@ -278,7 +282,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     public void updateProperty(final Property newProperty, final String comments, final String workFlowAction,
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
-                propertyByEmployee);
+                propertyByEmployee,false);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(newProperty.getSource()))
             propertyService.updatePortal((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         propertyPerService.update(newProperty.getBasicProperty());
@@ -287,7 +291,11 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments,
             final String workFlowAction, Long approverPosition, final String additionalRule,
-            final Boolean propertyByEmployee) {
+            final Boolean propertyByEmployee,final boolean wsPortalRequest) {
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
+
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
@@ -300,8 +308,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(user.getName())
                 || propertyService.isCitizenPortalUser(user)) {
             currentState = "Created";
-            if (propertyService.isCscOperator(user)) {
-                assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+            if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+                assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
                 wfInitiator = assignment;
             } else {
                 assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
@@ -467,9 +475,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
             final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule,
-            final HashMap<String, String> meesevaParams) {
+            final HashMap<String, String> meesevaParams,final boolean wsPortalRequest) {
         return saveProperty(newProperty, oldProperty, status, approvalComment, workFlowAction, approvalPosition,
-                taxExemptedReason, propertyByEmployee, EXEMPTION);
+                taxExemptedReason, propertyByEmployee, EXEMPTION,wsPortalRequest);
 
     }
 
@@ -674,7 +682,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final String taxExemptedReason, final HttpServletRequest request) {
         try {
             saveProperty(newProperty, oldProperty, status, approvalComment, workFlowAction, approvalPosition, taxExemptedReason,
-                    false, EXEMPTION);
+                    false, EXEMPTION,true);
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
                     WebUtils.extractRequestDomainURL(request, false),
                     newProperty.getApplicationNo(), APPLICATION_TYPE_TAX_EXEMTION);

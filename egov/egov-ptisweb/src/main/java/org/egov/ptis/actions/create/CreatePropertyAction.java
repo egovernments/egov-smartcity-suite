@@ -249,6 +249,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
     private static final String NOTEXISTS_POSITION = "notexists.position";
+    private static final String WS_REQUEST_REASON_CODE="reason";
+    private static final String WS_APPLICATION_CHILD_BIFURCATION = "CHILD_BIFURCATION";
+    
     private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
@@ -352,7 +355,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
-
+    private String reasonForCreate;
+    
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
 
@@ -464,10 +468,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
                 addActionMessage(getText("WS.001"));
                 return RESULT_ERROR;
-            } else if (Source.WARDSECRETARY.toString().equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
-                getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+            } else if (Source.WARDSECRETARY.toString()
+                    .equalsIgnoreCase(request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
+                if (request.getParameter(WS_REQUEST_REASON_CODE) != null && WS_APPLICATION_CHILD_BIFURCATION
+                        .equalsIgnoreCase(request.getParameter(WS_REQUEST_REASON_CODE))) {
+                    getMutationListByCode(PROP_CREATE_RSN_BIFUR);
+                } else {
+                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
+                }
                 transactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
                 applicationSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+                reasonForCreate = request.getParameter(WS_REQUEST_REASON_CODE);
             }
 
         }
@@ -497,7 +508,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
-        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+        Boolean isWardSecretaryRequest = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+        if (isWardSecretaryRequest) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, applicationSource)) {
                 addActionError(getText("WS.001"));
                 return RESULT_NEW;
@@ -529,17 +541,17 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        // this should be appending to messgae
+        // this should be appending to message
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
+        else if (isWardSecretaryRequest)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
 
         propService.processAndStoreDocument(property.getAssessmentDocuments());
 
-        if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+        if (isWardSecretaryRequest) {
             propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property,request, transactionId);
         } else if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
@@ -569,12 +581,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         updatePropertyStatusValuesRemarks(nonVacantBasicProperty);
         PropertyImpl nonVacantProperty = null;
         PropertyImpl vacantProperty =null;
+        Boolean isWardSecretaryRequest = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
         try {
             nonVacantProperty = createNonVacantProperty(status, nonVacantBasicProperty);
             final BasicProperty vacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
             updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
             vacantProperty = createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
-            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (isWardSecretaryRequest) {
                 propertyThirdPartyService.publishEventForAppurTenant(transactionId, nonVacantProperty.getApplicationNo(),
                         vacantProperty.getApplicationNo(), true);
             }
@@ -585,7 +598,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             return RESULT_NEW;
         } catch (final Exception e) {
             logger.error("Exception while creating appurtenant property. ", e);
-            if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+            if (isWardSecretaryRequest) {
                 propertyThirdPartyService.publishEventForAppurTenant(transactionId,
                         nonVacantProperty == null ? "" : nonVacantProperty.getApplicationNo(),
                         vacantProperty == null ? "" : vacantProperty.getApplicationNo(), false);
@@ -1223,10 +1236,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
                 getMutationListByCode(PROP_CREATE_RSN_BIFUR);
         }
-        final List<DepreciationMaster> ageFacList = depreciationMasterDao.findAll();
-        final List<StructureClassification> structureList = classificationRepository.findByIsActiveTrueOrderByTypeName();
-        final List<Apartment> apartmentsList = apartmentRepository.findAll();
-        final List<TaxExemptionReason> taxExemptionReasonList = taxExemptionReasonRepository.findByIsActiveTrueOrderByName();
+        if (Source.WARDSECRETARY.toString().equalsIgnoreCase(applicationSource)
+                && WS_APPLICATION_CHILD_BIFURCATION.equalsIgnoreCase(reasonForCreate)) {
+            mutationList = getPersistenceService().findAllBy(
+                    "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,
+                    PROP_CREATE_RSN_BIFUR);
+        }
+        final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+        final List<String> structureList = getPersistenceService()
+                .findAllBy("from StructureClassification where isActive = true order by typeName ");
+        final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+        final List<String> taxExemptionReasonList = getPersistenceService()
+                .findAllBy("from TaxExemptionReason where isActive = true order by name");
+
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
@@ -2423,5 +2445,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setSitalArea(String sitalArea) {
         this.sitalArea = sitalArea;
+    }    
+
+    public String getReasonForCreate() {
+        return reasonForCreate;
+    }
+
+    public void setReasonForCreate(String reasonForCreate) {
+        this.reasonForCreate = reasonForCreate;
     }
 }

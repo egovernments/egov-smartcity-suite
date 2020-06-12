@@ -220,7 +220,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         String message;
         String approverName = null;
         String nextDesignation = null;
-        if (!isEmployee || citizenPortalUser) {
+        if (!isEmployee || citizenPortalUser || isWardSecretaryUser) {
             final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(marriageRegistration,
                     null);
             if (assignment != null) {

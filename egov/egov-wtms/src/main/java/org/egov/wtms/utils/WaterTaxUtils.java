@@ -413,7 +413,7 @@ public class WaterTaxUtils {
 
             return assignlist.get(0).getPosition();
         } else
-            return getZonalLevelClerkForLoggedInUser(assessmentNumber);
+            return getZonalLevelClerkForLoggedInUser(assessmentNumber, false);
     }
 
     public String getApproverUserName(Long approvalPosition) {
@@ -489,7 +489,7 @@ public class WaterTaxUtils {
                             ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName()) ||
                             ROLE_MEESEVA_OPERATOR.equalsIgnoreCase(userrole.getName())) {
                         Position positionuser = getZonalLevelClerkForLoggedInUser(
-                                waterConnectionDetails.getConnection().getPropertyIdentifier());
+                                waterConnectionDetails.getConnection().getPropertyIdentifier(), false);
                         if (positionuser != null) {
                             approverPosition = positionuser.getId();
                             break;
@@ -504,7 +504,7 @@ public class WaterTaxUtils {
                 for (Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                         Position positionuser = getZonalLevelClerkForLoggedInUser(
-                                waterConnectionDetails.getConnection().getPropertyIdentifier());
+                                waterConnectionDetails.getConnection().getPropertyIdentifier(), false);
                         if (positionuser != null) {
                             approverPosition = positionuser.getId();
                             break;
@@ -521,14 +521,14 @@ public class WaterTaxUtils {
     }
 
     @Transactional(readOnly = true)
-	public Position getZonalLevelClerkForLoggedInUser(String asessmentNumber) {
+	public Position getZonalLevelClerkForLoggedInUser(String asessmentNumber, boolean isWardSecretaryUser) {
 		String departmentStr = getDepartmentForWorkFlow();
 		String designationStr = getDesignationForThirdPartyUser();
 		Assignment assignmentObj = null;
 		AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
 				PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
 		Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
-		if (isCSCoperator(securityUtils.getCurrentUser()))
+		if (isCSCoperator(securityUtils.getCurrentUser()) || isWardSecretaryUser)
 			assignmentObj = getMappedAssignmentForCscOperator(boundaryObj.getId(), departmentStr, designationStr);
 		if (assignmentObj == null)
 			assignmentObj = getUserPositionByZone(boundaryObj, departmentStr, designationStr);

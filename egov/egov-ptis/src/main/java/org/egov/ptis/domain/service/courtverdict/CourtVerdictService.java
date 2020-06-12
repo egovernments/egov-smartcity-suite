@@ -573,6 +573,8 @@ public class CourtVerdictService extends GenericWorkFlowController {
             }
 
             else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(),
+                        courtVerdict.getBasicProperty().getActiveProperty());
                 propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
                 if (action.equalsIgnoreCase("CANCEL_PROP")) {
                     PropertyStatusValues propStatusValues = propertyService.createPropStatVal(courtVerdict.getBasicProperty(),

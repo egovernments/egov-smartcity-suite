@@ -287,6 +287,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 property.setStatus(STATUS_ISACTIVE);
                 persistenceService.persist(property);
             }
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) oldProperty);
+            propService.copyCollection((PropertyImpl) oldProperty, (PropertyImpl) property);
             demandVoucherService.createDemandVoucher((PropertyImpl) property, (PropertyImpl) oldProperty,
                     propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_DEMOLITION,
                             PropertyTaxConstants.NO_ACTION));
@@ -390,7 +392,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                         approvalPosition, DEMOLITION);
             else
                 propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                        workFlowAction, approvalPosition, DEMOLITION);
+                        workFlowAction, approvalPosition, DEMOLITION,false);
             model.addAttribute(SUCCESSMESSAGE, "Property Demolition rejected successfully and forwared to "
                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
                     + " with application number "
@@ -453,13 +455,13 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                         approvalPosition, DEMOLITION);
         } else if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                    workFlowAction, approvalPosition, DEMOLITION);
+                    workFlowAction, approvalPosition, DEMOLITION,false);
     }
 
     private Assignment getCscUserAssignment(final Property property) {
         Assignment cscAssignment = null;
         if (!propService.isEmployee(securityUtils.getCurrentUser()))
-            cscAssignment = propertyDemolitionService.getUserAssignment(securityUtils.getCurrentUser(), property);
+            cscAssignment = propertyDemolitionService.getUserAssignment(securityUtils.getCurrentUser(), property,false);
         return cscAssignment;
     }
 

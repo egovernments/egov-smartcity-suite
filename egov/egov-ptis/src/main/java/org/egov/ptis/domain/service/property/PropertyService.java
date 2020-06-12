@@ -1539,6 +1539,7 @@ public class PropertyService {
                 floor.setPropertyDetail(newProperty.getPropertyDetail());
                 floorProxy.add(floor);
             }
+        newProperty.setApplicationNo("");
         newProperty.getPropertyDetail().setFloorDetails(floorProxy);
         if (newProperty.getPropertyDetail().getPropertyOccupation() != null)
             newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
@@ -2567,7 +2568,10 @@ public class PropertyService {
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
-    public Assignment getMappedAssignmentForCscOperator(final BasicProperty basicProperty) {
+    /*
+     * api to fetch the assignee details for business user request (CSC opertaor , Ward Secretary)
+     */
+    public Assignment getMappedAssignmentForBusinessUser(final BasicProperty basicProperty) {
         Assignment assignment;
         assignment = getAssignmentByDeptDesigElecWard(basicProperty);
         if (assignment == null)
@@ -3026,7 +3030,7 @@ public class PropertyService {
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
             final List<StateHistory<Position>> stateHistory = stateAware.getStateHistory();
-            if (null != state.getHistory() && !state.getHistory().isEmpty()) {
+            if (!stateHistory.isEmpty()) {
                 Collections.reverse(stateHistory);
                 for (final StateHistory<Position> historyState : stateHistory) {
                     final HashMap<String, Object> workflowHistory = new HashMap<>();
@@ -4505,3 +4509,4 @@ public class PropertyService {
         this.totalAlv = totalAlv;
     }
 }
+

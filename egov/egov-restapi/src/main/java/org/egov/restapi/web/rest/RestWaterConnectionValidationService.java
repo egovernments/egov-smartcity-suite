@@ -241,7 +241,7 @@ public class RestWaterConnectionValidationService {
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(regularisedConnection.getStateType(), null,
                 null, REGULARIZE_CONNECTION, "Created", null);
         final User user = securityUtils.getCurrentUser();
-        final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterChargesConnectionInfo.getPropertyId());
+        final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterChargesConnectionInfo.getPropertyId(), false);
         regularisedConnection.setUlbCode(waterChargesConnectionInfo.getUlbCode());
         regularisedConnection.setPropertyIdentifier(waterChargesConnectionInfo.getPropertyId());
         regularisedConnection.transition().start().withSenderName(user.getUsername() + "::" + user.getName())

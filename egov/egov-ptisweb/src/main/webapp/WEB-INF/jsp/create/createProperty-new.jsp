@@ -85,6 +85,7 @@
 			<s:hidden name="applicationSource" value="%{applicationSource}" />
 			<s:hidden name="transactionId" value="%{transactionId}" />
 			<s:hidden name="wsPortalRequest" value="%{wsPortalRequest}"/>
+			<s:hidden name="reasonForCreate" value="%{reasonForCreate}"/>
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="CreatePropertyHeader" />

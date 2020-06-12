@@ -67,7 +67,26 @@ $(document).ready(
             }
         });
 
-        userlist.initialize();
+			var userlist = new Bloodhound({
+				datumTokenizer : function(datum) {
+					return Bloodhound.tokenizers.whitespace(datum.value);
+				},
+				queryTokenizer : Bloodhound.tokenizers.whitespace,
+				remote : {
+					url : '/egi/userRole/ajax/userlist?userName=%QUERY',
+					filter : function(data) {
+						// Map the remote source JSON array to a JavaScript
+						// object array
+						return $.map(data, function(u) {
+							return {
+								name : u.Text,
+								value : u.Value
+							};
+						});
+					}
+				},
+				 limit: 10
+			});
 
         $('#user_name').typeahead({
             hint: true,

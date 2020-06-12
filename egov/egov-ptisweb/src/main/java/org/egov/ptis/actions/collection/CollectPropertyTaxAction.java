@@ -63,6 +63,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,15 +146,14 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
-
-        if (basicProperty.getProperty().getIsExemptedFromTax()) {
+        final Property property = basicProperty.getProperty();
+        if (property.getIsExemptedFromTax()) {
             args.add(propertyId);
             setErrorMsg(getText("msg.collection.tax.exempted", args));
             return RESULT_ERROR;
         }
 
-        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty
-                .getProperty());
+        final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(property);
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
         /*
@@ -185,7 +185,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
             setErrorMsg(getText("msg.collection.fully.paid", args));
             return RESULT_ERROR;
         }
-        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(property.getPropertyDetail().getPropertyTypeMaster().getCode())) {
             propertyTaxBillable.setVacantLandTaxPayment(Boolean.TRUE);
         }
         propertyTaxBillable.setLevyPenalty(true);
@@ -269,12 +269,12 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         this.isAssessmentNoValid = isAssessmentNoValid;
     }
 
-	public String getInfoMessage() {
-		return infoMessage;
-	}
+    public String getInfoMessage() {
+        return infoMessage;
+    }
 
-	public void setInfoMessage(String infoMessage) {
-		this.infoMessage = infoMessage;
-	}
+    public void setInfoMessage(String infoMessage) {
+        this.infoMessage = infoMessage;
+    }
 
 }

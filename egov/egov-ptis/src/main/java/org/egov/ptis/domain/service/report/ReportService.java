@@ -639,13 +639,13 @@ public class ReportService {
             commonFromQry = commonFromQry + ", eg_boundary boundary ";
         commonFromQry = commonFromQry + courtCaseTable + " where pi.isactive = true and pi.isexempted = false " + courtCaseQry;
 
-        finalCommonQry = " cast(COALESCE(sum(pi.waivedoff_amount),0) as numeric) as \"waivedOffPT\","
-                + "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
-                + " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmnd_arrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmnd_currentPT\", "
-                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmnd_currentPFT\","
-                + " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
-                + " cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctn_currentPT\","
-                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctn_currentPFT\"  ";
+        finalCommonQry = " cast(sum(pi.waivedoff_amount) as numeric) as \"waivedOffPT\","
+                + "cast(sum(pi.ARREAR_DEMAND) as numeric) as \"dmnd_arrearPT\","
+                + " cast(sum(pi.pen_aggr_arrear_demand) AS numeric) as \"dmnd_arrearPFT\", cast(sum(pi.annualdemand) AS numeric) as \"dmnd_currentPT\", "
+                + " cast(sum(pi.pen_aggr_current_firsthalf_demand) + sum(pi.pen_aggr_current_secondhalf_demand) AS numeric) as \"dmnd_currentPFT\","
+                + " cast(sum(pi.ARREAR_COLLECTION) AS numeric) as \"clctn_arrearPT\", cast(sum(pi.pen_aggr_arr_coll) AS numeric) as \"clctn_arrearPFT\","
+                + " cast(sum(pi.annualcoll) AS numeric) as \"clctn_currentPT\","
+                + " cast(sum(pi.pen_aggr_current_firsthalf_coll) + sum(pi.pen_aggr_current_secondhalf_coll) AS numeric) as \"clctn_currentPFT\"  ";
 
         // Conditions to Retrieve data based on selected boundary types
         if (!mode.equalsIgnoreCase(PROPERTY)) {

@@ -349,9 +349,9 @@ public class NewConnectionController extends GenericConnectionController {
         if (request.getParameter(APPROVALPOSITION) != null && !request.getParameter(APPROVALPOSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
 
-        if (applicationByOthers || citizenPortalUser || isAnonymousUser) {
+        if (applicationByOthers || citizenPortalUser || isAnonymousUser || isWardSecretaryUser) {
             Position userPosition = waterTaxUtils
-                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier(), isWardSecretaryUser);
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
             else {

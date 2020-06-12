@@ -250,7 +250,7 @@ public class SearchReceiptAction extends BaseFormAction {
                         criteriaString.append(" and instruments.instrumentType.type =:instrumentType ");
                 }
                 if (StringUtils.isNotBlank(getReceiptNumber()))
-                        criteriaString.append(" and upper(receiptNumber) like :receiptNo ");
+                        criteriaString.append(" and receiptNumber = :receiptNo ");
                 if (StringUtils.isNotBlank(getManualReceiptNumber()))
                         criteriaString.append(" and upper(receipt.manualreceiptnumber) like :manualReceiptNo ");
                 if (getSearchStatus() != -1)
@@ -278,7 +278,7 @@ public class SearchReceiptAction extends BaseFormAction {
                 if (StringUtils.isNotBlank(getInstrumentType()))
                         query.setParameter("instrumentType", getInstrumentType(), StringType.INSTANCE);
                 if (StringUtils.isNotBlank(getReceiptNumber()))
-                        query.setParameter("receiptNo", "%" + getReceiptNumber().toUpperCase() + "%", StringType.INSTANCE);
+                        query.setParameter("receiptNo", getReceiptNumber(), StringType.INSTANCE);
                 if (StringUtils.isNotBlank(getManualReceiptNumber()))
                         query.setParameter("manualReceiptNo", "%" + getManualReceiptNumber().toUpperCase() + "%",
                                         StringType.INSTANCE);
