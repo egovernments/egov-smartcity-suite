@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
@@ -93,6 +94,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -329,7 +331,26 @@ public class WaterTaxExternalService {
         }
         return waterTaxDetails;
     }
+    public List<WaterTaxDetails> getWaterTaxDemandDetListByConsumerCodes(List<String> consumerCodes) {
 
+        WaterTaxDetails waterTaxDetails = new WaterTaxDetails();
+        List<WaterTaxDetails> waterTaxDetailsList = new  ArrayList<>();
+        List<WaterConnectionDetails> waterConnectionDetailsList = new  ArrayList<>();
+        ErrorDetails errorDetails = new ErrorDetails();
+        if (!(consumerCodes.isEmpty()))
+           waterConnectionDetailsList =  waterConnectionDetailsService.findByApplicationNumbersOrConsumerCodesAndStatus(consumerCodes, ACTIVE);
+        
+        if (waterConnectionDetailsList.isEmpty()) {
+            errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
+                    + StringUtils.join(consumerCodes, ",") + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+            waterTaxDetails.setErrorDetails(errorDetails);
+            waterTaxDetailsList.add(waterTaxDetails);
+        } else {
+                waterTaxDetailsList = getWaterTaxDetails(waterTaxDetailsList, waterConnectionDetailsList);
+        }
+        return waterTaxDetailsList;
+    }
     @Transactional
     public BillReceiptInfo executeCollection(Payment payment, EgBill bill, String source) {
 
@@ -555,6 +576,43 @@ public class WaterTaxExternalService {
 
         waterTaxDetails.setErrorDetails(errorDetails);
         return waterTaxDetails;
+    }
+
+
+    public List<WaterTaxDetails> getWaterTaxDetails(List<WaterTaxDetails> waterTaxDetailsList,
+            List<WaterConnectionDetails> waterConnectionDetailsList) {
+        WaterTaxDetails waterTaxDetails = new WaterTaxDetails();
+        WaterConnection waterConnection =null;
+        BasicProperty basicProperty =null;
+        for (WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
+            waterConnection= waterConnectionDetails.getConnection();
+            waterTaxDetails.setConsumerNo(StringUtils.isNotBlank(waterConnectionDetails.getApplicationNumber())
+                    ? waterConnectionDetails.getApplicationNumber() : waterConnection.getConsumerCode());
+            basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(waterConnection.getPropertyIdentifier());
+            waterTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            waterTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+            waterTaxDetails.setConsumerNo(waterConnection.getConsumerCode());
+
+            List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
+            if (!propOwnerInfos.isEmpty()) {
+                waterTaxDetails.setOwnerName(propOwnerInfos.get(0).getOwner().getName());
+                waterTaxDetails.setMobileNo(propOwnerInfos.get(0).getOwner().getMobileNumber());
+            }
+            waterTaxDetails.setTaxDetails(new ArrayList<>(0));
+            BigDecimal waterTaxDueAmount = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
+            RestPropertyTaxDetails arrearDetails = new RestPropertyTaxDetails();
+            arrearDetails.setTotalAmount(waterTaxDueAmount.signum() >= 0 ? waterTaxDueAmount : ZERO);
+            arrearDetails.setTaxAmount(waterTaxDueAmount.signum() >= 0 ? waterTaxDueAmount : ZERO);
+            arrearDetails.setInstallment(financialYearDAO.getFinancialYearByDate(new Date()).getFinYearRange());
+            waterTaxDetails.getTaxDetails().add(arrearDetails);
+            
+            ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            waterTaxDetails.setErrorDetails(errorDetails);
+            waterTaxDetailsList.add(waterTaxDetails);
+        }
+        return waterTaxDetailsList;
     }
 
     public EgBill generateBillForConnection(Billable billObj, FinancialYearDAO financialYearDAO) {

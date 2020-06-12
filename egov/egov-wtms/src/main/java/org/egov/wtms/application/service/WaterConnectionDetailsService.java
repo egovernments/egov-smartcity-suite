@@ -249,6 +249,7 @@ import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionAddress;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.WaterConnectionRequestDetails;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -2033,4 +2034,42 @@ public class WaterConnectionDetailsService {
 		}
 		return updatedApplicationNo;
 	}
+	
+    public List<String> getConnectionsByOwnerOrMobileNumber(WaterConnectionRequestDetails waterConnectionRequestDetails) {
+        StringBuilder queryString = new StringBuilder(
+                "select dcbview.hscno from egwtr_mv_dcb_view dcbview where dcbview.hscno is not null and dcbview.connectionstatus = 'ACTIVE' ");
+        Map<String, String> params = new HashMap<>();
+
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getConsumerNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getConsumerNo().trim())) {
+            queryString.append(" and dcbview.hscno=:hscNo ");
+            params.put("hscNo", waterConnectionRequestDetails.getConsumerNo().trim());
+        }
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getAssessmentNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getAssessmentNo().trim())) {
+            queryString.append(" and dcbview.propertyid=:upicNo ");
+            params.put("upicNo", waterConnectionRequestDetails.getAssessmentNo().trim());
+        }
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getOwnerName())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getOwnerName().trim())) {
+            queryString.append(" and upper(trim(dcbview.username)) like :ownerName ");
+            params.put("ownerName", "%" + waterConnectionRequestDetails.getOwnerName().toUpperCase() + "%");
+        }
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getMobileNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getMobileNo().trim())) {
+            queryString.append(" and dcbview.mobileno like :mobileNumber ");
+            params.put("mobileNumber", waterConnectionRequestDetails.getMobileNo());
+        }
+        Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        for (String param : params.keySet())
+            query.setParameter(param, params.get(param));
+        return query.list();
+    }
+
+    public List<WaterConnectionDetails> findByApplicationNumbersOrConsumerCodesAndStatus(List<String> consumerCodes,
+            ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository
+                .findConnectionDetailsByApplicationNumbersOrConsumerCodesAndConnectionStatus(consumerCodes, consumerCodes,
+                        connectionStatus);
+    }
 }
