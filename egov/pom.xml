@@ -177,7 +177,7 @@
         <spring-session-version>1.3.2.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
-        <spring-security-version>4.2.3.RELEASE</spring-security-version>
+        <spring-security-version>5.3.3.RELEASE</spring-security-version>
         <spring-security-oauth2-version>2.2.0.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
         <elastic-search-version>2.4.6</elastic-search-version>
