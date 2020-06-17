@@ -84,7 +84,7 @@ function getData(){
 		return false;
 		}
 	
-	//doLoadingMask();
+	doLoadingMask();
 	var url = '/EGF/report/bankBookReport-ajaxLoadBankBook.action?skipPrepare=true&bankAccount.id='+bankAccount+'&startDate='+startDate+'&endDate='+endDate+getMiscData();
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
