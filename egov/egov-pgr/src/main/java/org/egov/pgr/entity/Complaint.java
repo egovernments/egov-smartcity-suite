@@ -114,7 +114,7 @@ public class Complaint extends StateAware<Position> {
     @SafeHtml
     private String crn = "";
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "complaintType", nullable = false)
     private ComplaintType complaintType;
@@ -125,7 +125,7 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "complainant", nullable = false)
     private Complainant complainant = new Complainant();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee")
     private Position assignee;
 
@@ -133,11 +133,11 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "currentOwner")
     private User currentOwner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location")
     private Boundary location;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "status")
     private ComplaintStatus status = new ComplaintStatus();
@@ -151,16 +151,16 @@ public class Complaint extends StateAware<Position> {
     @SafeHtml
     private String landmarkDetails;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receivingMode")
     @NotNull
     private ReceivingMode receivingMode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priority")
     private Priority priority;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receivingCenter")
     private ReceivingCenter receivingCenter;
 
@@ -180,14 +180,14 @@ public class Complaint extends StateAware<Position> {
     @Column(name = "escalation_date", nullable = false)
     private Date escalationDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department", nullable = false)
     private Department department;
 
     @Enumerated(EnumType.ORDINAL)
     private CitizenFeedback citizenFeedback;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
