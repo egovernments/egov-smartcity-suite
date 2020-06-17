@@ -171,7 +171,7 @@ public class CollectionReportService {
                         .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
                         .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
                         .append(" INNER JOIN EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS ");
-        final StringBuilder whereQuery = new StringBuilder(" WHERE EGW_STATUS.DESCRIPTION != 'Cancelled'");
+        final StringBuilder whereQuery = new StringBuilder(" WHERE EGW_STATUS.CODE != 'CANCELLED'");
         final StringBuilder groupQuery = new StringBuilder(" GROUP BY  source, counterName, employeeName, USERID,serviceName ");
         aggregateQuery.append(
                 " ,count(distinct(EGCL_COLLECTIONHEADER.ID)) as totalReceiptCount ,EGCL_COLLECTIONHEADER.SOURCE AS source, SER.NAME AS serviceName, '' AS counterName, '' AS employeeName, 0 AS USERID ")
