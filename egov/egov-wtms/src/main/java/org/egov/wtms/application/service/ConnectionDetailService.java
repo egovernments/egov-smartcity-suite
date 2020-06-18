@@ -52,14 +52,17 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSC
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -127,7 +130,7 @@ public class ConnectionDetailService {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @Autowired
     private WaterDemandConnectionService waterDemandConnectionService;
 
@@ -166,9 +169,10 @@ public class ConnectionDetailService {
         BigDecimal totalDue = new BigDecimal(0);
         BigDecimal currentInstDue = new BigDecimal(0);
         WaterTaxDue waterTaxDue;
-        final List<WaterConnection> waterConnections = waterConnectionService
-                .findByPropertyIdentifier(propertyIdentifier);
-        if (waterConnections.isEmpty()) {
+        List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
+                .getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyIdentifier,
+                        Arrays.asList(ConnectionStatus.ACTIVE, ConnectionStatus.INPROGRESS));
+        if (connectionDetailsList.isEmpty()) {
             waterTaxDue = new WaterTaxDue();
             waterTaxDue.setConsumerCode(Collections.emptyList());
             waterTaxDue.setConnectionCount(0);
@@ -179,23 +183,28 @@ public class ConnectionDetailService {
         } else {
             waterTaxDue = new WaterTaxDue();
             final List<String> consumerCodes = new ArrayList<>();
-            for (final WaterConnection connection : waterConnections)
-                if (connection.getConsumerCode() != null) {
-                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(),
-                                    ConnectionStatus.ACTIVE);
-                    if (waterConnectionDetails != null) {
-                        waterTaxDue = getDueInfo(waterConnectionDetails, effectiveDate);
-                        waterTaxDue.setPropertyID(propertyIdentifier);
-                        if (connection.getConsumerCode() != null && waterConnectionDetailsService
-                                .getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0)
-                            consumerCodes.add(connection.getConsumerCode());
-                        arrDmd = arrDmd.add(waterTaxDue.getArrearDemand());
-                        arrColl = arrColl.add(waterTaxDue.getArrearCollection());
-                        currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
-                        currColl = currColl.add(waterTaxDue.getCurrentCollection());
-                        currentInstDue = currentInstDue.add(waterTaxDue.getCurrentInstDemand());
-                        totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
+            LinkedHashSet<Long> connectionIdSet = new LinkedHashSet<>();
+            WaterConnection waterConnection;
+            for (final WaterConnectionDetails waterConnectionDetails : connectionDetailsList)
+                if (waterConnectionDetails != null) {
+                    waterConnection = waterConnectionDetails.getConnection();
+                    if (null != waterConnection && waterConnection.getConsumerCode() != null) {
+                        if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus().toString())) {
+                            connectionIdSet.add(waterConnection.getId());
+                            waterTaxDue = getDueInfo(waterConnectionDetails, effectiveDate);
+                            waterTaxDue.setPropertyID(propertyIdentifier);
+                            if (waterConnection.getConsumerCode() != null && waterConnectionDetailsService
+                                    .getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0)
+                                consumerCodes.add(waterConnection.getConsumerCode());
+                            arrDmd = arrDmd.add(waterTaxDue.getArrearDemand());
+                            arrColl = arrColl.add(waterTaxDue.getArrearCollection());
+                            currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
+                            currColl = currColl.add(waterTaxDue.getCurrentCollection());
+                            currentInstDue = currentInstDue.add(waterTaxDue.getCurrentInstDemand());
+                            totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
+                        } else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus().toString())) {
+                            waterTaxDue.setIsInWorkFlow(true);
+                        }
                     }
                 }
             waterTaxDue.setArrearDemand(arrDmd);
@@ -205,15 +214,9 @@ public class ConnectionDetailService {
             waterTaxDue.setTotalTaxDue(totalDue);
             waterTaxDue.setCurrentInstDemand(currentInstDue);
             waterTaxDue.setConsumerCode(consumerCodes);
-            waterTaxDue.setConnectionCount(waterConnections.size());
+            waterTaxDue.setConnectionCount(connectionIdSet.size());
             waterTaxDue.setIsSuccess(true);
         }
-        final List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
-                .getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
-        for (final WaterConnectionDetails connectionDetails : connectionDetailsList)
-            if (INPROGRESS.equals(connectionDetails.getConnectionStatus().toString()))
-                waterTaxDue.setIsInWorkFlow(true);
-
         return waterTaxDue;
     }
 
@@ -368,8 +371,8 @@ public class ConnectionDetailService {
         waterChargesDetails.setPropertytype(waterConnectionDetails.getPropertyType().getName());
         waterChargesDetails.setConnectionStatus(waterConnectionDetails.getConnectionStatus().toString());
         WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-        if(waterRatesDetails!=null)
-        waterChargesDetails.setHalfYearlyTax(BigDecimal.valueOf(waterRatesDetails.getMonthlyRate() * 6));
+        if (waterRatesDetails != null)
+            waterChargesDetails.setHalfYearlyTax(BigDecimal.valueOf(waterRatesDetails.getMonthlyRate() * 6));
         if (waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
             waterChargesDetails.setIsPrimaryConnection(true);
@@ -400,7 +403,8 @@ public class ConnectionDetailService {
         return waterTaxDue;
     }
 
-    public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails, final String effectiveDate) {
+    public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails,
+            final String effectiveDate) {
         final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
@@ -530,7 +534,6 @@ public class ConnectionDetailService {
         return query.list();
     }
 
-    
     public WaterChargesDetails getCloserStatusByPropertyId(String assessmentNumber) {
         WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
         List<WaterConnectionDetails> waterConnectionDetailsList = waterConnectionDetailsService
