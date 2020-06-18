@@ -175,7 +175,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public List getWardWiseProperties() {
-        StringBuffer selectProperties = new StringBuffer(1500);
+        StringBuffer selectProperties = new StringBuffer();
 
         selectProperties
                 .append("select count(propusage.idUsage),propusage.usageName,BndryImpl.id,BndryImpl.boundaryNum ");
@@ -203,7 +203,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
         List propList = new ArrayList();
         if (src != null && !src.isEmpty() && bndryList != null && !bndryList.isEmpty()) {
             LOGGER.debug("getAllPropertiesForGivenBndryListAndSrc : bndryList : " + bndryList + " : src : " + src);
-            StringBuffer strBuffer = new StringBuffer(200);
+            StringBuffer strBuffer = new StringBuffer();
             strBuffer.append("select prop from BasicPropertyImpl BP left join BP.property prop ");
             if (src != null && !src.equals("")) {
                 strBuffer.append(" left join prop.propertySource propsrc ");
@@ -460,7 +460,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public List getDmdCollAmtInstWise(final EgDemand egDemand) {
-        final StringBuffer strBuf = new StringBuffer(2000);
+        final StringBuffer strBuf = new StringBuffer();
         strBuf.append(
                 " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date, sum(ddv.dramount) as variation_amt "
                         + "from eg_demand_details dmdDet left outer join eg_demand_detail_variation ddv on ddv.demand_detail = dmdDet.id, eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
@@ -481,7 +481,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
     @Override
     public List getPenaltyDmdCollAmtInstWise(final EgDemand egDemand) {
         new ArrayList();
-        final StringBuffer strBuf = new StringBuffer(2000);
+        final StringBuffer strBuf = new StringBuffer();
         strBuf.append(
                 " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date "
                         + "from eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
@@ -500,7 +500,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
     public List getDmdDetIdFromInstallandEgDemand(final Installment installment, final EgDemand egDemand) {
         List dmdIdList = new ArrayList();
         if (egDemand != null && installment != null) {
-            final StringBuffer strBuf = new StringBuffer(2000);
+            final StringBuffer strBuf = new StringBuffer();
             strBuf.append(
                     " select dmdet.id from eg_demand_details dmdet, eg_demand_reason res where dmdet.id_demand_reason= res.id and dmdet.id_demand =:dmdId and res.id_installment =:instlId ");
             final Query qry = getCurrentSession().createSQLQuery(strBuf.toString());
@@ -523,7 +523,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
     public BigDecimal getEgptPropertyFromBillId(final Long billId) {
         BigDecimal propertyId = null;
         if (billId != null) {
-            final StringBuffer strBuf = new StringBuffer(2000);
+            final StringBuffer strBuf = new StringBuffer();
             strBuf.append(" select ptdem.id_property from ")
                     .append("egpt_ptdemand ptdem, eg_demand dmd, eg_bill bill ")
                     .append("where bill.id_demand = dmd.id and dmd.id = ptdem.id_demand ")
@@ -573,7 +573,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
             final String demandReasonMasterCode) {
         List dmdIdList = new ArrayList();
         if (egDemand != null && installment != null) {
-            final StringBuffer strBuf = new StringBuffer(2000);
+            final StringBuffer strBuf = new StringBuffer();
             strBuf.append(" SELECT dmdet.id FROM eg_demand_details dmdet, eg_demand_reason res , eg_demand_reason_master mast ");
             strBuf.append(" WHERE dmdet.id_demand_reason= res.id AND dmdet.id_demand =:dmdId AND res.id_installment =:instlId ");
             strBuf.append(" AND mast.id = res.id_demand_reason_master AND mast.code =:masterCode ");
@@ -595,7 +595,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
     @Override
     public List getDmdCollForAllDmdReasons(final EgDemand egDemand) {
         new ArrayList();
-        final StringBuffer strBuf = new StringBuffer(2000);
+        final StringBuffer strBuf = new StringBuffer();
         strBuf.append(
                 " select dmdRes.ID_INSTALLMENT, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as rebate, inst.start_date, dmdresmas.code as reason "
                         + "from eg_demand_details dmdDet ,eg_demand_reason dmdRes, eg_installment_master inst, eg_demand_reason_master dmdresmas "
@@ -610,8 +610,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public List getTotalDemandDetailsIncludingPenalty(final EgDemand egDemand) {
-        new ArrayList();
-        final StringBuffer strBuf = new StringBuffer(2000);
+        final StringBuffer strBuf = new StringBuffer();
         strBuf.append(
                 " select dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date "
                         + "from eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
@@ -627,7 +626,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public List<?> getInstallmentAndReasonWiseDemandDetails(final EgDemand egDemand) {
-        final StringBuilder strBul = new StringBuilder(2000);
+        final StringBuilder strBul = new StringBuilder();
         strBul.append(" select dmdRes.id_installment,  dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date, ddv.dramount  "
                 + "from eg_demand_details dmdDet left outer join eg_demand_detail_variation ddv on ddv.demand_detail = dmdDet.id, eg_demand_reason dmdRes,eg_installment_master inst,eg_demand_reason_master dmdresmas "
                 + "where dmdDet.id_demand_reason=dmdRes.id "
