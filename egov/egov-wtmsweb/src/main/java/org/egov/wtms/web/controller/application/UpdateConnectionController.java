@@ -261,6 +261,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 					.getWaterTaxDueAmount(waterConnectionDetails);
 			model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
 			model.addAttribute(MESSAGE, MSG_WATER_CHARGES_DUE);
+			model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+					.get(waterConnectionDetails.getConnectionType().name()));
 			return NEWCONNECTION_EDIT;
 		} else if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
 				&& (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
