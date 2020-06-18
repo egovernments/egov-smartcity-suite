@@ -182,4 +182,9 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
             @Param("consumerCodes") List<String> consumerCodes, @Param("applicationNumbers") List<String> applicationNumbers,
             @Param("connectionStatus") ConnectionStatus connectionStatus);
     
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connectionStatus in (:connectionStatusList) and wcd.connection.propertyIdentifier =:propertyIdentifier")
+    List<WaterConnectionDetails> getAllConnectionDetailsByPropertyIDAndConnectionStatusList(
+            @Param("propertyIdentifier") String propertyIdentifier, @Param("connectionStatusList") List<ConnectionStatus> connectionStatusList);
+
+    
 }

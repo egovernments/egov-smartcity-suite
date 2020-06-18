@@ -236,8 +236,7 @@ public class WaterTaxExternalService {
             waterReceiptDetails.setPaymentMode(payWaterTaxDetails.getPaymentMode());
             waterReceiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
             waterReceiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
-            String[] paidFrom = null;
-            String[] paidTo = null;
+            
             Installment fromInstallment = new Installment();
             Installment toInstallment = new Installment();
             if (totalAmountToBePaid.signum() > 0) {
@@ -248,23 +247,23 @@ public class WaterTaxExternalService {
                         return rcptAcctInfo1.getOrderNumber().compareTo(rcptAcctInfo2.getOrderNumber());
                     return 0;
                 });
+                String paidFrom = null;
+                String paidTo = null;
                 for (ReceiptAccountInfo rcptAcctInfo : receiptAccountsList)
                     if (rcptAcctInfo.getCrAmount().signum() > 0
                             && !rcptAcctInfo.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE)) {
                         if (paidFrom == null) {
-                            paidFrom = rcptAcctInfo.getDescription().split("-", 2);
-                            paidFrom = paidFrom[1].split("#", 2);
+                            paidFrom = rcptAcctInfo.getDescription().split("-", 2)[1].split("#", 2)[0];
                         }
-                        paidTo = rcptAcctInfo.getDescription().split("-", 2);
-                        paidTo = paidTo[1].split("#", 2);
+                        paidTo = rcptAcctInfo.getDescription().split("-", 2)[1].split("#", 2)[0];
                     }
 
                 if (paidFrom != null)
                     fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidFrom[0].trim());
+                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidFrom.trim());
                 if (paidTo != null)
                     toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidTo[0].trim());
+                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidTo.trim());
             }
 
             if (totalAmountToBePaid.signum() == 0) {

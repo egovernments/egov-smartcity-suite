@@ -2072,4 +2072,8 @@ public class WaterConnectionDetailsService {
                 .findConnectionDetailsByApplicationNumbersOrConsumerCodesAndConnectionStatus(consumerCodes, consumerCodes,
                         connectionStatus);
     }
+
+    public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyIDAndConnectionStatusList(String propertyId, List<ConnectionStatus> connectionStatusList) {
+        return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyId, connectionStatusList);
+    }
 }
