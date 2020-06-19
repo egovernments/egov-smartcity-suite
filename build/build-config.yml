@@ -8,7 +8,7 @@
 # -
 # -
 config:
-  -   name: builds/egov-smartcity-suite/erp-demo
-      build:
-        - work-dir: egov
-          image-name: erp-demo
+-   name: builds/egov-smartcity-suite/erp-demo
+    build:
+    - work-dir: egov
+      image-name: erp-demo
