@@ -183,6 +183,13 @@ public class OnlineReceiptAction extends BaseFormAction {
         /**
          * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
+        pendingOnlineTransactions();
+        if(isTransactionPending)
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(
+                            "The transaction is in pending status, please click on Reconcile button to reconcile the pending transaction before initiating next payment.",
+                            "The transaction is in pending status, please click on Reconcile button to reconcile the pending transaction before initiating next payment."
+                            )));
         if (callbackForApportioning != null && overrideAccountHeads != null && callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
         ServiceDetails paymentService = null;
