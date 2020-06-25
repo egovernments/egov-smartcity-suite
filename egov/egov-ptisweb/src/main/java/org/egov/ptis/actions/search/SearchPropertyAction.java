@@ -115,7 +115,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "applicationType",
                 "${applicationType}", "transactionId","${transactionId}","applicationSource", "${applicationSource}" }),
-        @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
+        @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "/modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
                 "${applicationType}", "transactionId", "${transactionId}", "applicationSource", "${applicationSource}" }),
         @Result(name = MUTATION_TYPE_REGISTERED_TRANSFER, type = "redirectAction", location = "new", params = {
@@ -946,7 +946,7 @@ public class SearchPropertyAction extends SearchFormAction {
      * @param property
      */
     private void checkIsDemandActive(final Property property) {
-        if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
+        if (PropertyTaxConstants.STATUS_DEMAND_INACTIVE.equals(property.getStatus()))
             isDemandActive = false;
         else
             isDemandActive = true;
