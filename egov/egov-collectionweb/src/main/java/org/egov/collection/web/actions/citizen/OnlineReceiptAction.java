@@ -218,7 +218,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         try {
             setPaymentResponse(collectionCommon.createPaymentResponse(paymentService, getMsg()));
         } catch (final ApplicationRuntimeException egovEx) {
-            LOGGER.error("acceptMessageFromPaymentGateway" + egovEx);
+            LOGGER.error("acceptMessageFromPaymentGateway", egovEx);
             throw new ValidationException(Arrays.asList(new ValidationError(egovEx.getMessage(), egovEx.getMessage())));
         }
 
