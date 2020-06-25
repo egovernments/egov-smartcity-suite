@@ -84,7 +84,7 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
             LOGGER.debug("Written bill details to file successfully " + xml);
 
         } catch (final Exception e) {
-            LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e);
+            LOGGER.error("Error occrured while updating dishonored cheque status to billing system : ", e);
             throw new ApplicationRuntimeException("Exception Occured" + e);
         }
 

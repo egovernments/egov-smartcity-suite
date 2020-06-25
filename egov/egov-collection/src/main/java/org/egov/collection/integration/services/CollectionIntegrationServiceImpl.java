@@ -455,7 +455,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             errors.add(new ValidationError(
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed.",
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed."));
-            LOGGER.error("Update to financial systems failed" + ex);
+            LOGGER.error("Update to financial systems failed" , ex);
         }
 
         // Create Vouchers

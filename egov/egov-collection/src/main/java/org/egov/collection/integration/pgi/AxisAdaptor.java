@@ -351,7 +351,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 buf.append('=');
                 buf.append(URLEncoder.encode(fieldValue, UTF8));
                 } catch (final UnsupportedEncodingException e) {
-                LOGGER.error("Error appending QueryFields" + e);
+                LOGGER.error("Error appending QueryFields", e);
                 throw new ApplicationRuntimeException(e.getMessage());
                 }
             // add a '&' to the end if we have more fields coming.
@@ -429,7 +429,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         try {
             urlEncodedFormEntity = new UrlEncodedFormEntity(formData);
         } catch (final UnsupportedEncodingException e1) {
-            LOGGER.error("Error in Create Offline Payment Request" + e1);
+            LOGGER.error("Error in Create Offline Payment Request", e1);
         }
         return urlEncodedFormEntity;
     }
@@ -454,7 +454,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 data.append(line);
             reader.close();
         } catch (final IOException e) {
-            LOGGER.error("Error Reading InsputStrem from Axis Bank Response" + e);
+            LOGGER.error("Error Reading InsputStrem from Axis Bank Response", e);
         }
         LOGGER.info("ResponseAXIS: " + data.toString());
         pairs = data.toString().split("&");
@@ -465,7 +465,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 responseAxisMap.put(URLDecoder.decode(pair.substring(0, idx), UTF8),
                         URLDecoder.decode(pair.substring(idx + 1), UTF8));
             } catch (final UnsupportedEncodingException e) {
-                LOGGER.error("Error Decoding Axis Bank Response" + e);
+                LOGGER.error("Error Decoding Axis Bank Response", e);
             }
         }
         return responseAxisMap;

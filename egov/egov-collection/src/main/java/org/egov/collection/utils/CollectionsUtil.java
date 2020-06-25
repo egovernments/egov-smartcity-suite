@@ -979,7 +979,7 @@ public class CollectionsUtil {
         try {
             service = Class.forName(environmentSettings.getProperty("collection.debitaccounthead.client.impl.class"));
         } catch (final ClassNotFoundException e) {
-            LOGGER.error("Error getting Class name for Debit Account Head" + e);
+            LOGGER.error("Error getting Class name for Debit Account Head", e);
         }
         // getting the entity type service.
         String serviceClassName = null;
