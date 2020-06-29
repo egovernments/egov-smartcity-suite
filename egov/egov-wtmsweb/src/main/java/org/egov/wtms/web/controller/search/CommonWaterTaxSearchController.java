@@ -118,6 +118,7 @@ public class CommonWaterTaxSearchController {
     private static final String ERR_CLOSURE_NOT_ALLOWED= "err.application.inprogress";
     private static final String ERR_APPLY_FOR_RECONNECTION= "err.application.temporary.closed";
     private static final String ERR_APPLY_FOR_NEWCONNECTION= "err.application.permanent.closed";
+    private static final String ERR_SYSTEM_CONN= "err.systemconnection.modify.notallowed";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -584,11 +585,17 @@ public class CommonWaterTaxSearchController {
                 return COMMON_FORM_SEARCH;
             }
         if (isNotBlank(applicationType) && applicationType.equals(EDITDEMAND))
-            if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
-                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getLegacy())
+			if (!waterConnectionDetails.getLegacy()) {
+				model.addAttribute(MODE, ERROR_MODE);
+				model.addAttribute(APPLICATIONTYPE, applicationType);
+				resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_SYSTEM_CONN);
+				return COMMON_FORM_SEARCH;
+			} 
+			else if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+					|| waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
+					|| waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
+							&& waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+							&& waterConnectionDetails.getLegacy())
                 return "redirect:/application/editDemand/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute(MODE, ERROR_MODE);
