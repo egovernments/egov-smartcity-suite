@@ -559,7 +559,13 @@ public class CommonWaterTaxSearchController {
 
         }
         if (isNotBlank(applicationType) && applicationType.equals(EDITCOLLECTION))
-            if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+			if (!waterConnectionDetails.getLegacy()) {
+				model.addAttribute(MODE, ERROR_MODE);
+				model.addAttribute(APPLICATIONTYPE, applicationType);
+				resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_SYSTEM_CONN);
+				return COMMON_FORM_SEARCH;
+			} 
+        	else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
                     && waterConnectionDetails.getLegacy())
