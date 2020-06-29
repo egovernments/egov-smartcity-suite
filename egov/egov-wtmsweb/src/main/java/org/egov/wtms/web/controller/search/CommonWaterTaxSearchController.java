@@ -289,7 +289,8 @@ public class CommonWaterTaxSearchController {
             
             else if ((CHANGEOFUSE.equals(waterConnectionDetails.getApplicationType().getCode())
                     || NEWCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
-                    || RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+                    || RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
+					|| REGULARIZE_CONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
                     && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                     && waterConnectionDetails.getConnection().getParentConnection() == null){
 				if (isWardSecretaryUser) {
