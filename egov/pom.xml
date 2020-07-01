@@ -183,7 +183,7 @@
         <elastic-search-version>2.4.6</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
-        <quartz-version>2.3.0</quartz-version>
+        <quartz-version>2.3.2</quartz-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
         <jackson-version>2.9.2</jackson-version>
