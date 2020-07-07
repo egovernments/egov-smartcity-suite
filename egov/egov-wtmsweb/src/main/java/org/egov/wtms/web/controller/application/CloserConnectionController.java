@@ -190,12 +190,13 @@ public class CloserConnectionController extends GenericConnectionController {
                 PERMENENTCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType()))
             throw new ApplicationRuntimeException("connection.closed");
 
-        return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
+		return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber, isWardSecretaryUser);
 	}
 
-    @Transactional(readOnly = true)
-    public String loadViewData(final Model model, final HttpServletRequest request,
-            final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber) {
+	@Transactional(readOnly = true)
+	public String loadViewData(final Model model, final HttpServletRequest request,
+			final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber,
+			boolean isWardSecretaryUser) {
         Boolean loggedUserIsMeesevaUser;
         
         if(applicationProcessTimeService.getApplicationProcessTime(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION),
@@ -213,9 +214,9 @@ public class CloserConnectionController extends GenericConnectionController {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(WaterTaxConstants.CLOSECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
-        if ("CSCUSER".equalsIgnoreCase(securityUtils.getCurrentUser().getUsername())
-                && waterConnectionDetails.getCurrentState() != null
-                && WF_STATE_CANCELLED.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())) {
+		if (("CSCUSER".equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()) || isWardSecretaryUser)
+				&& waterConnectionDetails.getCurrentState() != null
+				&& WF_STATE_CANCELLED.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())) {
             List<String> validActions = (List<String>) model.asMap().get("validActionList");
             if (validActions.isEmpty()) {
                 validActions = Arrays.asList("Forward");
