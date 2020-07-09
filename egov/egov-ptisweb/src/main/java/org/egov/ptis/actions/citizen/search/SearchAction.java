@@ -261,7 +261,9 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
         searchResultMap.put("address", basicProperty.getAddress().toString());
         searchResultMap.put("source", basicProperty.getSource().toString());
         searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
-        searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+        searchResultMap.put("propType", property != null && property.getPropertyDetail() != null
+                && property.getPropertyDetail().getPropertyTypeMaster().getCode() != null
+                        ? property.getPropertyDetail().getPropertyTypeMaster().getCode() : "");
         searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
         searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
         searchResultMap.put("enableVacancyRemission",

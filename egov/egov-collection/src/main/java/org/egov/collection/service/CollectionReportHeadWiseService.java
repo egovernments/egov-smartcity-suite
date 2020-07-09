@@ -118,7 +118,7 @@ public class CollectionReportHeadWiseService {
                 + " INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER "
                 + " INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER "
                 + " INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT ");
-        StringBuilder whereQueryStr = new StringBuilder(" WHERE EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        StringBuilder whereQueryStr = new StringBuilder(" WHERE EGW_STATUS.CODE != 'CANCELLED' ");
         StringBuilder creditWhereQueryStr = new StringBuilder("  AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0 ");
         StringBuilder debitWhereQueryStr = new StringBuilder(
                 "  AND EGCL_COLLECTIONDETAILS.DRAMOUNT>0 AND CAO.purposeid in (select id from EGF_ACCOUNTCODE_PURPOSE where name ='"

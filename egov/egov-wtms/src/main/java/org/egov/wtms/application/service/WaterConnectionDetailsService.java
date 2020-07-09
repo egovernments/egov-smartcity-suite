@@ -252,6 +252,7 @@ import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionAddress;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.WaterConnectionRequestDetails;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -2008,66 +2009,78 @@ public class WaterConnectionDetailsService {
                 }
         }
 
-        /**
-         * API appends the latest initiation date to the application number for
-         * updating the final status in case of Closure/Reconnection for Ward
-         * Secretary portal requests
-         * 
-         * @param waterConnectionDetails
-         * @param applicationType
-         * @return updated application number
-         */
-        private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
-                String updatedApplicationNo = EMPTY;
-                String natureOfTask;
-                List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
-                if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
-                        natureOfTask = CLOSURE_WATER_TAP_CONNECTION;
-                else
-                        natureOfTask = RECONN_WATER_TAP_CONNECTION;
+	/**
+	 * API appends the latest initiation date to the application number for
+	 * updating the final status in case of Closure/Reconnection for Ward
+	 * Secretary portal requests
+	 * 
+	 * @param waterConnectionDetails
+	 * @param applicationType
+	 * @return updated application number
+	 */
+	private String getUpdatedApplicationNumber(WaterConnectionDetails waterConnectionDetails, String applicationType) {
+		String updatedApplicationNo = EMPTY;
+		String natureOfTask;
+		List<StateHistory> stateHistoryList = new ArrayList<>(waterConnectionDetails.getStateHistory());
+		if (APPLICATION_TYPE_CLOSING_CONNECTION.equalsIgnoreCase(applicationType))
+			natureOfTask = CLOSURE_WATER_TAP_CONNECTION;
+		else
+			natureOfTask = RECONN_WATER_TAP_CONNECTION;
 
-                if (!stateHistoryList.isEmpty()) {
-                        Collections.sort(stateHistoryList, (history1, history2) -> history2.getId().compareTo(history1.getId()));
-                        for (StateHistory stateHistory : stateHistoryList) {
-                                if (natureOfTask.equalsIgnoreCase(stateHistory.getNatureOfTask())
-                                                && APPLICATION_STATUS_NEW.equalsIgnoreCase(stateHistory.getValue()))
-                                        updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
-                                                        .concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
+		if (!stateHistoryList.isEmpty()) {
+			Collections.sort(stateHistoryList, (history1, history2) -> history2.getId().compareTo(history1.getId()));
+			for (StateHistory stateHistory : stateHistoryList) {
+				if (natureOfTask.equalsIgnoreCase(stateHistory.getNatureOfTask())
+						&& APPLICATION_STATUS_NEW.equalsIgnoreCase(stateHistory.getValue()))
+					updatedApplicationNo = waterConnectionDetails.getApplicationNumber().concat("~")
+							.concat(getFormattedDate(stateHistory.getLastModifiedDate(), "dd-MM-yyyy"));
 
-                                if (isNotBlank(updatedApplicationNo))
-                                        break;
-                        }
-                }
-                return updatedApplicationNo;
+				if (isNotBlank(updatedApplicationNo))
+					break;
+			}
+		}
+		return updatedApplicationNo;
+	}
+	
+    public List<String> getConnectionsByOwnerOrMobileNumber(WaterConnectionRequestDetails waterConnectionRequestDetails) {
+        StringBuilder queryString = new StringBuilder(
+                "select dcbview.hscno from egwtr_mv_dcb_view dcbview where dcbview.hscno is not null and dcbview.connectionstatus = 'ACTIVE' ");
+        Map<String, String> params = new HashMap<>();
+
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getConsumerNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getConsumerNo().trim())) {
+            queryString.append(" and dcbview.hscno=:hscNo ");
+            params.put("hscNo", waterConnectionRequestDetails.getConsumerNo().trim());
         }
-        
-    public boolean isValidApprover(WaterConnectionDetails waterConnectionDetails, Long approvalPosition, String workFlowAction) {
-        boolean isValidApprover = true;
-        String additionalRule = EMPTY;
-        WorkFlowMatrix workflowMatrix = null;
-        Position nextStateOwner = positionMasterService.getPositionById(approvalPosition);
-        String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
-        if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-            additionalRule = CLOSECONNECTION;
-        else
-            additionalRule = waterConnectionDetails.getApplicationType().getCode();
-
-        if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
-            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
-        else if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction))
-            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
-                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
-                    loggedInUserDesignation);
-
-        if (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner))
-            isValidApprover = false;
-
-        return isValidApprover;
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getAssessmentNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getAssessmentNo().trim())) {
+            queryString.append(" and dcbview.propertyid=:upicNo ");
+            params.put("upicNo", waterConnectionRequestDetails.getAssessmentNo().trim());
+        }
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getOwnerName())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getOwnerName().trim())) {
+            queryString.append(" and upper(trim(dcbview.username)) like :ownerName ");
+            params.put("ownerName", "%" + waterConnectionRequestDetails.getOwnerName().toUpperCase() + "%");
+        }
+        if (StringUtils.isNotBlank(waterConnectionRequestDetails.getMobileNo())
+                && StringUtils.isNotBlank(waterConnectionRequestDetails.getMobileNo().trim())) {
+            queryString.append(" and dcbview.mobileno like :mobileNumber ");
+            params.put("mobileNumber", waterConnectionRequestDetails.getMobileNo());
+        }
+        Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        for (String param : params.keySet())
+            query.setParameter(param, params.get(param));
+        return query.list();
     }
 
-    public Boolean isApplicationOwner(User currentUser, StateAware state) {
-        return positionMasterService.getPositionsForEmployee(currentUser.getId())
-                .contains(state.getCurrentState().getOwnerPosition());
+    public List<WaterConnectionDetails> findByApplicationNumbersOrConsumerCodesAndStatus(List<String> consumerCodes,
+            ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository
+                .findConnectionDetailsByApplicationNumbersOrConsumerCodesAndConnectionStatus(consumerCodes, consumerCodes,
+                        connectionStatus);
+    }
+
+    public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyIDAndConnectionStatusList(String propertyId, List<ConnectionStatus> connectionStatusList) {
+        return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyId, connectionStatusList);
     }
 }

@@ -122,7 +122,6 @@ public class DemandVoucherService {
             Arrays.asList(DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
                     DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
                     DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
-    private boolean specialCase = false;
 
     @Autowired
     private PropertyService propertyService;
@@ -201,14 +200,14 @@ public class DemandVoucherService {
 
         if (!demandVoucherDetailList.isEmpty())
             prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
-                    demandVoucherDetailList);
+                    demandVoucherDetailList, applicationDetails);
 
         return voucherDetails;
     }
 
     private void prepareVoucherDetailsMap(Map<String, Map<String, Object>> voucherDetails,
             Map<String, String> glCodeMap, boolean demandIncreased,
-            List<DemandVoucherDetails> demandVoucherDetailList) {
+            List<DemandVoucherDetails> demandVoucherDetailList, Map<String, String> applicationDetails) {
         BigDecimal generalTax = ZERO;
         BigDecimal vacantLandtax = ZERO;
         BigDecimal libraryCess = ZERO;
@@ -236,10 +235,10 @@ public class DemandVoucherService {
         if (advance.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
                     putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX);
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX);
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS);
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, priorIncome, PRIOR_INCOME);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX, applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX, applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS, applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, priorIncome, PRIOR_INCOME, applicationDetails);
         if (penalty.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
                     putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
@@ -255,14 +254,14 @@ public class DemandVoucherService {
     }
 
     private void assembleIncomeHeads(Map<String, Map<String, Object>> voucherDetails, Map<String, String> glCodeMap,
-            boolean demandIncreased, BigDecimal incomeHeadAmount, String demandReasonCode) {
+            boolean demandIncreased, BigDecimal incomeHeadAmount, String demandReasonCode, Map<String, String> applicationDetails) {
         if (incomeHeadAmount.compareTo(ZERO) != 0) {
             /*
              * if overall demand is decreased and income head is increased or vice-versa, then income head amount will go to
              * credit and debit account respectively and should not be a special case for e.g. Vacancy Remission, Write Off, Court Verdict.
              */
             if ((!demandIncreased && incomeHeadAmount.compareTo(ZERO) < 0
-                    || demandIncreased && incomeHeadAmount.compareTo(ZERO) > 0) && !isSpecialCase())
+                    || demandIncreased && incomeHeadAmount.compareTo(ZERO) > 0) && !isSpecialCase(applicationDetails))
                 voucherDetails.put(glCodeMap.get(demandReasonCode),
                         putAmountAndType(incomeHeadAmount.abs().setScale(2, BigDecimal.ROUND_HALF_UP),
                                 demandIncreased ? true : false));
@@ -319,7 +318,7 @@ public class DemandVoucherService {
         Iterator<NormalizeDemandDetails> oldIterator = normalizedDemandDetailListOld.iterator();
         Iterator<NormalizeDemandDetails> newIterator = normalizedDemandDetailListNew.iterator();
         while (oldIterator.hasNext() && newIterator.hasNext()) {
-            final DemandVoucherDetails demandVoucherDetails = new DemandVoucherDetails();
+            DemandVoucherDetails demandVoucherDetails = new DemandVoucherDetails();
             NormalizeDemandDetails normalizeDemandDetailsOld = oldIterator.next();
             NormalizeDemandDetails normalizeDemandDetailsNew = newIterator.next();
             demandVoucherDetails.setInstallment(normalizeDemandDetailsOld.getInstallment());
@@ -477,12 +476,8 @@ public class DemandVoucherService {
             Map<String, String> applicationDetails) {
         boolean demandIncreased = true;
         demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
-        if (applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND)
-                || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
-                        .equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL)) {
+        if (isSpecialCase(applicationDetails))
             demandIncreased = false;
-            specialCase = true;
-        }
         return demandIncreased;
     }
 
@@ -606,12 +601,12 @@ public class DemandVoucherService {
                 normalizedDemandDetaiNew.getPenalty().subtract(normalizedDemandDetailOld.getPenaltyCollection())
                         .compareTo(ZERO) < 0;
     }
+    
 
-    public boolean isSpecialCase() {
-        return specialCase;
+    public boolean isSpecialCase(Map<String, String> applicationDetails) {
+        return applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND)
+                || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
+                        .equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
     }
 
-    public void setSpecialCase(boolean specialCase) {
-        this.specialCase = specialCase;
-    }
 }

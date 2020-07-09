@@ -113,7 +113,7 @@ public class FinancialsUtil {
             voucherHeaderCash = financialsVoucherUtil.createApprovedVoucher(headerdetails, accountCodeList,
                     subledgerList);
         } catch (final Exception e) {
-            LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0");
+            LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0",e);
             throw new ApplicationRuntimeException(
                     "Error in createBankRemittance createPreApprovalVoucher when cash amount>0", e);
         }

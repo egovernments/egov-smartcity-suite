@@ -50,7 +50,7 @@ $(document).ready(function(){
 
 	//sewerage validation
 	$('.sewerageDetails').hide();
-	$('#propertyIdentifier').val($('#ptAssessmentNo').val());
+	$('#propertyIdentifier').val();
 
 	$('#addSewerageAppln').change(function(){
 			if ($('#addSewerageAppln').is(":checked")) {

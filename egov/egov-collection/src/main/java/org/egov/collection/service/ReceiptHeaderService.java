@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
@@ -181,15 +182,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         String receiptType = null;
         Integer counterId = null;
         String paymentMode = null;
-        final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 7) {
-            wfAction = params[0];
-            serviceCode = params[1];
-            userName = params[2];
-            counterId = Integer.valueOf(params[4]);
-            receiptDate = params[3];
-            receiptType = params[5];
-            paymentMode = params[6];
+        if (StringUtils.isNotBlank(groupingCriteria)) {
+            final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN);
+            if (params.length == 7) {
+                wfAction = params[0];
+                serviceCode = params[1];
+                userName = params[2];
+                counterId = Integer.valueOf(params[4]);
+                receiptDate = params[3];
+                receiptType = params[5];
+                paymentMode = params[6];
+            }
         }
         final boolean allCounters = counterId == null || counterId < 0;
         // final boolean allPositions = positionIds == null ||
@@ -207,8 +210,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             throw new ApplicationRuntimeException(e.getMessage());
         }
 
-        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
-                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+        if (StringUtils.isNotBlank(paymentMode) &&(paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
+                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)))
             query.append("join receipt.receiptInstrument as instruments ");
 
         query.append(" where 1=1 and receipt.state.value != 'END' and receipt.state.status != 2 ");
@@ -224,13 +227,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             query.append(" and receipt.createdBy.username = :userName");
         if (!allDate)
             query.append(" and (cast(receipt.receiptdate as date)) = :rcptDate");
-        if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
+        if (receiptType!=null && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
             query.append(" and receipt.receipttype = :receiptType");
         else
             query.append(" and receipt.receipttype in ('A', 'C')");
 
-        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
-                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+        if (StringUtils.isNotBlank(paymentMode) &&(paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
+                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)))
             query.append(" and instruments.instrumentType.type in (:paymentMode )");
         query.append(" order by receipt.receiptdate  desc");
         final Query listQuery = getSession().createQuery(query.toString());
@@ -247,11 +250,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             listQuery.setString("userName", userName);
         if (!allDate)
             listQuery.setDate("rcptDate", rcptDate);
-        if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
+        if (StringUtils.isNotBlank(receiptType) && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
             listQuery.setCharacter("receiptType", receiptType.charAt(0));
-        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
+        if (StringUtils.isNotBlank(paymentMode) && paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
             listQuery.setString("paymentMode", paymentMode);
-        else if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+        else if (StringUtils.isNotBlank(paymentMode) && paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
             listQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
         return listQuery.list();
     }

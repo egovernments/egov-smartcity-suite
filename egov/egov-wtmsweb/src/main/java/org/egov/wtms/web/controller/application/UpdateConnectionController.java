@@ -245,200 +245,200 @@ public class UpdateConnectionController extends GenericConnectionController {
 	@Qualifier("parentMessageSource")
 	private MessageSource messageSource;
 
-    @ModelAttribute
-    public WaterConnectionDetails getWaterConnectionDetails(@PathVariable String applicationNumber) {
-        return waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-    }
+	@ModelAttribute
+	public WaterConnectionDetails getWaterConnectionDetails(@PathVariable String applicationNumber) {
+		return waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+	}
 
-    @GetMapping("/update/{applicationNumber}")
-    public String view(Model model, @PathVariable String applicationNumber, HttpServletRequest request) {
+	@GetMapping("/update/{applicationNumber}")
+	public String view(Model model, @PathVariable String applicationNumber, HttpServletRequest request) {
 
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumber(applicationNumber);
-        if (!waterConnectionDetailsService.isApplicationOwner(securityUtils.getCurrentUser(), waterConnectionDetails))
-            return NOT_AUTHORIZED;
-        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                && updateWaterConnectionValidator.validateRegularizationAmount(waterConnectionDetails)) {
-            BigDecimal waterTaxDueforParent = waterConnectionDetailsService
-                    .getWaterTaxDueAmount(waterConnectionDetails);
-            model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
-            model.addAttribute(MESSAGE, MSG_WATER_CHARGES_DUE);
-            return NEWCONNECTION_EDIT;
-        } else if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                && (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                        || APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-                && waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
-                        .compareTo(BigDecimal.ZERO) > 0 ? true : false) {
-            model.addAttribute(MESSAGE, MSG_WATER_ESTIMATION_CHARGES_DUE);
-            return NEWCONNECTION_EDIT;
-        }
-        return loadViewData(model, request, waterConnectionDetails);
-    }
+		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findByApplicationNumber(applicationNumber);
+		if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+				&& APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+				&& updateWaterConnectionValidator.validateRegularizationAmount(waterConnectionDetails)) {
+			BigDecimal waterTaxDueforParent = waterConnectionDetailsService
+					.getWaterTaxDueAmount(waterConnectionDetails);
+			model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
+			model.addAttribute(MESSAGE, MSG_WATER_CHARGES_DUE);
+			model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+					.get(waterConnectionDetails.getConnectionType().name()));
+			return NEWCONNECTION_EDIT;
+		} else if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+				&& (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+						|| APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
+				&& waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
+						.compareTo(BigDecimal.ZERO) > 0 ? true : false) {
+			model.addAttribute(MESSAGE, MSG_WATER_ESTIMATION_CHARGES_DUE);
+			return NEWCONNECTION_EDIT;
+		}
+		return loadViewData(model, request, waterConnectionDetails);
+	}
 
-    private String loadViewData(Model model, HttpServletRequest request,
-            WaterConnectionDetails waterConnectionDetails) {
+	private String loadViewData(Model model, HttpServletRequest request,
+			WaterConnectionDetails waterConnectionDetails) {
 
-        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        WorkflowContainer workflowContainer = new WorkflowContainer();
-        Boolean isCommissionerLoggedIn = Boolean.FALSE;
-        Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
-        String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
+		model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+		WorkflowContainer workflowContainer = new WorkflowContainer();
+		Boolean isCommissionerLoggedIn = Boolean.FALSE;
+		Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
+		String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
 
-        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                && (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                        || APPLICATION_STATUS_ESTIMATENOTICEGEN
-                                .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))) {
-            DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
-            Double donationAmount = donationDetails == null ? 0d
-                    : connectionDemandService.getDonationDetails(waterConnectionDetails).getAmount();
-            BigDecimal penaltyPercent = BigDecimal.ZERO;
-            AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
-                    WCMS_PENALTY_CHARGES_PERCENTAGE);
-            if (appConfig != null && !appConfig.getConfValues().isEmpty())
-                penaltyPercent = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
-            model.addAttribute(DONATION_AMOUNT, donationAmount.longValue());
-            model.addAttribute(PENALTY_AMOUNT,
-                    BigDecimal.valueOf(donationAmount).multiply(penaltyPercent).divide(new BigDecimal(100)));
-            model.addAttribute("currentDemand",
-                    waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand());
-        }
+		if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+				&& (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+						|| APPLICATION_STATUS_ESTIMATENOTICEGEN
+								.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))) {
+			DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
+			Double donationAmount = donationDetails == null ? 0d
+					: connectionDemandService.getDonationDetails(waterConnectionDetails).getAmount();
+			BigDecimal penaltyPercent = BigDecimal.ZERO;
+			AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
+					WCMS_PENALTY_CHARGES_PERCENTAGE);
+			if (appConfig != null && !appConfig.getConfValues().isEmpty())
+				penaltyPercent = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
+			model.addAttribute(DONATION_AMOUNT, donationAmount.longValue());
+			model.addAttribute(PENALTY_AMOUNT,
+					BigDecimal.valueOf(donationAmount).multiply(penaltyPercent).divide(new BigDecimal(100)));
+			model.addAttribute("currentDemand",
+					waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand());
+		}
 
-        if (waterTaxUtils.isConnectionInProgress(waterConnectionDetails.getStatus().getCode())
-                && !waterConnectionDetails.getState().getValue().equals(WF_STATE_REJECTED))
-            workflowContainer.setCurrentDesignation(loggedInUserDesignation);
-        if (loggedInUserDesignation != null
-                && (loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT_DESIGN))
-                && waterConnectionDetails.getStatus() != null
-                && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                        || waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
-                || loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_ENGINEER_DESIGN)
-                        && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                                || waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)))
-            workflowContainer.setCurrentDesignation(null);
-        if (waterConnectionDetails.getCloseConnectionType() != null
-                && waterConnectionDetails.getReConnectionReason() == null) {
-            model.addAttribute(ADDITIONALRULE, CLOSECONNECTION);
-            workflowContainer.setAdditionalRule(CLOSECONNECTION);
-            if (waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE))
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
-            else
-                waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
+		if (waterTaxUtils.isConnectionInProgress(waterConnectionDetails.getStatus().getCode())
+				&& !waterConnectionDetails.getState().getValue().equals(WF_STATE_REJECTED))
+			workflowContainer.setCurrentDesignation(loggedInUserDesignation);
+		if (loggedInUserDesignation != null
+				&& (loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT_DESIGN)
+						|| loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT_DESIGN))
+				&& waterConnectionDetails.getStatus() != null
+				&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
+						|| waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
+				|| loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_ENGINEER_DESIGN)
+						&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
+								|| waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)))
+			workflowContainer.setCurrentDesignation(null);
+		if (waterConnectionDetails.getCloseConnectionType() != null
+				&& waterConnectionDetails.getReConnectionReason() == null) {
+			model.addAttribute(ADDITIONALRULE, CLOSECONNECTION);
+			workflowContainer.setAdditionalRule(CLOSECONNECTION);
+			if (waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE))
+				waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
+			else
+				waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
-            model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
-        }
-        model.addAttribute("applicationDocList",
-                waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
-        if (waterConnectionDetails.getCloseConnectionType() != null
-                && (waterConnectionDetails.getReConnectionReason() == null
-                        || waterConnectionDetails.getReConnectionReason() != null))
-            if (!waterConnectionDetails.getApplicationDocs().isEmpty())
-                for (ApplicationDocuments appDoc : waterConnectionDetails.getApplicationDocs()) {
-                    if (appDoc.getDocumentNames() != null
-                            && appDoc.getDocumentNames().getApplicationType().getCode().equals(CLOSINGCONNECTION)) {
-                        List<ApplicationDocuments> tempListDoc = new ArrayList<>();
-                        tempListDoc.add(appDoc);
-                        model.addAttribute(APP_DOCUMENT_LIST, tempListDoc);
-                    }
-                    if (appDoc.getDocumentNames() != null
-                            && appDoc.getDocumentNames().getApplicationType().getCode().equals(RECONNECTION)) {
-                        List<ApplicationDocuments> tempListDocrecon = new ArrayList<>();
-                        tempListDocrecon.add(appDoc);
-                        model.addAttribute(APP_DOCUMENT_LIST, tempListDocrecon);
-                    }
+			model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
+		}
+		model.addAttribute("applicationDocList",
+				waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
+		if (waterConnectionDetails.getCloseConnectionType() != null
+				&& (waterConnectionDetails.getReConnectionReason() == null
+						|| waterConnectionDetails.getReConnectionReason() != null))
+			if (!waterConnectionDetails.getApplicationDocs().isEmpty())
+				for (ApplicationDocuments appDoc : waterConnectionDetails.getApplicationDocs()) {
+					if (appDoc.getDocumentNames() != null
+							&& appDoc.getDocumentNames().getApplicationType().getCode().equals(CLOSINGCONNECTION)) {
+						List<ApplicationDocuments> tempListDoc = new ArrayList<>();
+						tempListDoc.add(appDoc);
+						model.addAttribute(APP_DOCUMENT_LIST, tempListDoc);
+					}
+					if (appDoc.getDocumentNames() != null
+							&& appDoc.getDocumentNames().getApplicationType().getCode().equals(RECONNECTION)) {
+						List<ApplicationDocuments> tempListDocrecon = new ArrayList<>();
+						tempListDocrecon.add(appDoc);
+						model.addAttribute(APP_DOCUMENT_LIST, tempListDocrecon);
+					}
 
-                }
-            else
-                model.addAttribute(APP_DOCUMENT_LIST, waterConnectionDetails.getApplicationDocs());
+				}
+			else
+				model.addAttribute(APP_DOCUMENT_LIST, waterConnectionDetails.getApplicationDocs());
 
-        if (waterConnectionDetails.getCloseConnectionType() != null
-                && waterConnectionDetails.getReConnectionReason() != null) {
-            model.addAttribute(ADDITIONALRULE, RECONNECTION);
-            workflowContainer.setAdditionalRule(RECONNECTION);
+		if (waterConnectionDetails.getCloseConnectionType() != null
+				&& waterConnectionDetails.getReConnectionReason() != null) {
+			model.addAttribute(ADDITIONALRULE, RECONNECTION);
+			workflowContainer.setAdditionalRule(RECONNECTION);
 
-        } else if (isBlank(workflowContainer.getAdditionalRule())) {
-            workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
-            model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
-        }
-        if (WF_STATE_APPROVAL_PENDING.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())
-                && waterConnectionDetails.getApprovalNumber() != null
-                && COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                && APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-            workflowContainer.setPendingActions(PENDING_DIGI_SIGN);
-        else if (Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE)
-                .contains(waterConnectionDetails.getApplicationType().getCode())
-                && APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                && COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
-            workflowContainer.setPendingActions(COMM_APPROVAL_PENDING);
-        else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-            workflowContainer.setPendingActions(waterConnectionDetailsService
-                    .getReglnConnectionPendingAction(waterConnectionDetails, loggedInUserDesignation, null));
-            model.addAttribute("pendingActions", workflowContainer.getPendingActions());
-        }
-        prepareWorkflow(model, waterConnectionDetails, workflowContainer);
-        model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
-        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
-        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-        if (waterConnectionDetails.getStatus() != null
-                && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED))
-            model.addAttribute("meterCostMasters",
-                    meterCostService.findByPipeSize(waterConnectionDetails.getPipeSize()));
+		} else if (isBlank(workflowContainer.getAdditionalRule())) {
+			workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
+			model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
+		}
+		if (WF_STATE_APPROVAL_PENDING.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())
+				&& waterConnectionDetails.getApprovalNumber() != null
+				&& COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+				&& APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
+			workflowContainer.setPendingActions(PENDING_DIGI_SIGN);
+		else if (Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE)
+				.contains(waterConnectionDetails.getApplicationType().getCode())
+				&& APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+				&& COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+			workflowContainer.setPendingActions(COMM_APPROVAL_PENDING);
+		else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+			workflowContainer.setPendingActions(waterConnectionDetailsService
+					.getReglnConnectionPendingAction(waterConnectionDetails, loggedInUserDesignation, null));
+			model.addAttribute("pendingActions", workflowContainer.getPendingActions());
+		}
+		prepareWorkflow(model, waterConnectionDetails, workflowContainer);
+		model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+		model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+		model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+		model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+		model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+				.get(waterConnectionDetails.getConnectionType().name()));
+		model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
+		model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+		if (waterConnectionDetails.getStatus() != null
+				&& waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED))
+			model.addAttribute("meterCostMasters",
+					meterCostService.findByPipeSize(waterConnectionDetails.getPipeSize()));
 
-        if (waterConnectionDetails.getStatus() != null
-                && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)) {
-            ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
-            model.addAttribute("chairPerson", chairPerson);
-            model.addAttribute("sanctionDateLowerLimit",
-                    DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
+		if (waterConnectionDetails.getStatus() != null
+				&& waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)) {
+			ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
+			model.addAttribute("chairPerson", chairPerson);
+			model.addAttribute("sanctionDateLowerLimit",
+					DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
 
-        }
+		}
 
-        appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
-        if (loggedInUserDesignation != null && !"".equals(loggedInUserDesignation)
-                && loggedInUserDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)
-                && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
-                        || waterConnectionDetails.getStatus().getCode()
-                                .equals(APPLICATION_STATUS_RECONNDIGSIGNPENDING)))
-            isCommissionerLoggedIn = Boolean.TRUE;
-        if (waterTaxUtils.currentUserIsApprover(loggedInUserDesignation)
-                && (waterConnectionDetails.getApprovalNumber() == null || !APPLICATION_STATUS_DIGITALSIGNPENDING
-                        .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())))
-            isSanctionedDetailEnable = Boolean.TRUE;
+		appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
+		if (loggedInUserDesignation != null && !"".equals(loggedInUserDesignation)
+				&& loggedInUserDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)
+				&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
+						|| waterConnectionDetails.getStatus().getCode()
+								.equals(APPLICATION_STATUS_RECONNDIGSIGNPENDING)))
+			isCommissionerLoggedIn = Boolean.TRUE;
+		if (waterTaxUtils.currentUserIsApprover(loggedInUserDesignation)
+				&& (waterConnectionDetails.getApprovalNumber() == null || !APPLICATION_STATUS_DIGITALSIGNPENDING
+						.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())))
+			isSanctionedDetailEnable = Boolean.TRUE;
 
-        BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
-        model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
-        if (loggedInUserDesignation != null
-                && (loggedInUserDesignation.equals(SENIOR_ASSISTANT_DESIGN)
-                        || loggedInUserDesignation.equals(JUNIOR_ASSISTANT_DESIGN))
-                && waterConnectionDetails.getStatus() != null
-                && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
-                        || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                        || waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
-                || loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_ENGINEER_DESIGN)
-                        && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                                || waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)))
-            model.addAttribute("currentDesignation", "");
-        else
-            model.addAttribute("currentDesignation", loggedInUserDesignation);
+		BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
+		model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
+		if (loggedInUserDesignation != null
+				&& (loggedInUserDesignation.equals(SENIOR_ASSISTANT_DESIGN)
+						|| loggedInUserDesignation.equals(JUNIOR_ASSISTANT_DESIGN))
+				&& waterConnectionDetails.getStatus() != null
+				&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
+						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
+						|| waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
+				|| loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_ENGINEER_DESIGN)
+						&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
+								|| waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)))
+			model.addAttribute("currentDesignation", "");
+		else
+			model.addAttribute("currentDesignation", loggedInUserDesignation);
 
-        if (!WF_STATE_REJECTED.equals(waterConnectionDetails.getState().getValue())
-                && !WF_STATE_CLERK_APPROVED.equals(waterConnectionDetails.getState().getValue())) {
-            AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
-                    NON_METERED.equals(waterConnectionDetails.getConnectionType()) ? PROCEED_WITHOUT_NONMETER_EST_AMT
-                            : PROCEED_WITHOUT_METER_EST_AMT);
-            if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
-                model.addAttribute("proceedWithoutDonation", "true");
+		if (!WF_STATE_REJECTED.equals(waterConnectionDetails.getState().getValue())
+				&& !WF_STATE_CLERK_APPROVED.equals(waterConnectionDetails.getState().getValue())) {
+			AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
+					NON_METERED.equals(waterConnectionDetails.getConnectionType()) ? PROCEED_WITHOUT_NONMETER_EST_AMT
+							: PROCEED_WITHOUT_METER_EST_AMT);
+			if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
+				model.addAttribute("proceedWithoutDonation", "true");
 			
 			if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType())
 					&& CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())

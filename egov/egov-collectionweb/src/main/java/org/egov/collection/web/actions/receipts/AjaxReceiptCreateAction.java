@@ -260,7 +260,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                 .getServletContext());
         final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
-        final List<EntityType> tempEntityList = (List<EntityType>) entityService.filterActiveEntities(filterKey, -1,
+        final List<EntityType> tempEntityList = (List<EntityType>) entityService.filterActiveEntities(filterKey, 10,
                 adt.getId());
         entityList = new ArrayList<EntityType>();
         for (final EntityType e : tempEntityList) {

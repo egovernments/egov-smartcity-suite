@@ -122,7 +122,7 @@
 						type : 'hidden',
 						id : 'transactionId',
 						name : 'transactionId',
-						value : transactionId
+						value : transactionId 
 					})).append(jQuery('<input>').attr({
 						type : 'hidden',
 						id : 'wsPortalRequest',
@@ -133,7 +133,7 @@
 				if (applicationType == 'Bifuracate_Assessment') {
 					var indexNumber = '${assessmentNum}';
 					var namespace = '/ptis'.concat('${actionNamespace}')
-							.concat('/modifyProperty-modifyForm.action');
+							.concat('/modify/modifyProperty-modifyForm.action');
 					var modifyRsn = 'BIFURCATE';
 					jQuery('<form>.').attr({
 						method : 'post',
