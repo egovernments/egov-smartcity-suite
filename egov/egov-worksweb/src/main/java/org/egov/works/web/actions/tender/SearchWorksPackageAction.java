@@ -68,6 +68,7 @@ import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,8 @@ public class SearchWorksPackageAction extends SearchFormAction {
     private EmployeeService employeeService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
     private Date fromDate;
     private Date toDate;
     private String status;
@@ -189,7 +192,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
                 if (!wp.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !wp.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                     final String posName = wp.getState().getOwnerPosition().getName();
-                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(wp.getState()
+                    final Assignment assignment = worksReadOnlyService.getPrimaryAssignmentForPosition(wp.getState()
                             .getOwnerPosition().getId());
                     if (assignment != null)
                         wp.setEmployeeName(posName + " / " + assignment.getEmployee().getName());
@@ -197,7 +200,8 @@ public class SearchWorksPackageAction extends SearchFormAction {
                         wp.setEmployeeName(posName);
                 }
                 final String approved = getApprovedValue();
-                final OfflineStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, wp.getId(),
+                final OfflineStatus lastStatus = worksReadOnlyService.getStatusDateByObjectIdTypeDesc(
+                        wp.getId(),
                         OBJECT_TYPE, lastStatusDescription);
 
                 worksPackageActions = new LinkedList<String>();

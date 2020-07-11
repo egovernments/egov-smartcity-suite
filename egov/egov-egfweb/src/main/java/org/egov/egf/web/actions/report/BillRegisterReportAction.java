@@ -85,6 +85,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
+import org.egov.services.report.BillRegisterReportService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
@@ -132,7 +133,9 @@ public class BillRegisterReportAction extends SearchFormAction {
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
  @Autowired	
-    private  AppConfigValueService appConfigValueService;
+ private  AppConfigValueService appConfigValueService;
+ @Autowired
+ private BillRegisterReportService billRegisterReportService;
     
    
 
@@ -146,7 +149,6 @@ public class BillRegisterReportAction extends SearchFormAction {
     private final String chqdelimitDP = "//";
     private List<BillRegisterReportBean> billRegReportList;
     private List<String> chequeStatusCheckList = new ArrayList<String>();
-    StringBuffer getRemiitPaymentVoucherQry = new StringBuffer("");
     List<Integer> cancelledChequeStatus = new ArrayList<Integer>();
 
     private static boolean errorState = false;
@@ -167,15 +169,6 @@ public class BillRegisterReportAction extends SearchFormAction {
         chequeStatusCheckList.add(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS);
         chequeStatusCheckList.add(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS);
         chequeStatusCheckList.add(FinancialConstants.INSTRUMENT_CANCELLED_STATUS);
-
-        
-
-        getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?" +
-                " and rm.voucherheader.status!=?")
-                .append(" order by rm.voucherheader.id");
-
     }
 
     @Override
@@ -310,10 +303,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                 billRegReport.setStatus(null != object[5] ? object[5].toString().toUpperCase() : "");
                 billRegReport.setBillDate(DDMMYYYYFORMATS.format((Date) object[6]));
                 if (!StringUtils.isEmpty(billRegReport.getVoucherNumber())) {
-                    final List<Miscbilldetail> miscBillList = persistenceService.findAllBy(
-                            " from Miscbilldetail mis where mis.billnumber=? " +
-                                    " and mis.billVoucherHeader.voucherNumber=?", billRegReport.getBillNumber(),
-                                    billRegReport.getVoucherNumber());
+                    final List<Miscbilldetail> miscBillList = billRegisterReportService.getMiscBillDetailsByBillVoucher(billRegReport);
                     if (null != miscBillList && miscBillList.size() > 0) {
                         BigDecimal paidAmount = null;
                         final StringBuffer payMentVoucherNumber = new StringBuffer("");
@@ -329,15 +319,12 @@ public class BillRegisterReportAction extends SearchFormAction {
                                     payMentVoucherNumber.append("|").append(
                                             miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2,BigDecimal.ROUND_HALF_EVEN);
-                                    final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                    final Paymentheader paymentMode = billRegisterReportService
+                                            .getPaymentHeaderByPaymentVoucher(miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
-                                        final List<InstrumentVoucher> instrumentVoucherList = qry.list();
+                                        final List<InstrumentVoucher> instrumentVoucherList = billRegisterReportService
+                                                .getInstrumentVouchersByVoucherHeader(
+                                                        miscbilldetail.getPayVoucherHeader().getId(), cancelledChequeStatus);
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
                                                 // chequeStatus=inst.getInstrumentHeaderId().getStatusId().getId();
@@ -365,12 +352,9 @@ public class BillRegisterReportAction extends SearchFormAction {
                                                 .append(DDMMYYYYFORMATS.format(inst.getInstrumentHeaderId()
                                                         .getInstrumentDate()));
                                     } else {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
-                                        final List<InstrumentVoucher> instrumentVoucherList = qry.list();
+                                        final List<InstrumentVoucher> instrumentVoucherList = billRegisterReportService
+                                                .getInstrumentVouchersByVoucherHeader(
+                                                        miscbilldetail.getPayVoucherHeader().getId(), cancelledChequeStatus);
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
                                                 if (!StringUtils.isEmpty(chequeNoAndDate.toString())) {
@@ -407,18 +391,12 @@ public class BillRegisterReportAction extends SearchFormAction {
                                 } else {
                                     paidAmount = miscbilldetail.getPaidamount().setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     payMentVoucherNumber.append(miscbilldetail.getPayVoucherHeader().getVoucherNumber());
-                                    final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                    final Paymentheader paymentMode = billRegisterReportService
+                                            .getPaymentHeaderByPaymentVoucher(miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
-                                        // List<InstrumentVoucher>
-                                        // instrumentVoucherList=(List<InstrumentVoucher>)persistenceService.findAllBy(" from InstrumentVoucher where voucherHeaderId=?",
-                                        // miscbilldetail.getPayVoucherHeader());
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
-                                        final List<InstrumentVoucher> instrumentVoucherList = qry.list();
+                                        final List<InstrumentVoucher> instrumentVoucherList = billRegisterReportService
+                                                .getInstrumentVouchersByVoucherHeader(
+                                                        miscbilldetail.getPayVoucherHeader().getId(), cancelledChequeStatus);
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
                                                 if (!StringUtils.isEmpty(chequeNoAndDate.toString())) {
@@ -445,12 +423,9 @@ public class BillRegisterReportAction extends SearchFormAction {
                                                             .format(inst.getInstrumentHeaderId().getInstrumentDate())
                                                             : "");
                                     } else {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
-                                        final List<InstrumentVoucher> instrumentVoucherList = qry.list();
+                                        final List<InstrumentVoucher> instrumentVoucherList = billRegisterReportService
+                                                .getInstrumentVouchersByVoucherHeader(
+                                                        miscbilldetail.getPayVoucherHeader().getId(), cancelledChequeStatus);
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
                                                 if (!StringUtils.isEmpty(chequeNoAndDate.toString())) {
@@ -528,9 +503,7 @@ public class BillRegisterReportAction extends SearchFormAction {
 
         if (billRegReport.getVoucherNumber() != null) {
 
-            remittancePaymentItem = persistenceService.findAllBy(getRemiitPaymentVoucherQry.toString()
-                    , billRegReport.getVoucherNumber(), FinancialConstants.CANCELLEDVOUCHERSTATUS,
-                    FinancialConstants.CANCELLEDVOUCHERSTATUS);
+            remittancePaymentItem = billRegisterReportService.getRemittancePaymentByVoucher(billRegReport.getVoucherNumber());
 
             if (remittancePaymentItem.size() > 0) {
                 paymentVhId = remittancePaymentItem.get(0).getVoucherheader().getId();
@@ -539,12 +512,8 @@ public class BillRegisterReportAction extends SearchFormAction {
 
                     // if(remittancePaymentItem.get(i).getVoucherheader().getStatus())
                     remmitPaymentVoucherNumber.append(remittancePaymentItem.get(i).getVoucherheader().getVoucherNumber() + "|");
-                    final Query qry = persistenceService.getSession().createQuery(
-                            "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                            " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                    qry.setLong("vhId", remittancePaymentItem.get(i).getVoucherheader().getId());
-                    qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
-                    instrumentVoucherList = qry.list();
+                    instrumentVoucherList = billRegisterReportService.getInstrumentVouchersByVoucherHeader(
+                            remittancePaymentItem.get(i).getVoucherheader().getId(), cancelledChequeStatus);
 
                     if (instrumentVoucherList.size() > 0)
                         for (final InstrumentVoucher inst : instrumentVoucherList)

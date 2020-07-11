@@ -61,6 +61,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -91,6 +92,7 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksPackageService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
@@ -171,6 +173,8 @@ public class TenderNegotiationAction extends SearchFormAction {
     private AssignmentService assignmentService;
     @Autowired
     private EmployeeServiceOld employeeServiceOld;
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
 
     private String nsActionName;
     private String option;
@@ -1302,17 +1306,17 @@ public class TenderNegotiationAction extends SearchFormAction {
         return status;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     protected void getPositionAndUser() {
         final List<TenderResponseContractors> tenderResponseContractorsList = new ArrayList<TenderResponseContractors>();
-        final Map<String, Integer> exceptionaSorMap = worksService.getExceptionSOR();
+        final Map<String, Integer> exceptionaSorMap = worksReadOnlyService.getExceptionSOR();
 
         final Iterator i = searchResult.getList().iterator();
         while (i.hasNext()) {
             final TenderResponse tenderResponse = (TenderResponse) i.next();
             if (SEARCH_NEGOTIATION_FOR_WO.equals(sourcepage)) {
                 double totalTenderNegQty = tenderResponse.getTotalNegotiatedQuantity().getValue();
-                double totalWorkOrderQty = getTotalWorkOrderQuantity(tenderResponse.getNegotiationNumber());
+                double totalWorkOrderQty = worksReadOnlyService.getTotalWorkOrderQuantity(tenderResponse.getNegotiationNumber());
                 totalTenderNegQty = Math.round(totalTenderNegQty * 100) / 100.0;
                 totalWorkOrderQty = Math.round(totalWorkOrderQty * 100) / 100.0;
                 if (totalWorkOrderQty >= totalTenderNegQty)
@@ -1320,7 +1324,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             }
             if (!tenderResponse.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !tenderResponse.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(tenderResponse.getCurrentState()
+                final PersonalInformation emp = worksReadOnlyService.getEmployeeforPosition(tenderResponse.getCurrentState()
                         .getOwnerPosition());
                 if (emp != null && StringUtils.isNotBlank(emp.getEmployeeName()))
                     if (tenderResponse.getTenderEstimate().getAbstractEstimate() == null)
@@ -1348,10 +1352,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                 if (tenderResponseCntractrs.getTenderResponse().getEgwStatus() != null
                         && tenderResponseCntractrs.getTenderResponse().getEgwStatus().getCode()
                                 .equals(TenderResponse.TenderResponseStatus.APPROVED.toString())) {
-                    final OfflineStatus setStatus = (OfflineStatus) persistenceService.findByNamedQuery(
-                            "getmaxStatusByObjectId_Type", tenderResponseCntractrs.getId(),
-                            tenderResponseCntractrs.getId(), TenderResponseContractors.class.getSimpleName(),
-                            TenderResponseContractors.class.getSimpleName());
+                    final OfflineStatus setStatus = worksReadOnlyService.getOfflineStatusByObjectType(tenderResponseCntractrs);
                     if (setStatus == null) {
                         tenderResponseCntractrs.setStatus(tenderResponse.getEgwStatus().getCode());
                         tenderResponseCntractrs.setStatusCode(tenderResponse.getEgwStatus().getCode());
@@ -1366,19 +1367,21 @@ public class TenderNegotiationAction extends SearchFormAction {
             }
 
             final String approved = getApprovedValue();
-            final OfflineStatus lastStatus = worksStatusService.findByNamedQuery(STATUS_OBJECTID, tenderResponse
-                    .getTenderResponseContractors().get(0).getId(), OBJECT_TYPE, getLastStatus());
-            final String actions = worksService.getWorksConfigValue("TENDERNEGOTIATION_SHOW_ACTIONS");
+            final OfflineStatus lastStatus = worksReadOnlyService.getStatusDateByObjectIdTypeDesc(
+                    tenderResponse
+                            .getTenderResponseContractors().get(0).getId(),
+                    OBJECT_TYPE, getLastStatus());
+            final String actions = worksReadOnlyService.getWorksConfigValue("TENDERNEGOTIATION_SHOW_ACTIONS");
             if (StringUtils.isNotBlank(actions)) {
                 String setStat = "";
                 tenderResponse.getTenderNegotiationsActions().addAll(Arrays.asList(actions.split(",")));
 
                 if (lastStatus != null || "view".equalsIgnoreCase(setStatus))
-                    setStat = worksService.getWorksConfigValue("WORKS_VIEW_OFFLINE_STATUS_VALUE");
+                    setStat = worksReadOnlyService.getWorksConfigValue("WORKS_VIEW_OFFLINE_STATUS_VALUE");
                 else if (lastStatus == null && StringUtils.isNotBlank(approved)
                         && tenderResponse.getEgwStatus() != null
                         && approved.equals(tenderResponse.getEgwStatus().getCode()))
-                    setStat = worksService.getWorksConfigValue("WORKS_SETSTATUS_VALUE");
+                    setStat = worksReadOnlyService.getWorksConfigValue("WORKS_SETSTATUS_VALUE");
                 if (StringUtils.isNotBlank(setStat))
                     tenderResponse.getTenderNegotiationsActions().add(setStat);
             }
@@ -1408,23 +1411,6 @@ public class TenderNegotiationAction extends SearchFormAction {
             searchResult.getList().clear();
             searchResult.getList().addAll(tenderResponseContractorsList);
         }
-    }
-
-    private double getTotalWorkOrderQuantity(final String negotiationNumber) {
-        Object[] params = new Object[] { negotiationNumber, WorksConstants.CANCELLED_STATUS };
-        Double totalWorkOrderQty = (Double) getPersistenceService().findByNamedQuery("getTotalQuantityForWO", params);
-        params = new Object[] { negotiationNumber, WorksConstants.NEW };
-        final Double totalWorkOrderQtyForNew = (Double) getPersistenceService().findByNamedQuery(
-                "getTotalQuantityForNewWO", params);
-
-        if (totalWorkOrderQty != null && totalWorkOrderQtyForNew != null)
-            totalWorkOrderQty = totalWorkOrderQty + totalWorkOrderQtyForNew;
-        if (totalWorkOrderQty == null && totalWorkOrderQtyForNew != null)
-            totalWorkOrderQty = totalWorkOrderQtyForNew;
-        if (totalWorkOrderQty == null)
-            return 0.0d;
-        else
-            return totalWorkOrderQty.doubleValue();
     }
 
     public String getApprovedValue() {
