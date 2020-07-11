@@ -175,6 +175,7 @@ public class CloserConnectionController extends GenericConnectionController {
 		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
 		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
 		boolean anonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+		boolean citizenUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
 
 		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
 				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
@@ -192,13 +193,13 @@ public class CloserConnectionController extends GenericConnectionController {
             throw new ApplicationRuntimeException("connection.closed");
 
 		return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber, isWardSecretaryUser,
-				anonymousUser);
+				anonymousUser, citizenUser);
 	}
 
 	@Transactional(readOnly = true)
 	public String loadViewData(final Model model, final HttpServletRequest request,
 			final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber,
-			boolean isWardSecretaryUser, boolean anonymousUser) {
+			boolean isWardSecretaryUser, boolean anonymousUser, boolean citizenUser) {
         Boolean loggedUserIsMeesevaUser;
         
         if(applicationProcessTimeService.getApplicationProcessTime(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION),
@@ -217,8 +218,7 @@ public class CloserConnectionController extends GenericConnectionController {
         workflowContainer.setAdditionalRule(WaterTaxConstants.CLOSECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
 		if (("CSCUSER".equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()) || isWardSecretaryUser
-				|| anonymousUser)
-				&& waterConnectionDetails.getCurrentState() != null
+				|| anonymousUser || citizenUser) && waterConnectionDetails.getCurrentState() != null
 				&& WF_STATE_CANCELLED.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())) {
             List<String> validActions = (List<String>) model.asMap().get("validActionList");
             if (validActions.isEmpty()) {
