@@ -80,38 +80,35 @@ public class BillRegisterReportService {
     @ReadOnly
     public List<Miscbilldetail> getMiscBillDetailsByBillVoucher(final BillRegisterReportBean billRegReport) {
 
-        final List<Miscbilldetail> miscBillList = persistenceService.getSession()
+        return persistenceService.getSession()
                 .createQuery(" from Miscbilldetail mis where mis.billnumber=:billNumber " +
                         " and mis.billVoucherHeader.voucherNumber=:voucherNumber")
                 .setParameter("billNumber", billRegReport.getBillNumber())
                 .setParameter("voucherNumber", billRegReport.getVoucherNumber()).list();
-        return miscBillList;
     }
 
     @ReadOnly
     public Paymentheader getPaymentHeaderByPaymentVoucher(final CVoucherHeader cVoucherHeader) {
-        final Paymentheader paymentMode = (Paymentheader) persistenceService.getSession()
+        return (Paymentheader) persistenceService.getSession()
                 .createQuery("from Paymentheader where voucherheader=:voucherHeader")
                 .setParameter("voucherHeader", cVoucherHeader).uniqueResult();
-        return paymentMode;
     }
 
     @SuppressWarnings({ "unchecked" })
     @ReadOnly
     public List<InstrumentVoucher> getInstrumentVouchersByVoucherHeader(final Long voucherHeader,
             List<Integer> cancelledChequeStatus) {
-        final List<InstrumentVoucher> instrumentVoucherList = persistenceService.getSession().createQuery(
+        return persistenceService.getSession().createQuery(
                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                         " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)")
                 .setLong("vhId", voucherHeader)
                 .setParameterList("cancelledChequeList", cancelledChequeStatus).list();
-        return instrumentVoucherList;
     }
 
     @SuppressWarnings({ "unchecked" })
     @ReadOnly
     public List<EgRemittance> getRemittancePaymentByVoucher(final String voucherNumber) {
-        List<EgRemittance> remittancePaymentItem = persistenceService.getSession()
+        return persistenceService.getSession()
                 .createQuery("select distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl "
                         + "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =:voucherNumber "
                         + "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=:voucherStatus "
@@ -119,7 +116,6 @@ public class BillRegisterReportService {
                 .setParameter("voucherNumber", voucherNumber)
                 .setParameter("voucherStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS)
                 .list();
-        return remittancePaymentItem;
     }
 
 }

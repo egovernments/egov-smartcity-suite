@@ -179,11 +179,10 @@ public class WorksReadOnlyService {
 
     @ReadOnly
     public OfflineStatus getOfflineStatusByObjectType(final TenderResponseContractors tenderResponseCntractrs) {
-        final OfflineStatus setStatus = (OfflineStatus) persistenceService.findByNamedQuery(
+        return (OfflineStatus) persistenceService.findByNamedQuery(
                 "getmaxStatusByObjectId_Type", tenderResponseCntractrs.getId(),
                 tenderResponseCntractrs.getId(), TenderResponseContractors.class.getSimpleName(),
                 TenderResponseContractors.class.getSimpleName());
-        return setStatus;
     }
 
     @ReadOnly
@@ -204,13 +203,12 @@ public class WorksReadOnlyService {
     @SuppressWarnings("unchecked")
     @ReadOnly
     public List<Object> getTenderResponseByEstimateId(final Long estimateId) {
-        final List<Object> result = persistenceService.getSession()
+        return persistenceService.getSession()
                 .createQuery(
                         "select wpkg,tr from TenderResponse tr,WorksPackage wpkg left outer join wpkg.worksPackageDetails wpkgd "
                                 + "where tr.tenderEstimate.worksPackage.id=wpkg.id and wpkgd.estimate.id=:estimateId")
                 .setParameter("estimateId", estimateId)
                 .list();
-        return result;
     }
 
     @ReadOnly
@@ -230,13 +228,12 @@ public class WorksReadOnlyService {
 
     @ReadOnly
     public OfflineStatus getStatusDateByObjectIdTypeDesc(Long id, String objectType, String status) {
-        final OfflineStatus offlineStatus = (OfflineStatus) persistenceService.findByNamedQuery(
+        return (OfflineStatus) persistenceService.findByNamedQuery(
                 STATUS_OBJECTID, id, objectType, status);
-        return offlineStatus;
     }
 
     @ReadOnly
-    public Double getAssignedQuantity(final String query, Object[] params) {
+    public Double getAssignedQuantity(final String query, Object... params) {
         return (Double) persistenceService.findByNamedQuery(query, params);
     }
 }
