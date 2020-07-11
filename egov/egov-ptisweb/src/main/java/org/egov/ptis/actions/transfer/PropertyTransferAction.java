@@ -513,20 +513,21 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/collect-fee")
     public String collectFee() {
         String target = "";
-        if (StringUtils.isBlank(assessmentNo) && StringUtils.isBlank(assessmentNo)) {
-            addActionError(getText("mandatory.assessmentno.applicationno"));
-            target = SEARCH;
-        } else if (StringUtils.isNotBlank(assessmentNo))
+        try {
+
+        if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
-        if (propertyMutation != null && propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
-            addActionError(getText("error.cancelled.applicationno"));
-            target = SEARCH;
+        else {
+            addActionError(getText("mandatory.assessmentno.applicationno"));
+           return target = SEARCH;
         }
-
         if (propertyMutation == null || propertyMutation.getId() == null) {
             addActionError(getText("mutation.notexists"));
+            target = SEARCH;
+        } else if (propertyMutation != null && propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
+            addActionError(getText("error.cancelled.applicationno"));
             target = SEARCH;
         } else if (propertyMutation.getReceiptDate() != null
                 && !propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum())) {
@@ -538,15 +539,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mutationfee.notexists"));
             target = SEARCH;
         } else {
-            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || citizenPortalUser) {
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || citizenPortalUser)
                 target = COLLECT_ONLINE_FEE;
-            }
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
             if (StringUtils.isBlank(target))
                 target = COLLECT_FEE;
         }
-        return target;
+    } catch (Exception e) {
+        addActionError(getText("mutation.notexists"));
+        target = SEARCH;
     }
+        return target;
+}
 
     @SkipValidation
     @Action(value = "/forward")
