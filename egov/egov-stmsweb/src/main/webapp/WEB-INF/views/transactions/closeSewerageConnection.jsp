@@ -127,8 +127,10 @@
 							</c:choose>
 					</c:if>
 				</div>
-			</div>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			</div> 
+			<c:if test="${!isAnonymousUser}">
+				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>			
+			</c:if>
 	 		<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 		</form:form>
 	</div>					

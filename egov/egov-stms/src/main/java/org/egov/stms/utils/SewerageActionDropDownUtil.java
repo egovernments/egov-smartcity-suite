@@ -163,10 +163,11 @@ public class SewerageActionDropDownUtil {
                 actionList.add(CLOSECONNECTION_ACTIONDROPDOWN);
                 actionList.add(GENERATEBEMANDBILL);
             }
-            if (role.equalsIgnoreCase(ROLE_ULBOPERATOR) || role.equalsIgnoreCase(ROLE_SEWERAGETAX_CREATOR)
-                    || role.equalsIgnoreCase(ROLE_SEWERAGETAX_APPROVER) || role.equalsIgnoreCase(ROLE_CITIZEN)) {
-                actionList.add(CHANGENOOFCLOSET);
-            }
+			if (role.equalsIgnoreCase(ROLE_ULBOPERATOR) || role.equalsIgnoreCase(ROLE_SEWERAGETAX_CREATOR)
+					|| role.equalsIgnoreCase(ROLE_SEWERAGETAX_APPROVER) || role.equalsIgnoreCase(ROLE_CITIZEN)
+					|| role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE)) {
+				actionList.add(CHANGENOOFCLOSET);
+			}
             if (role.equalsIgnoreCase(ROLE_CSCOPERTAOR) || role.equalsIgnoreCase(ROLE_ULBOPERATOR)
                     || role.equalsIgnoreCase(ROLE_COLLECTIONOPERATOR)
                     || role.equalsIgnoreCase(ROLE_SUPERUSER)) {
@@ -175,7 +176,9 @@ public class SewerageActionDropDownUtil {
             if (role.equalsIgnoreCase(ROLE_SEWERAGETAX_ADMINISTRATOR) || role.equalsIgnoreCase(ROLE_SUPERUSER)) {
                 actionList.add(MODIFYLEGACYCONNECTIONACTIONDROPDOWN);
             }
-
+			if (role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE)) {
+				actionList.add(CLOSECONNECTION_ACTIONDROPDOWN);
+			}
         }
         actionList.add(VIEW);
 

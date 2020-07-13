@@ -140,6 +140,7 @@ public class SewerageTaxConstants {
     public static final String ROLE_SEWERAGETAX_APPROVER = "Sewerage Tax Approver";
     public static final String ROLE_SEWERAGETAX_REPORTVIEWER = "Sewerage Tax Report Viewer";
     public static final String ROLE_STMS_VIEW_ACCESS_ROLE = "STMS_VIEW_ACCESS_ROLE";
+    public static final String ROLE_STMS_PUBLIC_ROLE = "PUBLIC";
 
     public static final String APPROVAL_POSITION = "approvalPosition";
     public static final String WORKFLOW_ACTION = "workFlowAction";
