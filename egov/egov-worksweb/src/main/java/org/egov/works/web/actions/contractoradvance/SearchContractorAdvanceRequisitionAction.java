@@ -63,6 +63,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.WorksConstants;
@@ -110,6 +111,8 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
     private EmployeeServiceOld employeeService;
     private PersistenceService<Contractor, Long> contractorService;
     private ContractorAdvanceService contractorAdvanceService;
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
 
     public SearchContractorAdvanceRequisitionAction() {
 
@@ -241,7 +244,7 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
         while (iter.hasNext()) {
             final Object row = iter.next();
             final ContractorAdvanceRequisition arf = (ContractorAdvanceRequisition) row;
-            final PersonalInformation emp = employeeService.getEmployeeforPosition(arf.getCurrentState().getOwnerPosition());
+            final PersonalInformation emp = worksReadOnlyService.getEmployeeforPosition(arf.getCurrentState().getOwnerPosition());
             if (emp != null)
                 arf.setOwnerName(emp.getUserMaster().getName());
             arfList.add(arf);

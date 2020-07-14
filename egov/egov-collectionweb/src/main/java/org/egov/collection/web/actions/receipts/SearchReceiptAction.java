@@ -63,9 +63,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -96,7 +96,7 @@ public class SearchReceiptAction extends SearchFormAction {
     private TreeMap<Long, String> userMap = new TreeMap<>();
 
     @Autowired
-    private AssignmentService assignmentService;
+    private CollectionCommon collectionCommon;
 
     @Override
     public Object getModel() {
@@ -194,11 +194,11 @@ public class SearchReceiptAction extends SearchFormAction {
         searchResult.getList().clear();
         if (!getServiceClass().equals("-1"))
             addDropdownData("serviceTypeList",
-                    getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, getServiceClass()));
+                    collectionCommon.getServiceByType(getServiceClass()));
 
         for (ReceiptHeader receiptHeader : receiptList) {
             if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
-                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(
+                List<Assignment> assignments = collectionCommon.getAssignmentsForPosition(
                         receiptHeader.getState().getOwnerPosition().getId(), receiptHeader.getCreatedDate());
                 if (!assignments.isEmpty())
                     receiptHeader.setWorkflowUserName(assignments.get(0).getEmployee().getUsername());

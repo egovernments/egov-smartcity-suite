@@ -101,11 +101,14 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -153,6 +156,9 @@ public class CollectionCommon {
 
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
 
     /**
      * @param receiptHeaderService the receipt header Service to be set
@@ -860,4 +866,21 @@ public class CollectionCommon {
      * instrHeaderATM.setTransactionDate(paytInfoATM.getTransactionDate());
      * instrHeaderATM.setIsPayCheque(CollectionConstants.ZERO_INT); return instrHeaderATM; }
      */
+    
+    @SuppressWarnings("deprecation")
+    @ReadOnly
+    public List getServiceByType(String serviceClass) {
+        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, serviceClass);
+    }
+
+    @ReadOnly
+    public List<Assignment> getAssignmentsForPosition(Long positionId, Date date) {
+        return assignmentService.getAssignmentsForPosition(positionId, date);
+    }
+
+    @SuppressWarnings("deprecation")
+    @ReadOnly
+    public ReceiptVoucher getReceiptVoucherByReceiptId(Long receiptId) {
+        return (ReceiptVoucher) persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
+    }
 }

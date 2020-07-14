@@ -95,6 +95,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.RebateService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -151,6 +152,9 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
 
     @Autowired
     private PtDemandDao ptDemandDAO;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     public Object getModel() {
@@ -218,7 +222,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
     public String srchByAssessmentNo() {
         try {
 
-            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
+            final BasicProperty basicProperty = propertyTaxCommonUtils.getBasicProperty(assessmentNum);
             if (basicProperty != null) {
                 setSearchUrl("onlineSearch");
                 checkIsDemandActive(basicProperty.getProperty());
@@ -253,7 +257,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
             LOGGER.debug("Assessment Number : " + basicProperty.getUpicNo());
         }
         final Property property = basicProperty.getProperty();
-        final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
+        final Map<String, BigDecimal> demandCollMap = propertyTaxCommonUtils.getDemandCollMapIncludingPenaltyAndAdvance(property);
 
         final Map<String, String> searchResultMap = new HashMap<>();
         searchResultMap.put("assessmentNum", basicProperty.getUpicNo());
@@ -335,7 +339,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
             LOGGER.debug("Entered into getSearchResults method");
             LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
         }
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        final BasicProperty basicProperty = propertyTaxCommonUtils.getBasicProperty(pmv.getPropertyId());
         final Property property = basicProperty.getProperty();
         if (basicProperty != null)
             checkIsDemandActive(basicProperty.getProperty());

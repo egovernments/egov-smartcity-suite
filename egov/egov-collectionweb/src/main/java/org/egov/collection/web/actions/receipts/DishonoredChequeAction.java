@@ -70,6 +70,7 @@ import org.egov.collection.entity.DishonoredChequeBean;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.services.DishonorChequeService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.infra.validation.exception.ValidationError;
@@ -124,6 +125,10 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Autowired
     private DishonorChequeService dishonorChequeService;
     private BigDecimal reversalAmount;
+    
+    @Autowired
+    private CollectionCommon collectionCommon;
+
 
     @Override
     public Object getModel() {
@@ -240,8 +245,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         for (final Object[] object : list) {
             receiptId = getLongValue(object[0]);
             final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
-            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
+            final ReceiptVoucher receiptVoucher = collectionCommon.getReceiptVoucherByReceiptId(receiptId);
             if (receiptVoucher != null) {
                 chequeBean.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
                 chequeBean.setVoucherNumber(receiptVoucher.getVoucherheader().getVoucherNumber());

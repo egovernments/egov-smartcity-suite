@@ -65,6 +65,7 @@ import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.TenderResponseService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +105,9 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
     private String tenderNegotiationNumber;
     private int executingDepartmentId;
     private String workOrderNumber;
+    
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
 
     public SearchEstimateForContractorAdvanceAction() {
     }
@@ -239,10 +243,7 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
         final Iterator i = searchResult.getList().iterator();
         while (i.hasNext()) {
             final WorkOrderEstimate woe = (WorkOrderEstimate) i.next();
-            final TenderResponse tenderResponse = tenderResponseService
-                    .find("from TenderResponse tr where tr.negotiationNumber =? " +
-                            "and tr.egwStatus.code = ?", woe.getWorkOrder().getNegotiationNumber(),
-                            TenderResponse.TenderResponseStatus.APPROVED.toString());
+            final TenderResponse tenderResponse = worksReadOnlyService.getTenderResponse(woe);
             woe.getWorkOrder().setTenderType(tenderResponse.getTenderEstimate().getTenderType());
             woeList.add(woe);
         }
