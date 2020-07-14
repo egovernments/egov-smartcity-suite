@@ -154,6 +154,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
      * @return index
      */
 
+    @Override
     @Action(value = "/reports/remittanceVoucherReport-criteria")
     public String criteria() {
         populateBankAccountList();
@@ -203,12 +204,13 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         return REPORT;
     }
 
+    @Override
     @Action(value = "/reports/remittanceVoucherReport-report")
     public String report() {
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
                 ReportDataSourceType.SQL);
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }

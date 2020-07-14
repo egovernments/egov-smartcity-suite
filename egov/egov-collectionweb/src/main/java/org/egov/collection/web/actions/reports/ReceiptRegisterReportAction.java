@@ -60,6 +60,9 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -93,15 +96,18 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_CLASSIFICATION = "EGOV_CLASSIFICATION";
     private static final String EGOV_BRANCH_ID = "EGOV_BRANCH_ID";
     public static final String DROPDOWN_BRANCHUSER_BRANCH = "bankBranchlist";
-
+    private String reportId;
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
     private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
+    public Map<String, Object> critParams = new HashMap<String, Object>(0);
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -148,84 +154,84 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
      * @return the from date
      */
     public Date getFromDate() {
-        return (Date) getReportParam(EGOV_FROM_DATE);
+        return (Date) critParams.get(EGOV_FROM_DATE);
     }
 
     /**
      * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
-        setReportParam(EGOV_FROM_DATE, fromDate);
+        critParams.put(EGOV_FROM_DATE, fromDate);
     }
 
     /**
      * @return the do date
      */
     public String getSource() {
-        return (String) getReportParam(EGOV_SOURCE);
+        return (String) critParams.get(EGOV_SOURCE);
     }
 
     /**
      * @param toDate the to date to set
      */
     public void setSource(final String source) {
-        setReportParam(EGOV_SOURCE, source);
+        critParams.put(EGOV_SOURCE, source);
     }
 
     /**
      * @return the do date
      */
     public Date getToDate() {
-        return (Date) getReportParam(EGOV_TO_DATE);
+        return (Date) critParams.get(EGOV_TO_DATE);
     }
 
     /**
      * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
-        setReportParam(EGOV_TO_DATE, toDate);
+        critParams.put(EGOV_TO_DATE, toDate);
     }
 
     /**
      * @return the department id
      */
     public Integer getDeptId() {
-        return (Integer) getReportParam(EGOV_DEPT_ID);
+        return (Integer) critParams.get(EGOV_DEPT_ID);
     }
 
     /**
      * @param deptId the department id to set
      */
     public void setDeptId(final Integer deptId) {
-        setReportParam(EGOV_DEPT_ID, deptId);
+        critParams.put(EGOV_DEPT_ID, deptId);
     }
 
     /**
      * @return the payment mode (cash/cheque)
      */
     public String getPaymentMode() {
-        return (String) getReportParam(EGOV_PAYMENT_MODE);
+        return (String) critParams.get(EGOV_PAYMENT_MODE);
     }
 
     /**
      * @param paymentMode the payment mode to set (cash/cheque)
      */
     public void setPaymentMode(final String paymentMode) {
-        setReportParam(EGOV_PAYMENT_MODE, paymentMode);
+        critParams.put(EGOV_PAYMENT_MODE, paymentMode);
     }
 
     /**
      * @return the department id
      */
     public Integer getStatusId() {
-        return (Integer) getReportParam(EGOV_STATUS_ID);
+        return (Integer) critParams.get(EGOV_STATUS_ID);
     }
 
     /**
      * @param deptId the department id to set
      */
     public void setStatusId(final Integer statusId) {
-        setReportParam(EGOV_STATUS_ID, statusId);
+        critParams.put(EGOV_STATUS_ID, statusId);
     }
 
     /**
@@ -251,8 +257,8 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         setupDropdownDataExcluding();
 
         // Set default values of criteria fields
-        setReportParam(EGOV_FROM_DATE, new Date());
-        setReportParam(EGOV_TO_DATE, new Date());
+        critParams.put(EGOV_FROM_DATE, new Date());
+        critParams.put(EGOV_TO_DATE, new Date());
         serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         return INDEX;
@@ -261,8 +267,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/receiptRegisterReport-report")
     public String report() {
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
-        return super.report();
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
+        final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
+                ReportDataSourceType.SQL);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return REPORT;
     }
 
     @Override
@@ -279,19 +289,19 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     }
 
     public Long getServiceId() {
-        return (Long) getReportParam(EGOV_SERVICE_ID);
+        return (Long) critParams.get(EGOV_SERVICE_ID);
     }
 
     public void setServiceId(final Long serviceId) {
-        setReportParam(EGOV_SERVICE_ID, serviceId);
+        critParams.put(EGOV_SERVICE_ID, serviceId);
     }
 
     public String getClassificationType() {
-        return (String) getReportParam(EGOV_CLASSIFICATION);
+        return (String) critParams.get(EGOV_CLASSIFICATION);
     }
 
     public void setClassificationType(final String classification) {
-        setReportParam(EGOV_CLASSIFICATION, classification);
+        critParams.put(EGOV_CLASSIFICATION, classification);
     }
 
     public TreeMap<String, String> getServiceTypeMap() {
@@ -303,10 +313,15 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     }
 
     public Long getBranchId() {
-        return (Long) getReportParam(EGOV_BRANCH_ID);
+        return (Long) critParams.get(EGOV_BRANCH_ID);
     }
 
     public void setBranchId(final Long branchId) {
-        setReportParam(EGOV_BRANCH_ID, branchId);
+        critParams.put(EGOV_BRANCH_ID, branchId);
+    }
+
+    @Override
+    public String getReportId() {
+        return reportId;
     }
 }

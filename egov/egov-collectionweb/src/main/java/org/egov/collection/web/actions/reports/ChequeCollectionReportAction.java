@@ -209,7 +209,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
