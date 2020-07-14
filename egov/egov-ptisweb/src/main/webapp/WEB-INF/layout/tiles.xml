@@ -922,4 +922,10 @@
         <put-attribute name="body"
                        value="/WEB-INF/views/search/searchwriteoffcourtcase-newForm.jsp"/>
     </definition>
+    <definition name="taxregister-pt-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.property.register"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/taxregister-pt-form.jsp" />
+	</definition>
 </tiles-definitions> 
