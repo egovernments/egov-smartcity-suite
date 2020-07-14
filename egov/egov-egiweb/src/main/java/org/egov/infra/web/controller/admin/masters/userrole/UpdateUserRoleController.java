@@ -62,7 +62,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")
@@ -95,6 +100,12 @@ public class UpdateUserRoleController {
     public String updateUserRoles(@ModelAttribute User user, BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "/userrole/update/" + user.getId();
+        Set<Role> obj = userService.getRolesByUsername(user.getUsername());
+        for(Role role : obj) {
+        	if(role.isInternal()) {
+        		user.getRoles().add(role);
+        	}
+        }
         userService.updateUser(user);
         redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
         return "redirect:/userrole/view/" + user.getId();
