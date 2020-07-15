@@ -120,6 +120,12 @@ public class ApplicationDocumentService {
 
     private static final String SOURCE_CSC = "CSC";
 
+    private static final String SOURCE_CITIZENPORTAL = "CITIZENPORTAL";
+
+    private static final String SOURCE_MSEVA = "MSEVA";
+
+    private static final String SOURCE_WARDSECRETARY = "WARDSECRETARY";
+    
     private static final String SLA_GAP = "slaGap";
 
     private static final String OTHERS_TOTAL = "othersTotal";
@@ -131,6 +137,8 @@ public class ApplicationDocumentService {
     private static final String MEESEVA_TOTAL = "meesevaTotal";
 
     private static final String CSC_TOTAL = "cscTotal";
+
+    private static final String WARDSECRETARY_TOTAL = "wardsecretaryTotal";
 
     private static final String SLAB4BEYOND_SLA = "slab4beyondSLA";
 
@@ -392,19 +400,18 @@ public class ApplicationDocumentService {
             valueCount = aggregation.get(TOTAL_COUNT);
             applicationIndexResponse.setTotalCsc(valueCount != null ? valueCount.getValue() : 0);
         }
-        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, ULB_TOTAL,
-                StringUtils.EMPTY,
-                0);
-        if (aggregation != null) {
-            valueCount = aggregation.get(TOTAL_COUNT);
-            applicationIndexResponse.setTotalUlb(valueCount != null ? valueCount.getValue() : 0);
-        }
         aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, ONLINE_TOTAL,
                 StringUtils.EMPTY,
                 0);
         if (aggregation != null) {
             valueCount = aggregation.get(TOTAL_COUNT);
             applicationIndexResponse.setTotalOnline(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY,
+                WARDSECRETARY_TOTAL, StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalWsPortal(valueCount != null ? valueCount.getValue() : 0);
         }
         aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, OTHERS_TOTAL,
                 StringUtils.EMPTY,
@@ -467,17 +474,17 @@ public class ApplicationDocumentService {
             applications.add(sourceTrend);
         }
     }
-
+ 
     private void populateTotal(final SourceTrend sourceTrend, final Bucket term, final String channel) {
         final ValueCount countAggr = term.getAggregations().get(TOTAL_COUNT);
-        if (SOURCE_CSC.equals(channel))
-            sourceTrend.setTotalCsc(countAggr.getValue());
-        else if (SOURCE_MEESEVA.equals(channel))
-            sourceTrend.setTotalMeeseva(countAggr.getValue());
-        else if (SOURCE_SYSTEM.equals(channel))
-            sourceTrend.setTotalUlb(countAggr.getValue());
-        else if (SOURCE_ONLINE.equals(channel))
-            sourceTrend.setTotalOnline(countAggr.getValue());
+        if (SOURCE_CSC.equals(channel) || SOURCE_SYSTEM.equals(channel))
+            sourceTrend.setTotalCsc(sourceTrend.getTotalCsc() + countAggr.getValue());
+        else if (SOURCE_MEESEVA.equals(channel) || SOURCE_MSEVA.equals(channel))
+            sourceTrend.setTotalMeeseva(sourceTrend.getTotalMeeseva() + countAggr.getValue());
+        else if (SOURCE_ONLINE.equals(channel) || SOURCE_CITIZENPORTAL.equals(channel))
+            sourceTrend.setTotalOnline(sourceTrend.getTotalOnline() + countAggr.getValue());
+        else if (SOURCE_WARDSECRETARY.equals(channel))
+            sourceTrend.setTotalWsPortal(countAggr.getValue());
         else
             sourceTrend.setTotalOthers(countAggr.getValue());
     }
@@ -559,8 +566,9 @@ public class ApplicationDocumentService {
         if (StringUtils.isNotBlank(applicationIndexRequest.getSource())) {
 
             if ("OTHERS".equalsIgnoreCase(applicationIndexRequest.getSource()))
-                boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CHANNEL,
-                        Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+                boolQuery = boolQuery.mustNot(
+                        QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE,
+                                SOURCE_SYSTEM, SOURCE_CITIZENPORTAL, SOURCE_MSEVA, SOURCE_WARDSECRETARY)));
             else
                 boolQuery = boolQuery
                         .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
@@ -713,6 +721,8 @@ public class ApplicationDocumentService {
                 ONLINE_TOTAL, ONLINE_TOTAL, aggregationField, size);
         Map<String, Long> ulbApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 ULB_TOTAL, ULB_TOTAL, aggregationField, size);
+        Map<String, Long> wsApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                WARDSECRETARY_TOTAL, WARDSECRETARY_TOTAL, aggregationField, size);
         Map<String, Long> otherApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 OTHERS_TOTAL, OTHERS_TOTAL, aggregationField, size);
 
@@ -796,6 +806,7 @@ public class ApplicationDocumentService {
             applicationDetails.setOnlineTotal(onlineApplications.get(name) == null ? 0 : onlineApplications.get(name));
             applicationDetails.setUlbTotal(ulbApplications.get(name) == null ? 0 : ulbApplications.get(name));
             applicationDetails.setOthersTotal(otherApplications.get(name) == null ? 0 : otherApplications.get(name));
+            applicationDetails.setWsTotal(wsApplications.get(name) == null ? 0 : wsApplications.get(name));
 
             if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
                 if (moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()) == null) {
@@ -1048,16 +1059,19 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91))
                     .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (CSC_TOTAL.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_CSC));
+            appStatusQuery = appStatusQuery
+                    .filter(QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_SYSTEM)));
         else if (MEESEVA_TOTAL.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_MEESEVA));
+            appStatusQuery = appStatusQuery
+                    .filter(QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_MEESEVA, SOURCE_MSEVA)));
         else if (ONLINE_TOTAL.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_ONLINE));
-        else if (ULB_TOTAL.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_SYSTEM));
+            appStatusQuery = appStatusQuery
+                    .filter(QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_ONLINE, SOURCE_CITIZENPORTAL)));
+        else if (WARDSECRETARY_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_WARDSECRETARY));
         else if (OTHERS_TOTAL.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.mustNot(
-                    QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+            appStatusQuery = appStatusQuery
+                    .mustNot(QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM,SOURCE_CITIZENPORTAL,SOURCE_MSEVA,SOURCE_WARDSECRETARY)));
         else if ("approvedClosed".equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED))
                     .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
