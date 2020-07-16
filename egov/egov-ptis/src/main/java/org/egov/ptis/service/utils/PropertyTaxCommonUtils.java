@@ -616,7 +616,7 @@ public class PropertyTaxCommonUtils {
             source = PropertyTaxConstants.SOURCE_MEESEVA;
         else if (isCitizenPortalUser(user))
             source = Source.CITIZENPORTAL.toString();
-        else if (isOnline)
+        else if (PropertyTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(user.getName()) || isOnline)
             source = PropertyTaxConstants.SOURCE_ONLINE;
         else
             source = PropertyTaxConstants.SOURCE_SYSTEM;
