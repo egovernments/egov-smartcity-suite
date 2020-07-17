@@ -146,7 +146,8 @@ public class DemandVoucherService {
 
     public void createDemandVoucher(PropertyImpl newProperty, PropertyImpl oldProperty, Map<String, String> applicationDetails) {
         String appConfigValue = propertyTaxCommonUtils.getDemandVoucherAppConfigValue();
-        if ("Y".equalsIgnoreCase(appConfigValue)) {
+        PropertyDemandVoucher demandVoucher = demandVoucherRepository.findByProperty(newProperty);
+        if ("Y".equalsIgnoreCase(appConfigValue) && demandVoucher == null) {
             Map<String, Map<String, Object>> voucherData = prepareDemandVoucherData(newProperty, oldProperty, applicationDetails);
             if (!voucherData.isEmpty()) {
                 LOGGER.info("Voucher Data-------------->" + voucherData);
