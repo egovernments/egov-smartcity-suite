@@ -135,7 +135,7 @@
          <constructor-arg index="0" ref="vacancyRemissionApprovalPersistenceService"/>
     </bean>
     
-    <bean id="PetitionPersistenceService" parent="abstractPersistenceService">
+    <bean id="PetitionPersistenceService" parent="abstractPersistenceService" scope="prototype">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.Petition" />
     </bean>
     
@@ -183,9 +183,9 @@
 	
 	<bean id="propertyTaxBillable" class="org.egov.ptis.domain.bill.PropertyTaxBillable" scope="prototype" />
 	
-	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil"/>
+	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil" scope="prototype"/>
 	
-	<bean id="propertyTaxCommonUtils" class="org.egov.ptis.service.utils.PropertyTaxCommonUtils"/>
+	<bean id="propertyTaxCommonUtils" class="org.egov.ptis.service.utils.PropertyTaxCommonUtils" scope="prototype"/>
 	
 	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -211,7 +211,7 @@
 		<constructor-arg name="type" value="org.egov.ptis.domain.entity.document.DocumentTypeDetails" />
 	</bean>
 
-    <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
+    <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService" scope="prototype">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>
     </bean>
     
@@ -243,6 +243,6 @@
          <constructor-arg index="0" ref="writeOffPersistenceService"/>
     </bean>
 	
-	<bean id="propertyTaxService" class="org.egov.ptis.service.utils.PropertyTaxService"/>
+	<bean id="propertyTaxService" class="org.egov.ptis.service.utils.PropertyTaxService" scope="prototype"/>
 	
 </beans>
