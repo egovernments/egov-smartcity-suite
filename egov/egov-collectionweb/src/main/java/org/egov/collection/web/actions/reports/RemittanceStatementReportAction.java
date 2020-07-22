@@ -201,7 +201,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
 
         final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
                 ReportDataSourceType.SQL);
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }

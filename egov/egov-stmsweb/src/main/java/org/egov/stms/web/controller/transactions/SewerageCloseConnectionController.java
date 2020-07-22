@@ -48,14 +48,13 @@
 
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COMMON_ERROR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MESSAGE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
-
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,6 +66,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -84,9 +84,11 @@ import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -98,6 +100,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/transactions")
@@ -122,6 +125,8 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
     private AssignmentService assignmentService;
     @Autowired
     private SewerageApplicationValidator sewerageApplicationValidator;
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.GET)
     public String view(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails, final Model model,
@@ -169,15 +174,16 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         prepareWorkflow(model, sewerageApplicationDetails, sewerageApplicationDetails.getWorkflowContainer());
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", CLOSESEWERAGECONNECTION);
+		model.addAttribute("isAnonymousUser", sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
         return "closeSewerageConnection";
     }
 
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-                         @PathVariable final String shscNumber,
-                         final BindingResult resultBinder, final HttpServletRequest request, final Model model,
-                         @RequestParam("files") final MultipartFile[] files) {
-
+	public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
+			final RedirectAttributes redirectAttributes, @PathVariable final String shscNumber,
+			final BindingResult resultBinder, final HttpServletRequest request, final Model model,
+			@RequestParam("files") final MultipartFile[] files) {
+		final Boolean anonymousUser = sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByShscNumberAndIsActive(shscNumber);
         if (sewerageApplicationDetailsFromDB != null
@@ -206,28 +212,50 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         sewerageConnection.setStatus(SewerageConnectionStatus.INPROGRESS);
         sewerageApplicationDetails.setConnection(sewerageConnection);
         sewerageConnection.addApplicantDetails(sewerageApplicationDetails);
-
+		if (anonymousUser) {
+			sewerageApplicationDetails.setSource(Source.ONLINE.toString());
+			sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+					SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED, SewerageTaxConstants.MODULETYPE));
+			if (StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getAdditionalRule()))
+				sewerageApplicationDetails.getWorkflowContainer()
+						.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
+		}
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, files, request);
 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
-
-        Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-        List<Assignment> asignList = new ArrayList<>();
-        if (assignObj != null) {
-            asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition > 0)
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-
-        final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
-
-        final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
-                + sewerageTaxUtils.getApproverName(approvalPosition) + ","
-                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                + (nextDesign != null ? nextDesign : "");
-
-        return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
+		String approverName = "";
+		String nextDesignation = "";
+		final Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+		if (anonymousUser) {
+			final Assignment assignment = assignmentService
+					.getPrimaryAssignmentForPositon(sewerageApplicationDetails.getState().getOwnerPosition().getId());
+			if (assignment != null) {
+				approvalPosition = assignment.getPosition().getId();
+				approverName = assignment.getEmployee().getName();
+				nextDesignation = assignment.getDesignation().getName();
+			}
+			final String message = messageSource.getMessage("msg.success.forward",
+					new String[] { approverName.concat("~").concat(nextDesignation),
+							newSewerageApplicationDetails.getApplicationNumber() },
+					null);
+			redirectAttributes.addFlashAttribute("message", message);
+			return "redirect:/transactions/new-sewerage-ackowledgement/"
+					+ newSewerageApplicationDetails.getApplicationNumber();
+		} else {
+			List<Assignment> asignList = new ArrayList<>();
+			if (assignObj != null) {
+				asignList.add(assignObj);
+			} else if (assignObj == null && approvalPosition > 0)
+				asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+			final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+			final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
+					+ sewerageTaxUtils.getApproverName(approvalPosition) + ","
+					+ (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
+					+ (nextDesign != null ? nextDesign : "");
+			return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
+		}
     }
 
     @RequestMapping(value = "/closeConnection-success", method = RequestMethod.GET)

@@ -171,6 +171,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
@@ -183,6 +184,8 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -263,6 +266,12 @@ public class PropertyTaxCommonUtils {
     
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+    
+    @Autowired
+    private PtDemandDao ptDemandDAO;
 
     /**
      * Gives the first half of the current financial year
@@ -608,7 +617,7 @@ public class PropertyTaxCommonUtils {
             source = PropertyTaxConstants.SOURCE_MEESEVA;
         else if (isCitizenPortalUser(user))
             source = Source.CITIZENPORTAL.toString();
-        else if (isOnline)
+        else if (PropertyTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(user.getName()) || isOnline)
             source = PropertyTaxConstants.SOURCE_ONLINE;
         else
             source = PropertyTaxConstants.SOURCE_SYSTEM;
@@ -1187,4 +1196,20 @@ public class PropertyTaxCommonUtils {
                 .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                 .withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(nextAction);
     }
+
+    @ReadOnly
+    public BasicProperty getBasicProperty(String assessmentNumber) {
+        return basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
+    }
+
+    @ReadOnly
+    public Map<String, BigDecimal> getDemandCollectionMap(Property property) {
+        return ptDemandDAO.getDemandCollMap(property);
+    }
+    
+    @ReadOnly
+    public Map<String, BigDecimal> getDemandCollMapIncludingPenaltyAndAdvance(Property property) {
+        return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
+    }
 }
+

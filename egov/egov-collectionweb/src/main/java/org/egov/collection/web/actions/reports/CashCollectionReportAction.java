@@ -282,12 +282,12 @@ public class CashCollectionReportAction extends BaseFormAction {
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(CASH_COLLECTION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
 
-    /**
+    /**  
      * Action method for criteria screen
      *
      * @return index

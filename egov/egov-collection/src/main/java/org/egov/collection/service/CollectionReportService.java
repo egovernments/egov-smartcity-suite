@@ -65,6 +65,7 @@ import org.egov.collection.entity.CollectionSummaryReport;
 import org.egov.collection.entity.CollectionSummaryReportResult;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.query.NativeQuery;
@@ -153,6 +154,7 @@ public class CollectionReportService {
         return query.list();
     }
 
+    @ReadOnly
     public CollectionSummaryReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
             final String paymentMode, final String source, final Long serviceId, final int status,
             final String serviceType) {

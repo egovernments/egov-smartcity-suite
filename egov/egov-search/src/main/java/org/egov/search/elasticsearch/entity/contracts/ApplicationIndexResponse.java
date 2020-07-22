@@ -67,6 +67,7 @@ public class ApplicationIndexResponse {
     private long totalMeeseva = 0;
     private long totalOnline = 0;
     private long totalUlb = 0;
+    private long totalWsPortal = 0;
     private long totalOthers = 0;
     private String url=StringUtils.EMPTY;
     private String cityCode=StringUtils.EMPTY;
@@ -251,6 +252,14 @@ public class ApplicationIndexResponse {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public long getTotalWsPortal() {
+        return totalWsPortal;
+    }
+
+    public void setTotalWsPortal(long totalWsPortal) {
+        this.totalWsPortal = totalWsPortal;
     }
 
 }

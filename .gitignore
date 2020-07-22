@@ -8,3 +8,4 @@ target
 .tern-project
 rebel.xml
 .travis.yml
+/.metadata/

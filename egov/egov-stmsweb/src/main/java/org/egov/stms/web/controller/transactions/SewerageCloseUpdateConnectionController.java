@@ -224,6 +224,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         Assignment assignObj = null;
         List<Assignment> assignmentList = new ArrayList<>();
         Long approvalPosition = sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId();
+		if (sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser())
+				&& (approvalPosition == null || approvalPosition == 0))
+			approvalPosition = sewerageApplicationDetails.getState().getOwnerPosition().getId();
         if (approvalPosition == null || approvalPosition == 0)
             approvalPosition = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId())
                     .getPosition().getId();

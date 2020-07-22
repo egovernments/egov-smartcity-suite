@@ -120,6 +120,7 @@ import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.ContractorBillService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,6 +194,9 @@ public class WorkProgressRegisterAction extends SearchFormAction {
     private String searchCriteria = "";
     private Long wardId;
     private String wardName = "";
+    
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -298,12 +302,136 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return "search";
     }
 
-    @SuppressWarnings("unchecked")
-    private List<WorkProgressRegister> getWorkProgressRegisterList(final List<WorkOrderEstimate> workPorgressRegisterList) {
-        final Iterator<WorkOrderEstimate> iter = workPorgressRegisterList.iterator();
-        final List<WorkProgressRegister> tempList = new ArrayList<>();
+    private String getFinancialYearRange(final Long finYearId) {
+        return finHibernateDao.getFinancialYearById(
+                finYearId.longValue())
+                .getFinYearRange();
+    }
+
+    @Override
+    public Object getModel() {
+
+        return null;
+    }
+
+    protected void populateCategoryList(final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
+        if (categoryPopulated) {
+            ajaxEstimateAction.setCategory(parentCategory);
+            ajaxEstimateAction.subcategories();
+            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
+        } else
+            addDropdownData("categoryList", Collections.emptyList());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Date getTechSanctionDate(final AbstractEstimate estimate) {
+        for (final StateHistory stateHistory : estimate.getCurrentState().getHistory())
+            if (stateHistory.getValue().equalsIgnoreCase("TECH_SANCTIONED"))
+                return stateHistory.getCreatedDate();
+        return null;
+    }
+
+    private Map getTenderDetailsReadOnly(final Long estimateId) {
+
+        final List<Object> result = worksReadOnlyService.getTenderResponseByEstimateId(estimateId);
+        Object[] objects;
+        final Iterator iterator = result.iterator();
+        final HashMap<String, Object> tenderDates = new HashMap<String, Object>();
+        while (iterator.hasNext()) {
+            objects = (Object[]) iterator.next();
+            if (objects[0] != null) {
+                final WorksPackage worksPackage = (WorksPackage) objects[0];
+                for (final OfflineStatus status : worksPackage.getOfflineStatuses()) {
+                    if (TENDER_NOTICE_STATUS.equalsIgnoreCase(status.getEgwStatus().getCode()))
+                        tenderDates.put("tenderDate", status.getCreatedDate());
+                    if (TENDER_FINALIZATION_STATUS.equalsIgnoreCase(status.getEgwStatus().getCode()))
+                        tenderDates.put("tenderFinalizationDate", status.getCreatedDate());
+                }
+            }
+            if (objects[1] != null) {
+                final TenderResponse tenderResponse = (TenderResponse) objects[1];
+                if (tenderResponse != null) {
+                    final OfflineStatus objStatusForSite = worksReadOnlyService.getStatusDateByObjectIdTypeDesc(
+                            tenderResponse.getTenderResponseContractors().get(0).getId(), "TenderResponseContractors",
+                            TENDER_AGGREEMENT_ORDER);
+                    if (objStatusForSite != null)
+                        tenderDates.put("aggreementDate", objStatusForSite.getStatusDate());
+                }
+            }
+        }
+        return tenderDates;
+    }
+
+    public Map<String, Object> getPaymentDetailReadOnly(final Set<MBHeader> mbHeaders) {
+        BigDecimal totalBillAmount = BigDecimal.ZERO;
+        BigDecimal totalReleasedAmt = BigDecimal.ZERO;
+        BigDecimal totalOutstandingAmt = BigDecimal.ZERO;
+        BigDecimal totalNetPayableAmt = BigDecimal.ZERO;
+        final HashMap<String, Object> result = new HashMap<String, Object>();
+        final List<PaymentDetail> paymentDetailList = new LinkedList<PaymentDetail>();
+        for (final MBHeader mbHeader : mbHeaders) {
+            final PaymentDetail paymentDetail = new PaymentDetail();
+            final EgBillregister egBillRegister = mbHeader.getEgBillregister();
+            BigDecimal netPayableAmt = BigDecimal.ZERO;
+
+            if (egBillRegister != null)
+                if (egBillRegister.getStatus() != null
+                        && egBillRegister.getStatus().getCode().equalsIgnoreCase("APPROVED")) {
+                    paymentDetail.setBillAmount(egBillRegister.getBillamount());
+                    paymentDetail.setBillDate(DateUtils.getFormattedDate(egBillRegister.getBilldate(), dateFormat));
+                    paymentDetail.setBillNumber(egBillRegister.getBillnumber());
+                    paymentDetail.setBillType(egBillRegister.getBilltype());
+                    if (egBillRegister.getEgBillregistermis().getVoucherHeader() != null
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber() != null
+                            && !egBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber().equals("")
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() != null
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() == 0) {
+
+                        paymentDetail.setCjvNo(egBillRegister.getEgBillregistermis().getVoucherHeader()
+                                .getVoucherNumber());
+                        logger.debug("Bill Number : " + egBillRegister.getBillnumber() + " --- CJVNo : "
+                                + egBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber());
+                    }
+                    try {
+                        paymentDetail.setReleasedAmount(worksReadOnlyService.getPaymentAmountByBillRegisterId(egBillRegister.getId()));
+                        netPayableAmt = worksReadOnlyService.getNetPayableAmountForGlCodeId(egBillRegister.getId());
+                    } catch (final ApplicationException egovExp) {
+                        logger.error("Error: Getting payment for a contractor bill", egovExp);
+                        paymentDetail.setReleasedAmount(BigDecimal.ZERO);
+                    }
+
+                    paymentDetail.setOutstandingAmount(netPayableAmt.subtract(paymentDetail.getReleasedAmount()));
+                    totalNetPayableAmt = totalNetPayableAmt.add(netPayableAmt);
+                    totalBillAmount = totalBillAmount.add(paymentDetail.getBillAmount());
+                    totalReleasedAmt = totalReleasedAmt.add(paymentDetail.getReleasedAmount());
+                    if (egBillRegister.getBilltype().equalsIgnoreCase(
+                            worksReadOnlyService.getBillType())
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader() != null
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber() != null
+                            && !egBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber().equals("")
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() != null
+                            && egBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() == 0)
+                        result.put("isFinalBillCreated", Boolean.TRUE);
+                    else
+                        result.put("isFinalBillCreated", Boolean.FALSE);
+                    paymentDetailList.add(paymentDetail);
+                }
+        }
+
+        totalOutstandingAmt = totalNetPayableAmt.subtract(totalReleasedAmt);
+        result.put("paymentDetails", paymentDetailList);
+        result.put("totalBillAmt", totalBillAmount);
+        result.put("totalReleasedAmt", totalReleasedAmt);
+        result.put("totalOutstandingAmt", totalOutstandingAmt);
+
+        return result;
+    }
+    
+    private List getWorkProgressRegisterList(final List workPorgressRegisterList) {
+        final Iterator iter = workPorgressRegisterList.iterator();
+        final List<WorkProgressRegister> tempList = new ArrayList<WorkProgressRegister>();
         while (iter.hasNext()) {
-            final WorkOrderEstimate workOrderEstimate = iter.next();
+            final WorkOrderEstimate workOrderEstimate = (WorkOrderEstimate) iter.next();
             WorkOrder workOrder = null;
             AbstractEstimate estimate = null;
             Milestone milestone = null;
@@ -401,7 +529,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     }
                     workProgress.setApprDetails(apprDetails);
                 }
-                final Map<String, Object> tenderDetail = getTenderDetails(estimate.getId());
+                final Map tenderDetail = getTenderDetails(estimate.getId());
                 if (tenderDetail.get("tenderDate") != null)
                     workProgress.setTenderDate(DateUtils.getFormattedDate((Date) tenderDetail.get("tenderDate"),
                             dateFormat));
@@ -412,7 +540,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     workProgress.setTenderAgreementDate(DateUtils.getFormattedDate(
                             (Date) tenderDetail.get("aggreementDate"), dateFormat));
                 if (mbHeaders != null) {
-                    final Map<String, Object> paymentDetails = getPaymentDetail(mbHeaders);
+                    final Map paymentDetails = getPaymentDetail(mbHeaders);
                     workProgress.setPaymentDetails((List<PaymentDetail>) paymentDetails.get("paymentDetails"));
                     workProgress.setTotalBillAmt((BigDecimal) paymentDetails.get("totalBillAmt"));
                     workProgress.setTotalReleasedAmt((BigDecimal) paymentDetails.get("totalReleasedAmt"));
@@ -439,7 +567,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
                     workProgress.setCompletedPercentage(trackMilestone.getTotalPercentage());
                 } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getStatus().getCode())) {
-                    final List<TrackMilestoneActivity> trackList = new LinkedList<>();
+                    final List<TrackMilestoneActivity> trackList = new LinkedList<TrackMilestoneActivity>();
                     for (final MilestoneActivity milestoneActivity : milestone.getActivities()) {
                         final TrackMilestoneActivity trackMilestoneActivity = new TrackMilestoneActivity();
                         trackMilestoneActivity.setMilestoneActivity(milestoneActivity);
@@ -467,32 +595,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return tempList;
 
     }
-
-    @Override
-    public Object getModel() {
-
-        return null;
-    }
-
-    protected void populateCategoryList(final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
-        if (categoryPopulated) {
-            ajaxEstimateAction.setCategory(parentCategory);
-            ajaxEstimateAction.subcategories();
-            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
-        } else
-            addDropdownData("categoryList", Collections.emptyList());
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Date getTechSanctionDate(final AbstractEstimate estimate) {
-        for (final StateHistory stateHistory : estimate.getCurrentState().getHistory())
-            if (stateHistory.getValue().equalsIgnoreCase("TECH_SANCTIONED"))
-                return stateHistory.getCreatedDate();
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> getTenderDetails(final Long estimateId) {
+    
+    private Map getTenderDetails(final Long estimateId) {
 
         final StringBuffer query = new StringBuffer("select wpkg,tr")
                 .append(" from TenderResponse tr,WorksPackage wpkg left outer join wpkg.worksPackageDetails wpkgd")

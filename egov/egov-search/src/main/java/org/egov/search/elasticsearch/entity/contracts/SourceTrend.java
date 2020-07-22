@@ -54,6 +54,7 @@ public class SourceTrend extends Trend {
     private long totalOnline;
     private long totalUlb;
     private long totalOthers;
+    private long totalWsPortal;
 
     public long getTotalCsc() {
         return totalCsc;
@@ -93,6 +94,14 @@ public class SourceTrend extends Trend {
 
     public void setTotalOthers(final long totalOthers) {
         this.totalOthers = totalOthers;
+    }
+
+    public long getTotalWsPortal() {
+        return totalWsPortal;
+    }
+
+    public void setTotalWsPortal(long totalWsPortal) {
+        this.totalWsPortal = totalWsPortal;
     }
 
 }

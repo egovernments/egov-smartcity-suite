@@ -100,6 +100,7 @@ import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.AbstractEstimateService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
@@ -179,6 +180,9 @@ public class SearchEstimateAction extends SearchFormAction {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
+
     public SearchEstimateAction() {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
@@ -210,8 +214,8 @@ public class SearchEstimateAction extends SearchFormAction {
                     && !estimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)
                     && estimate.getState() != null) {
                 final String posName = estimate.getState().getOwnerPosition().getName();
-                final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(estimate.getState()
-                        .getOwnerPosition().getId());
+                final Assignment assignment = worksReadOnlyService
+                        .getPrimaryAssignmentForPosition(estimate.getState().getOwnerPosition().getId());
                 if (assignment != null)
                     estimate.setPositionAndUserName(posName + " / " + assignment.getEmployee().getName());
                 else
@@ -237,7 +241,7 @@ public class SearchEstimateAction extends SearchFormAction {
                 if (!lastestMilestoneObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !lastestMilestoneObj.getStatus().getCode()
                                 .equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(lastestMilestoneObj
+                    final Assignment assignment = worksReadOnlyService.getPrimaryAssignmentForPosition(lastestMilestoneObj
                             .getState().getOwnerPosition().getId());
                     if (assignment != null && assignment.getEmployee() != null)
                         lastestMilestoneObj.setOwnerName(assignment.getEmployee().getName());
@@ -261,7 +265,7 @@ public class SearchEstimateAction extends SearchFormAction {
             if (msObj != null)
                 if (!msObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !msObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(msObj
+                    final Assignment assignment = worksReadOnlyService.getPrimaryAssignmentForPosition(msObj
                             .getState().getOwnerPosition().getId());
                     if (assignment != null && assignment.getEmployee() != null)
                         msObj.setOwnerName(assignment.getEmployee().getName());
@@ -269,7 +273,7 @@ public class SearchEstimateAction extends SearchFormAction {
             if (tmObj != null)
                 if (!tmObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                         && !tmObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(tmObj
+                    final Assignment assignment = worksReadOnlyService.getPrimaryAssignmentForPosition(tmObj
                             .getState().getOwnerPosition().getId());
                     if (assignment != null && assignment.getEmployee() != null)
                         tmObj.setOwnerName(assignment.getEmployee().getName());
@@ -847,18 +851,12 @@ public class SearchEstimateAction extends SearchFormAction {
         }
         if (searchResult.getFullListSize() == 0) {
             WorksPackage wp = null;
-            if ("wp".equals(source) && StringUtils.isNotBlank(getEstimatenumber())) {
-                final List<WorksPackage> results = entityManager.createQuery(new StringBuffer("from WorksPackage wp")
-                        .append(" where wp.id in (select wpd.worksPackage.id from WorksPackageDetails wpd where wpd.estimate.estimateNumber = :estimateNumber)")
-                        .append(" and wp.egwStatus.code <> 'CANCELLED'").toString(), WorksPackage.class)
-                        .setParameter("estimateNumber", getEstimatenumber())
-                        .getResultList();
-                wp = results.isEmpty() ? null : results.get(0);
-            }
 
+            if ("wp".equals(source) && StringUtils.isNotBlank(getEstimatenumber()))
+                wp = worksReadOnlyService.getWorksPackageByEstimateNo(getEstimatenumber());
             if (wp != null) {
                 if ("NEW".equalsIgnoreCase(wp.getEgwStatus().getCode())) {
-                    final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(wp
+                    final Assignment assignment = worksReadOnlyService.getPrimaryAssignmentForPosition(wp
                             .getState().getOwnerPosition().getId());
                     addFieldError("result not found",
                             "Work package is already created for the Estimate with Work Package No " + wp.getWpNumber()

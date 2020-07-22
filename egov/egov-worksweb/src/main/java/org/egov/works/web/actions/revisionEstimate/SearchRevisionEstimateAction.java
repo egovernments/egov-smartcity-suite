@@ -93,6 +93,7 @@ import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionWorkOrder;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.services.RevisionEstimateService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.WorksConstants;
@@ -116,6 +117,8 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     private AssignmentService assignmentService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
     public static final String SEARCH = "search";
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
@@ -530,7 +533,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             final WorkOrderEstimate woe = (WorkOrderEstimate) row;
             if (!woe.getEstimate().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                     && !woe.getEstimate().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
-                final PersonalInformation emp = employeeServiceOld.getEmployeeforPosition(woe.getEstimate().getState()
+                final PersonalInformation emp = worksReadOnlyService.getEmployeeforPosition(woe.getEstimate().getState()
                         .getOwnerPosition());
                 if (emp != null)
                     if (emp.getUserMaster() != null)

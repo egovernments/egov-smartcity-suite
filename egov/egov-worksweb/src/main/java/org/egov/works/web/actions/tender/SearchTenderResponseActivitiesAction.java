@@ -62,7 +62,9 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponseActivity;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("deprecation")
 public class SearchTenderResponseActivitiesAction extends SearchFormAction {
@@ -80,6 +82,8 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
     private double assignedQty;
     private String recordId;
     private String selectedactivities;
+    @Autowired
+    private WorksReadOnlyService worksReadonlyService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -200,11 +204,10 @@ public class SearchTenderResponseActivitiesAction extends SearchFormAction {
 
     private double getAssignedQuantity(final Long activityId, final String negotiationNumber) {
         Object[] params = new Object[] { negotiationNumber, WorksConstants.CANCELLED_STATUS, activityId };
-        Double assignedQty = (Double) getPersistenceService()
-                .findByNamedQuery("getAssignedQuantityForActivity", params);
+        Double assignedQty = worksReadonlyService.getAssignedQuantity("getAssignedQuantityForActivity", params);
         params = new Object[] { negotiationNumber, WorksConstants.NEW, activityId };
-        final Double assignedQtyForNew = (Double) getPersistenceService().findByNamedQuery(
-                "getAssignedQuantityForActivityForNewWO", params);
+        final Double assignedQtyForNew = worksReadonlyService.getAssignedQuantity("getAssignedQuantityForActivityForNewWO",
+                params);
 
         if (assignedQty != null && assignedQtyForNew != null)
             assignedQty = assignedQty + assignedQtyForNew;

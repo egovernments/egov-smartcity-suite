@@ -90,6 +90,7 @@ public class ApplicationDetails {
     private long ulbTotal = 0;
     private long othersTotal = 0;
     private long delayedDays;
+    private long wsTotal =0;
 
     public String getRegion() {
         return region;
@@ -395,4 +396,11 @@ public class ApplicationDetails {
         this.delayedDays = delayedDays;
     }
 
+    public long getWsTotal() {
+        return wsTotal;
+    }
+
+    public void setWsTotal(long wsTotal) {
+        this.wsTotal = wsTotal;
+    }
 }

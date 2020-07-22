@@ -77,6 +77,8 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.services.TenderResponseService;
+import org.egov.works.services.WorksReadOnlyService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,8 +108,12 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
     private String tenderNegotiationNumber;
     private int executingDepartmentId;
     private String workOrderNumber;
+
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private WorksReadOnlyService worksReadOnlyService;
 
     public SearchEstimateForContractorAdvanceAction() {
     }
@@ -250,16 +256,7 @@ public class SearchEstimateForContractorAdvanceAction extends SearchFormAction {
         final Iterator i = searchResult.getList().iterator();
         while (i.hasNext()) {
             final WorkOrderEstimate woe = (WorkOrderEstimate) i.next();
-
-            List<TenderResponse> results = entityManager.createQuery(
-                    "from TenderResponse tr where tr.negotiationNumber = :negotiationNumber and tr.egwStatus.code = :status",
-                    TenderResponse.class)
-                    .setParameter("negotiationNumber", woe.getWorkOrder().getNegotiationNumber())
-                    .setParameter("status", TenderResponse.TenderResponseStatus.APPROVED.toString())
-                    .getResultList();
-
-            final TenderResponse tenderResponse = results.isEmpty() ? null : results.get(0);
-
+            final TenderResponse tenderResponse = worksReadOnlyService.getTenderResponse(woe);
             woe.getWorkOrder().setTenderType(tenderResponse.getTenderEstimate().getTenderType());
             woeList.add(woe);
         }

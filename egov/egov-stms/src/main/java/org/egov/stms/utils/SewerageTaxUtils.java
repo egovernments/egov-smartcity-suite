@@ -323,4 +323,8 @@ public class SewerageTaxUtils {
                 APPCONFKEY_REASSIGN_BUTTONENABLED);
         return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue());
     }
+
+	public Boolean isAnonymousUser(User user) {
+		return ANONYMOUS_USER.equalsIgnoreCase(user.getName());
+	}
 }

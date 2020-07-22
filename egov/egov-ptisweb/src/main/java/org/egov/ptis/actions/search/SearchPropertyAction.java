@@ -876,12 +876,12 @@ public class SearchPropertyAction extends SearchFormAction {
      */
     private List<Map<String, String>> getSearchResults(final String assessmentNumber) {
         if (StringUtils.isNotBlank(assessmentNumber)) {
-            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
+            final BasicProperty basicProperty = propertyTaxCommonUtils.getBasicProperty(assessmentNumber);
             if (basicProperty != null) {
                 final Property property = basicProperty.getProperty();
                 checkIsDemandActive(property);
 
-                final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+                final Map<String, BigDecimal> demandCollMap = propertyTaxCommonUtils.getDemandCollectionMap(property);
 
                 final Map<String, String> searchResultMap = new HashMap<>();
                 searchResultMap.put("assessmentNum", assessmentNumber);
@@ -956,7 +956,7 @@ public class SearchPropertyAction extends SearchFormAction {
      * @return
      */
     private List<Map<String, String>> getResultsFromMv(final PropertyMaterlizeView pmv) {
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        final BasicProperty basicProperty = propertyTaxCommonUtils.getBasicProperty(pmv.getPropertyId());
         final Property property = basicProperty.getProperty();
             checkIsDemandActive(basicProperty.getProperty());
         if (!StringUtils.isBlank(pmv.getPropertyId())) {

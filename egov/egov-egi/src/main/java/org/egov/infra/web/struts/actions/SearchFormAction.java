@@ -52,9 +52,10 @@ import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
-import org.egov.infra.persistence.utils.Page;
-import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infstr.models.SearchFormData;
 import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.services.SearchFormSevice;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Generic Search Form Action. Can be extended by any action class that intends to provide 
@@ -62,6 +63,10 @@ import org.egov.infstr.search.SearchQuery;
  * that prepares the query based on criteria entered by user, and returns an object of {@link SearchQuery}
  */
 public abstract class SearchFormAction extends BaseFormAction {
+    
+    @Autowired
+    private SearchFormSevice searchFormSevice;
+        
 	private static final long serialVersionUID = 1L;
 	private static final String SORT_ORDER_ASCENDING = "asc";
 	private static final String SORT_ORDER_DESCENDING = "desc";
@@ -213,9 +218,8 @@ public abstract class SearchFormAction extends BaseFormAction {
 			this.pageNum = 1;
 		}
 
-		final Page resultPage = this.searchQuery.getPage(this.persistenceService, this.pageNum, this.pageSize);
-		final int searchCount = this.searchQuery.getCount(this.persistenceService);
-		this.searchResult = new EgovPaginatedList(resultPage, searchCount, this.sortField, this.sortOrder);
+        this.searchResult = searchFormSevice
+                .search(new SearchFormData(this.searchQuery, this.sortField, this.sortOrder, this.pageNum, this.pageSize));
 
 		return SUCCESS;
 	}

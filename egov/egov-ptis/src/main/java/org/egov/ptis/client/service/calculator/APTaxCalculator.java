@@ -450,15 +450,15 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return builtUpArea.multiply(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
     }
 
-    private BigDecimal calculateFloorBuildingValue(final BigDecimal floorMrv) {
+    public BigDecimal calculateFloorBuildingValue(final BigDecimal floorMrv) {
         return floorMrv.multiply(BUILDING_VALUE).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    private BigDecimal calculateFloorSiteValue(final BigDecimal floorMrv) {
+    public BigDecimal calculateFloorSiteValue(final BigDecimal floorMrv) {
         return floorMrv.multiply(SITE_VALUE).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    private BigDecimal calculateFloorDepreciation(final BigDecimal grossArv, final Floor floor) {
+    public BigDecimal calculateFloorDepreciation(final BigDecimal grossArv, final Floor floor) {
         BigDecimal depreciationPct;
         if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)
                 && floor.getPropertyUsage().getIsResidential())

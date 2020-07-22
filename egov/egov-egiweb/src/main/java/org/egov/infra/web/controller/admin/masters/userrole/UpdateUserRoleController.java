@@ -50,7 +50,6 @@ package org.egov.infra.web.controller.admin.masters.userrole;
 
 import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
@@ -66,6 +65,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")
@@ -101,7 +101,12 @@ public class UpdateUserRoleController {
             bindResult.rejectValue("roles", "err.internal.roles.found");
         if (bindResult.hasErrors())
             return "userrole-update";
-
+        Set<Role> obj = userService.getRolesByUsername(userRole.getUsername());
+        for(Role role : obj) {
+        	if(role.isInternal()) {
+        		userRole.getRoles().add(role);
+        	}
+        }
         userService.updateUserRoles(userRole);
         redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
         redirectAttrs.addFlashAttribute("fromUpdate", true);

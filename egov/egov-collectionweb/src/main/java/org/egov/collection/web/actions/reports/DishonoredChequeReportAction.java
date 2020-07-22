@@ -48,17 +48,22 @@
 
 package org.egov.collection.web.actions.reports;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.Map;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "dishonoredChequeReport-index.jsp"),
         @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
@@ -77,11 +82,15 @@ public class DishonoredChequeReportAction extends ReportFormAction {
     private static final String EGOV_FUND_ID = "EGOV_FUND_ID";
     private static final String EGOV_USER_ID = "EGOV_USER_ID";
     private static final String EGOV_INSTRUMENT_NUMBER = "EGOV_INSTRUMENT_NUMBER";
+    private final Map<String, Object> critParams = new HashMap<String, Object>(0);
+    private String reportId;
 
     private CollectionsUtil collectionsUtil;
     private Map<String, String> paymentModes;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     @Override
     public Object getModel() {
@@ -93,8 +102,8 @@ public class DishonoredChequeReportAction extends ReportFormAction {
     @Action(value = "/reports/dishonoredChequeReport-criteria")
     public String criteria() {
 
-        setReportParam(EGOV_FROM_DATE, new Date());
-        setReportParam(EGOV_TO_DATE, new Date());
+        critParams.put(EGOV_FROM_DATE, new Date());
+        critParams.put(EGOV_TO_DATE, new Date());
         addDropdownData("servicetypeList",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS));
         addDropdownData(CollectionConstants.DROPDOWN_DATA_LOCATION_LIST, collectionsUtil.getAllLocations());
@@ -106,8 +115,13 @@ public class DishonoredChequeReportAction extends ReportFormAction {
 
     @Action(value = "/reports/dishonoredChequeReport-generateReport")
     public String generateReport() {
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
-        return report();
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
+
+        final ReportRequest reportInput = new ReportRequest(COLLECTION_DISHONORED_CHEQUE_REPORT, critParams,
+                ReportDataSourceType.SQL);
+        final ReportOutput reportOutput = collectionsUtil.createReportFromSql(reportInput);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return REPORT;
     }
 
     @Override
@@ -125,51 +139,51 @@ public class DishonoredChequeReportAction extends ReportFormAction {
     }
 
     public Long getServiceId() {
-        return (Long) getReportParam(EGOV_SERVICE_ID);
+        return (Long) critParams.get(EGOV_SERVICE_ID);
     }
 
     public void setServiceId(final Long serviceId) {
-        setReportParam(EGOV_SERVICE_ID, serviceId);
+        critParams.put(EGOV_SERVICE_ID, serviceId);
     }
 
     public Date getFromDate() {
-        return (Date) getReportParam(EGOV_FROM_DATE);
+        return (Date) critParams.get(EGOV_FROM_DATE);
     }
 
     public void setFromDate(final Date fromDate) {
-        setReportParam(EGOV_FROM_DATE, fromDate);
+        critParams.put(EGOV_FROM_DATE, fromDate);
     }
 
     public Date getToDate() {
-        return (Date) getReportParam(EGOV_TO_DATE);
+        return (Date) critParams.get(EGOV_TO_DATE);
     }
 
     public void setToDate(final Date toDate) {
-        setReportParam(EGOV_TO_DATE, toDate);
+        critParams.put(EGOV_TO_DATE, toDate);
     }
 
     public Date getTransactionFromDate() {
-        return (Date) getReportParam(EGOV_TRANSACTION_FROM_DATE);
+        return (Date) critParams.get(EGOV_TRANSACTION_FROM_DATE);
     }
 
     public void setTransactionFromDate(final Date transactionFromDate) {
-        setReportParam(EGOV_TRANSACTION_FROM_DATE, transactionFromDate);
+        critParams.put(EGOV_TRANSACTION_FROM_DATE, transactionFromDate);
     }
 
     public Date getTransactionToDate() {
-        return (Date) getReportParam(EGOV_TRANSACTION_TO_DATE);
+        return (Date) critParams.get(EGOV_TRANSACTION_TO_DATE);
     }
 
     public void setTransactionToDate(final Date transactionToDate) {
-        setReportParam(EGOV_TRANSACTION_TO_DATE, transactionToDate);
+        critParams.put(EGOV_TRANSACTION_TO_DATE, transactionToDate);
     }
 
     public String getPaymentMode() {
-        return (String) getReportParam(EGOV_PAYMENT_MODE);
+        return (String) critParams.get(EGOV_PAYMENT_MODE);
     }
 
     public void setPaymentMode(final String paymentMode) {
-        setReportParam(EGOV_PAYMENT_MODE, paymentMode);
+        critParams.put(EGOV_PAYMENT_MODE, paymentMode);
     }
 
     public Map<String, String> getPaymentModes() {
@@ -177,43 +191,48 @@ public class DishonoredChequeReportAction extends ReportFormAction {
     }
 
     public Integer getStatusId() {
-        return (Integer) getReportParam(EGOV_STATUS_ID);
+        return (Integer) critParams.get(EGOV_STATUS_ID);
     }
 
     public void setStatusId(final Integer statusId) {
-        setReportParam(EGOV_STATUS_ID, statusId);
+        critParams.put(EGOV_STATUS_ID, statusId);
     }
 
     public void setLocationId(final Long locationId) {
-        setReportParam(EGOV_LOCATION_ID, locationId);
+        critParams.put(EGOV_LOCATION_ID, locationId);
     }
 
     public Long getLocationId() {
-        return (Long) getReportParam(EGOV_LOCATION_ID);
+        return (Long) critParams.get(EGOV_LOCATION_ID);
     }
 
     public void setFundId(final Long fundId) {
-        setReportParam(EGOV_FUND_ID, fundId);
+        critParams.put(EGOV_FUND_ID, fundId);
     }
 
     public Long getFundId() {
-        return (Long) getReportParam(EGOV_FUND_ID);
+        return (Long) critParams.get(EGOV_FUND_ID);
     }
 
     public void setUserId(final Long userId) {
-        setReportParam(EGOV_USER_ID, userId);
+        critParams.put(EGOV_USER_ID, userId);
     }
 
     public Long getUserId() {
-        return (Long) getReportParam(EGOV_USER_ID);
+        return (Long) critParams.get(EGOV_USER_ID);
     }
 
     public void setInstrumentNumber(final String instrumentNumber) {
-        setReportParam(EGOV_INSTRUMENT_NUMBER, instrumentNumber);
+        critParams.put(EGOV_INSTRUMENT_NUMBER, instrumentNumber);
     }
 
     public String getInstrumentNumber() {
-        return (String) getReportParam(EGOV_INSTRUMENT_NUMBER);
+        return (String) critParams.get(EGOV_INSTRUMENT_NUMBER);
+    }
+
+    @Override
+    public String getReportId() {
+        return reportId;
     }
 
 }

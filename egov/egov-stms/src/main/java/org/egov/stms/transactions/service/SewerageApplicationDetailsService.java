@@ -920,7 +920,10 @@ public class SewerageApplicationDetailsService {
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED, MODULETYPE));
-            } else if (APPLICATION_STATUS_CREATED.equals(sewerageApplicationDetails.getStatus().getCode()))
+			} else if (APPLICATION_STATUS_ANONYMOUSCREATED.equals(sewerageApplicationDetails.getStatus().getCode()))
+				sewerageApplicationDetails.setStatus(
+						sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED, MODULETYPE));
+			else if (APPLICATION_STATUS_CREATED.equals(sewerageApplicationDetails.getStatus().getCode()))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_INITIALAPPROVED, MODULETYPE));
             else if (APPLICATION_STATUS_INITIALAPPROVED.equals(sewerageApplicationDetails.getStatus().getCode()))

@@ -107,6 +107,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.notification.service.NotificationService;
@@ -755,6 +756,12 @@ public class CollectionsUtil {
 
     public ReportOutput createReport(final ReportRequest reportRequest) {
         return reportService.createReport(reportRequest);
+    }
+    
+    @ReadOnly
+    public  ReportOutput createReportFromSql(ReportRequest reportInput)
+    {
+        return reportService.createReport(reportInput);
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
