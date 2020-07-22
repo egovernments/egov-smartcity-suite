@@ -63,6 +63,8 @@ public class PropertyTaxRegisterBean {
     private TaxDetailsBean previousTaxDetails;
     private RevisedAssessmentDetailsBean revisedAssessmentDetails;
     private TaxDetailsBean revisionPetitionTaxDetails;
+    private String pattaNo;
+    private String surveyNo;
 
     public String getDoorNo() {
         return doorNo;
@@ -150,5 +152,21 @@ public class PropertyTaxRegisterBean {
 
     public void setWard(String ward) {
         this.ward = ward;
+    }
+
+    public String getPattaNo() {
+        return pattaNo;
+    }
+
+    public void setPattaNo(String pattaNo) {
+        this.pattaNo = pattaNo;
+    }
+
+    public String getSurveyNo() {
+        return surveyNo;
+    }
+
+    public void setSurveyNo(String surveyNo) {
+        this.surveyNo = surveyNo;
     }
 }

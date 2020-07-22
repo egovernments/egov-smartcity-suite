@@ -61,6 +61,7 @@ public class TaxDetailsBean {
     private BigDecimal unauthorizedPenalty;
     private BigDecimal totalTax;
     private BigDecimal capitalOrARValue;
+    private BigDecimal landArea;
 
     public BigDecimal getGeneral() {
         return general;
@@ -142,4 +143,11 @@ public class TaxDetailsBean {
         this.capitalOrARValue = capitalOrARValue;
     }
 
+    public BigDecimal getLandArea() {
+        return landArea;
+    }
+
+    public void setLandArea(BigDecimal landArea) {
+        this.landArea = landArea;
+    }
 }

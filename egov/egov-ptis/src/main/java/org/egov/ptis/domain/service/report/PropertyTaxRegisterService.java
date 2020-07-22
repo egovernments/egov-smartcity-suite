@@ -92,6 +92,8 @@ public class PropertyTaxRegisterService {
     private final static String NA = "NA";
     private final static String YES = "Yes";
     private final static String NO = "No";
+    private final static String EQUALS = "= 'VAC_LAND'";
+    private final static String NOT_EQUALS = "<> 'VAC_LAND'";
 
     @Autowired
     private ReportService reportService;
@@ -133,14 +135,18 @@ public class PropertyTaxRegisterService {
                 getMonthFromYearMonth(yearMonth), wardId, mode);
         if (!propertyList.isEmpty()) {
             for (Property property : propertyList) {
-                propertyTaxRegisterList.add(prepareTaxRegisterDetails(property));
+                propertyTaxRegisterList.add(mode.equals(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX)
+                        ? prepareTaxRegisterDetails(property) : prepareVLTRegisterDetails(property));
             }
         }
         reportParams.put("propertyTaxRegisterList", propertyTaxRegisterList);
         reportParams.put("yearMonth", yearMonth);
         reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put("cityGrade", cityService.getCityGrade());
-        reportInput = new ReportRequest(PropertyTaxConstants.REPORT_PT_TAX_REGISTER, reportParams, reportParams);
+        if (mode.equals(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX))
+            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_PT_TAX_REGISTER, reportParams, reportParams);
+        else
+            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_VLT_TAX_REGISTER, reportParams, reportParams);
         reportInput.setPrintDialogOnOpenReport(true);
         reportInput.setReportFormat(ReportFormat.PDF);
         reportOutput = reportService.createReport(reportInput);
@@ -241,7 +247,8 @@ public class PropertyTaxRegisterService {
         final Ptdemand ptdemand = propertyHibernateDAO.getLatestDemand(property);
         for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
             String demandReasonMaster = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode();
-            if (demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX))
+            if (demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+                    || demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                 general = general.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails));
             if (demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX) ||
                     demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX))
@@ -275,20 +282,43 @@ public class PropertyTaxRegisterService {
     @SuppressWarnings("unchecked")
     @ReadOnly
     public List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
-        mode = getPropertyType(mode);
         final Query query = propertyTaxCommonUtils.getSession().createQuery(
                 "select p from PropertyImpl p, BasicPropertyImpl bp where p.status in ('A', 'H', 'I') and EXTRACT(year FROM p.state.lastModifiedDate) = :year and EXTRACT(month FROM p.state.lastModifiedDate) = :month "
-                        + " and bp.source = 'A' and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.type <> :mode order by p.id asc ");
+                        + " and bp.source = 'A' and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
+                        + getPropertyType(mode) + " order by p.id asc ");
         query.setInteger("year", year);
         query.setInteger("month", month);
         query.setLong("wardId", wardId);
-        query.setString("mode", mode);
         final List<Property> properties = query.list();
         return properties;
     }
 
     public String getPropertyType(final String mode) {
-        return !mode.equals(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)
-                ? PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND : PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
+        return mode.equals(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)
+                ? EQUALS : NOT_EQUALS;
+    }
+
+    public PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
+        PropertyTaxRegisterBean vltRegister = new PropertyTaxRegisterBean();
+        final BasicProperty basicProperty = property.getBasicProperty();
+        vltRegister.setAssessmentNo(basicProperty.getUpicNo());
+        vltRegister.setOwnerName(basicProperty.getFullOwnerName());
+        vltRegister.setOwnerAddress(basicProperty.getAddress().toString());
+        vltRegister.setPattaNo(property.getPropertyDetail().getPattaNumber());
+        vltRegister.setSurveyNo(property.getPropertyDetail().getSurveyNumber());
+        vltRegister.setRevisedAssessmentDetails(prepareRevisedAssessmentDetailsVLT(property));
+        return vltRegister;
+    }
+    
+    private RevisedAssessmentDetailsBean prepareRevisedAssessmentDetailsVLT(Property property) {
+        RevisedAssessmentDetailsBean revisedAssessmentDetailsVLT = new RevisedAssessmentDetailsBean();
+        setNoticeDetails(revisedAssessmentDetailsVLT, property);
+        revisedAssessmentDetailsVLT.setRevisedTaxDetails(prepareTaxDetails(property));
+        revisedAssessmentDetailsVLT.getRevisedTaxDetails()
+                .setCapitalOrARValue(property.getPropertyDetail().getCurrentCapitalValue());
+        revisedAssessmentDetailsVLT.getRevisedTaxDetails()
+                .setLandArea(BigDecimal.valueOf(property.getPropertyDetail().getSitalArea().getArea()));
+        revisedAssessmentDetailsVLT.setApplicationType(property.getPropertyModifyReason());
+        return revisedAssessmentDetailsVLT;
     }
 }

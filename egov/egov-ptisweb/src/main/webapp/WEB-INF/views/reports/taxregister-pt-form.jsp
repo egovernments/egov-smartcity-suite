@@ -65,7 +65,7 @@
 								<spring:message code="lbl.title.ptregister" />
 							</c:when>
 							<c:otherwise>
-								<spring:message code="lbl.title.adrreport.vlt" />
+								<spring:message code="lbl.title.vltregister" />
 							</c:otherwise>
 						</c:choose>
 					</div>

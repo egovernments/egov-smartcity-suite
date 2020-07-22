@@ -106,9 +106,17 @@ public class PropertyTaxRegisterController {
     }
 
     @RequestMapping(value = "/taxregister-pt/form", method = RequestMethod.GET)
-    public String searchForm(final Model model) {
+    public String buildingForm(final Model model) {
         model.addAttribute("currDate", new Date());
         model.addAttribute("mode", PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX);
+        model.addAttribute("ptTaxRegister", new PropertyTaxRegisterBean());
+        return "taxregister-pt-form";
+    }
+    
+    @RequestMapping(value = "/taxregister-vlt/form", method = RequestMethod.GET)
+    public String vacantLandForm(final Model model) {
+        model.addAttribute("currDate", new Date());
+        model.addAttribute("mode", PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX);
         model.addAttribute("ptTaxRegister", new PropertyTaxRegisterBean());
         return "taxregister-pt-form";
     }

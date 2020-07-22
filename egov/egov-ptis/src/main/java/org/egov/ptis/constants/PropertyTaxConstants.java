@@ -1127,6 +1127,7 @@ public interface PropertyTaxConstants {
     public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
     public static final String REPORT_ARREAR_DEMAND_REGISTER = "arreardemand-register";
     public static final String REPORT_PT_TAX_REGISTER = "property-taxregister";
+    public static final String REPORT_VLT_TAX_REGISTER = "vlt-taxregister";
     public static final String ADR_REPORT = "ADR Report";
 
     // Property Transfer related constants
