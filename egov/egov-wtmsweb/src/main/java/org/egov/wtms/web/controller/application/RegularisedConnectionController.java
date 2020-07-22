@@ -226,6 +226,8 @@ public class RegularisedConnectionController extends GenericConnectionController
             waterConnectionDetails.setSource(CITIZENPORTAL);
         else if (loggedUserIsMeesevaUser)
             waterConnectionDetails.setSource(MEESEVA);
+		else if (isAnonymousUser)
+			waterConnectionDetails.setSource(ONLINE);
         else
             waterConnectionDetails.setSource(SYSTEM);
 
@@ -275,10 +277,6 @@ public class RegularisedConnectionController extends GenericConnectionController
             } else
                 approvalPosition = userPosition.getId();
         }
-
-        if (isAnonymousUser)
-            waterConnectionDetails.setSource(ONLINE);
-
         if (citizenPortalUser && waterConnectionDetails.getSource() == null)
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
 
