@@ -165,6 +165,8 @@ public class RegularisedConnectionController extends GenericConnectionController
         model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
         if (waterTaxUtils.isMeesevaUser(currentUser))
             waterConnectionDetails.setApplicationNumber(request.getParameter("applicationNo"));
+		model.addAttribute("documentNamesList",
+				waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType()));
         return REGULARISE_CONN_FORM;
     }
 
