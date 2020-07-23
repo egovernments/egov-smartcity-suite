@@ -98,7 +98,7 @@ public class PropertyTaxRegisterController {
         String currentYearMonth = DateUtils.currentDateToGivenFormat("MMM-yyyy");
         YearMonth startDate = YearMonth.parse("Apr-2016", formatter);
         YearMonth endDate = YearMonth.parse(currentYearMonth, formatter);
-        while (startDate.isBefore(endDate)) {
+        while (startDate.isBefore(endDate.plusMonths(1))) {
             monthAndYears.add(startDate.format(formatter).toString());
             startDate = startDate.plusMonths(1);
         }
@@ -112,7 +112,7 @@ public class PropertyTaxRegisterController {
         model.addAttribute("ptTaxRegister", new PropertyTaxRegisterBean());
         return "taxregister-pt-form";
     }
-    
+
     @RequestMapping(value = "/taxregister-vlt/form", method = RequestMethod.GET)
     public String vacantLandForm(final Model model) {
         model.addAttribute("currDate", new Date());

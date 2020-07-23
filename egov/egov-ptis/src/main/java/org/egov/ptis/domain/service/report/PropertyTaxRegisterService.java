@@ -70,6 +70,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.model.reportregister.PropertyTaxRegisterBean;
 import org.egov.ptis.domain.model.reportregister.RevisedAssessmentDetailsBean;
 import org.egov.ptis.domain.model.reportregister.StoreyDetailsRegisterBean;
@@ -165,6 +166,11 @@ public class PropertyTaxRegisterService {
         propertyTaxRegister.setOwnerName(basicProperty.getFullOwnerName());
         propertyTaxRegister.setOwnerAddress(basicProperty.getAddress().toString());
         propertyTaxRegister.setStoreyDetails(prepareStoreyDetails(property));
+        propertyTaxRegister.setPreviousTaxDetails(getPreviousProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
+                : prepareTaxDetails(getPreviousProperty((PropertyImpl) property)));
+        propertyTaxRegister
+                .setRevisionPetitionTaxDetails(getImmediateRPForProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
+                        : prepareTaxDetails(getImmediateRPForProperty((PropertyImpl) property)));
         return propertyTaxRegister;
     }
 
@@ -281,9 +287,9 @@ public class PropertyTaxRegisterService {
 
     @SuppressWarnings("unchecked")
     @ReadOnly
-    public List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
+    private List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
         final Query query = propertyTaxCommonUtils.getSession().createQuery(
-                "select p from PropertyImpl p, BasicPropertyImpl bp where p.status in ('A', 'H', 'I') and EXTRACT(year FROM p.state.lastModifiedDate) = :year and EXTRACT(month FROM p.state.lastModifiedDate) = :month "
+                "select distinct p from PropertyImpl p, BasicPropertyImpl bp where p.status in ('A', 'H', 'I') and EXTRACT(year FROM p.state.lastModifiedDate) = :year and EXTRACT(month FROM p.state.lastModifiedDate) = :month "
                         + " and bp.source = 'A' and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
                         + getPropertyType(mode) + " order by p.id asc ");
         query.setInteger("year", year);
@@ -293,12 +299,12 @@ public class PropertyTaxRegisterService {
         return properties;
     }
 
-    public String getPropertyType(final String mode) {
+    private String getPropertyType(final String mode) {
         return mode.equals(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)
                 ? EQUALS : NOT_EQUALS;
     }
 
-    public PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
+    private PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
         PropertyTaxRegisterBean vltRegister = new PropertyTaxRegisterBean();
         final BasicProperty basicProperty = property.getBasicProperty();
         vltRegister.setAssessmentNo(basicProperty.getUpicNo());
@@ -307,9 +313,14 @@ public class PropertyTaxRegisterService {
         vltRegister.setPattaNo(property.getPropertyDetail().getPattaNumber());
         vltRegister.setSurveyNo(property.getPropertyDetail().getSurveyNumber());
         vltRegister.setRevisedAssessmentDetails(prepareRevisedAssessmentDetailsVLT(property));
+        vltRegister.setPreviousTaxDetails(getPreviousProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
+                : prepareTaxDetails(getPreviousProperty((PropertyImpl) property)));
+        vltRegister
+                .setRevisionPetitionTaxDetails(getImmediateRPForProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
+                        : prepareTaxDetails(getImmediateRPForProperty((PropertyImpl) property)));
         return vltRegister;
     }
-    
+
     private RevisedAssessmentDetailsBean prepareRevisedAssessmentDetailsVLT(Property property) {
         RevisedAssessmentDetailsBean revisedAssessmentDetailsVLT = new RevisedAssessmentDetailsBean();
         setNoticeDetails(revisedAssessmentDetailsVLT, property);
@@ -320,5 +331,42 @@ public class PropertyTaxRegisterService {
                 .setLandArea(BigDecimal.valueOf(property.getPropertyDetail().getSitalArea().getArea()));
         revisedAssessmentDetailsVLT.setApplicationType(property.getPropertyModifyReason());
         return revisedAssessmentDetailsVLT;
+    }
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    private PropertyImpl getPreviousProperty(final PropertyImpl property) {
+        Query getreportQuery = null;
+        PropertyImpl propertyImpl = null;
+        StringBuilder query = new StringBuilder(
+                "from PropertyImpl where status='H' and createdDate < :createdDate").append(" ")
+                        .append("and basicProperty.id = :basicPropertyId order by id desc");
+        getreportQuery = propertyTaxCommonUtils.getSession().createQuery(query.toString());
+        getreportQuery.setParameter("createdDate", property.getCreatedDate());
+        getreportQuery.setLong("basicPropertyId", property.getBasicProperty().getId());
+        getreportQuery.setMaxResults(1);
+        final List<PropertyImpl> result = getreportQuery.list();
+        if (!result.isEmpty())
+            propertyImpl = result.get(0);
+        return propertyImpl;
+    }
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    private PropertyImpl getImmediateRPForProperty(final PropertyImpl property) {
+        Query getreportQuery = null;
+        PropertyImpl propertyImpl = null;
+        StringBuilder query = new StringBuilder(
+                "from PropertyImpl where status in ('A', 'I', 'H') and propertyModifyReason = 'RP' and createdDate > :createdDate")
+                        .append(" ")
+                        .append("and basicProperty.id = :basicPropertyId order by id ");
+        getreportQuery = propertyTaxCommonUtils.getSession().createQuery(query.toString());
+        getreportQuery.setParameter("createdDate", property.getCreatedDate());
+        getreportQuery.setLong("basicPropertyId", property.getBasicProperty().getId());
+        getreportQuery.setMaxResults(1);
+        final List<PropertyImpl> result = getreportQuery.list();
+        if (!result.isEmpty())
+            propertyImpl = result.get(0);
+        return propertyImpl;
     }
 }
