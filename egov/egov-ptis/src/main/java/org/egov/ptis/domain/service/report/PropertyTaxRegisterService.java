@@ -154,7 +154,8 @@ public class PropertyTaxRegisterService {
         return reportOutput;
     }
 
-    private PropertyTaxRegisterBean prepareTaxRegisterDetails(Property property) {
+    @ReadOnly
+    public PropertyTaxRegisterBean prepareTaxRegisterDetails(Property property) {
         PropertyTaxRegisterBean propertyTaxRegister = new PropertyTaxRegisterBean();
         final BasicProperty basicProperty = property.getBasicProperty();
         propertyTaxRegister.setRevisedAssessmentDetails(prepareRevisedAssessmentDetails(property));
@@ -174,7 +175,8 @@ public class PropertyTaxRegisterService {
         return propertyTaxRegister;
     }
 
-    private RevisedAssessmentDetailsBean prepareRevisedAssessmentDetails(Property property) {
+    @ReadOnly
+    public RevisedAssessmentDetailsBean prepareRevisedAssessmentDetails(Property property) {
         RevisedAssessmentDetailsBean revisedAssessmentDetails = new RevisedAssessmentDetailsBean();
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         revisedAssessmentDetails.setApplicationType(property.getPropertyModifyReason());
@@ -201,7 +203,7 @@ public class PropertyTaxRegisterService {
     }
 
     @ReadOnly
-    private void setNoticeDetails(RevisedAssessmentDetailsBean revisedAssessmentDetails,
+    public void setNoticeDetails(RevisedAssessmentDetailsBean revisedAssessmentDetails,
             Property property) {
         PtNotice notice = noticeService.getNoticeByApplicationNumber(property.getApplicationNo());
         if (notice != null) {
@@ -210,7 +212,8 @@ public class PropertyTaxRegisterService {
         }
     }
 
-    private List<StoreyDetailsRegisterBean> prepareStoreyDetails(Property property) {
+    @ReadOnly
+    public List<StoreyDetailsRegisterBean> prepareStoreyDetails(Property property) {
         List<StoreyDetailsRegisterBean> storeyDetailsList = new ArrayList<>();
         for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
             StoreyDetailsRegisterBean storeyDetails = new StoreyDetailsRegisterBean();
@@ -241,7 +244,7 @@ public class PropertyTaxRegisterService {
     }
 
     @ReadOnly
-    private TaxDetailsBean prepareTaxDetails(Property property) {
+    public TaxDetailsBean prepareTaxDetails(Property property) {
         TaxDetailsBean taxDetails = new TaxDetailsBean();
         BigDecimal general = BigDecimal.ZERO;
         BigDecimal waterAndDrainage = BigDecimal.ZERO;
@@ -287,7 +290,7 @@ public class PropertyTaxRegisterService {
 
     @SuppressWarnings("unchecked")
     @ReadOnly
-    private List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
+    public List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
         final Query query = propertyTaxCommonUtils.getSession().createQuery(
                 "select distinct p from PropertyImpl p, BasicPropertyImpl bp where p.status in ('A', 'H', 'I') and EXTRACT(year FROM p.state.lastModifiedDate) = :year and EXTRACT(month FROM p.state.lastModifiedDate) = :month "
                         + " and bp.source = 'A' and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
@@ -299,12 +302,13 @@ public class PropertyTaxRegisterService {
         return properties;
     }
 
-    private String getPropertyType(final String mode) {
+    public String getPropertyType(final String mode) {
         return mode.equals(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)
                 ? EQUALS : NOT_EQUALS;
     }
 
-    private PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
+    @ReadOnly
+    public PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
         PropertyTaxRegisterBean vltRegister = new PropertyTaxRegisterBean();
         final BasicProperty basicProperty = property.getBasicProperty();
         vltRegister.setAssessmentNo(basicProperty.getUpicNo());
@@ -321,7 +325,8 @@ public class PropertyTaxRegisterService {
         return vltRegister;
     }
 
-    private RevisedAssessmentDetailsBean prepareRevisedAssessmentDetailsVLT(Property property) {
+    @ReadOnly
+    public RevisedAssessmentDetailsBean prepareRevisedAssessmentDetailsVLT(Property property) {
         RevisedAssessmentDetailsBean revisedAssessmentDetailsVLT = new RevisedAssessmentDetailsBean();
         setNoticeDetails(revisedAssessmentDetailsVLT, property);
         revisedAssessmentDetailsVLT.setRevisedTaxDetails(prepareTaxDetails(property));
@@ -335,7 +340,7 @@ public class PropertyTaxRegisterService {
 
     @SuppressWarnings("unchecked")
     @ReadOnly
-    private PropertyImpl getPreviousProperty(final PropertyImpl property) {
+    public PropertyImpl getPreviousProperty(final PropertyImpl property) {
         Query getreportQuery = null;
         PropertyImpl propertyImpl = null;
         StringBuilder query = new StringBuilder(
@@ -353,7 +358,7 @@ public class PropertyTaxRegisterService {
 
     @SuppressWarnings("unchecked")
     @ReadOnly
-    private PropertyImpl getImmediateRPForProperty(final PropertyImpl property) {
+    public PropertyImpl getImmediateRPForProperty(final PropertyImpl property) {
         Query getreportQuery = null;
         PropertyImpl propertyImpl = null;
         StringBuilder query = new StringBuilder(
