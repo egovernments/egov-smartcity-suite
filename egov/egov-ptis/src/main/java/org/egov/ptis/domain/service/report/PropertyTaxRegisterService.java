@@ -64,7 +64,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -75,7 +74,6 @@ import org.egov.ptis.domain.model.reportregister.PropertyTaxRegisterBean;
 import org.egov.ptis.domain.model.reportregister.RevisedAssessmentDetailsBean;
 import org.egov.ptis.domain.model.reportregister.StoreyDetailsRegisterBean;
 import org.egov.ptis.domain.model.reportregister.TaxDetailsBean;
-import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
@@ -101,12 +99,6 @@ public class PropertyTaxRegisterService {
 
     @Autowired
     private CityService cityService;
-
-    @Autowired
-    private PropertyHibernateDAO propertyHibernateDAO;
-
-    @Autowired
-    private NoticeService noticeService;
 
     @Autowired
     private APTaxCalculator apTaxCalculator;
@@ -205,7 +197,7 @@ public class PropertyTaxRegisterService {
     @ReadOnly
     public void setNoticeDetails(RevisedAssessmentDetailsBean revisedAssessmentDetails,
             Property property) {
-        PtNotice notice = noticeService.getNoticeByApplicationNumber(property.getApplicationNo());
+        PtNotice notice = getNoticeByApplicationNumber(property.getApplicationNo());
         if (notice != null) {
             revisedAssessmentDetails.setSpecialNotice(notice.getNoticeNo());
             revisedAssessmentDetails.setSpecialNoticeDate(notice.getNoticeDate());
@@ -253,7 +245,7 @@ public class PropertyTaxRegisterService {
         BigDecimal education = BigDecimal.ZERO;
         BigDecimal libraryCess = BigDecimal.ZERO;
         BigDecimal unauthorizedPenalty = BigDecimal.ZERO;
-        final Ptdemand ptdemand = propertyHibernateDAO.getLatestDemandReadOnly(property);
+        final Ptdemand ptdemand = getLatestDemandReadOnly(property);
         for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
             String demandReasonMaster = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode();
             if (demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
@@ -373,5 +365,23 @@ public class PropertyTaxRegisterService {
         if (!result.isEmpty())
             propertyImpl = result.get(0);
         return propertyImpl;
+    }
+
+    @ReadOnly
+    public Ptdemand getLatestDemandReadOnly(Property oldProperty) {
+        Query qry = propertyTaxCommonUtils.getSession()
+                .createQuery(
+                        "from Ptdemand where egptProperty =:oldProperty and isHistory='N' order by egInstallmentMaster.installmentYear desc");
+        qry.setEntity("oldProperty", oldProperty);
+        qry.setMaxResults(1);
+        return (Ptdemand) qry.uniqueResult();
+    }
+
+    @ReadOnly
+    public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
+        Query qry = propertyTaxCommonUtils.getSession()
+                .createQuery("from PtNotice where applicationNumber = :applicationNo");
+        qry.setParameter("applicationNo", applicationNo);
+        return (PtNotice) qry.uniqueResult();
     }
 }

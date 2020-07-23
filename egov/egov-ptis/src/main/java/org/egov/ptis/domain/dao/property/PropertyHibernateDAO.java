@@ -711,15 +711,4 @@ public class PropertyHibernateDAO implements PropertyDAO {
         return (Property) qry.uniqueResult();
     }
     
-    /**
-     * API gives the latest Demand for history property for readonly purpose
-     */
-    @ReadOnly
-    public Ptdemand getLatestDemandReadOnly(Property oldProperty) {
-        Query qry = getCurrentSession()
-                .createQuery("from Ptdemand where egptProperty =:oldProperty and isHistory='N' order by egInstallmentMaster.installmentYear desc");
-        qry.setEntity("oldProperty", oldProperty);
-        qry.setMaxResults(1);
-        return (Ptdemand)qry.uniqueResult();
-    }
 }

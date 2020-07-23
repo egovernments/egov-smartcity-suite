@@ -51,7 +51,7 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("vlt-taxregister-subreport.jasper")]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement x="222" y="64" width="100" height="16" uuid="6d784e2d-58b9-4ff3-920c-ad313793ecd4"/>
+				<reportElement x="221" y="64" width="100" height="16" uuid="6d784e2d-58b9-4ff3-920c-ad313793ecd4"/>
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 					<paragraph lineSpacingSize="0.0"/>
