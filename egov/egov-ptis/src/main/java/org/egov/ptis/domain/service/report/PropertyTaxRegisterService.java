@@ -250,7 +250,7 @@ public class PropertyTaxRegisterService {
         BigDecimal education = BigDecimal.ZERO;
         BigDecimal libraryCess = BigDecimal.ZERO;
         BigDecimal unauthorizedPenalty = BigDecimal.ZERO;
-        final Ptdemand ptdemand = propertyHibernateDAO.getLatestDemand(property);
+        final Ptdemand ptdemand = propertyHibernateDAO.getLatestDemandReadOnly(property);
         for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
             String demandReasonMaster = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode();
             if (demandReasonMaster.equals(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)

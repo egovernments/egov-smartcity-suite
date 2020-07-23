@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
@@ -708,5 +709,17 @@ public class PropertyHibernateDAO implements PropertyDAO {
                 .createQuery("from PropertyImpl where applicationNo =:applicationNo ");
         qry.setString("applicationNo", applicationNo);
         return (Property) qry.uniqueResult();
+    }
+    
+    /**
+     * API gives the latest Demand for history property for readonly purpose
+     */
+    @ReadOnly
+    public Ptdemand getLatestDemandReadOnly(Property oldProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from Ptdemand where egptProperty =:oldProperty and isHistory='N' order by egInstallmentMaster.installmentYear desc");
+        qry.setEntity("oldProperty", oldProperty);
+        qry.setMaxResults(1);
+        return (Ptdemand)qry.uniqueResult();
     }
 }
