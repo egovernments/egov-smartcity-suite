@@ -330,13 +330,15 @@ public class PropertyTaxRegisterService {
         vltRegister.setSurveyNo(propertyDetail.getSurveyNumber());
         vltRegister.setRevisedAssessmentDetails(prepareRevisedAssessmentDetailsVLT(property));
         final PropertyImpl previousProperty = getPreviousProperty((PropertyImpl) property);
-        vltRegister.setPreviousTaxDetails(previousProperty == null ? new TaxDetailsBean()
-                : prepareTaxDetails(previousProperty));
         final PropertyImpl rpProperty = getImmediateRPForProperty((PropertyImpl) property);
         vltRegister.setRevisionPetitionTaxDetails(rpProperty == null ? new TaxDetailsBean()
                 : prepareTaxDetails(rpProperty));
-        vltRegister.getPreviousTaxDetails().setCapitalOrARValue(propertyDetail.getCurrentCapitalValue());
-        vltRegister.getPreviousTaxDetails().setLandArea(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
+        if (previousProperty != null) {
+            vltRegister.setPreviousTaxDetails(prepareTaxDetails(previousProperty));
+            vltRegister.getPreviousTaxDetails().setCapitalOrARValue(propertyDetail.getCurrentCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP));
+            vltRegister.getPreviousTaxDetails().setLandArea(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP));
+        } else
+            vltRegister.setPreviousTaxDetails(new TaxDetailsBean());
         return vltRegister;
     }
 
@@ -346,9 +348,9 @@ public class PropertyTaxRegisterService {
         setNoticeDetails(revisedAssessmentDetailsVLT, property);
         revisedAssessmentDetailsVLT.setRevisedTaxDetails(prepareTaxDetails(property));
         revisedAssessmentDetailsVLT.getRevisedTaxDetails()
-                .setCapitalOrARValue(property.getPropertyDetail().getCurrentCapitalValue());
+                .setCapitalOrARValue(property.getPropertyDetail().getCurrentCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP));
         revisedAssessmentDetailsVLT.getRevisedTaxDetails()
-                .setLandArea(BigDecimal.valueOf(property.getPropertyDetail().getSitalArea().getArea()));
+                .setLandArea(BigDecimal.valueOf(property.getPropertyDetail().getSitalArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP));
         revisedAssessmentDetailsVLT.setApplicationType(property.getPropertyModifyReason());
         return revisedAssessmentDetailsVLT;
     }

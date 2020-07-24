@@ -806,7 +806,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
 				<text><![CDATA[  :]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="261" y="379" width="275" height="20" uuid="394ca70f-0eec-48a2-b68f-d114fdfb5719">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
@@ -1024,7 +1024,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getLandArea()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getCapitalOrARValue()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="-18" y="499" width="20" height="20" uuid="61ffb6e2-ff59-444a-9d7f-03375ae0796a"/>
