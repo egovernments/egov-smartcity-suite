@@ -124,8 +124,11 @@ public class PropertyTaxRegisterService {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput;
         List<PropertyTaxRegisterBean> propertyTaxRegisterList = new ArrayList<>();
-        List<Property> propertyList = getApprovedPropertiesByMonthAndYear(getYearFromYearMonth(yearMonth),
+        final List<Property> propertyList = getApprovedPropertiesByMonthAndYear(getYearFromYearMonth(yearMonth),
                 getMonthFromYearMonth(yearMonth), wardId, mode);
+        final List<Property> propertyListRP = getApprovedRPPropertiesByMonthAndYear(getYearFromYearMonth(yearMonth),
+                getMonthFromYearMonth(yearMonth), wardId, mode);
+        propertyList.addAll(propertyListRP);
         if (!propertyList.isEmpty()) {
             for (Property property : propertyList) {
                 propertyTaxRegisterList.add(mode.equals(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX)
@@ -287,8 +290,22 @@ public class PropertyTaxRegisterService {
     public List<Property> getApprovedPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
         final Query query = propertyTaxCommonUtils.getSession().createQuery(
                 "select distinct p from PropertyImpl p, BasicPropertyImpl bp where p.status in ('A', 'H', 'I') and EXTRACT(year FROM p.state.lastModifiedDate) = :year and EXTRACT(month FROM p.state.lastModifiedDate) = :month "
-                        + " and bp.source = 'A' and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
+                        + " and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
                         + getPropertyType(mode) + " order by p.id asc ");
+        query.setInteger("year", year);
+        query.setInteger("month", month);
+        query.setLong("wardId", wardId);
+        final List<Property> properties = query.list();
+        return properties;
+    }
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    public List<Property> getApprovedRPPropertiesByMonthAndYear(Integer year, Integer month, Long wardId, String mode) {
+        final Query query = propertyTaxCommonUtils.getSession().createQuery(
+                "select distinct p from PropertyImpl p, BasicPropertyImpl bp, Petition obj where p.status in ('A', 'H', 'I') and EXTRACT(year FROM obj.state.lastModifiedDate) = :year and EXTRACT(month FROM obj.state.lastModifiedDate) = :month "
+                        + " and bp.active = true and bp.propertyID.ward = :wardId and p.basicProperty = bp.id and p.propertyDetail.propertyTypeMaster.code "
+                        + getPropertyType(mode) + " and obj.property = p.id order by p.id asc ");
         query.setInteger("year", year);
         query.setInteger("month", month);
         query.setLong("wardId", wardId);
