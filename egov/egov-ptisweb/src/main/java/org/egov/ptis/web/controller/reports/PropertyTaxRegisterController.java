@@ -98,7 +98,7 @@ public class PropertyTaxRegisterController {
         String currentYearMonth = DateUtils.currentDateToGivenFormat("MMM-yyyy");
         YearMonth startDate = YearMonth.parse("Apr-2016", formatter);
         YearMonth endDate = YearMonth.parse(currentYearMonth, formatter);
-        while (startDate.isBefore(endDate.plusMonths(1))) {
+        while (startDate.isBefore(endDate)) {
             monthAndYears.add(startDate.format(formatter).toString());
             startDate = startDate.plusMonths(1);
         }
@@ -129,7 +129,7 @@ public class PropertyTaxRegisterController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",
-                "inline;filename=PropertyTaxRegister_" + yearMonth + ".pdf");
+                "inline;filename=PropertyTaxRegister_" + yearMonth.replace("-", "_") + ".pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }
