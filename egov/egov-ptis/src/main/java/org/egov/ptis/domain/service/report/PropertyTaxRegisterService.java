@@ -164,6 +164,8 @@ public class PropertyTaxRegisterService {
         propertyTaxRegister
                 .setRevisionPetitionTaxDetails(getImmediateRPForProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
                         : prepareTaxDetails(getImmediateRPForProperty((PropertyImpl) property)));
+        propertyTaxRegister.getPreviousTaxDetails()
+                .setCapitalOrARValue(getLatestDemandReadOnly(property).getDmdCalculations().getAlv());
         return propertyTaxRegister;
     }
 
@@ -303,17 +305,21 @@ public class PropertyTaxRegisterService {
     public PropertyTaxRegisterBean prepareVLTRegisterDetails(Property property) {
         PropertyTaxRegisterBean vltRegister = new PropertyTaxRegisterBean();
         final BasicProperty basicProperty = property.getBasicProperty();
+        final PropertyDetail propertyDetail = property.getPropertyDetail();
         vltRegister.setAssessmentNo(basicProperty.getUpicNo());
         vltRegister.setOwnerName(basicProperty.getFullOwnerName());
         vltRegister.setOwnerAddress(basicProperty.getAddress().toString());
-        vltRegister.setPattaNo(property.getPropertyDetail().getPattaNumber());
-        vltRegister.setSurveyNo(property.getPropertyDetail().getSurveyNumber());
+        vltRegister.setPattaNo(propertyDetail.getPattaNumber());
+        vltRegister.setSurveyNo(propertyDetail.getSurveyNumber());
         vltRegister.setRevisedAssessmentDetails(prepareRevisedAssessmentDetailsVLT(property));
-        vltRegister.setPreviousTaxDetails(getPreviousProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
-                : prepareTaxDetails(getPreviousProperty((PropertyImpl) property)));
-        vltRegister
-                .setRevisionPetitionTaxDetails(getImmediateRPForProperty((PropertyImpl) property) == null ? new TaxDetailsBean()
-                        : prepareTaxDetails(getImmediateRPForProperty((PropertyImpl) property)));
+        final PropertyImpl previousProperty = getPreviousProperty((PropertyImpl) property);
+        vltRegister.setPreviousTaxDetails(previousProperty == null ? new TaxDetailsBean()
+                : prepareTaxDetails(previousProperty));
+        final PropertyImpl rpProperty = getImmediateRPForProperty((PropertyImpl) property);
+        vltRegister.setRevisionPetitionTaxDetails(rpProperty == null ? new TaxDetailsBean()
+                : prepareTaxDetails(rpProperty));
+        vltRegister.getPreviousTaxDetails().setCapitalOrARValue(propertyDetail.getCurrentCapitalValue());
+        vltRegister.getPreviousTaxDetails().setLandArea(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return vltRegister;
     }
 
