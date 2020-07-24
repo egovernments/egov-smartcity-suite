@@ -508,7 +508,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getEducation()]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="261" y="264" width="275" height="20" uuid="e19abd26-9c4a-4c6e-b604-ae955dbd331e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
@@ -959,7 +959,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
 				<text><![CDATA[  :]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="261" y="459" width="275" height="20" uuid="e62d3c54-e29d-4931-98c3-3e49800262ac">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
@@ -1011,7 +1011,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
 				<text><![CDATA[  :]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="261" y="479" width="275" height="20" uuid="3a5e27b3-0c04-459b-a32f-547de3425888">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
