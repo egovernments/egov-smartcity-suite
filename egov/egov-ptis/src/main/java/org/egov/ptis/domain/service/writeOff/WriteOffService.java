@@ -918,14 +918,14 @@ public class WriteOffService extends GenericWorkFlowController {
             reportParams.put("fromInstallment", writeOff.getFromInstallment());
             reportParams.put("toInstallment", writeOff.getToInstallment());
             reportParams.put("writeoffType", writeOff.getWriteOffType().getMutationDesc());
-            Set<EgDemandDetails> newDemandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty()))
+            Set<EgDemandDetails> newDemandDetails = ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty())
                     .getEgDemandDetails();
 
             List<EgDemandDetails> newDmndDetails = new ArrayList<>(newDemandDetails);
             for (EgDemandDetails demand : newDmndDetails) {
                 List<DemandDetailVariation> variation = new ArrayList<>(demand.getDemandDetailVariation());
                 for (DemandDetailVariation demandDetailVariation : variation) {
-                    if ((demandDetailVariation.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+                    if (demandDetailVariation.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                             .equalsIgnoreCase(DEMANDRSN_STR_PENALTY_FINES)) {
                         writeoffInterset = writeoffInterset.add(demandDetailVariation.getDramount());
                     } else
@@ -944,5 +944,4 @@ public class WriteOffService extends GenericWorkFlowController {
         }
         return reportInput;
     }
-
 }
