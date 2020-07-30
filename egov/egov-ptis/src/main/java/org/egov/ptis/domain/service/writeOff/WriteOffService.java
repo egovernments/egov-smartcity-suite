@@ -5,10 +5,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_WRIT
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.COUNCIL_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.FULL_WRITEOFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.HISTORY_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_WRITE_OFF;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WOPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATE;
@@ -29,8 +32,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WO_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITEOFF_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,7 +66,15 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -68,24 +82,29 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.demand.DemandDetail;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
 import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
 import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -109,6 +128,7 @@ public class WriteOffService extends GenericWorkFlowController {
     private static final String CREATED = "Created";
     private static final String ERROR_MSG = "errorMsg";
     private static final String ERROR = "error";
+    public static final String WO_SPECIALNOTICE_TEMPLATE = "mainWriteOffProceedings";
     Property property = null;
 
     @Autowired
@@ -158,6 +178,16 @@ public class WriteOffService extends GenericWorkFlowController {
     private WriteOffReasonRepository writeOffReasonRepository;
     @Autowired
     private DemandVoucherService demandVoucherService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    @Autowired
+    private NoticeService noticeService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ReportService reportService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -836,6 +866,83 @@ public class WriteOffService extends GenericWorkFlowController {
             for (final DemandDetailVariation demandDetailVariation : demandDetails.getDemandDetailVariation())
                 revisedAmount = revisedAmount.add(demandDetailVariation.getDramount().setScale(0, BigDecimal.ROUND_DOWN));
         return revisedAmount;
+    }
+    
+    public String generateWOBulkNotice(Long id) {
+        final WriteOff writeOff = getLatestSpecialNoticeGeneratedWriteOff(writeOffRepo.getOne(id).getBasicProperty().getUpicNo());
+        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
+                writeOff.getApplicationNumber());
+        InputStream noticePdf = null;
+        if (notice == null) {
+            String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS);
+            ReportOutput reportOutput = reportService
+                    .createReport(generateWriteOffReportRequest(writeOff, noticeNo, securityUtils.getCurrentUser().getName()));
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            notice = noticeService.saveNotice(writeOff.getApplicationNumber(), noticeNo,
+                    NOTICE_TYPE_WOPROCEEDINGS, writeOff.getBasicProperty(), noticePdf);
+        }
+        return notice.getFileStore().getFileStoreId();
+    }
+    
+    public ReportRequest generateWriteOffReportRequest(WriteOff writeOff, String noticeNo,
+            final String approvedUser) {
+        ReportRequest reportInput = null;
+        BigDecimal writeoffInterset = BigDecimal.ZERO;
+        BigDecimal writeoffAmount = BigDecimal.ZERO;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        if (writeOff != null) {
+            final BasicPropertyImpl basicProperty = writeOff.getBasicProperty();
+            final Map<String, Object> reportParams = new HashMap<>();
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final String cityName = cityService.getMunicipalityName();
+            final Address ownerAddress = basicProperty.getAddress();
+            final PropertyID propertyId = basicProperty.getPropertyID();
+            reportParams.put("cityName", cityName);
+            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
+            reportParams.put("loggedInUsername", approvedUser);
+            reportParams.put("approvedDate", formatter.format(writeOff.getState().getCreatedDate()));
+            reportParams.put("approverName", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
+            reportParams.put("applicationDate", formatter.format(writeOff.getCreatedDate()));
+            reportParams.put("currentDate", formatter.format(new Date()));
+            reportParams.put("noticeNo", (noticeNo != null) ? noticeNo : "");
+            reportParams.put("ownerName", basicProperty.getFullOwnerName());
+            reportParams.put("houseNo", ownerAddress.getHouseNoBldgApt());
+            reportParams.put("assessmentNo", basicProperty.getUpicNo());
+            reportParams.put("revenueWard", propertyId.getWard().getLocalName());
+            reportParams.put("locality", propertyId.getLocality().getName());
+            reportParams.put("resolutionType", writeOff.getResolutionType());
+            reportParams.put("resolutionNo", writeOff.getResolutionNo());
+            reportParams.put("resolutionDate", writeOff.getResolutionDate());
+            reportParams.put("fromInstallment", writeOff.getFromInstallment());
+            reportParams.put("toInstallment", writeOff.getToInstallment());
+            reportParams.put("writeoffType", writeOff.getWriteOffType().getMutationDesc());
+            Set<EgDemandDetails> newDemandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty()))
+                    .getEgDemandDetails();
+
+            List<EgDemandDetails> newDmndDetails = new ArrayList<>(newDemandDetails);
+            for (EgDemandDetails demand : newDmndDetails) {
+                List<DemandDetailVariation> variation = new ArrayList<>(demand.getDemandDetailVariation());
+                for (DemandDetailVariation demandDetailVariation : variation) {
+                    if ((demandDetailVariation.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+                            .equalsIgnoreCase(DEMANDRSN_STR_PENALTY_FINES)) {
+                        writeoffInterset = writeoffInterset.add(demandDetailVariation.getDramount());
+                    } else
+                        writeoffAmount = writeoffAmount.add(demandDetailVariation.getDramount());
+                }
+            }
+            totalAmount = writeoffAmount.add(writeoffInterset);
+            reportParams.put("writeOffDemand", writeoffAmount.toString());
+            reportParams.put("writeOffInterest", writeoffInterset.toString());
+            reportParams.put("totalAmount", totalAmount.toString());
+            reportInput = new ReportRequest(WO_SPECIALNOTICE_TEMPLATE, writeOff, reportParams);
+        }
+        if (reportInput != null) {
+            reportInput.setPrintDialogOnOpenReport(true);
+            reportInput.setReportFormat(ReportFormat.PDF);
+        }
+        return reportInput;
     }
 
 }

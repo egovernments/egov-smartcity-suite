@@ -49,79 +49,89 @@
 <%@ page contentType="text/html" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%> 
-	
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="digitalSignatureSearchForm" modelAttribute="digitalSignatureReportList"
-			method="get">
+			id="digitalSignatureSearchForm"
+			modelAttribute="digitalSignatureReportList" method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
 						<strong><spring:message
-							code="lbl.digitalSignature.report.title" /></strong>
+								code="lbl.digitalSignature.report.title" /></strong>
 					</div>
 				</div>
 				<div class="panel-body">
 					<div class="main-content">
 						<div class="row">
 							<div class="col-md-12">
-								<table class="table table-bordered"  id="digSignDetailsTab" name="digSignDetailsTab">
-						    		<thead>
-							      		<tr>
+								<table class="table table-bordered" id="digSignDetailsTab"
+									name="digSignDetailsTab">
+									<thead>
+										<tr>
 											<%-- <th><spring:message code="lbl.digitalSignature.slno"/></th> --%>
-											<th><input type="checkbox" id="selectAll" /><spring:message code="lbl.digitalSignature.select"/></th>
-											<th><spring:message code="lbl.digitalSignature.module"/></th>
-											<th><spring:message code="lbl.digitalSignature.type"/></th>
-											<th><spring:message code="lbl.digitalSignature.details"/></th>
-											<th><spring:message code="lbl.digitalSignature.sign"/></th> 
+											<th><input type="checkbox" id="selectAll" />
+											<spring:message code="lbl.digitalSignature.select" /></th>
+											<th><spring:message code="lbl.digitalSignature.module" /></th>
+											<th><spring:message code="lbl.digitalSignature.type" /></th>
+											<th><spring:message code="lbl.digitalSignature.details" /></th>
+											<th><spring:message code="lbl.digitalSignature.sign" /></th>
 										</tr>
 									</thead>
 									<c:choose>
 										<c:when test="${!digitalSignatureReportList.isEmpty()}">
-											<c:forEach items="${digitalSignatureReportList}" var="record" varStatus="counter">
+											<c:forEach items="${digitalSignatureReportList}" var="record"
+												varStatus="counter">
 												<tr id="digSignInfo">
-													<td class="blueborderfortd">
-														<input type="checkbox" id="rowCheckBox" name="rowCheckBox"/>
-													</td>
-													<td class="blueborderfortd" >	
-														<c:out value="${record.module}"/>
-										 				<input type="hidden" id="objectId" name="objectId" value="${record.objectId}" />
-										 				<input type="hidden" id="currentState" name="currentState" value="${record.status}" />
-										 			</td>
-										 			<td class="blueborderfortd" >	
-										 				<c:out value="${record.type}"/>
-										 				<input type="hidden" id="natureOfTask" name="natureOfTask" value="${record.type}" />	
-										 			</td> 
-										 			<td class="blueborderfortd" >	
-										 				<c:out value="${record.details}"/>
-										 			</td>
-										 			<td class="blueborderfortd" >	
-														 <span class="add-padding"><button type="button" id="previewButn" onclick="generateNotice(this, 'Preview', '<c:out value="${record.status}"/>');" class="btn btn-default">Preview</button></span>
-														 <span class="add-padding"><button type="button" id="signButn" onclick="generateNotice(this, 'Sign', '<c:out value="${record.status}"/>')" class="btn btn-default">Sign</button></span>
-										 			</td>
+													<td class="blueborderfortd"><input type="checkbox"
+														id="rowCheckBox" name="rowCheckBox" /></td>
+													<td class="blueborderfortd"><c:out
+															value="${record.module}" /> <input type="hidden"
+														id="objectId" name="objectId" value="${record.objectId}" />
+														<input type="hidden" id="currentState" name="currentState"
+														value="${record.status}" /></td>
+													<td class="blueborderfortd"><c:out
+															value="${record.type}" /> <input type="hidden"
+														id="natureOfTask" name="natureOfTask"
+														value="${record.type}" /></td>
+													<td class="blueborderfortd"><c:out
+															value="${record.details}" /></td>
+													<td class="blueborderfortd"><span class="add-padding"><button
+																type="button" id="previewButn"
+																onclick="generateNotice(this, 'Preview', '<c:out value="${record.status}"/>', '<c:out value="${record.type}"/>');"
+																class="btn btn-default">Preview</button></span> <span
+														class="add-padding"><button type="button"
+																id="signButn"
+																onclick="generateNotice(this, 'Sign', '<c:out value="${record.status}"/>', '<c:out value="${record.type}"/>')"
+																class="btn btn-default">Sign</button></span></td>
 												</tr>
 											</c:forEach>
 										</c:when>
 										<c:otherwise>No records found</c:otherwise>
-									</c:choose>		
+									</c:choose>
 								</table>
 								<div class="text-center">
-								<c:choose>
+									<c:choose>
 										<c:when test="${!digitalSignatureReportList.isEmpty()}">
-									<button type="button" class="btn btn-primary" id="submitButton">Sign All</button>
-									</c:when></c:choose>
-									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 
-								</div> 
+											<button type="button" class="btn btn-primary"
+												id="submitButton">Sign All</button>
+										</c:when>
+									</c:choose>
+									<a href="javascript:void(0)" class="btn btn-default"
+										onclick="self.close()">Close</a>
+								</div>
 							</div>
 						</div>
-					</div> 
+					</div>
 				</div>
 			</div>
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
-<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
+<script
+	src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
