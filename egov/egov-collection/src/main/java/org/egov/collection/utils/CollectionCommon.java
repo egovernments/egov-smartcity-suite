@@ -881,6 +881,6 @@ public class CollectionCommon {
     @SuppressWarnings("deprecation")
     @ReadOnly
     public ReceiptVoucher getReceiptVoucherByReceiptId(Long receiptId) {
-        return (ReceiptVoucher) persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
+        return (ReceiptVoucher) persistenceService.findByNamedQuery(CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
     }
 }
