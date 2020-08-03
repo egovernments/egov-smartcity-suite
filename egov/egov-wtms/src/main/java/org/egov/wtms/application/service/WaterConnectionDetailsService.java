@@ -2083,4 +2083,34 @@ public class WaterConnectionDetailsService {
     public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyIDAndConnectionStatusList(String propertyId, List<ConnectionStatus> connectionStatusList) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyId, connectionStatusList);
     }
+    
+    public boolean isValidApprover(WaterConnectionDetails waterConnectionDetails, Long approvalPosition, String workFlowAction) {
+        boolean isValidApprover = true;
+        String additionalRule = EMPTY;
+        WorkFlowMatrix workflowMatrix = null;
+        Position nextStateOwner = positionMasterService.getPositionById(approvalPosition);
+        String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
+        if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            additionalRule = CLOSECONNECTION;
+        else
+            additionalRule = waterConnectionDetails.getApplicationType().getCode();
+
+        if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
+            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
+        else if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction))
+            workflowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                    null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
+                    loggedInUserDesignation);
+
+        if (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner))
+            isValidApprover = false;
+
+        return isValidApprover;
+    }
+
+    public Boolean isApplicationOwner(User currentUser, StateAware state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
+    }
 }
