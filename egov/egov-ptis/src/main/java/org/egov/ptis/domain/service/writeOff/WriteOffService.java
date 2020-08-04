@@ -870,7 +870,7 @@ public class WriteOffService extends GenericWorkFlowController {
     
     public String generateWOBulkNotice(Long id) {
         final WriteOff writeOff = getLatestSpecialNoticeGeneratedWriteOff(writeOffRepo.getOne(id).getBasicProperty().getUpicNo());
-        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
+        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WOPROCEEDINGS,
                 writeOff.getApplicationNumber());
         InputStream noticePdf = null;
         if (notice == null) {
