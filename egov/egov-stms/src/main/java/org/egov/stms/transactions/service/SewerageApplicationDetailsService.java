@@ -49,10 +49,53 @@ package org.egov.stms.transactions.service;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.egov.infra.utils.StringUtils.EMPTY;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ANONYMOUS_USER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CITIZENCREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_EEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.DEMANDISHISTORY;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.EXECUTIVE_ENGINEER_APPROVAL_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NA;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFPA_REJECTED_INSPECTIONFEE_COLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_INSPECTIONFEE_COLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLERK_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_EE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -81,6 +124,8 @@ import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -95,7 +140,10 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxBuilder;
@@ -217,6 +265,16 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private PortalInboxService portalInboxService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private SewerageWorkflowService sewerageWorkflowService;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
 
     public SewerageApplicationDetails findBy(final Long id) {
         return sewerageApplicationDetailsRepository.findOne(id);
@@ -1154,5 +1212,33 @@ public class SewerageApplicationDetailsService {
         return sewerageApplicationDetailsRepository
                 .findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(propertyId,
                         connectionStatus);
+    }
+    
+    public boolean isValidApprover(SewerageApplicationDetails sewerageApplicationDetails) {
+        WorkFlowMatrix workflowMatrix = null;
+        WorkflowContainer workflowContainer = sewerageApplicationDetails.getWorkflowContainer();
+        String additionalRule = workflowContainer.getAdditionalRule();
+        Long  approvalPosition = workflowContainer.getApproverPositionId();
+        Position nextStateOwner = positionMasterService.getPositionById(approvalPosition);
+    
+		String pendingActions = null;
+		if ((!sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION))&&
+				sewerageApplicationDetails.getState() != null
+				&& ("new".equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+						&& APPLICATION_STATUS_COLLECTINSPECTIONFEE
+								.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+				&& (sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy())
+						|| ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername())
+						|| sewerageTaxUtils.isCitizenPortalUser(sewerageApplicationDetails.getCreatedBy()))
+				&& sewerageTaxUtils.isInspectionFeeCollectionRequired())
+			pendingActions = WF_INSPECTIONFEE_COLLECTION;
+		workflowMatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(), null,
+				null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+		return (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner)) ? Boolean.FALSE : Boolean.TRUE;
+	}
+
+    public Boolean isApplicationOwner(User currentUser, StateAware state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
     }
 }

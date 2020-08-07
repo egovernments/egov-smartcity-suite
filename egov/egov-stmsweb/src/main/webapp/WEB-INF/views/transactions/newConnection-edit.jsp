@@ -97,6 +97,7 @@
 		name="removedEstimationDtlRowId" />
 	<input type="hidden" id="applicationNumber"
 		value="${sewerageApplicationDetails.applicationNumber}" />
+	<input type="hidden" id="approverError" name="approverError" value="${approverError}" />	
 
 	<c:if
 		test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">

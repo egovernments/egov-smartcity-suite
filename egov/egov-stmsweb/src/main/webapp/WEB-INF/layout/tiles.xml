@@ -382,4 +382,8 @@
         <put-attribute name="body"
                        value="/WEB-INF/views/search/search-application.jsp"/>
     </definition>
+     <definition name="notAuthorized" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.notAuthorized" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/notAuthorized.jsp"/>
+    </definition>
 </tiles-definitions>

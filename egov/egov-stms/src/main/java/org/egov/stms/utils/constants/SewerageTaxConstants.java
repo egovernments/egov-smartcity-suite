@@ -278,6 +278,8 @@ public class SewerageTaxConstants {
     public static final String SEWERAGE_RATES_SUCCESS_PAGE = "redirect:/masters/getseweragerates/";
     public static final String MESSAGE = "message";
     public static final String COMMON_ERROR = "common-error";
+    public static final String MODE = "mode";
+    public static final String NOT_AUTHORIZED = "notAuthorized";
     private static final Map<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<>();
 
     static {

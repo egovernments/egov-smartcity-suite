@@ -206,6 +206,13 @@ $(document).ready(function()
 			//$('#see-more-link').show();
 		}
 	});
+
+	   if ($('#approverError').val()) {
+			bootbox.alert($('#approverError').val());
+			$('#approverDetailHeading').hide();
+			$('.btnWorkflow').hide();
+			return false;
+		}
 	
 });
 

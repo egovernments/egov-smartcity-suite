@@ -139,7 +139,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_ST
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.getPipeScrewSizes;
-
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOT_AUTHORIZED;
 @Controller
 @RequestMapping(value = "/transactions")
 public class SewerageUpdateConnectionController extends GenericWorkFlowController {
@@ -152,6 +153,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     private static final String SEWERAGE_APPLICATION_DETAILS = "sewerageApplicationDetails";
     private static final String NEWCONNECTION_EDIT = "newconnection-edit";
     private static final String INSPECTIONDATE = "inspectionDate";
+    
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
@@ -240,6 +242,8 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
+        if (!sewerageApplicationDetailsService.isApplicationOwner(securityUtils.getCurrentUser(), sewerageApplicationDetails))
+            return NOT_AUTHORIZED;
         if (sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS))
             return "redirect:/transactions/modifyConnection-update/" + applicationNumber;
         else if (sewerageApplicationDetails.getApplicationType().getCode()
@@ -299,10 +303,10 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         final Map<String, String> modelParams = sewerageApplicationDetailsService
                 .showApprovalDetailsByApplcationCurState(sewerageApplicationDetails);
-        model.addAttribute("mode", modelParams.get("mode"));
+        model.addAttribute(MODE, modelParams.get(MODE));
         model.addAttribute("showApprovalDtls", modelParams.get("showApprovalDtls"));
 
-        if ("edit".equalsIgnoreCase(modelParams.get("mode"))) {
+        if ("edit".equalsIgnoreCase(modelParams.get(MODE))) {
             final FeesDetailMaster fdm = feesDetailMasterService.findByCodeAndIsActive(
                     FEES_ESTIMATIONCHARGES_CODE, true);
             final List<SewerageConnectionFee> connectionFeeList = sewerageConnectionFeeService
@@ -334,7 +338,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             model.addAttribute("isReassignEnabled", sewerageTaxUtils.isReassignEnabled());
         }
         // Pending: To Support Documents Re-Attachment on Edit mode
-        if ("editOnReject".equals(modelParams.get("mode"))) {
+        if ("editOnReject".equals(modelParams.get(MODE))) {
             final List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService
                     .getSewerageApplicationDoc(sewerageApplicationDetails);
             model.addAttribute("documentNamesList", docList);
@@ -397,13 +401,27 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                             "err.connectionexecution.date.validate");
             }
         }
-        if (request.getParameter("mode") != null)
-            mode = request.getParameter("mode");
+        if (request.getParameter(MODE) != null)
+            mode = request.getParameter(MODE);
 
         if (resultBinder.hasErrors()) {
             model.addAttribute("sewerageApplcationDetails", sewerageApplicationDetails);
             loadViewData(model, request, sewerageApplicationDetails);
             return NEWCONNECTION_EDIT;
+        }
+        
+        
+        if (isNotBlank(workFlowAction) && (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)   
+                 && sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != null
+                && sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != 0)) {
+            boolean isValidApprover = sewerageApplicationDetailsService.isValidApprover(sewerageApplicationDetails);    
+            if (!isValidApprover) {
+                model.addAttribute("approverError", "Invalid approver");
+                model.addAttribute("sewerageApplcationDetails", sewerageApplicationDetails);
+                loadViewData(model, request, sewerageApplicationDetails);
+                model.addAttribute(MODE, "error");
+                return NEWCONNECTION_EDIT;
+            }
         }
 
         if ((sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED)
