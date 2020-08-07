@@ -67,6 +67,7 @@
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
 			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
+			<input type="hidden" id="approverError" name="approverError" value="${approverError}" />	  
 			<jsp:include page="commonApplicationDetails-view.jsp"/> 
 			<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
 			 
@@ -154,5 +155,12 @@ $(document).ready(function()
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 	}
+	
+	 if ($('#approverError').val()) {
+			bootbox.alert($('#approverError').val());
+			$('#approverDetailHeading').hide();
+			$('.btnWorkflow').hide();
+			return false;
+		}
 });
 </script>

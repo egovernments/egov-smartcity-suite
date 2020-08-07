@@ -48,8 +48,12 @@
 package org.egov.stms.web.controller.transactions;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOT_AUTHORIZED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
 
 import java.io.File;
@@ -148,6 +152,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
+        if (!sewerageApplicationDetailsService.isApplicationOwner(securityUtils.getCurrentUser(), sewerageApplicationDetails))
+            return NOT_AUTHORIZED;
+        
         model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
 
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
@@ -196,6 +203,24 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             model.addAttribute("documentNamesList", docList);
             return "closeSewerageConnection";
         }
+		if (isNotBlank(workFlowAction) && (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
+				&& sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != null
+				&& sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != 0)) {
+			boolean isValidApprover = sewerageApplicationDetailsService.isValidApprover(sewerageApplicationDetails);
+			if (!isValidApprover) {
+				model.addAttribute("approverError", "Invalid approver");
+				model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
+				final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
+						.getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
+				if (propertyOwnerDetails != null)
+					model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
+				model.addAttribute("propertyTypes", PropertyType.values());
+				final List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService
+						.getSewerageApplicationDoc(sewerageApplicationDetails);
+				model.addAttribute("documentNamesList", docList);
+				return "closeSewerageConnection";
+			}
+		}
 
         try {
             if (workFlowAction != null && !workFlowAction.isEmpty()

@@ -79,6 +79,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -122,6 +123,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STA
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
@@ -131,6 +133,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_ESTIMATION_N
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.PREVIEWWORKFLOWACTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOT_AUTHORIZED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_CLOSERACKNOWLDGEENT_BUTTON;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
@@ -232,6 +235,10 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
+    	if ( !sewerageApplicationDetailsService.isApplicationOwner(securityUtils.getCurrentUser(),
+    			sewerageApplicationDetails))
+			return NOT_AUTHORIZED;
+
         if (sewerageApplicationDetails.getEstimationDetails() != null
                 && !sewerageApplicationDetails.getEstimationDetails().isEmpty())
             sewerageApplicationDetails.setEstimationDetailsForUpdate(sewerageApplicationDetails.getEstimationDetails());
@@ -400,6 +407,19 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             loadViewData(model, request, sewerageApplicationDetails);
             return CHANGE_IN_CLOSETS_EDIT;
         }
+        if (isNotBlank(sewerageApplicationDetails.getWorkflowContainer().getWorkFlowAction())
+				&& (WFLOW_ACTION_STEP_FORWARD
+						.equalsIgnoreCase(sewerageApplicationDetails.getWorkflowContainer().getWorkFlowAction())
+						&& sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != null
+						&& sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId() != 0)) {
+			boolean isValidApprover = sewerageApplicationDetailsService.isValidApprover(sewerageApplicationDetails);
+			if (!isValidApprover) {
+				model.addAttribute("approverError", "Invalid approver");
+				model.addAttribute(mode, "error");
+				model.addAttribute(SEWERAGE_APPLCATION_DETAILS, sewerageApplicationDetails);
+			   return loadViewData(model, request, sewerageApplicationDetails);
+			}
+       }
         if ((APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_INSPECTIONFEEPAID.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_FEECOLLECTIONPENDING.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
