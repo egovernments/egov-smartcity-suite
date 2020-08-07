@@ -48,7 +48,6 @@
 package org.egov.stms.web.controller.transactions;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOT_AUTHORIZED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
