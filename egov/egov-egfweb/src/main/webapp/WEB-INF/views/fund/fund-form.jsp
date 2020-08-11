@@ -110,3 +110,9 @@
               <form:errors path="isactive" cssClass="error-msg" />
             </div>
             <input type="hidden" name="fund" value="${fund.id}" />
+           </div>
+          </div>
+         </div>
+        </div>
+      </div>
+    </div>

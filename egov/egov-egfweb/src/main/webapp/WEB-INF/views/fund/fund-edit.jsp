@@ -54,10 +54,6 @@
 	enctype="multipart/form-data">
 	<%@ include file="fund-form.jsp"%>
 	<input type="hidden" name="fund" value="${fund.id}" />
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
