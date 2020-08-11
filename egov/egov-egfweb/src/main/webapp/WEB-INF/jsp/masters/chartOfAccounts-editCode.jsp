@@ -59,6 +59,13 @@
 				bootbox.alert("Please enter account code");
 				return false;
 			}
+			var glcodeEntered = document.getElementById('glCode').value;
+			if(/^[a-zA-Z0-9-& ]*$/.test(glcodeEntered) == false){
+				document.getElementById('glCode').value = '';
+				bootbox.alert("Please enter correct account code");
+				return false;
+			}
+			
 			var value = obj.value;
 				document.chartOfAccountsForm.action='${pageContext.request.contextPath}/masters/chartOfAccounts-modifySearch.action';
 	    		document.chartOfAccountsForm.submit();
