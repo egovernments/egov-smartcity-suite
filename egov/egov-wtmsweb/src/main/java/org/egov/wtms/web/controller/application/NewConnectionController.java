@@ -74,6 +74,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -542,9 +543,18 @@ public class NewConnectionController extends GenericConnectionController {
     // sewerage
     private void sewerageIntegration(WaterConnectionDetails waterConnectionDetails, BindingResult resultBinder,
             SewerageApplicationDetails sewerageDetails) {
-        if (sewerageDetails.getState() == null)
-            sewerageDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                    SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
+        if (sewerageDetails.getState() == null) {
+        	String status = StringUtils.EMPTY;
+        	if(CSC.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED;
+        	else if(ONLINE.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
+        	else if(WARDSECRETARY.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_WARDSECRETARYCREATED;
+        	
+        	if(StringUtils.isNotBlank(status))
+        		sewerageDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(status, SewerageTaxConstants.MODULETYPE));
+        }
         SewerageApplicationType sewerageType = sewerageApplicationTypeService
                 .findBy(waterConnectionDetails.getSewerageApplicationDetails().getApplicationType().getId());
 

@@ -122,6 +122,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STA
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WARDSECRETARYCREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
@@ -329,7 +330,8 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         if (sewerageApplicationDetails != null
                 && sewerageApplicationDetails.getStatus() != null
                 && (APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                || APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+                || APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                || APPLICATION_STATUS_WARDSECRETARYCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                 && NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())) {
             model.addAttribute("isReassignEnabled", sewerageTaxUtils.isReassignEnabled());
         }

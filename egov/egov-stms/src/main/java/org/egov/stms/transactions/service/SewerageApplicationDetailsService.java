@@ -49,7 +49,10 @@ package org.egov.stms.transactions.service;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+
 import static org.apache.commons.lang3.time.DateUtils.addDays;
 import static org.egov.infra.utils.StringUtils.EMPTY;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
@@ -89,11 +92,16 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.integration.event.model.ApplicationDetails;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
+import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -123,6 +131,7 @@ import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -217,6 +226,9 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private PortalInboxService portalInboxService;
+    
+    @Autowired
+    private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
 
     public SewerageApplicationDetails findBy(final Long id) {
         return sewerageApplicationDetailsRepository.findOne(id);
@@ -618,9 +630,14 @@ public class SewerageApplicationDetailsService {
                 modelParams.put(MODE, "edit");
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
                 modelParams.put(MODE, "editOnReject");
-            else if (NEW_STATE.equalsIgnoreCase(currentState) && (APPLICATION_STATUS_CSCCREATED
-                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                    || APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || APPLICATION_STATUS_CITIZENCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
+			else if (NEW_STATE.equalsIgnoreCase(currentState)
+					&& (APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+							|| APPLICATION_STATUS_ANONYMOUSCREATED
+									.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+							|| APPLICATION_STATUS_CITIZENCREATED
+									.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+							|| APPLICATION_STATUS_WARDSECRETARYCREATED
+									.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
                 modelParams.put(MODE, "closetview");
             else
                 modelParams.put(MODE, "view");
@@ -796,8 +813,10 @@ public class SewerageApplicationDetailsService {
             } else if (NEW_STATE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
                     && (APPLICATION_STATUS_CSCCREATED
                     .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_WARDSECRETARYCREATED
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                     || APPLICATION_STATUS_ANONYMOUSCREATED
-                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))) {
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             APPLICATION_STATUS_COLLECTINSPECTIONFEE, MODULETYPE));
@@ -1155,4 +1174,51 @@ public class SewerageApplicationDetailsService {
                 .findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(propertyId,
                         connectionStatus);
     }
+    
+	@Transactional
+	public void persistAndPublishEventForWardSecretary(SewerageApplicationDetails sewerageApplicationDetails,
+			final MultipartFile[] files, final HttpServletRequest request, String workFlowAction, String mode) {
+		try {
+			publishEventForWardSecretary(request, sewerageApplicationDetails.getApplicationNumber(),
+					sewerageApplicationDetails.getApplicationType().getName(), true, mode, workFlowAction,
+					sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+		} catch (Exception e) {
+			publishEventForWardSecretary(request, sewerageApplicationDetails.getApplicationNumber(),
+					sewerageApplicationDetails.getApplicationType().getName(), false, mode, workFlowAction,
+					sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+		}
+	}
+
+	public void publishEventForWardSecretary(HttpServletRequest request, String applicationNo, String applicationType,
+			boolean isSuccess, String mode, String workFlowAction, String propertyId) {
+		if (isSuccess) {
+			if (WARDSECRETARY_EVENTPUBLISH_MODE_CREATE.equalsIgnoreCase(mode)) {
+				thirdPartyApplicationEventPublisher.publishEvent(ApplicationDetails.builder()
+						.withApplicationNumber((CLOSESEWERAGECONNECTION.equalsIgnoreCase(applicationType)
+								|| CHANGEINCLOSETS.equalsIgnoreCase(applicationType))
+										? applicationNo.concat("~").concat(getFormattedDate(new Date(), "dd-MM-yyyy"))
+										: applicationNo)
+						.withViewLink(format(SewerageTaxConstants.VIEW_LINK,
+								WebUtils.extractRequestDomainURL(request, false), applicationNo, propertyId))
+						.withTransactionStatus(TransactionStatus.SUCCESS)
+						.withApplicationStatus(ApplicationStatus.INPROGRESS)
+						.withRemark(applicationType.concat(" created"))
+						.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+			} else if (WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE.equalsIgnoreCase(mode)) {
+				ApplicationDetails applicationDetails = ApplicationDetails.builder()
+						.withApplicationNumber(applicationNo)
+						.withApplicationStatus(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+								? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED)
+						.withRemark(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+								? applicationType.concat(" approved") : applicationType.concat(" cancelled"))
+						.withDateOfCompletion(new Date()).build();
+				thirdPartyApplicationEventPublisher.publishEvent(applicationDetails);
+			}
+		} else {
+			thirdPartyApplicationEventPublisher
+					.publishEvent(ApplicationDetails.builder().withTransactionStatus(TransactionStatus.FAILED)
+							.withRemark(applicationType.concat(" creation failed"))
+							.withTransactionId(request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE)).build());
+		}
+	}
 }
