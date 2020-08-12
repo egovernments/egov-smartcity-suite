@@ -814,7 +814,6 @@ public class ReportGenerationService {
         reportParams.put(APPLICATION_TYPE, waterConnectionDetails.getApplicationType().getName());
         reportParams.put(DISTRICT, cityService.getDistrictName());
         String municipalityName = cityService.getMunicipalityName();
-        reportParams.put(MUNICIPALITY_NAME, municipalityName);
         reportParams.put(CITY_NAME, municipalityName);
         reportParams.put("assessmentNumber", waterConnectionDetails.getConnection().getPropertyIdentifier());
         reportParams.put("date", toDefaultDateFormat(new Date()));
