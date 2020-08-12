@@ -67,3 +67,10 @@
 						</div>
 						<input type="hidden" name="budgetControlType"
 							value="${budgetControlType.id}" />
+							
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

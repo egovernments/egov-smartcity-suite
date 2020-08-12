@@ -71,7 +71,11 @@ function callAjaxSearch() {
 					url : "/EGF/budgetdefinition/ajaxsearch/"
 							+ $('#mode').val(),
 					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					"data" : getFormData(jQuery('form')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$(row)

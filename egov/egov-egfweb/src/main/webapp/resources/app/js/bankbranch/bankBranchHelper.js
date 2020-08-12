@@ -107,7 +107,11 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/EGF/bankbranch/ajaxsearch/" + $('#mode').val(),
 					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					"data" : getFormData(jQuery('form')),
+					"error" : function() {
+						jQuery("#resultTable tbody tr td").html(
+								"No data available.");
+					}
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$(row).on(
