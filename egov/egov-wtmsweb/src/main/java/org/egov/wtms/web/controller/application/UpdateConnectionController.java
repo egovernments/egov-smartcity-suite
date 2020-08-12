@@ -684,7 +684,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                 }
 
                 waterConnectionDetailsService.save(waterConnectionDetails);
-				waterConnectionDetailsService.getCurrentSession().flush();
 
             } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
