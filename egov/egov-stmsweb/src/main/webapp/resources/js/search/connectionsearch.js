@@ -51,7 +51,22 @@
 var tableContainer;
 var isFlag=false;
 var applicationType;
+var isAnonymousOrWardSecretaryUser;
+var wsSource;
+var wsTransactionId;
+var wsPortalRequest;
 jQuery(document).ready(function($) {
+	isAnonymousOrWardSecretaryUser = $('#isAnonymousOrWardSecretaryUser').val();
+	wsSource = $("#wsSource").val();
+	wsTransactionId = $("#wsTransactionId").val();
+	wsPortalRequest = $("#wsPortalRequest").val();
+	if (isAnonymousOrWardSecretaryUser == "yes") {
+		$('#consumerNumber').hide();
+		$('#applicationNoLabel').hide();
+		$('#nameAndMobileNumberDiv').hide();
+		$('#boundaryAndDoorNumberDiv').hide();
+		$('#dateRangesDiv').hide();
+	}
 	tableContainer = $("#aplicationSearchResults");
 	 document.onkeydown=function(evt){
 		 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
@@ -85,7 +100,8 @@ $(".btnSearch").click(function(event){
 	var fromDate=$('#fromDate').val();
 	var toDate=$('#toDate').val();
 	
-	if(consumerNumber == '' && shscNumber == '' && applicantName == '' && mobileNumber == '' && wardName == '' && doorNo == '' && fromDate == '' && toDate == '') {
+	if((isAnonymousOrWardSecretaryUser == 'yes' && shscNumber == '') 
+		|| (consumerNumber == '' && shscNumber == '' && applicantName == '' && mobileNumber == '' && wardName == '' && doorNo == '' && fromDate == '' && toDate == '')) {
 				bootbox.alert("Please Enter Atleast One Input Value For Searching");
 				return false;
 			} else {
@@ -263,6 +279,13 @@ function loadPropertyDetails(url,consumerno,shscnumber, propertyID) {
 					}
 					if(response.propertyDetails.taxDue > 0 || waterTaxDue['WATERTAXDUE'] > 0) {
 						bootbox.alert(errorMessage);
+					} if (wsSource == 'WARDSECRETARY') {
+						if (applicationType === "changenumberofseats") {
+							url = "/stms/transactions/modifyConnection/form/"+shscnumber;
+						} else {
+							url = "/stms/transactions/closeConnection/form/"+shscnumber;
+						}
+						submitFormForWardSecretary(url);
 					} else {
 						callurl(url, consumerno, propertyID, shscnumber);
 					}
@@ -300,4 +323,27 @@ function getFormData($form) {
         indexed_array[n['name']] = n['value'];
     });
     return indexed_array;
+}
+
+function submitFormForWardSecretary(url) {
+	jQuery('<form>.').attr({
+		method : 'POST',
+		action : url,
+		target : '_self'
+	}).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'wsTransactionId',
+		name : 'wsTransactionId',
+		value : wsTransactionId
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'wsSource',
+		name : 'wsSource',
+		value : wsSource
+	})).append(jQuery('<input>').attr({
+		type : 'hidden',
+		id : 'wsPortalRequest',
+		name : 'wsPortalRequest',
+		value : wsPortalRequest
+	})).appendTo(document.body).submit();
 }

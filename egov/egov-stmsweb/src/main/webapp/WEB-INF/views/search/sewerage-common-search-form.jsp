@@ -58,13 +58,14 @@
 	<div class="row">
 		<div class="col-md-12">
 			<form:hidden path="searchType" id="searchType" value="${sewerageConnSearchRequest.searchType}" />
+			<form:hidden path="validWardSecretaryRequest" id="validWardSecretaryRequest" value="${sewerageConnSearchRequest.validWardSecretaryRequest}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title"></div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 col-md-2 control-label "> <spring:message
+						<label class="col-sm-2 col-md-2 control-label " id="applicationNoLabel"> <spring:message
 								code="lbl.application.number" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
 							<input type="text" name="consumerNumber" id="consumerNumber"
@@ -80,7 +81,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" id="nameAndMobileNumberDiv">
 						<label class="col-sm-2 col-md-2 control-label"> <spring:message
 								code="lbl.applicantname" />
 						</label>
@@ -99,7 +100,7 @@
 								data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" id="boundaryAndDoorNumberDiv">
 						<label for="field-1" class="col-md-2 col-sm-2 control-label"><spring:message
 								code="lbl.revenue.ward" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
@@ -118,7 +119,7 @@
 								id="app-appcodo" maxlength="24" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" id="dateRangesDiv">
 						<label class="col-sm-2 col-md-2 control-label"><spring:message
 								code="lbl.fromDate" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
