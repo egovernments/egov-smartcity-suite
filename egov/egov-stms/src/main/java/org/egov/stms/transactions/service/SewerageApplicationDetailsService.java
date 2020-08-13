@@ -77,6 +77,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
@@ -772,10 +773,26 @@ public class SewerageApplicationDetailsService {
             sewerageApplicationDetails.setApprovalComent(approverComments);
             sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
         }
-
+        publishEventUpdateForWardSecretary(sewerageApplicationDetails, workFlowAction);
         return updatedSewerageApplicationDetails;
     }
 
+    private void publishEventUpdateForWardSecretary(final SewerageApplicationDetails sewerageApplicationDetails,
+            String workFlowAction) {
+        if (StringUtils.isNotBlank(sewerageApplicationDetails.getSource())
+                && Source.WARDSECRETARY.toString().equalsIgnoreCase(sewerageApplicationDetails.getSource())
+                && (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                        || APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))) {
+            if ((NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+                    || CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+                    || CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode()))) {
+                publishEventForWardSecretary(null, sewerageApplicationDetails.getApplicationNumber(),
+                        sewerageApplicationDetails.getApplicationType().getName(), true,
+                        WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction,
+                        sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            }
+        }
+    }
     // Pending : commented out code as statuses are changed. Need to correct
 
     public void applicationStatusChange(final SewerageApplicationDetails sewerageApplicationDetails,
@@ -926,6 +943,7 @@ public class SewerageApplicationDetailsService {
             sewerageApplicationDetails.setApprovalComent(sewerageApplicationDetails.getWorkflowContainer().getApproverComments());
             sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
         }
+        publishEventUpdateForWardSecretary(sewerageApplicationDetails,workFlowAction);
         return updatedSewerageApplicationDetails;
     }
 
