@@ -94,8 +94,13 @@ function callAjaxSearch() {
             ajax: {
                 url: "/EGF/receiptpayment/ajaxsearch",
                 type: "POST",
-                "data": getFormData(jQuery('form'))
-            }, "fnRowCallback": function (row, data, index) {
+                "data": getFormData(jQuery('form')),
+                "error" : function() {
+					jQuery("#resultTable tbody tr td").html(
+							"No data available.");
+				}
+            }, 
+            "fnRowCallback": function (row, data, index) {
                 $('td:eq(2)', row).html(parseFloat(Math.round(data.creditAmount * 100) / 100).toFixed(2));
                 $('td:eq(5)', row).html(parseFloat(Math.round(data.debitAmount * 100) / 100).toFixed(2));
                 return row;
