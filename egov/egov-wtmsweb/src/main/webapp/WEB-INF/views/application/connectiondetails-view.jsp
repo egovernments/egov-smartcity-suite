@@ -179,21 +179,19 @@
 								</div>
 							</div>
 						</c:if>
-					</c:if>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin"><spring:message code="lbl.materials.supplied"/></div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:choose>
-								<c:when test="${not empty waterConnectionDetails.ulbMaterial}">
-									<c:out value="${waterConnectionDetails.ulbMaterial==true ? 'Yes':'No'}" />
-								</c:when>
-								<c:otherwise>
-									<spring:message code="lb.NA.code"/>
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-					<div class="row add-border">
+						</c:if>
+						<c:if
+							test="${not empty waterConnectionDetails.ulbMaterial && waterConnectionDetails.ulbMaterial==true}">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.materials.supplied" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="Yes" />
+								</div>
+							</div>
+						</c:if>
+				<div class="row add-border">
 						<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
 							<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>
 							<div class="col-xs-3 add-margin view-content">
