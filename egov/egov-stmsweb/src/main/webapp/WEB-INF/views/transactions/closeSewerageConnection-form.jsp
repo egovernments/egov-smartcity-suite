@@ -55,7 +55,8 @@
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" method="post"   
+		<form:form role="form" method="post"
+			action="/stms/transactions/closeConnection/${sewerageApplicationDetails.connection.shscNumber}"
 			modelAttribute="sewerageApplicationDetails" id="closeSewerageConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
