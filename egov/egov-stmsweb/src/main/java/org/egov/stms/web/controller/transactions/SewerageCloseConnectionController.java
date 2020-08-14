@@ -207,6 +207,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", CLOSESEWERAGECONNECTION);
 		model.addAttribute("isAnonymousUser", sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
+        model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
         return "closeSewerageConnection-form";
     }
 
