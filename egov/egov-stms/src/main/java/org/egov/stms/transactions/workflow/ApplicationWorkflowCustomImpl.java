@@ -359,8 +359,12 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             else
                 pos = wfInitiator.getPosition();
 			if (sewerageApplicationDetails.getState() == null) {
+				boolean isWardSecretaryApplication = Source.WARDSECRETARY.toString()
+						.equalsIgnoreCase(sewerageApplicationDetails.getSource()) ? true : false;
 				if (sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()))
 					currState = ANONYMOUS_CREATED;
+				else if(isWardSecretaryApplication)
+					currState = THIRD_PARTY_OPERATOR_CREATED;
 				wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
 						null, null, additionalRule, currState, null);
 				sewerageApplicationDetails.transition().start()
