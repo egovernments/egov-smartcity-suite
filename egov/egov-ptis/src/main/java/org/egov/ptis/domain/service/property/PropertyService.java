@@ -3632,14 +3632,11 @@ public class PropertyService {
      */
     public void updateReferenceBasicProperty(final BasicProperty basicProperty, final String parentPropId) {
 
-        final PropertyStatusValues propStatVal = (PropertyStatusValues) propPerServ.find(
-                "from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
-        if (parentPropId != null && !parentPropId.isEmpty()) {
-            final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
-                    .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
-            if (referenceBasicProperty != null)
-                propStatVal.setReferenceBasicProperty(referenceBasicProperty);
-        }
+		final PropertyStatusValues propStatVal = (PropertyStatusValues) propertyStatusValuesDAO
+				.getPropertyStatusValuesByBasicProperty(basicProperty);
+        final BasicProperty referenceBasicProperty = basicPropertyDAO.getInActiveBasicPropertyByPropertyID(parentPropId);
+        if (referenceBasicProperty != null)
+            propStatVal.setReferenceBasicProperty(referenceBasicProperty);
     }
 
     /**
