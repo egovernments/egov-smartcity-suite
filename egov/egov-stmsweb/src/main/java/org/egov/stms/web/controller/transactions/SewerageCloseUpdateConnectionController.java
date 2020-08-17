@@ -49,6 +49,7 @@ package org.egov.stms.web.controller.transactions;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
 
@@ -213,11 +214,16 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         } catch (final ValidationException e) {
             throw new ValidationException(e.getMessage());
         }
-        if (workFlowAction != null && !workFlowAction.isEmpty()
-                && workFlowAction.equalsIgnoreCase(WF_STATE_CONNECTION_CLOSE_BUTTON)
-                && sewerageApplicationDetails.getClosureNoticeNumber() != null)
-            return "redirect:/transactions/viewcloseconnectionnotice/" + sewerageApplicationDetails.getApplicationNumber()
-                    + "?closureNoticeNumber=" + sewerageApplicationDetails.getClosureNoticeNumber();
+        if (workFlowAction != null && !workFlowAction.isEmpty()){
+            if(workFlowAction.equalsIgnoreCase(WF_STATE_CONNECTION_CLOSE_BUTTON)
+	                && sewerageApplicationDetails.getClosureNoticeNumber() != null)
+	            return "redirect:/transactions/viewcloseconnectionnotice/" + sewerageApplicationDetails.getApplicationNumber()
+	                    + "?closureNoticeNumber=" + sewerageApplicationDetails.getClosureNoticeNumber();
+	        if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))
+	            return "redirect:/transactions/rejectionnotice?pathVar="
+	                    + sewerageApplicationDetails.getApplicationNumber() + "&" + "approvalComent="
+	                    + sewerageApplicationDetails.getWorkflowContainer().getApproverComments();
+        }
 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());

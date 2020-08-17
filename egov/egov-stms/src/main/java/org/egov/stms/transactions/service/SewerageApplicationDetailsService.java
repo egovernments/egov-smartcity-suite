@@ -923,6 +923,23 @@ public class SewerageApplicationDetailsService {
             if (sewerageNotice != null)
                 sewerageApplicationDetails.addNotice(sewerageNotice);
         }
+        
+		if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
+			if (sewerageApplicationDetails.getRejectionNumber() == null) {
+				SewerageRejectionNoticeNumberGenerator rejectionNumberGenerator = beanResolver
+						.getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
+				if (rejectionNumberGenerator != null) {
+					sewerageApplicationDetails
+							.setRejectionNumber(rejectionNumberGenerator.generateRejectionNoticeNumber());
+					sewerageApplicationDetails.setRejectionDate(new Date());
+				}
+
+				SewerageNotice sewerageNotice = sewerageNoticeService
+						.generateReportForRejection(sewerageApplicationDetails, session, request);
+				if (sewerageNotice != null)
+					sewerageApplicationDetails.addNotice(sewerageNotice);
+			}
+		}
 
         final SewerageApplicationDetails updatedSewerageApplicationDetails = sewerageApplicationDetailsRepository
                 .save(sewerageApplicationDetails);
