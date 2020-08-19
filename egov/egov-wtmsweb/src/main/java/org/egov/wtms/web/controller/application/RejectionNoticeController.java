@@ -45,40 +45,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.wtms.autonumber.impl;
+package org.egov.wtms.web.controller.application;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.wtms.autonumber.EstimationNumberGenerator;
-import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@Service
-public class EstimationNumberGeneratorImpl implements EstimationNumberGenerator {
-    private static final String ESTIMATION_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATION_NUMBER";
-    private static final String ESTIMATION_NUMBER = "EN-";
-    private static final String REJECTION_NUMBER = "RN/";
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+@Controller
+@RequestMapping(value = "/application")
+public class RejectionNoticeController {
 
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
+	@Autowired
+	private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Override
-    public String generateEstimationNumber(String noticeType) {
-    	String noticeNumber = StringUtils.EMPTY;
-    	if(StringUtils.isNotBlank(noticeType)) {
-    		String numberFormat = StringUtils.EMPTY;
-    		if(WaterTaxConstants.NOTICETYPE_ESTIMATION.equalsIgnoreCase(noticeType))
-    			numberFormat = ESTIMATION_NUMBER;
-    		else if(WaterTaxConstants.NOTICETYPE_REJECTION.equalsIgnoreCase(noticeType))
-    			numberFormat = REJECTION_NUMBER;
-    		noticeNumber = String.format("%s%s%06d", numberFormat, waterTaxUtils.getCityCode(),
-	                genericSequenceNumberGenerator.getNextSequence(ESTIMATION_NUMBER_SEQ_PREFIX));
-    	}
-        return noticeNumber;
-    }
+	@Autowired
+	private ReportGenerationService reportGenerationService;
+
+	@RequestMapping(value = "/rejectionnotice", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<byte[]> generateRejectionNotice(final HttpServletRequest request,
+			final HttpSession session) {
+		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findByApplicationNumber(request.getParameter("pathVar"));
+		return generateReport(waterConnectionDetails, session, request);
+	}
+
+	private ResponseEntity<byte[]> generateReport(WaterConnectionDetails waterConnectionDetails,
+			final HttpSession session, final HttpServletRequest request) {
+		ReportOutput reportOutput = null;
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("application/pdf"));
+		headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
+		reportOutput = reportGenerationService.generateReportOutputDataForRejection(waterConnectionDetails,
+				session.getAttribute("citymunicipalityname").toString(), request.getParameter("rejectionNumber"),
+				request.getParameter("rejectionDate"), request.getParameter("approvalComent"));
+		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+	}
 
 }

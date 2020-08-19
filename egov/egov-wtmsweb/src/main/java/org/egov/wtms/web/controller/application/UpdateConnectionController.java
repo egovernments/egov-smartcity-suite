@@ -50,6 +50,7 @@ package org.egov.wtms.web.controller.application;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONPDFNAME;
@@ -100,6 +101,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
@@ -154,6 +156,7 @@ import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.service.WaterEstimationChargesPaymentService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.web.validator.UpdateWaterConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -571,7 +574,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 		String mode = EMPTY;
 		Double donationCharges = 0d;
-
+		String applicationType = waterConnectionDetails.getApplicationType().getCode();
 		String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
 				? request.getParameter(WORKFLOW_ACTION)
 				: EMPTY;
@@ -712,6 +715,10 @@ public class UpdateConnectionController extends GenericConnectionController {
 				&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
 						|| waterConnectionDetails.getStatus().getCode().equals(APPROVED)))
 			throw new ValidationException("err.nouserdefinedforworkflow");
+		
+		String approvalComent = isNotBlank(request.getParameter("approvalComent"))
+				? request.getParameter("approvalComent")
+				: EMPTY;
 		if (!resultBinder.hasErrors()) {
 			try {
 				// For Closure Connection
@@ -721,9 +728,6 @@ public class UpdateConnectionController extends GenericConnectionController {
 					else
 						waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
-				String approvalComent = isNotBlank(request.getParameter("approvalComent"))
-						? request.getParameter("approvalComent")
-						: EMPTY;
 				if (isNotBlank(workFlowAction))
 					if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
 
@@ -836,18 +840,39 @@ public class UpdateConnectionController extends GenericConnectionController {
 			if (WF_STATE_BUTTON_GENERATEESTIMATE.equalsIgnoreCase(workFlowAction)) {
 				EstimationNumberGenerator estimationNoGen = beanResolver
 						.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-				String estimationNumber = estimationNoGen.generateEstimationNumber();
+				String estimationNumber = estimationNoGen.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_ESTIMATION);
 				EstimationNotice estimationNotice = waterConnectionDetailsService
-						.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
+						.addEstimationOrRejectionNoticeToConnectionDetails(waterConnectionDetails, estimationNumber,
+								WaterTaxConstants.NOTICETYPE_ESTIMATION, applicationType);
 				ReportOutput reportOutput = reportGenerationService.generateEstimationNoticeReport(
 						waterConnectionDetails, ApplicationThreadLocals.getCityName(), cityService.getDistrictName(),
 						estimationNumber);
 				if (reportOutput != null)
-					waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails,
+					waterConnectionDetailsService.updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
 							estimationNotice, reportOutput);
 
 				return "redirect:/application/estimationNotice?pathVar="
 						+ waterConnectionDetails.getApplicationNumber();
+			} 
+			if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
+				EstimationNumberGenerator estimationNoGen = beanResolver
+						.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+				String rejectionNumber = estimationNoGen
+						.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_REJECTION);
+				EstimationNotice estimationNotice = waterConnectionDetailsService
+						.addEstimationOrRejectionNoticeToConnectionDetails(waterConnectionDetails, rejectionNumber,
+								WaterTaxConstants.NOTICETYPE_REJECTION, applicationType);
+				String rejectionDate = getDefaultFormattedDate(estimationNotice.getEstimationNoticeDate());
+				ReportOutput reportOutput = reportGenerationService.generateReportOutputDataForRejection(
+						waterConnectionDetails, ApplicationThreadLocals.getCityName(), rejectionNumber, rejectionDate,
+						approvalComent);
+				if (reportOutput != null)
+					waterConnectionDetailsService.updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
+							estimationNotice, reportOutput);
+				return "redirect:/application/rejectionnotice?pathVar="
+						.concat(waterConnectionDetails.getApplicationNumber()).concat("&approvalComent=")
+						.concat(approvalComent).concat("&rejectionNumber=").concat(rejectionNumber)
+						.concat("&rejectionDate=").concat(rejectionDate);
 			}
 
 			Assignment currentUserAssignment = assignmentService

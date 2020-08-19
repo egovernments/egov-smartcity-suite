@@ -1908,17 +1908,20 @@ public class WaterConnectionDetailsService {
                 return connectionAddressCriteria.list();
         }
         
-        public EstimationNotice addEstimationNoticeToConnectionDetails(WaterConnectionDetails waterConnectionDetails,
-                        String estimationNumber) {
+        public EstimationNotice addEstimationOrRejectionNoticeToConnectionDetails(WaterConnectionDetails waterConnectionDetails,
+                        String estimationNumber, String noticeType, String applicationType) {
                 EstimationNotice estimationNotice = new EstimationNotice();
                 estimationNotice.setEstimationNumber(estimationNumber);
                 estimationNotice.setEstimationNoticeDate(new Date());
+                estimationNotice.setNoticeType(noticeType);
+                estimationNotice.setApplicationType(applicationType);
                 if (waterConnectionDetails.getEstimationNotices().isEmpty()) {
                         estimationNotice.setOrderNumber(1L);
                         estimationNotice.setHistory(false);
                 } else {
                         estimationNotice.setOrderNumber(waterConnectionDetails.getEstimationNotices().size() + 1L);
                         for (EstimationNotice notice : waterConnectionDetails.getEstimationNotices())
+                        	if(noticeType.equalsIgnoreCase(notice.getNoticeType()))
                                 notice.setHistory(true);
                         estimationNotice.setHistory(false);
                 }
@@ -1928,21 +1931,28 @@ public class WaterConnectionDetailsService {
                 return estimationNotice;
         }
 
-        @Transactional
-    public void updateConnectionDetailsWithEstimationNotice(WaterConnectionDetails waterConnectionDetails,
-            EstimationNotice estimationNotice,
-                        ReportOutput reportOutput) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
-                headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-                String fileName;
-                fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
-                InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-                FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
-                                FILESTORE_MODULECODE);
-                estimationNotice.setEstimationNoticeFileStore(fileStore);
-                updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
-        }
+	@Transactional
+	public void updateConnectionDetailsWithEstimationOrRejectionNotice(WaterConnectionDetails waterConnectionDetails,
+			EstimationNotice estimationNotice, ReportOutput reportOutput) {
+		String fileName = EMPTY;
+		String contentDisposition = EMPTY;
+		if (WaterTaxConstants.NOTICETYPE_ESTIMATION.equalsIgnoreCase(estimationNotice.getNoticeType())) {
+			fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
+			contentDisposition = "inline;filename=EstimationNotice.pdf";
+		} else if (WaterTaxConstants.NOTICETYPE_REJECTION.equalsIgnoreCase(estimationNotice.getNoticeType())) {
+			fileName = estimationNotice.getEstimationNumber() + ".pdf";
+			contentDisposition = "inline;filename=RejectionNotice.pdf";
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
+		headers.add("content-disposition", contentDisposition);
+
+		InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+		FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
+				FILESTORE_MODULECODE);
+		estimationNotice.setEstimationNoticeFileStore(fileStore);
+		updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+	}
         
         public String getGOEffectiveDate() {
                 String value = EMPTY;

@@ -51,6 +51,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
@@ -88,6 +89,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -115,6 +119,8 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -123,6 +129,7 @@ import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.service.WaterEstimationChargesPaymentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -768,8 +775,10 @@ public class ReportGenerationService {
 
 			EstimationNumberGenerator estimationNumberGenerator;
 			estimationNumberGenerator = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-			estimationNotice.setEstimationNumber(estimationNumberGenerator.generateEstimationNumber());
+			estimationNotice.setEstimationNumber(estimationNumberGenerator.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_ESTIMATION));
 			estimationNotice.setEstimationNoticeDate(new Date());
+			estimationNotice.setNoticeType(WaterTaxConstants.NOTICETYPE_ESTIMATION);
+            estimationNotice.setApplicationType(waterConnectionDetails.getApplicationType().getCode());
 			estimationNotice.setWaterConnectionDetails(waterConnectionDetails);
 			estimationNotice.setInstallment(waterTaxUtils.getInstallmentForDate(new Date()));
 			estimationNotice.setOrderNumber(1l);
@@ -920,4 +929,39 @@ public class ReportGenerationService {
         reportOutput.setReportName(waterConnectionDetails.getApplicationNumber());
         return reportAsResponseEntity(reportOutput);
     }
+    
+	public ReportOutput generateReportOutputDataForRejection(WaterConnectionDetails waterConnectionDetails,
+			String cityName, String rejectionNumber, String rejectionDate, String remarks) {
+		final List<Assignment> assignList = assignmentService.getAllActiveAssignments(
+				designationService.getDesignationByName(SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId());
+
+		ReportRequest reportInput = null;
+		final Map<String, Object> reportParams = new HashMap<>();
+
+		if (waterConnectionDetails != null) {
+			AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+					waterConnectionDetails.getConnection().getPropertyIdentifier(),
+					PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+			StringBuilder ownerName = new StringBuilder();
+
+			for (OwnerName names : assessmentDetails.getOwnerNames()) {
+				if (assessmentDetails.getOwnerNames().size() > 1)
+					ownerName.append(", ");
+				ownerName.append(names.getOwnerName());
+			}
+
+			reportParams.put(APPLICATION_TYPE,
+					WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+			reportParams.put("applicantName", ownerName.toString());
+			reportParams.put("cityName", cityName);
+			reportParams.put("remarks", remarks);
+			reportParams.put("rejectionDate", rejectionDate);
+			reportParams.put("rejectionNumber", rejectionNumber);
+			reportParams.put(COMMISSIONER_NAME,
+					assignList == null ? StringUtils.EMPTY : assignList.get(0).getEmployee().getName());
+			reportInput = new ReportRequest("rejectionNotice", waterConnectionDetails, reportParams);
+
+		}
+		return reportService.createReport(reportInput);
+	}
 }
