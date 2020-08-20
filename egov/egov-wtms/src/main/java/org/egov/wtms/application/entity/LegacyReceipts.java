@@ -84,6 +84,7 @@ public class LegacyReceipts extends AbstractAuditable {
     private WaterConnectionDetails waterConnectionDetails;
 
     @SafeHtml
+    @Length(max = 64)
     private String bookNumber;
 
     @NotNull

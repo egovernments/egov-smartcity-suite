@@ -63,6 +63,7 @@ import javax.persistence.Table;
 
 import org.egov.demand.model.EgDemand;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -74,32 +75,44 @@ public class WaterChargeMaterlizeView implements Serializable {
     @Id
     private Long connectionDetailsId;
     @SafeHtml
+    @Length(max = 64)
     private String propertyId;
     @SafeHtml
+    @Length(max = 50)
     private String hscNo;
     @SafeHtml
     private String address;
     @SafeHtml
+    @Length(max = 50)
     private String oldHscNo;
     @SafeHtml
+    @Length(max = 50)
     private String propertyType;
     @SafeHtml
+    @Length(max = 50)
     private String applicationType;
     @SafeHtml
+    @Length(max = 50)
     private String usageType;
     @SafeHtml
+    @Length(max = 50)
     private String categoryType;
     @SafeHtml
+    @Length(max = 25)
     private String pipeSize;
     @SafeHtml
     private String userName;
     @SafeHtml
+    @Length(max = 32)
     private String houseNo;
     @SafeHtml
+    @Length(max = 100)
     private String waterSource;
     @SafeHtml
+    @Length(max = 20)
     private String connectionType;
     @SafeHtml
+    @Length(max = 20)
     private String connectionStatus;
     
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

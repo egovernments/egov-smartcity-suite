@@ -53,6 +53,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -84,11 +85,13 @@ public class UsageSlab extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
+    @Length(max = 100)
     @Audited
     private String slabName;
 
     @NotNull
     @SafeHtml
+    @Length(max = 100)
     @Audited
     private String usage;
 

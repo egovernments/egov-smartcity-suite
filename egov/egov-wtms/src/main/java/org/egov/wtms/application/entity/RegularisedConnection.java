@@ -65,6 +65,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -81,22 +82,27 @@ public class RegularisedConnection extends StateAware<Position> {
 
     @NotNull
     @SafeHtml
+    @Length(max = 4)
     private String ulbCode;
 
     @NotNull
     @SafeHtml
+    @Length(max = 20)
     private String propertyIdentifier;
 
     @SafeHtml
+    @Length(max = 50)
     private String applicationNumber;
     
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
     
     @SafeHtml
+    @Length(max = 20)
     private String source;
  
     @SafeHtml
+    @Length(max = 50)
     private String referenceNumber;
 
     @Override

@@ -125,6 +125,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private ExistingConnectionDetails existingConnection;
 
     @SafeHtml
+    @Length(max = 50)
     private String applicationNumber;
 
     @Temporal(value = TemporalType.DATE)
@@ -199,6 +200,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private Date workOrderDate;
 
     @SafeHtml
+    @Length(max = 12)
     private String workOrderNumber;
 
     private double donationCharges;
@@ -268,6 +270,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private String closeConnectionType;
 
     @SafeHtml
+    @Length(max = 25)
     private String previousApplicationType;
 
     @Length(max = 1024)
@@ -297,6 +300,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private List<DemandDetail> demandDetailBeanList = new ArrayList<>(0);
 
     @SafeHtml
+    @Length(max = 50)
     private String referenceNumber;
 
     @Length(max = 1024)

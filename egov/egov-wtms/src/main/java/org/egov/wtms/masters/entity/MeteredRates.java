@@ -53,6 +53,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -92,6 +93,7 @@ public class MeteredRates extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
+    @Length(max = 100)
     @Audited
     private String slabName;
 

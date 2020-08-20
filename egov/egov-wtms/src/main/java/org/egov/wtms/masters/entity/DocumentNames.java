@@ -95,6 +95,7 @@ public class DocumentNames extends AbstractAuditable {
     private String documentName;
 
     @SafeHtml
+    @Length(max = 18)
     private String description;
 
     @Audited

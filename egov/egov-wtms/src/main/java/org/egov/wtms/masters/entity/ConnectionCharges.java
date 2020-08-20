@@ -59,6 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -80,6 +81,7 @@ public class ConnectionCharges extends AbstractAuditable {
     private String type;
 
     @SafeHtml
+    @Length(max = 255)
     private String description;
 
     private boolean active;
@@ -92,6 +94,7 @@ public class ConnectionCharges extends AbstractAuditable {
     private Date toDate;
 
     @NotNull
+    @Min(value = 1)
     private double amount;
 
     @Override

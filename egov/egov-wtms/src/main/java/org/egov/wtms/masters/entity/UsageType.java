@@ -100,6 +100,7 @@ public class UsageType extends AbstractAuditable {
     private String name;
 
     @SafeHtml
+    @Length(max = 255)
     private String description;
 
     @Audited

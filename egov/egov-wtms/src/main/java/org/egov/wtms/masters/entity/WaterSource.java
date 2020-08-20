@@ -92,6 +92,7 @@ public class WaterSource extends AbstractAuditable {
     private String waterSourceType;
 
     @SafeHtml
+    @Length(max = 255)
     @Audited
     private String description;
     

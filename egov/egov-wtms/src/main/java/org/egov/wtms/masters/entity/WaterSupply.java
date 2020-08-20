@@ -98,6 +98,7 @@ public class WaterSupply extends AbstractAuditable {
     private String waterSupplyType;
 
     @SafeHtml
+    @Length(max = 255)
     @Audited
     private String description;
 
