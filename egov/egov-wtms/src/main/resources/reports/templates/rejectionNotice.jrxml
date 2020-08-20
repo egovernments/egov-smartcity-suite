@@ -126,7 +126,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{commissionerName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="400" y="124" width="90" height="20" uuid="a7e6846d-8f5f-4f67-891e-fa03a9d51839"/>
