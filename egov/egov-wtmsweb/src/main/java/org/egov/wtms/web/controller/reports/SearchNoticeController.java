@@ -53,8 +53,12 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NOTICETYPE_ESTIMATION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NOTICETYPE_REJECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REJECTION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_CLOSER_OF_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_RECONNECTION;
@@ -213,10 +217,10 @@ public class SearchNoticeController {
 		if (request.getParameter(NOTICE_TYPE) != null)
 			if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE))
 					|| PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
-					|| PROCEEDING_FOR_RECONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
-				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
-			else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE))
-					|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
+					|| PROCEEDING_FOR_RECONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+					|| REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE))
+					|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+					|| REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
 				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
 
 		long foundRows = 0;
@@ -255,7 +259,9 @@ public class SearchNoticeController {
 		final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
 				.findByApplicationNumber(applicationNumber);
 		EstimationNotice estimationNotice = estimationNoticeService
-				.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
+				.getNonHistoryEstimationNoticeForConnectionAndNoticeType(waterConnectionDetails,
+						REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)) ? NOTICETYPE_REJECTION
+								: NOTICETYPE_ESTIMATION);
 		if (SANCTION_ORDER.equals(noticeType) && waterConnectionDetails != null) {
 			waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
 					? waterConnectionDetails.getFileStore().getFileStoreId()
@@ -269,7 +275,8 @@ public class SearchNoticeController {
 					? waterConnectionDetails.getReconnectionFileStore().getFileStoreId()
 					: null);
 		} else if (REGULARISATION_DEMAND_NOTE.equals(noticeType) || ESTIMATION_NOTICE.equals(noticeType)
-				&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+				|| REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)) && estimationNotice != null
+						&& estimationNotice.getEstimationNoticeFileStore() != null)
 			waterChargesFileStoreId.add(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
 		else {
 			waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode, waterConnectionDetailsService
@@ -289,7 +296,7 @@ public class SearchNoticeController {
 		List<SearchNoticeDetails> searchResultList;
 		searchResultList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
-		mergeAndDownloadNotice(searchResultList, response);
+		mergeAndDownloadNotice(searchResultList, response, request);
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Number of Bills : " + (searchResultList != null ? searchResultList.size() : ZERO));
 
@@ -391,7 +398,7 @@ public class SearchNoticeController {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Number of Bills : " + (noticeList != null ? noticeList.size() : ZERO));
 		try {
-			zipAndDownloadNotice(noticeList, response);
+			zipAndDownloadNotice(noticeList, response, request);
 		} catch (final IOException e) {
 			LOGGER.error("Exception in Zip and Download : ", e);
 		}
@@ -404,10 +411,12 @@ public class SearchNoticeController {
 		return null;
 	}
 
-	public void zipAndDownloadNotice(final List<SearchNoticeDetails> noticeList, final HttpServletResponse response)
+	public void zipAndDownloadNotice(final List<SearchNoticeDetails> noticeList, final HttpServletResponse response,
+			HttpServletRequest request)
 			throws IOException {
 
 		ZipOutputStream zipOutputStream = null;
+		EstimationNotice estimationNotice;
 		if (noticeList != null && !noticeList.isEmpty()) {
 
 			zipOutputStream = new ZipOutputStream(response.getOutputStream());
@@ -420,15 +429,29 @@ public class SearchNoticeController {
 			try {
 				final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
 						.findByApplicationNumber(noticeDetail.getApplicationNumber());
-				EstimationNotice estimationNotice = estimationNoticeService
-						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-				if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
-					String fileStoreId = null;
-					if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-							&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
-						fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
-					else if (waterConnectionDetails.getFileStore() != null)
-						fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					if (waterConnectionDetails != null) {
+						String fileStoreId = null;
+					if (ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+							|| REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) {
+						estimationNotice = estimationNoticeService
+								.getNonHistoryEstimationNoticeForConnectionAndNoticeType(waterConnectionDetails,
+										REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+												? NOTICETYPE_REJECTION
+												: NOTICETYPE_ESTIMATION);
+						if (estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+							fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
+					}
+					else {
+						if (RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+								&& waterConnectionDetails.getReconnectionFileStore() != null)
+							fileStoreId = waterConnectionDetails.getReconnectionFileStore().getFileStoreId();
+						else if (CLOSINGCONNECTION
+								.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+								&& waterConnectionDetails.getClosureFileStore() != null)
+							fileStoreId = waterConnectionDetails.getClosureFileStore().getFileStoreId();
+						else if (waterConnectionDetails.getFileStore() != null)
+							fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					}
 					final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
 					final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
 					final byte[] bFile = FileUtils.readFileToByteArray(file);
@@ -446,21 +469,35 @@ public class SearchNoticeController {
 	}
 
 	public void mergeAndDownloadNotice(final List<SearchNoticeDetails> searchResultList,
-			final HttpServletResponse response) {
+			final HttpServletResponse response, HttpServletRequest request) {
 		final List<InputStream> pdfs = new ArrayList<>();
+		EstimationNotice estimationNotice;
 		for (final SearchNoticeDetails noticeDetail : searchResultList)
 			try {
 				final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
 						.findByApplicationNumber(noticeDetail.getApplicationNumber());
-				EstimationNotice estimationNotice = estimationNoticeService
-						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
 				if (waterConnectionDetails != null) {
 					String fileStoreId = null;
-					if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-							&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
-						fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
-					else if (waterConnectionDetails.getFileStore() != null)
-						fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					if (ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+							|| REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) {
+						estimationNotice = estimationNoticeService
+								.getNonHistoryEstimationNoticeForConnectionAndNoticeType(waterConnectionDetails,
+										REJECTION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+												? NOTICETYPE_REJECTION
+												: NOTICETYPE_ESTIMATION);
+						if (estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+							fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
+					} else {
+						if (RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+								&& waterConnectionDetails.getReconnectionFileStore() != null)
+							fileStoreId = waterConnectionDetails.getReconnectionFileStore().getFileStoreId();
+						else if (CLOSINGCONNECTION
+								.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+								&& waterConnectionDetails.getClosureFileStore() != null)
+							fileStoreId = waterConnectionDetails.getClosureFileStore().getFileStoreId();
+						else if (waterConnectionDetails.getFileStore() != null)
+							fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					}
 					final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
 					final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
 					final byte[] bFile = FileUtils.readFileToByteArray(file);

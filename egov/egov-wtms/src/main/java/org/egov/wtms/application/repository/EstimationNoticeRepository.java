@@ -59,4 +59,9 @@ public interface EstimationNoticeRepository extends JpaRepository<EstimationNoti
 	@Query("select en from EstimationNotice en where en.isHistory = false and en.waterConnectionDetails.id =:connectionDetailsId and en.waterConnectionDetails.applicationType.code =:applicationType and en.noticeType = 'ESTIMATIONNOTICE' ")
 	public EstimationNotice findNonHistoryEstimationNoticeForConnection(
 			@Param("connectionDetailsId") Long connectionDetailsId, @Param("applicationType") String applicationType);
+	
+	@Query("select en from EstimationNotice en where en.isHistory = false and en.waterConnectionDetails.id =:connectionDetailsId and en.waterConnectionDetails.applicationType.code =:applicationType and en.noticeType =:noticeType ")
+	public EstimationNotice findNonHistoryEstimationNoticeForConnectionAndNoticeType(
+			@Param("connectionDetailsId") Long connectionDetailsId, @Param("applicationType") String applicationType,
+			@Param("noticeType") String noticeType);
 }

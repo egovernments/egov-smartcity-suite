@@ -122,7 +122,7 @@
 				<textFieldExpression><![CDATA[$P{remarks}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="400" y="144" width="125" height="15" uuid="07c73913-a328-4b2d-a9ee-8d7e7a6affd2"/>
+				<reportElement x="340" y="144" width="209" height="15" uuid="07c73913-a328-4b2d-a9ee-8d7e7a6affd2"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>

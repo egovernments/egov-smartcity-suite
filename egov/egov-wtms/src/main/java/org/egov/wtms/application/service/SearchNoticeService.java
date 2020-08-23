@@ -50,15 +50,18 @@ package org.egov.wtms.application.service;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_CLOSER_OF_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REJECTION_NOTICE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +127,8 @@ public class SearchNoticeService {
                 .append("conndetails.workordernumber as workOrderNumber, conndetails.workorderdate as workOrderDate, connectionaddress.doornumber as houseNumber, ")
                 .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype, conndetails.applicationnumber as applicationNumber ");
         if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
-                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                || REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             selectQuery.append(", en.estimationnumber as estimationNumber, en.estimationnoticedate as estimationDate");
         else
             selectQuery.append(", CAST(NULL AS character varying) as estimationNumber, CAST(NULL AS date) as estimationDate");
@@ -135,7 +139,8 @@ public class SearchNoticeService {
                 .append("egwtr_property_type propertytype on conndetails.propertytype=propertytype.id INNER JOIN ")
                 .append("egwtr_application_type applicationtype on conndetails.applicationtype=applicationtype.id ");
         if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
-                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                || REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             fromQuery.append(" INNER JOIN egwtr_estimation_notice en on conndetails.id = en.CONNECTIONDETAILS ");
 
         whereQuery.append(" where ");
@@ -167,7 +172,8 @@ public class SearchNoticeService {
             dateArray = searchNoticeDetails.getFromDate().split("/");
             formattedFromDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
             if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
-                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
                 whereQuery.append(" en.estimationnoticedate >=(cast(:formattedFromDate as date)) and ");
             else
                 whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
@@ -176,23 +182,29 @@ public class SearchNoticeService {
             dateArray = searchNoticeDetails.getToDate().split("/");
             formattedToDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
             if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
-                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
                 whereQuery.append(" en.estimationnoticedate >=(cast(:formattedToDate as date)) and ");
             else
                 whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
         }
 
-        if (isNotBlank(searchNoticeDetails.getApplicationType()))
-            whereQuery.append(" applicationtype.code=:applicationType and ");
-
+		if (isNotBlank(searchNoticeDetails.getApplicationType())) {
+			if (REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+				whereQuery.append(" en.applicationType =:applicationType and ");
+			else
+				whereQuery.append(" applicationtype.code=:applicationType and ");
+		}
         if (isNotBlank(searchNoticeDetails.getConnectionType()))
             whereQuery.append(" conndetails.connectiontype=:connectionType and ");
 
-        if (REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            whereQuery.append(" applicationtype.code=:reglnApplicationType and ");
-        else
-            whereQuery.append(
-                    " applicationtype.code!=:reglnApplicationType and conndetails.state_id = (select id from eg_wf_states where value in (:stateValues) and status = 2 and id = conndetails.state_id) and ");
+		if (!REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())) {
+			if (REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+				whereQuery.append(" applicationtype.code=:reglnApplicationType and ");
+			else
+				whereQuery.append(
+						" applicationtype.code!=:reglnApplicationType and conndetails.state_id = (select id from eg_wf_states where value in (:stateValues) and status = 2 and id = conndetails.state_id) and ");
+		}
 
         if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             whereQuery.append(" connectionStatus=:closureStatus and statusid=:status and ");
@@ -205,7 +217,8 @@ public class SearchNoticeService {
 
         if (financialYear != null) {
             if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
-                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
                 whereQuery.append(
                         " cast(en.estimationnoticedate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and en.ishistory = false and ");
             else if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
@@ -221,15 +234,27 @@ public class SearchNoticeService {
 
         if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             whereQuery.append(" conndetails.executiondate is not null and ");
+		if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+				|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+			whereQuery.append(" en.noticeType = 'ESTIMATIONNOTICE' and ");
 
-        whereQuery.append(" conndetails.connectionstatus!=:connectionStatus");
+		if (REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+				&& (!RECONNECTION.equalsIgnoreCase(searchNoticeDetails.getApplicationType())
+						&& !CLOSINGCONNECTION.equalsIgnoreCase(searchNoticeDetails.getApplicationType())))
+			whereQuery.append(
+					" en.noticeType = 'REJECTIONNOTICE' and conndetails.connectionstatus=:connectionStatus order by en.estimationNoticeDate desc ");
+		else
+			whereQuery.append(" conndetails.connectionstatus!=:connectionStatus");
 
-        Query query = entityManager.unwrap(Session.class)
+		Query query = entityManager.unwrap(Session.class)
                 .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
         setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query, financialYear);
-        query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
-        if (!REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            query.setParameterList("stateValues", Arrays.asList(END, APPLICATIONSTATUSCLOSED));
+		if (!REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+			query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
+		if (!(REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+				|| REJECTION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))){
+       		query.setParameterList("stateValues", Arrays.asList(END, APPLICATIONSTATUSCLOSED));
+        }
         if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType())) {
             query.setParameter("closureStatus", ConnectionStatus.CLOSED.toString());
             EgwStatus closureSanctionedStatus = waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED,
@@ -251,8 +276,8 @@ public class SearchNoticeService {
             query.setParameter(WARD, searchNoticeDetails.getRevenueWard());
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             query.setParameter(PROPERTY_TYPE, searchNoticeDetails.getPropertyType());
-        if (isNotBlank(searchNoticeDetails.getApplicationType()))
-            query.setParameter(APPLICATION_TYPE, searchNoticeDetails.getApplicationType());
+		if (isNotBlank(searchNoticeDetails.getApplicationType()))
+			query.setParameter(APPLICATION_TYPE, searchNoticeDetails.getApplicationType());
         if (isNotBlank(searchNoticeDetails.getFromDate()))
             query.setParameter(FORMATTED_FROM_DATE, formattedFromDate);
         if (isNotBlank(searchNoticeDetails.getToDate()))
@@ -372,5 +397,4 @@ public class SearchNoticeService {
         }
         return noticeDetails;
     }
-
 }
