@@ -191,7 +191,7 @@ public class DemandVoucherService {
          */
         Ptdemand ptDemand;
         ptDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(newProperty);
-        Ptdemand oldPtDemand;
+        Ptdemand oldPtDemand = null;
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         if (oldProperty != null) {
             oldPtDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(oldProperty);
@@ -206,8 +206,12 @@ public class DemandVoucherService {
                     null, ptDemand, applicationDetails);
 
         if (!demandVoucherDetailList.isEmpty())
-            prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
-                    demandVoucherDetailList, applicationDetails);
+            if (oldProperty != null && areInstallmentsMismatch(oldPtDemand, ptDemand))
+                prepareVoucherDetailsMapForMismatch(voucherDetails, glCodeMap, demandIncreased,
+                        demandVoucherDetailList, applicationDetails);
+            else
+                prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
+                        demandVoucherDetailList, applicationDetails);
 
         return voucherDetails;
     }
@@ -261,6 +265,63 @@ public class DemandVoucherService {
         if (currentTax.abs().compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(CURR_TAX),
                     putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+    }
+
+    private void prepareVoucherDetailsMapForMismatch(Map<String, Map<String, Object>> voucherDetails,
+            Map<String, String> glCodeMap, boolean demandIncreased,
+            List<DemandVoucherDetails> demandVoucherDetailList, Map<String, String> applicationDetails) {
+        BigDecimal generalTax = ZERO;
+        BigDecimal vacantLandtax = ZERO;
+        BigDecimal libraryCess = ZERO;
+        BigDecimal priorIncome = ZERO;
+        BigDecimal arrearsTax = ZERO;
+        BigDecimal currentTax = ZERO;
+        BigDecimal penalty = ZERO;
+        BigDecimal advance = ZERO;
+        for (DemandVoucherDetails demandVoucherDetail : demandVoucherDetailList) {
+            if (demandVoucherDetail.getPurpose().equals(CURR_TAX)) {
+                generalTax = generalTax.add(demandVoucherDetail.getGeneralTaxVariation());
+                vacantLandtax = vacantLandtax.add(demandVoucherDetail.getVacantTaxVariation());
+                currentTax = currentTax.add(demandVoucherDetail.getNetBalance());
+            }
+            if (demandVoucherDetail.getPurpose().equals(ARREAR_TAX)) {
+                priorIncome = priorIncome.add(demandVoucherDetail.getGeneralTaxVariation())
+                        .add(demandVoucherDetail.getVacantTaxVariation());
+                arrearsTax = arrearsTax.add(demandVoucherDetail.getNetBalance());
+            }
+            libraryCess = libraryCess.add(demandVoucherDetail.getLibraryCessVariation());
+            advance = advance.add(demandVoucherDetail.getAdvance());
+            penalty = penalty.add(demandVoucherDetail.getPenalty());
+        }
+
+        if (advance.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
+                    putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, priorIncome, PRIOR_INCOME, applicationDetails);
+        if (penalty.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (penalty.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (arrearsTax.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(ARREAR_TAX),
+                    putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (arrearsTax.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(ARREAR_TAX),
+                    putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (currentTax.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(CURR_TAX),
+                    putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (currentTax.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(CURR_TAX),
+                    putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
     }
 
     private void assembleIncomeHeads(Map<String, Map<String, Object>> voucherDetails, Map<String, String> glCodeMap,
