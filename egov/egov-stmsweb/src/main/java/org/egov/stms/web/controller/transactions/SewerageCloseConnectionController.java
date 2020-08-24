@@ -59,10 +59,6 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_S
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_SOURCE_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -150,8 +146,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
     private String loadCloseConnectionForm(final SewerageApplicationDetails sewerageApplicationDetails, final Model model,
             final String shscNumber, final HttpServletRequest request) {
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
-        final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
-                .findByShscNumberAndIsActive(shscNumber);
+       
         sewerageApplicationDetails.setConnection(sewerageConnection);
 
         boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
@@ -181,6 +176,9 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
                 return COMMON_ERROR;
             }
         }
+        
+        final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
+                .findByShscNumberAndIsActive(shscNumber);
 
         if (sewerageApplicationDetailsFromDB != null) {
             BigDecimal taxDue = sewerageApplicationDetailsService.getPendingTaxAmount(sewerageApplicationDetailsFromDB);
@@ -259,7 +257,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         if (anonymousUser) {
             sewerageApplicationDetails.setSource(Source.ONLINE.toString());
             sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                    SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED, SewerageTaxConstants.MODULETYPE));
+                    SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED, MODULETYPE));
             if (StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getAdditionalRule()))
                 sewerageApplicationDetails.getWorkflowContainer()
                         .setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
@@ -280,41 +278,41 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
         if (isWardSecretaryUser)
             sewerageApplicationDetailsService.persistAndPublishEventForWardSecretary(sewerageApplicationDetails, files,
-                            request, StringUtils.EMPTY, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
-   
+                    request, StringUtils.EMPTY, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
+
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
-		String approverName = StringUtils.EMPTY;
-		String nextDesignation = StringUtils.EMPTY;
-		final Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-		if (anonymousUser || isWardSecretaryUser) {
-			final Assignment assignment = assignmentService
-					.getPrimaryAssignmentForPositon(sewerageApplicationDetails.getState().getOwnerPosition().getId());
-			if (assignment != null) {
-				approvalPosition = assignment.getPosition().getId();
-				approverName = assignment.getEmployee().getName();
-				nextDesignation = assignment.getDesignation().getName();
-			}
-			final String message = messageSource.getMessage("msg.success.forward",
-					new String[] { approverName.concat("~").concat(nextDesignation),
-							newSewerageApplicationDetails.getApplicationNumber() },
-					null);
-			redirectAttributes.addFlashAttribute("message", message);
-			return "redirect:/transactions/new-sewerage-ackowledgement/"
-					+ newSewerageApplicationDetails.getApplicationNumber();
-		} else {
-			List<Assignment> asignList = new ArrayList<>();
-			if (assignObj != null) {
-				asignList.add(assignObj);
-			} else if (assignObj == null && approvalPosition > 0)
-				asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-			final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : StringUtils.EMPTY;
-			final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
-					+ sewerageTaxUtils.getApproverName(approvalPosition) + ","
-					+ (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : StringUtils.EMPTY) + ","
-					+ (nextDesign != null ? nextDesign : StringUtils.EMPTY);
-			return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
-		}
+        String approverName = StringUtils.EMPTY;
+        String nextDesignation = StringUtils.EMPTY;
+        final Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
+        if (anonymousUser || isWardSecretaryUser) {
+            final Assignment assignment = assignmentService
+                    .getPrimaryAssignmentForPositon(sewerageApplicationDetails.getState().getOwnerPosition().getId());
+            if (assignment != null) {
+                approvalPosition = assignment.getPosition().getId();
+                approverName = assignment.getEmployee().getName();
+                nextDesignation = assignment.getDesignation().getName();
+            }
+            final String message = messageSource.getMessage("msg.success.forward",
+                    new String[] { approverName.concat("~").concat(nextDesignation),
+                            newSewerageApplicationDetails.getApplicationNumber() },
+                    null);
+            redirectAttributes.addFlashAttribute("message", message);
+            return "redirect:/transactions/new-sewerage-ackowledgement/"
+                    + newSewerageApplicationDetails.getApplicationNumber();
+        } else {
+            List<Assignment> asignList = new ArrayList<>();
+            if (assignObj != null) {
+                asignList.add(assignObj);
+            } else if (assignObj == null && approvalPosition > 0)
+                asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+            final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : StringUtils.EMPTY;
+            final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
+                    + sewerageTaxUtils.getApproverName(approvalPosition) + ","
+                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : StringUtils.EMPTY) + ","
+                    + (nextDesign != null ? nextDesign : StringUtils.EMPTY);
+            return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
+        }
     }
 
     @RequestMapping(value = "/closeConnection-success", method = RequestMethod.GET)

@@ -783,9 +783,9 @@ public class SewerageApplicationDetailsService {
                 && Source.WARDSECRETARY.toString().equalsIgnoreCase(sewerageApplicationDetails.getSource())
                 && (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))
                 || APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
-            if ((NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+            if (NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
                     || CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
-                    || CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode()))) {
+                    || CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())) {
                 publishEventForWardSecretary(null, sewerageApplicationDetails.getApplicationNumber(),
                         sewerageApplicationDetails.getApplicationType().getName(), true,
                         WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE, workFlowAction,
