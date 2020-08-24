@@ -49,6 +49,6 @@ package org.egov.stms.autonumber;
 
 public interface SewerageRejectionNoticeNumberGenerator {
 
-    public String generateRejectionNoticeNumber();
+    public String generateRejectionNoticeNumber(String noticeType);
 
 }

@@ -96,14 +96,14 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rejection No. :]]></text>
+				<text><![CDATA[Notice No. :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="320" y="80" width="93" height="12" uuid="e2f33f03-fbf0-4af5-bde7-c403678270d9"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rejection Date : ]]></text>
+				<text><![CDATA[Notice Date : ]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -124,11 +124,11 @@
 				<textFieldExpression><![CDATA[$P{remarks}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="400" y="144" width="125" height="15" uuid="07c73913-a328-4b2d-a9ee-8d7e7a6affd2"/>
+				<reportElement x="340" y="144" width="185" height="15" uuid="07c73913-a328-4b2d-a9ee-8d7e7a6affd2"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{presentCommissioner}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="400" y="124" width="90" height="20" uuid="a7e6846d-8f5f-4f67-891e-fa03a9d51839"/>

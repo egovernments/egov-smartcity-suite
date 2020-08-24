@@ -818,7 +818,8 @@ public class SewerageApplicationDetailsService {
                     final SewerageRejectionNoticeNumberGenerator rejectionNumberGenerator = beanResolver
                             .getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
                     if (rejectionNumberGenerator != null) {
-                        sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator.generateRejectionNoticeNumber());
+						sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator
+								.generateRejectionNoticeNumber(SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE));
                         sewerageApplicationDetails.setRejectionDate(new Date());
                     }
                 }
@@ -929,8 +930,8 @@ public class SewerageApplicationDetailsService {
 				SewerageRejectionNoticeNumberGenerator rejectionNumberGenerator = beanResolver
 						.getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
 				if (rejectionNumberGenerator != null) {
-					sewerageApplicationDetails
-							.setRejectionNumber(rejectionNumberGenerator.generateRejectionNoticeNumber());
+					sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator
+							.generateRejectionNoticeNumber(SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE));
 					sewerageApplicationDetails.setRejectionDate(new Date());
 				}
 
