@@ -195,7 +195,7 @@ public class DemandVoucherService {
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         if (oldProperty != null) {
             oldPtDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(oldProperty);
-            if (IsInstallmentsMismatch(oldPtDemand, ptDemand))
+            if (areInstallmentsMismatch(oldPtDemand, ptDemand))
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails);
             else
@@ -729,7 +729,7 @@ public class DemandVoucherService {
         demandVoucherDetails.setPurpose(normalizeDemandDetailsLarge.getPurpose());
     }
 
-    public boolean IsInstallmentsMismatch(Ptdemand oldDemand, Ptdemand newDemand) {
+    public boolean areInstallmentsMismatch(Ptdemand oldDemand, Ptdemand newDemand) {
         Set<Installment> oldPropertyInstallments = new HashSet<>(oldDemand.getEgDemandDetails().size());
         oldDemand.getEgDemandDetails().stream()
                 .filter(p -> oldPropertyInstallments.add(p.getEgDemandReason().getEgInstallmentMaster()))
@@ -738,7 +738,7 @@ public class DemandVoucherService {
         newDemand.getEgDemandDetails().stream()
                 .filter(p -> newPropertyInstallments.add(p.getEgDemandReason().getEgInstallmentMaster()))
                 .collect(Collectors.toList());
-        return (oldPropertyInstallments.size() != newPropertyInstallments.size()
-                && oldPropertyInstallments.size() < newPropertyInstallments.size());
+        return oldPropertyInstallments.size() != newPropertyInstallments.size()
+                && oldPropertyInstallments.size() < newPropertyInstallments.size();
     }
 }
