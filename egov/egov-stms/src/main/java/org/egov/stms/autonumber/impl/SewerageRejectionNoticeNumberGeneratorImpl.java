@@ -47,11 +47,9 @@
  */
 package org.egov.stms.autonumber.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.stms.autonumber.SewerageRejectionNoticeNumberGenerator;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +57,6 @@ import org.springframework.stereotype.Service;
 public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejectionNoticeNumberGenerator {
 
     private static final String REJECTION_NOTICE_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_REJECTION_NOTICE_NUMBER";
-    private static final String ESTIMATION_NUMBER = "EN-";
     private static final String REJECTION_NUMBER = "RN/";
 
     @Autowired
@@ -69,17 +66,8 @@ public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejec
     private SewerageTaxUtils sewerageTaxUtils;
 
     @Override
-	public String generateRejectionNoticeNumber(String noticeType) {
-		String noticeNumber = StringUtils.EMPTY;
-		if (StringUtils.isNotBlank(noticeType)) {
-			String numberFormat = StringUtils.EMPTY;
-			if (SewerageTaxConstants.NOTICE_TYPE_ESTIMATION_NOTICE.equalsIgnoreCase(noticeType))
-				numberFormat = ESTIMATION_NUMBER;
-			else if (SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE.equalsIgnoreCase(noticeType))
-				numberFormat = REJECTION_NUMBER;
-			noticeNumber = String.format("%s%s%06d", numberFormat, sewerageTaxUtils.getCityCode(),
-					genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
-		}
-		return noticeNumber;
-	}
+    public String generateRejectionNoticeNumber() {
+		return String.format("%s%s%06d", REJECTION_NUMBER, sewerageTaxUtils.getCityCode(),
+				genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
     }
+}

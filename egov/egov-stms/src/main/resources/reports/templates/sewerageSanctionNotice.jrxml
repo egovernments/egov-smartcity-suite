@@ -191,14 +191,14 @@
 				<text><![CDATA[Copy to Asst Engineer with a direction to issue sewerage connection to the above premises and initiate the date of connection.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="330" y="520" width="180" height="20" uuid="18677254-3de8-43ea-99b3-be877e082fc4"/>
+				<reportElement x="343" y="520" width="167" height="20" uuid="18677254-3de8-43ea-99b3-be877e082fc4"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="300" y="540" width="208" height="16" uuid="f2cc217c-cc93-4603-9eff-52f028cd601b"/>
+				<reportElement x="280" y="540" width="228" height="16" uuid="f2cc217c-cc93-4603-9eff-52f028cd601b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>

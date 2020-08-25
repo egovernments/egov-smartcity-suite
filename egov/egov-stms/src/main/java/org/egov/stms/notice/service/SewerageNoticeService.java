@@ -334,11 +334,6 @@ public class SewerageNoticeService {
     public ReportOutput generateReportOutputDataForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session,
             final HttpServletRequest request, String remarks) {
-        final List<Assignment> assignList = assignmentService
-                .getAllActiveAssignments(
-                        designationService.getDesignationByName(
-                                SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId());
-
         ReportRequest reportInput = null;
         final Map<String, Object> reportParams = new HashMap<>();
 
@@ -359,9 +354,6 @@ public class SewerageNoticeService {
             reportParams.put("remarks", remarks);
             reportParams.put("rejectionDate", getDefaultFormattedDate(sewerageApplicationDetails.getRejectionDate()));
             reportParams.put("rejectionNumber", sewerageApplicationDetails.getRejectionNumber());
-            reportParams.put(PRESENT_COMMISSIONER, assignList == null ? StringUtils.EMPTY: assignList
-                    .get(0)
-                    .getEmployee().getName());
             reportInput = new ReportRequest(REJECTION_NOTICE, sewerageApplicationDetails,
                     reportParams);
 

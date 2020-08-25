@@ -819,7 +819,7 @@ public class SewerageApplicationDetailsService {
                             .getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
                     if (rejectionNumberGenerator != null) {
 						sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator
-								.generateRejectionNoticeNumber(SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE));
+								.generateRejectionNoticeNumber());
                         sewerageApplicationDetails.setRejectionDate(new Date());
                     }
                 }
@@ -931,7 +931,7 @@ public class SewerageApplicationDetailsService {
 						.getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
 				if (rejectionNumberGenerator != null) {
 					sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator
-							.generateRejectionNoticeNumber(SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE));
+							.generateRejectionNoticeNumber());
 					sewerageApplicationDetails.setRejectionDate(new Date());
 				}
 
