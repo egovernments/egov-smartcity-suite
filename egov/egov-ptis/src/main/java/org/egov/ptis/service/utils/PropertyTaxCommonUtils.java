@@ -866,6 +866,9 @@ public class PropertyTaxCommonUtils {
                 .createQuery("from PtNotice notice where applicationNumber=? and noticeType=?");
         qry.setParameter(1, applicationNo);
         qry.setParameter(2, noticeType);
+        if(qry.getResultList().isEmpty()){
+            qry.setParameter(2, NOTICE_TYPE_SPECIAL_NOTICE);
+        }
         PtNotice notice = (PtNotice) qry.getSingleResult();
         return notice.getNoticeNo();
     }

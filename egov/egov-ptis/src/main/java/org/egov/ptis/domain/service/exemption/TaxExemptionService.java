@@ -252,14 +252,10 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             for (final Ptdemand ptdemand : newPtdemandSet)
-                if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
-                    for (final EgDemandDetails demandDetails : ptdemand.getEgDemandDetails())
-                        if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
-                                || demandDetails.getInstallmentStartDate().after(effectiveDate))
-                            demandDetailSet.add(demandDetails);
-                    ptdemand.getEgDemandDetails().clear();
-                    ptdemand.getEgDemandDetails().addAll(demandDetailSet);
-                }
+                if(propertyModel.getIsExemptedFromTax())
+                    copyDemandDetailsForExemption(installmentFirstHalf, effectiveDate, demandDetailSet, ptdemand);
+                else
+                    copyDemandDetailsForExemptionRemoval(installmentFirstHalf, effectiveDate, demandDetailSet, ptdemand);
 
         for (final Ptdemand ptdemand : newPtdemandSet)
             propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
@@ -276,6 +272,34 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         }
         return propertyPerService.update(basicProperty);
 
+    }
+
+    public void copyDemandDetailsForExemption(final Installment installmentFirstHalf, Date effectiveDate,
+            final Set<EgDemandDetails> demandDetailSet, final Ptdemand ptdemand) {
+        if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+            for (final EgDemandDetails demandDetails : ptdemand.getEgDemandDetails())
+                if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                        || demandDetails.getInstallmentStartDate().after(effectiveDate))
+                    demandDetailSet.add(demandDetails);
+            ptdemand.getEgDemandDetails().clear();
+            ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+        }
+    }
+    
+    public void copyDemandDetailsForExemptionRemoval(final Installment installmentFirstHalf, Date effectiveDate,
+            final Set<EgDemandDetails> demandDetailSet, final Ptdemand ptdemand) {
+        if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+            for (final EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                        || demandDetails.getInstallmentStartDate().after(effectiveDate) && !demandDetails.getEgDemandReason()
+                                .getEgDemandReasonMaster().getCode().equals(ADVANCE_DMD_RSN_CODE)) {
+                    demandDetails.setAmtCollected(BigDecimal.ZERO);
+                    demandDetailSet.add(demandDetails);
+                }
+            }
+            ptdemand.getEgDemandDetails().clear();
+            ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+        }
     }
 
     @Transactional
