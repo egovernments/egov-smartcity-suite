@@ -931,7 +931,7 @@ public class ReportGenerationService {
     }
     
 	public ReportOutput generateReportOutputDataForRejection(WaterConnectionDetails waterConnectionDetails,
-			String cityName, String rejectionNumber, String rejectionDate, String remarks) {
+			String cityName, String remarks) {
 		final List<Assignment> assignList = assignmentService.getAllActiveAssignments(
 				designationService.getDesignationByName(SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId());
 
@@ -955,8 +955,6 @@ public class ReportGenerationService {
 			reportParams.put("applicantName", ownerName.toString());
 			reportParams.put("cityName", cityName);
 			reportParams.put("remarks", remarks);
-			reportParams.put("rejectionDate", rejectionDate);
-			reportParams.put("rejectionNumber", rejectionNumber);
 			reportParams.put(COMMISSIONER_NAME,
 					assignList == null ? StringUtils.EMPTY : assignList.get(0).getEmployee().getName());
 			reportInput = new ReportRequest("rejectionNotice", waterConnectionDetails, reportParams);

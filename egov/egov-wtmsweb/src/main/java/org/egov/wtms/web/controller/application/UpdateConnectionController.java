@@ -865,7 +865,6 @@ public class UpdateConnectionController extends GenericConnectionController {
 				String rejectionDate = getDefaultFormattedDate(estimationNotice.getEstimationNoticeDate());
 				ReportOutput reportOutput = reportGenerationService.generateReportOutputDataForRejection(
 						waterConnectionDetails, request.getSession().getAttribute("citymunicipalityname").toString(),
-						rejectionNumber, rejectionDate,
 						approvalComent);
 				if (reportOutput != null)
 					waterConnectionDetailsService.updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
