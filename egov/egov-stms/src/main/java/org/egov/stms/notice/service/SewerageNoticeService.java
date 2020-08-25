@@ -352,8 +352,6 @@ public class SewerageNoticeService {
             reportParams.put("applicantName", ownerName);
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("remarks", remarks);
-            reportParams.put("rejectionDate", getDefaultFormattedDate(sewerageApplicationDetails.getRejectionDate()));
-            reportParams.put("rejectionNumber", sewerageApplicationDetails.getRejectionNumber());
             reportInput = new ReportRequest(REJECTION_NOTICE, sewerageApplicationDetails,
                     reportParams);
 
