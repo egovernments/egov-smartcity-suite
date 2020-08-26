@@ -25,10 +25,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = LicenseNotice.SEQUENCE, sequenceName = LicenseNotice.SEQUENCE, allocationSize = 1)
 public class LicenseNotice implements Serializable {
 
-	public LicenseNotice() {
-		super();
-	}
-
 	private static final long serialVersionUID = 1L;
 
     public static final String SEQUENCE = "SEQ_EGTL_NOTICE";
