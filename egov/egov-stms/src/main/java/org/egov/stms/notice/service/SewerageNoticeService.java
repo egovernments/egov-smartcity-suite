@@ -352,6 +352,7 @@ public class SewerageNoticeService {
             reportParams.put("applicantName", ownerName);
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("remarks", remarks);
+			reportParams.put("applicationNumber", sewerageApplicationDetails.getApplicationNumber());
             reportInput = new ReportRequest(REJECTION_NOTICE, sewerageApplicationDetails,
                     reportParams);
 
