@@ -136,6 +136,32 @@
                                 <form:options items="${localityList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message code='lbl.notice.type'/>
+                        <span class="mandatory1">*</span></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="noticeTypeName" id="noticeTypeId" cssClass="form-control"
+                                         cssErrorClass="form-control error" onchange="selectNoticeType();">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${noticeType}"/>
+                            </form:select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none" id="showDateRange">
+                    	<label class="col-sm-3 control-label text-right"> <spring:message code='lbl.fromdate'/>
+                    	<span class="mandatory1">*</span></label>
+                    	<div class="col-sm-3 add-margin">
+                    		<input name="fromDate" id="noticeFromDate" value="" 
+							placeholder="DD/MM/YYYY" class="datepicker form-control" readonly/>
+                                                		
+                    	</div>
+                    	<label class="col-sm-2 control-label text-right"> <spring:message code='lbl.todate'/>
+                    	<span class="mandatory1">*</span></label>
+                    	<div class="col-sm-3 add-margin">
+                    		<input name="toDate" id="noticeToDate" value="" 
+							placeholder="DD/MM/YYYY" class="datepicker form-control" readonly/>
+                    	</div>
                     </div>
 
                     <div class="row">
@@ -194,12 +220,15 @@
         </div>
     </div>
 </div>
+
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/fixedColumns.dataTables.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	  href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" type="text/css" />
 <script type="text/javascript"
         src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -208,4 +237,6 @@
         src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
         src="<cdn:url  value='/resources/js/app/trade-license-demand-notice-search.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" 
+		src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 

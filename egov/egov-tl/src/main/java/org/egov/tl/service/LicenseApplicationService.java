@@ -78,6 +78,7 @@ import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPubl
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.utils.Constants;
@@ -234,6 +235,11 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseCitizenPortalService.onUpdate(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+    }
+    
+    @Transactional
+    public void saveRejectionNotice(LicenseNotice licenseNotice) {
+    	licenseNoticeRepository.save(licenseNotice);
     }
 
     public void processDigitalSignature(String applicationNumber) {

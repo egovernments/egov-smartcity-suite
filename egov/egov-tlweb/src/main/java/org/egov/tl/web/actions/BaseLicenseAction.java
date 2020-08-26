@@ -113,6 +113,7 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
@@ -254,6 +255,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             addNewDocuments();
             licenseApplicationService.updateLicense(license(), workflowBean);
             successMessage();
+            if(BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())){
+            	final LicenseNotice licenseNotice = tradeLicenseService.generateReportForRejection(license(), 
+            			workflowBean.getApproverComments());
+            	licenseApplicationService.saveRejectionNotice(licenseNotice);
+            }
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 return GENERATE_CERTIFICATE;
             else
@@ -275,6 +281,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             processWorkflow();
             addNewDocuments();
             tradeLicenseService.updateTradeLicense(license(), workflowBean);
+            if(BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())){
+            	final LicenseNotice licenseNotice = tradeLicenseService.generateReportForRejection(license(), workflowBean.getApproverComments());
+            	licenseApplicationService.saveRejectionNotice(licenseNotice);
+            }
             return GENERATECERTIFICATE
                     .equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? GENERATE_CERTIFICATE : MESSAGE;
         }

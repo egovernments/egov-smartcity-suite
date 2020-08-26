@@ -193,6 +193,8 @@ public final class Constants {
     public static final String WARDSECRETARY_WSPORTAL_REQUEST = "wsPortalRequest";
     public static final String WARDSECRETARY_SOURCE_CODE = "source";
     public static final String WARDSECRETARY_USER_NAME = "wardsecretary";
+    public static final String NOTICE_TYPE_REJECTION_NOTICE = "Rejection Notice";
+    public static final String MODULE_NAME = "Trade License";
 
     private Constants() {
         // only invariants
