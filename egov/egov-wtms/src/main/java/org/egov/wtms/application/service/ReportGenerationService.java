@@ -957,6 +957,7 @@ public class ReportGenerationService {
 			reportParams.put("remarks", remarks);
 			reportParams.put(COMMISSIONER_NAME,
 					assignList == null ? StringUtils.EMPTY : assignList.get(0).getEmployee().getName());
+			reportParams.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
 			reportInput = new ReportRequest("rejectionNotice", waterConnectionDetails, reportParams);
 
 		}

@@ -54,8 +54,7 @@
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="remarks" class="java.lang.String"/>
 	<parameter name="commissionerName" class="java.lang.String"/>
-	<parameter name="rejectionDate" class="java.lang.String"/>
-	<parameter name="rejectionNumber" class="java.lang.String"/>
+	<parameter name="applicationNumber" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -80,14 +79,14 @@
 	<detail>
 		<band height="165" splitType="Stretch">
 			<textField>
-				<reportElement x="15" y="17" width="195" height="20" uuid="52460259-e99f-4f65-9598-d287d20ac5c2"/>
+				<reportElement x="15" y="17" width="534" height="20" uuid="52460259-e99f-4f65-9598-d287d20ac5c2"/>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA["Dear"+" "+$P{applicantName}+","]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="15" y="47" width="535" height="30" uuid="f367124a-f3b5-430d-95b7-f101935631ba"/>
 				<textElement textAlignment="Left" markup="none"/>
-				<textFieldExpression><![CDATA["We regret to say that your application for"+" " +$P{applicationType}+","+" "+"is hereby rejected on following grounds :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["We regret to say that your application bearing No."+" " +$P{applicationNumber}+" "+"for"+" " +$P{applicationType}+","+" "+"is hereby rejected on following grounds :"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="15" y="81" width="535" height="29" uuid="a9c3dae5-1228-4529-8d09-2304425c5768"/>
