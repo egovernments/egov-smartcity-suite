@@ -89,7 +89,8 @@ public class RejectionNoticeController {
 		headers.setContentType(MediaType.parseMediaType("application/pdf"));
 		headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
 		reportOutput = reportGenerationService.generateReportOutputDataForRejection(waterConnectionDetails,
-				session.getAttribute("citymunicipalityname").toString(), request.getParameter("approvalComent"));
+				session.getAttribute("citymunicipalityname").toString(), request.getParameter("approvalComent"),
+				request.getParameter("applicationType"));
 		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 	}
 

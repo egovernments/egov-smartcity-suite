@@ -931,7 +931,7 @@ public class ReportGenerationService {
     }
     
 	public ReportOutput generateReportOutputDataForRejection(WaterConnectionDetails waterConnectionDetails,
-			String cityName, String remarks) {
+			String cityName, String remarks, String applicationType) {
 		final List<Assignment> assignList = assignmentService.getAllActiveAssignments(
 				designationService.getDesignationByName(SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId());
 
@@ -950,8 +950,7 @@ public class ReportGenerationService {
 				ownerName.append(names.getOwnerName());
 			}
 
-			reportParams.put(APPLICATION_TYPE,
-					WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+			reportParams.put(APPLICATION_TYPE, applicationType);
 			reportParams.put("applicantName", ownerName.toString());
 			reportParams.put("cityName", cityName);
 			reportParams.put("remarks", remarks);
