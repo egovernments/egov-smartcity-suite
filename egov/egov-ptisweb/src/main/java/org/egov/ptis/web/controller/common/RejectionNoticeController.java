@@ -68,6 +68,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -103,6 +104,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/rejectionnotice" })
 
 public class RejectionNoticeController {
+    private static final Logger LOGGER = Logger.getLogger(RejectionNoticeController.class);
+    
     @Autowired
     private NoticeService noticeService;
     @Autowired
@@ -172,6 +175,7 @@ public class RejectionNoticeController {
         model.addAttribute("ulbCode", ulbCode);
         model.addAttribute("fileStoreIds", fileStoreIds);
         model.addAttribute("digitalSignEnabled", digitalSignEnabled);
+        LOGGER.error("ulbCode=" + ulbCode +", fileStoreIds=" + fileStoreIds +", digitalSignEnabled=" + digitalSignEnabled);
         if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             return "digital-signature";
 
