@@ -90,7 +90,7 @@ public class RejectionNoticeController {
 		headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
 		reportOutput = reportGenerationService.generateReportOutputDataForRejection(waterConnectionDetails,
 				session.getAttribute("citymunicipalityname").toString(), request.getParameter("approvalComent"),
-				request.getParameter("applicationType"));
+				request.getParameter("applicationName"));
 		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 	}
 

@@ -574,7 +574,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
 		String mode = EMPTY;
 		Double donationCharges = 0d;
-		String applicationType = waterConnectionDetails.getApplicationType().getName();
+		String applicationType = waterConnectionDetails.getApplicationType().getCode();
+		String applicationName = waterConnectionDetails.getApplicationType().getName();
 		String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION))
 				? request.getParameter(WORKFLOW_ACTION)
 				: EMPTY;
@@ -864,13 +865,13 @@ public class UpdateConnectionController extends GenericConnectionController {
 								WaterTaxConstants.NOTICETYPE_REJECTION, applicationType);
 				ReportOutput reportOutput = reportGenerationService.generateReportOutputDataForRejection(
 						waterConnectionDetails, request.getSession().getAttribute("citymunicipalityname").toString(),
-						approvalComent, applicationType);
+						approvalComent, applicationName);
 				if (reportOutput != null)
 					waterConnectionDetailsService.updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
 							estimationNotice, reportOutput);
 				return "redirect:/application/rejectionnotice?pathVar="
 						.concat(waterConnectionDetails.getApplicationNumber()).concat("&approvalComent=")
-						.concat(approvalComent).concat("&applicationType=").concat(applicationType);
+						.concat(approvalComent).concat("&applicationName=").concat(applicationName);
 			}
 
 			Assignment currentUserAssignment = assignmentService
