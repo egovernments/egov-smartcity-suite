@@ -70,6 +70,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -124,7 +125,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -165,6 +165,8 @@ public class TradeLicenseService {
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_TYPE = "applicationType";
 	public static final String REJECTION_NOTICE = "tl_acknowledgement";
+	private static final String REJECTION_NOTICE_NUMBER_SEQ_PREFIX = "SEQ_TL_REJECTION_NOTICE_NUMBER";
+    private static final String REJECTION_NUMBER = "RN/";
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -257,6 +259,9 @@ public class TradeLicenseService {
 
     @Autowired
     private EisCommonService eisCommonService;
+    
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
 	private InputStream generateNoticePDF;
 
@@ -763,9 +768,8 @@ public class TradeLicenseService {
 
 	public LicenseNotice generateReportForRejection(TradeLicense license, String remarks) {
 		String reportTemplate;
-		LicenseNotice licenseNotice = null;
-		String runningNumber = getRandomNumberString();
-		final String rejectionNoticeNo = "RN/"+cityService.getCityCode()+runningNumber;
+		LicenseNotice licenseNotice = null; 
+		final String rejectionNoticeNo = generateRejectionNoticeNumber();
 		if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade()))
 			reportTemplate = "tl_rejection_notice";
 		else
@@ -794,11 +798,10 @@ public class TradeLicenseService {
 		}
 		return licenseNotice;
 	}
-
-	public static String getRandomNumberString() {
-	    Random rnd = new Random();
-	    int number = rnd.nextInt(999999);
-	    return String.format("%06d", number);
+	
+	public String generateRejectionNoticeNumber() {
+		return String.format("%s%s%06d", REJECTION_NUMBER, cityService.getCityCode(),
+				genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
 	}
 	
 	private void buildLicenseNotice(final TradeLicense license, final LicenseNotice licenseNotice,

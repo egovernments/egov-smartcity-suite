@@ -184,6 +184,7 @@ $(document).ready(function () {
                 var noticeTypeName = $('#noticeTypeId :selected').text();
                 var noticeFromDate = $('#noticeFromDate').val();
                 var noticeToDate = $('#noticeToDate').val();
+                var correctNoticeType = false;
                 
                 if(noticeTypeName == "Rejection Notice"){
                 	noticeType = [{
@@ -314,6 +315,25 @@ $(document).ready(function () {
                     bootbox.alert("Atleast one search criteria is mandatory!");
                     return false;
                 }
+                
+                if(noticeTypeName == "Rejection Notice" || noticeTypeName == "Generate Bulk Demand Notice"){
+                	correctNoticeType = true;
+                }
+                if(!correctNoticeType){
+                	bootbox.alert("Please select the notice type");
+                    return false;
+                }
+                
+            	if (noticeToDate < noticeFromDate) {
+            		bootbox.alert("Please enter correct date range");
+            		return false; 
+            	}
+            	if(noticeTypeName == "Rejection Notice"){
+            		if(noticeFromDate == "" || noticeToDate == ""){
+            			bootbox.alert("Date can not be empty");
+            			return false;
+            		}
+            	}
 
                 $('.loader-class').modal('show', {backdrop: 'static'});
                 $('.report-section').show();
@@ -389,5 +409,7 @@ function selectNoticeType (){
 		$("#showDateRange").css("display", "block");
 	}else{
 		$("#showDateRange").css("display", "none");
+		$('#noticeFromDate').val("");
+		$('#noticeToDate').val("");
 	}
 }

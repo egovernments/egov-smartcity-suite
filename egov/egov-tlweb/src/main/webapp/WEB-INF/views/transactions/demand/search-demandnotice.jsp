@@ -141,7 +141,7 @@
                         <div class="col-sm-3 add-margin">
                             <form:select path="noticeTypeName" id="noticeTypeId" cssClass="form-control"
                                          cssErrorClass="form-control error" onchange="selectNoticeType();">
-                                <form:option value="">
+                                <form:option value="select">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${noticeType}"/>
