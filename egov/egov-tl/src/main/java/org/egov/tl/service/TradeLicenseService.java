@@ -165,7 +165,7 @@ public class TradeLicenseService {
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_TYPE = "applicationType";
 	public static final String REJECTION_NOTICE = "tl_acknowledgement";
-	private static final String REJECTION_NOTICE_NUMBER_SEQ_PREFIX = "SEQ_TL_REJECTION_NOTICE_NUMBER";
+	private static final String REJECTION_SEQ_PREFIX = "SEQ_TL_REJECTION_NOTICE_NUMBER";
     private static final String REJECTION_NUMBER = "RN/";
 
     @PersistenceContext
@@ -801,7 +801,7 @@ public class TradeLicenseService {
 	
 	public String generateRejectionNoticeNumber() {
 		return String.format("%s%s%06d", REJECTION_NUMBER, cityService.getCityCode(),
-				genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
+				genericSequenceNumberGenerator.getNextSequence(REJECTION_SEQ_PREFIX));
 	}
 	
 	private void buildLicenseNotice(final TradeLicense license, final LicenseNotice licenseNotice,
