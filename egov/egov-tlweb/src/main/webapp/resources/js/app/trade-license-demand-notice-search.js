@@ -407,8 +407,10 @@ function selectNoticeType (){
 	var noticeType = $('#noticeTypeId :selected').text();
 	if(noticeType == "Rejection Notice"){
 		$("#showDateRange").css("display", "block");
+		$("#btngeneratePDF").hide();
 	}else{
 		$("#showDateRange").css("display", "none");
+		$("#btngeneratePDF").show();
 		$('#noticeFromDate').val("");
 		$('#noticeToDate').val("");
 	}
