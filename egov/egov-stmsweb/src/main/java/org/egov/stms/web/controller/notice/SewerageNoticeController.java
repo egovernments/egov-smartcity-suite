@@ -303,7 +303,7 @@ public class SewerageNoticeController {
         return noticeType;
     }
 
-    @RequestMapping(value = "/searchNotices-showSewerageNotice", method = RequestMethod.GET)
+    @RequestMapping(value = "/searchNotices-showSewerageNotice/", method = RequestMethod.GET)
     public String showNotice(@RequestParam("noticeNo") final String noticeNo,
             @RequestParam("noticeType") final String noticeTypeInput, final Model model,
                              final HttpServletResponse response) throws IOException {
