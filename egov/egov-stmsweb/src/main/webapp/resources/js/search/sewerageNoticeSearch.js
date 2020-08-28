@@ -216,7 +216,8 @@ function validateNoticeForm()
 		columns : [{title : 'Applicant Name',data : "applicantName"},
 		           {title : 'Notice No',class : 'row-detail', data : 'noticeNumber',
 		        	   "render": function ( data, type, row, meta ) {
-		        		   return '<a target="_blank" href="/stms/reports/searchNotices-showSewerageNotice/'+data+'/'+noticetype+'">'+data+'</a>';} },
+		        		   return '<a target="_blank" href="/stms/reports/searchNotices-showSewerageNotice'
+		        		   + '?noticeNo='+ data + '&noticeType='+ noticetype +'">'+data+'</a>';} },
 		           {title : 'Notice Gen Date',data : "noticeDate"},
 		           {title : 'S.H.S.C Number',data : "shscNumber"},
 		           {title : 'Door No',data :  "doorNumber"},
