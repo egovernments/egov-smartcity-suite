@@ -47,6 +47,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -55,9 +58,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,30 +69,29 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application")
 public class RejectionNoticeController {
 
-	@Autowired
-	private WaterConnectionDetailsService waterConnectionDetailsService;
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
-	@Autowired
-	private ReportGenerationService reportGenerationService;
+    @Autowired
+    private ReportGenerationService reportGenerationService;
 
-	@RequestMapping(value = "/rejectionnotice", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<byte[]> generateRejectionNotice(final HttpServletRequest request,
-			final HttpSession session) {
-		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-				.findByApplicationNumber(request.getParameter("pathVar"));
-		return generateReport(waterConnectionDetails, session, request);
-	}
+    @RequestMapping(value = "/rejectionnotice", method = RequestMethod.GET, produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateRejectionNotice(final HttpServletRequest request,
+            final HttpSession session) {
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(request.getParameter("pathVar"));
+        return generateReport(waterConnectionDetails, session, request);
+    }
 
-	private ResponseEntity<byte[]> generateReport(WaterConnectionDetails waterConnectionDetails,
-			final HttpSession session, final HttpServletRequest request) {
-		ReportOutput reportOutput = null;
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
-		reportOutput = reportGenerationService.generateReportOutputDataForRejection(waterConnectionDetails,
-				session.getAttribute("citymunicipalityname").toString(), request.getParameter("approvalComent"),
-				request.getParameter("applicationName"));
-		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-	}
+    private ResponseEntity<InputStreamResource> generateReport(WaterConnectionDetails waterConnectionDetails,
+            final HttpSession session, final HttpServletRequest request) {
+
+        ReportOutput reportOutput = reportGenerationService.generateReportOutputDataForRejection(waterConnectionDetails,
+                session.getAttribute("citymunicipalityname").toString(), request.getParameter("approvalComent"),
+                request.getParameter("applicationName"));
+        reportOutput.setReportName("Rejectionnotice");
+        return reportAsResponseEntity(reportOutput);
+    }
 
 }
