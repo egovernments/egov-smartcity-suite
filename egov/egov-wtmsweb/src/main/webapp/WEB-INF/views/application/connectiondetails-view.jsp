@@ -51,8 +51,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<div class="row">
-	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -212,10 +210,6 @@
 							</div>
 						</c:if>
 					</div>
-				</div>
-			</div>
-		</div>					
-	</div>
 	<c:if test="${mode !='meterEntry'}">
 		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 	</c:if>
