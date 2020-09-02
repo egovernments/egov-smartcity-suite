@@ -46,7 +46,7 @@
  *
  */
 $(document).ready(function(){
-	
+	hideMeteredConnectionTypeForRegularization();
 	$('#sewpropertyType option').each(function() {
 	    var $this = $(this);
 	    $this.text($this.text().replace(/_/g, ' '));
@@ -228,5 +228,16 @@ $(document).ready(function(){
 			console.log("failed");
 		}
 	});
+	}
+	
+	function hideMeteredConnectionTypeForRegularization()
+	{
+		var currentstate = $('#wfstateDesc').val();
+		var isEstimationDetailsPresent = $('#isEstimationDetailsPresent').val();
+		if($('#typeOfConnection').val()==='REGLZNCONNECTION' && (currentstate ==='Clerk approved' || isEstimationDetailsPresent === 'true'))
+		{
+			$('.showfields').hide();
+			$('#connectionTypes').attr('disabled',true);
+		}
 	}
 });

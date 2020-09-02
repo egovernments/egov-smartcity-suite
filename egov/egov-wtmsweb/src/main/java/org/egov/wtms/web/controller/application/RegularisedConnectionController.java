@@ -63,6 +63,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -167,6 +168,7 @@ public class RegularisedConnectionController extends GenericConnectionController
             waterConnectionDetails.setApplicationNumber(request.getParameter("applicationNo"));
 		model.addAttribute("documentNamesList",
 				waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType()));
+		model.addAttribute("connectionTypeForRegularization", Arrays.asList(ConnectionType.NON_METERED));
         return REGULARISE_CONN_FORM;
     }
 

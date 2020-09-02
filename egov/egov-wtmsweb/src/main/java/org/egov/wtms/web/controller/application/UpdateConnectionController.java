@@ -285,6 +285,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 		WorkflowContainer workflowContainer = new WorkflowContainer();
 		Boolean isCommissionerLoggedIn = Boolean.FALSE;
 		Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
+		boolean isEstimationDetailsPresent = false;
 		String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
 
 		if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
@@ -469,6 +470,12 @@ public class UpdateConnectionController extends GenericConnectionController {
 				pipeSizeService.getAllPipeSizesByPropertyType(waterConnectionDetails.getPropertyType().getId()));
 		model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
 		model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
+		if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+			model.addAttribute("connectionTypeForRegularization", Arrays.asList(ConnectionType.NON_METERED));
+			if (!waterConnectionDetails.getEstimationDetails().isEmpty())
+				isEstimationDetailsPresent = true;
+			model.addAttribute("isEstimationDetailsPresent", isEstimationDetailsPresent);
+		}
 		return NEWCONNECTION_EDIT;
 	}
 

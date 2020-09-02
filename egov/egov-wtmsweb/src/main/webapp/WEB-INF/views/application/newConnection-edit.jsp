@@ -90,6 +90,9 @@
         <input type="hidden" id="date" name="date" value="${waterConnectionDetails.applicationDate}" />
         <input type="hidden" id="hasEstimationDueForMetered" name="hasEstimationDueForMetered" value="${hasEstimationDueForMetered}" />
         <input type="hidden" id="noActiveJAOrSA" name="noActiveJAOrSA" value="${noActiveJAOrSA}" />
+        <input type="hidden" id="connectionTypeForRegularization" name="connectionTypeForRegularization" value="${connectionTypeForRegularization}" />
+        <input type="hidden" id="isEstimationDetailsPresent" name="isEstimationDetailsPresent" value="${isEstimationDetailsPresent}" />
+        
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">
