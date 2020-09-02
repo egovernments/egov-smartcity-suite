@@ -64,7 +64,7 @@
 		<c:when test="${mode != 'fieldInspection'}">
 			<c:if test="${mode !='dataEntry' }">
 				<div class="col-sm-3 add-margin">
-					<form:select path="connectionType" data-first-option="false" id="connectionTypes"
+					<form:select path="connectionType" data-first-option="false"
 						cssClass="form-control" required="required">
 						<form:option value="">
 							<spring:message code="lbl.select" />

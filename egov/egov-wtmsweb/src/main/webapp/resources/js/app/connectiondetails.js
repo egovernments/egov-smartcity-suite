@@ -237,7 +237,7 @@ $(document).ready(function(){
 		if($('#typeOfConnection').val()==='REGLZNCONNECTION' && (currentstate ==='Clerk approved' || isEstimationDetailsPresent === 'true'))
 		{
 			$('.showfields').hide();
-			$('#connectionTypes').attr('disabled',true);
+			$('#connectionType').attr('disabled',true);
 		}
 	}
 });
