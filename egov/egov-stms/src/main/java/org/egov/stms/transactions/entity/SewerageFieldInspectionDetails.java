@@ -48,6 +48,7 @@
 package org.egov.stms.transactions.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -85,17 +86,22 @@ public class SewerageFieldInspectionDetails extends AbstractAuditable {
     private Integer noOfScrews;
 
     @NotNull
+    @Length(min = 1)
     private Integer screwSize;
 
     @NotNull
+    @Length(min = 1)
     private Double pipeLength;
 
     @NotNull
+    @Length(min = 1)
     private Double distance;
+    @Length(min = 1)
     private Integer roadLength;
     private boolean roadDigging;
     
     @SafeHtml
+    @Length(max = 50)
     private String roadOwner;
 
     @Override

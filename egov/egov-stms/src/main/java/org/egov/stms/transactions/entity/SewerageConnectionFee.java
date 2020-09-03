@@ -49,6 +49,7 @@ package org.egov.stms.transactions.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.stms.masters.entity.FeesDetailMaster;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -87,6 +88,7 @@ public class SewerageConnectionFee extends AbstractAuditable {
     @JoinColumn(name = "applicationdetail", nullable = false)
     private SewerageApplicationDetails applicationDetails;
 
+    @Length (min = 1)
     private double amount;
 
     @Override

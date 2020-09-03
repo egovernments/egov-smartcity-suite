@@ -50,6 +50,7 @@ package org.egov.stms.notice.entity;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -88,6 +89,7 @@ public class SewerageNotice implements Serializable {
     @JoinColumn(name = "module", nullable = false)
     private Module module;
     @SafeHtml
+    @Length(max = 64)
     private String noticeNo;
 
     @Temporal(value = TemporalType.DATE)

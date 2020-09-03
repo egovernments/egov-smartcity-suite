@@ -87,12 +87,14 @@ public class SewerageConnectionEstimationDetails extends AbstractAuditable {
     @Length(max = 1024)
     private String itemDescription;
 
+    @Length(min = 1)
     private Double unitRate;
 
     @SafeHtml
     @Length(max = 50)
     private String unitOfMeasurement;
 
+    @Length(min = 1)
     private Double quantity;
 
     @NotNull

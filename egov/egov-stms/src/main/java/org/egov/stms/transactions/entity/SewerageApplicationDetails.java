@@ -92,6 +92,7 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     private SewerageConnection connection;
 
     @SafeHtml
+    @Length(max = 50)
     private String applicationNumber;
 
     @Temporal(value = TemporalType.DATE)
@@ -112,6 +113,7 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     private Date estimationDate;
 
     @SafeHtml
+    @Length(max = 50)
     private String workOrderNumber;
 
     @Temporal(value = TemporalType.DATE)
@@ -125,6 +127,7 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     private Date rejectionDate;
 
     @SafeHtml
+    @Length(min = 3, max = 50)
     private String closureNoticeNumber;
 
     @Temporal(value = TemporalType.DATE)

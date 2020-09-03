@@ -86,6 +86,7 @@ public class SewerageApplicationType extends AbstractAuditable {
     private String name;
 
     @SafeHtml
+    @Length(max = 64)
     private String description;
 
     @NotNull

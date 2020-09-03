@@ -60,6 +60,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Immutable
@@ -70,26 +72,47 @@ public class SewerageApplicationView implements Serializable {
 
     @Id
     private BigInteger applicationId;
+    @SafeHtml
+    @Length(max = 50)
     private String applicationNo;
     @Column(name = "applicationDate")
     @Temporal(TemporalType.DATE)
     private Date applicationDate;
+    @SafeHtml
     private String applicationType;
     private Boolean active;
+    @SafeHtml
     private String applicationStatus;
+    @SafeHtml
+    @Length(min = 3, max = 50)
     private String shscNo;
+    @SafeHtml
+    @Length(min = 3, max = 50)
     private String propertyId;
+    @SafeHtml
     private String propertyType;
+    @SafeHtml
     private String processOwner;
+    @SafeHtml
     private String propertyOwner;
+    @SafeHtml
     private String doorNo;
+    @SafeHtml
     private String address;
+    @SafeHtml
     private String revenueWard;
+    @SafeHtml
     private String zoneName;
+    @SafeHtml
     private String localityName;
+    @SafeHtml
     private String blockName;
+    @SafeHtml
     private String electionWard;
+    @SafeHtml
+    @Length(max = 10)
     private String mobileNo;
+    @SafeHtml
     private String connectionStatus;
     private BigInteger connectionId;
 
