@@ -496,4 +496,7 @@ public class WaterTaxConstants {
     public static final String NOTICETYPE_ESTIMATION = "ESTIMATIONNOTICE";
     public static final String NOTICETYPE_REJECTION = "REJECTIONNOTICE";
     public static final String REJECTION_NOTICE = "Rejection Notice";
+    public static final String FINANCIALYEAR_START_DATE = "STARTDATE";
+    public static final String FINANCIALYEAR_END_DATE = "ENDDATE";
+    
 }

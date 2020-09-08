@@ -407,6 +407,8 @@ public class WaterConnectionDetailsService {
         @Autowired
         @Qualifier("workflowService")
         private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
+        @Autowired
+        private WaterDemandVoucherService waterDemandVoucherService;
 
     @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
@@ -1564,24 +1566,30 @@ public class WaterConnectionDetailsService {
         @Transactional
         public Boolean updateStatus(List<WaterConnectionDetails> connectionDetailsList) {
             Installment executionInstallment;
-                if (!connectionDetailsList.isEmpty()) {
-                        for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
-                                waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
-                                if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
-                                                && APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())){
+        if (!connectionDetailsList.isEmpty()) {
+            for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
+                waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
+                if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
+                        && APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
                     executionInstallment = connectionDemandService.getCurrentInstallment(PROPERTY_MODULE_NAME, null,
                             waterConnectionDetails.getExecutionDate());
                     connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, executionInstallment,
                             null,
-                                                        WF_STATE_TAP_EXECUTION_DATE_BUTTON);
-                                }
-                                waterConnectionDetailsRepository.save(waterConnectionDetails);
-                                waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
-                                updatePortalMessage(waterConnectionDetails);
-                                updateIndexes(waterConnectionDetails);
-                        }
-                        return true;
+                            WF_STATE_TAP_EXECUTION_DATE_BUTTON);
+
+                    if ((NEWCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()) ||
+                            ADDNLCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+                            && waterDemandVoucherService.getDemandVoucherEnable())
+                        waterDemandVoucherService.createDemandVoucher(waterConnectionDetails);
+
                 }
+                waterConnectionDetailsRepository.save(waterConnectionDetails);
+                waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
+                updatePortalMessage(waterConnectionDetails);
+                updateIndexes(waterConnectionDetails);
+            }
+            return true;
+        }
                 return false;
         }
 
