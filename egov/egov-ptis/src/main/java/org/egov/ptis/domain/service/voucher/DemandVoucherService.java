@@ -434,11 +434,6 @@ public class DemandVoucherService {
             }
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
-            System.out.println("Installment " + demandVoucherDetails.getInstallment() + "\nGeneral Tax "
-                    + demandVoucherDetails.getGeneralTaxVariation() + "\nLibrary Cess "
-                    + demandVoucherDetails.getLibraryCessVariation() + "\nNetBalance "
-                    + demandVoucherDetails.getNetBalance()
-                    + "\nOldBalance" + oldBalance + "\nnewBalance" + newBalance);
         }
 
         return demandVoucherDetailList;
@@ -526,11 +521,6 @@ public class DemandVoucherService {
                         applicationDetails);
                 demandVoucherDetailList.add(demandVoucherDetails);
             }
-            System.out.println("Installment " + demandVoucherDetails.getInstallment() + "\nGeneral Tax "
-                    + demandVoucherDetails.getGeneralTaxVariation() + "\nLibrary Cess "
-                    + demandVoucherDetails.getLibraryCessVariation() + "\nNetBalance "
-                    + demandVoucherDetails.getNetBalance()
-                    + "\nOldBalance" + oldBalance + "\nnewBalance" + newBalance);
         }
 
         return demandVoucherDetailList;
@@ -606,14 +596,6 @@ public class DemandVoucherService {
             }
 
             normalizedDemandDetailList.add(normalizedDemandDetail);
-
-            System.out.println("Installment " + normalizedDemandDetail.getInstallment() + "\nGeneral Tax " +
-                    normalizedDemandDetail.getGeneralTax() + "\nGeneral Tax Collection" +
-                    normalizedDemandDetail.getGeneralTaxCollection() + "\nLibrary Cess " + normalizedDemandDetail.getLibraryCess()
-                    +
-                    "\nCommon Tax " + normalizedDemandDetail.getCommonTax() + "\nCommon Tax Collection" +
-                    normalizedDemandDetail.getCommonTaxCollection());
-
         }
         return normalizedDemandDetailList;
     }
