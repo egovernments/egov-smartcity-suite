@@ -158,7 +158,7 @@
         <!-- Application server provided dependency versions -->
         <hibernate-version>5.1.10.Final</hibernate-version>
         <hibernate-search-version>5.5.8.Final</hibernate-search-version>
-        <hibernate-validator-version>5.3.5.Final</hibernate-validator-version>
+        <hibernate-validator-version>5.3.6.Final</hibernate-validator-version>
         <javax-validation-version>1.1.0.Final</javax-validation-version>
         <javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
         <javax-servlet-jstl-version>1.2.6-RC1</javax-servlet-jstl-version>
