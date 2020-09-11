@@ -253,8 +253,6 @@ public class VacancyRemissionService {
     
     @Autowired
     private EventPublisher eventPublisher;
-    @Autowired
-    private ThirdPartyService thirdPartyService;
     
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo).get(0);
@@ -298,7 +296,7 @@ public class VacancyRemissionService {
     @Transactional
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, Long approvalPosition,
                                                  final String approvalComent, final String additionalRule, final String workFlowAction,
-                                                 final Boolean propertyByEmployee,final boolean wsPortalRequest) {
+                                                 final Boolean propertyByEmployee) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -321,15 +319,10 @@ public class VacancyRemissionService {
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(vacancyRemission.getSource()) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        if (propertyService.isCitizenPortalUser(user) || !propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
+        if (!propertyTaxCommonUtils.isUserTypeEmployee(user)) {
             currentState = "Created";
-            if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
-                assignment = propertyService.getMappedAssignmentForBusinessUser(vacancyRemission.getBasicProperty());
-                wfInitiator = assignment;
-            } else {
-                assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(), false);
-                wfInitiator = assignment;
-            }
+            assignment = propertyService.getMappedAssignmentForBusinessUser(vacancyRemission.getBasicProperty());
+            wfInitiator = assignment;
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else {
@@ -775,9 +768,9 @@ public class VacancyRemissionService {
 
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, final Long approvalPosition,
                                                  final String approvalComent, final String additionalRule, final String workFlowAction,
-                                                 final Boolean propertyByEmployee, final HashMap<String, String> meesevaParams,final boolean wsPortalRequest) {
+                                                 final Boolean propertyByEmployee, final HashMap<String, String> meesevaParams) {
         return saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, additionalRule, workFlowAction,
-                propertyByEmployee,wsPortalRequest);
+                propertyByEmployee);
 
     }
 
@@ -1109,7 +1102,7 @@ public class VacancyRemissionService {
             final Boolean propertyByEmployee, final HttpServletRequest request) {
         try {
             saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,workFlowAction,
-                    propertyByEmployee,true);
+                    propertyByEmployee);
             String viewURL = format(WS_VIEW_PROPERT_BY_APP_NO_URL,
                     WebUtils.extractRequestDomainURL(request, false),
                     vacancyRemission.getApplicationNumber(), APPLICATION_TYPE_VACANCY_REMISSION);

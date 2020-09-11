@@ -371,12 +371,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct,
             String previousExemptionReason) {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
-        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String taxExemptedReason;
         if (!workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))
                 taxExemptionService.updateProperty(property, approvalComent, workFlowAct, approvalPosition,
-                        propertyByEmployee, EXEMPTION);
+                         EXEMPTION);
             else if (request.getParameter(TAXEXEMPTIONREASON) != null) {
 
                 taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
@@ -384,7 +383,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+                        approvalPosition, taxExemptedReason, EXEMPTION);
                 propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
         String successMessage;
@@ -429,7 +428,6 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
     private String wFReject(final Property property, final HttpServletRequest request, final Character status,
             final Long approvalPosition, final String approvalComent, final String workFlowAct, String exemptionReason) {
-        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String taxExemptedReason = null;
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         String successMessage = null;
@@ -446,14 +444,14 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (assignment != null && assignment.getId() != null) {
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))
                 taxExemptionService.updateProperty(property, approvalComent, workFlowAct, approvalPosition,
-                        propertyByEmployee, EXEMPTION);
+                         EXEMPTION);
             else{
                 taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
                 if (StringUtils.isNotBlank(taxExemptedReason))
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+                    approvalPosition, taxExemptedReason, EXEMPTION);
             propertyService.updateIndexes((PropertyImpl)property, APPLICATION_TYPE_TAX_EXEMTION);
             }
 

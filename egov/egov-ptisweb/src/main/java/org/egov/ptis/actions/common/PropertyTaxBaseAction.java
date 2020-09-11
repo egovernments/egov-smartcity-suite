@@ -52,7 +52,6 @@ import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATIONTYPEBYNATUREOFTASK;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
@@ -126,7 +125,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -224,9 +222,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PropertyUsageService propertyUsageService;
     @Autowired
     protected PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @Autowired
-    private ThirdPartyService thirdPartyService;
-    
 
     private List<File> uploads = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
@@ -584,8 +579,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Assignment assignment = getApproverAssignment(property);
         if (assignment != null) {
             approverDesignation = assignment.getDesignation().getName();
-            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
-                    || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
+            if (!propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser()))
                 wfInitiator = assignment;
         }
         if (property.getId() != null)
@@ -617,14 +611,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      */
     private Assignment getApproverAssignment(final PropertyImpl property) {
         Assignment assignment = null;
-        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
-                || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser())) {
+        if (!propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser())) {
             currentState = "Created";
-            if (propertyService.isCscOperator(securityUtils.getCurrentUser())
-                    || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
-                assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
-            else
-                assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+            assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = assignment.getEmployee().getName().concat("~").concat(

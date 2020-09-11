@@ -49,7 +49,6 @@ package org.egov.ptis.web.controller.demolition;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
@@ -289,15 +288,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams,false);
                      } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                                propertyDemolitionService.savePropertyAndPublishEvent(property.getBasicProperty().getActiveProperty(), property,
-                                status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
+                                status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE));
                      } else
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
-						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION,false);
+						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION);
 
-			if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
-				Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property,wsPortalRequest);
-				if (assignment != null)
-					approvalPosition = assignment.getPosition().getId();
+			if (approvalPosition == null) {
+			    approvalPosition = property.getState().getInitiatorPosition().getId();
 			}
 			model.addAttribute("showAckBtn", Boolean.TRUE);
 			model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));

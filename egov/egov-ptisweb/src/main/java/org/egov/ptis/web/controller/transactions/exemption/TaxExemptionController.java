@@ -357,13 +357,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
                     property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams,false);
+                        approvalPosition, taxExemptedReason, EXEMPTION, meesevaParams);
             } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 taxExemptionService.savePropertyAndPublishEvent(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, request);
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+                        approvalPosition, taxExemptedReason, EXEMPTION);
             propertyService.updateIndexes(property, APPLICATION_TYPE_TAX_EXEMTION);
             model.addAttribute("showAckBtn", Boolean.TRUE);
             model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));

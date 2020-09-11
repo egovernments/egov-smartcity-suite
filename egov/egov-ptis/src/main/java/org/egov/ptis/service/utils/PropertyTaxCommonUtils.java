@@ -1205,4 +1205,8 @@ public class PropertyTaxCommonUtils {
     public Map<String, BigDecimal> getDemandCollMapIncludingPenaltyAndAdvance(Property property) {
         return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
     }
+    
+    public boolean isUserTypeEmployee(User user) {
+        return user.getType().equals(UserType.EMPLOYEE);
+    }
 }
