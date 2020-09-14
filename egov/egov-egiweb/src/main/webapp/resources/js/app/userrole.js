@@ -82,7 +82,7 @@ $(document).ready(
 						});
 					}
 				},
-				 limit: 10
+				 limit: 20
 			});
 
 			userlist.initialize();
