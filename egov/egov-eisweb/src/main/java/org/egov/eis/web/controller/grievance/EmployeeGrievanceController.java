@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.eis.autonumber.EmployeeGrievanceNumberGenerator;
 import org.egov.eis.entity.EmployeeGrievance;
@@ -132,7 +134,7 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String create(@Valid @ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, @RequestParam("file") final MultipartFile[] files) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -177,7 +179,7 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
