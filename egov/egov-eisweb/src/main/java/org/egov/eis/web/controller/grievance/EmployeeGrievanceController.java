@@ -52,8 +52,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.autonumber.EmployeeGrievanceNumberGenerator;
 import org.egov.eis.entity.EmployeeGrievance;
@@ -61,6 +59,7 @@ import org.egov.eis.entity.enums.EmployeeGrievanceStatus;
 import org.egov.eis.service.EmployeeGrievanceService;
 import org.egov.eis.service.EmployeeGrievanceTypeService;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.utils.EisUtils;
 import org.egov.eis.web.adaptor.EmployeeGrievanceJsonAdaptor;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -118,6 +117,9 @@ public class EmployeeGrievanceController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
+	@Autowired
+	private EisUtils eisUtils;
+
     private void prepareNewForm(Model model) {
         model.addAttribute("employeeGrievanceTypes", employeeGrievanceTypeService.findAll());
 
@@ -134,9 +136,11 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String create(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, @RequestParam("file") final MultipartFile[] files) {
-        if (errors.hasErrors()) {
+
+		validateGrievanceData(employeeGrievance, errors);
+		if (errors.hasErrors()) {
             prepareNewForm(model);
             return EMPLOYEEGRIEVANCE_NEW;
         }
@@ -179,12 +183,15 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String update(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors()) {
-            prepareNewForm(model);
-            return EMPLOYEEGRIEVANCE_EDIT;
-        }
+    	
+		validateGrievanceData(employeeGrievance, errors);
+		if (errors.hasErrors()) {
+			model.addAttribute("employeeGrievanceStatus", EmployeeGrievanceStatus.values());
+			prepareNewForm(model);
+			return EMPLOYEEGRIEVANCE_EDIT;
+		}
         employeeGrievanceService.prepareWorkFlowTransition(employeeGrievance);
         employeeGrievanceService.update(employeeGrievance);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.employeegrievance.success", null, null));
@@ -261,5 +268,16 @@ public class EmployeeGrievanceController {
 
         return message;
     }
+
+	private void validateGrievanceData(final EmployeeGrievance employeeGrievance, final BindingResult errors) {
+
+		if (StringUtils.isNotBlank(employeeGrievance.getDetails())
+				&& eisUtils.hasHtmlTags(employeeGrievance.getDetails())) {
+			errors.rejectValue("details", "invalid.input");
+		} else if (StringUtils.isNotBlank(employeeGrievance.getGrievanceResolution())
+				&& eisUtils.hasHtmlTags(employeeGrievance.getGrievanceResolution())) {
+			errors.rejectValue("grievanceResolution", "invalid.input");
+		}
+	}
 
 }

@@ -57,10 +57,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional(readOnly = true)
 public class EisUtils {
+	
+	public static final String HTML_TAG_FORMAT_PATTERN = ".*<.*?>.*";
 
     public Style getTextStyleLeftBorder() {
         final Style textStyle = getTextStyle();
@@ -119,4 +123,12 @@ public class EisUtils {
         headerStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return headerStyle;
     }
+
+	public boolean hasHtmlTags(final String value) {
+		Pattern pattern;
+		Matcher matcher;
+		pattern = Pattern.compile(HTML_TAG_FORMAT_PATTERN);
+		matcher = pattern.matcher(value);
+		return matcher.matches();
+	}
 }
