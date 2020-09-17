@@ -541,8 +541,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propService.pushPortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
             buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
             setBasicProp(basicProperty);
-            basicProperty.setPropertyID(null);
-            basicProperty.getPropertyID().getWard();
             propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
             setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
             setApplicationNoMessage(" with application number : ");
