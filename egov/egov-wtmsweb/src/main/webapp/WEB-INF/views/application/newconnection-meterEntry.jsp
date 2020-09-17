@@ -102,6 +102,7 @@
 						<div class="panel-title">
 							<spring:message code="lbl.meterbasicdetails" />
 						</div>
+					</div>
 						<c:if test="${!currentInstallmentExist}">
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.meterread.previous" /></label>
@@ -149,7 +150,6 @@
 								 </div>
 							</div>
 						</c:if>
-					</div>
 					<div class="row">
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submitButtonId"
