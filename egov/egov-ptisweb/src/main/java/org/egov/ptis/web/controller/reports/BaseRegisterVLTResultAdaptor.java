@@ -141,8 +141,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("surveyNo", StringUtils.isNotBlank(baseRegisterResultObj.getSurveyNo())
                     ? baseRegisterResultObj.getSurveyNo() : "NA");
             jsonObject.addProperty("taxationRate", taxRate);
-            jsonObject.addProperty("marketValue", marketValue.toString());
-            jsonObject.addProperty("documentValue", capitalValue.toString());
+            jsonObject.addProperty("marketValue", marketValue.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+            jsonObject.addProperty("documentValue", capitalValue.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             jsonObject.addProperty("higherValueForImposedtax", higherValueForImposedTax.toString());
             jsonObject.addProperty("isExempted", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
             jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
