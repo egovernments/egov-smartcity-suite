@@ -911,7 +911,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 basicProperty.addPropertyStatusValues(propService.createPropStatVal(
                         basicProperty, REVISIONPETITION_STATUS_CODE, null, null, null, null, null));
                 demandVoucherService.createDemandVoucher(property, (PropertyImpl) oldProperty,
-                        propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_GRP,
+                        propertyTaxCommonUtils.prepareApplicationDetailsForDemandVoucher(APPLICATION_TYPE_REVISION_PETITION,
                                 PropertyTaxConstants.NO_ACTION));
             } else if (WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(wfType)) {
                 basicProperty.addPropertyStatusValues(propService.createPropStatVal(
