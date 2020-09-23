@@ -122,6 +122,13 @@ $(document).ready(function(e){
 			  var installmentfirst =$("#current1HalfInstallment").val();
 			  var connectionType = $("#connectionTypeValue").val();
 			  var isPreviousDemandNotPresent = false;  
+			  if($('#nonLegacy').val()==='true'){
+	     			$('#submitButtonId').hide();
+					bootbox.alert('Invalid H.S.C. Number');
+					$('#dcbOnlinePaymentTable').hide();
+					$('#submitButtonId').hide();
+					return false;
+				}
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
@@ -189,5 +196,10 @@ $(document).ready(function(e){
 			  }
 			
 		});
+		
+		if($('#nonLegacy').val()==='true'){
+			bootbox.alert('Invalid H.S.C. Number');
+			$('#dcbOnlinePaymentTable').hide();
+		}
 	 
 	 

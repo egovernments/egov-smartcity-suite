@@ -531,12 +531,18 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null)
+			model.addAttribute("nonLegacy", true);
         return "newconnection-dataEntryEditForm";
     }
 
     @PostMapping(value = "/newConnection-editExisting/{consumerCode}")
     public String modifyExisting(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
             @PathVariable String consumerCode, BindingResult resultBinder, Model model) {
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
+			model.addAttribute("nonLegacy", true);
+			return "newconnection-dataEntryEditForm";
+		}
         return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
 

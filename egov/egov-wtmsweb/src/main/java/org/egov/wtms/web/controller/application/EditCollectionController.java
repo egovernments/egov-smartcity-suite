@@ -158,6 +158,8 @@ public class EditCollectionController {
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 1).getInstallment() : null);
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null)
+			model.addAttribute("nonLegacy", true);
         return "editCollection-newForm";
     }
 
@@ -197,6 +199,10 @@ public class EditCollectionController {
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
+			model.addAttribute("nonLegacy", true);
+			return "editCollection-newForm";
+		}
         final List<LegacyReceipts> legacyReceipts = waterConnectionDetails.getLegacyReceipts();
         if (!waterConnectionDetails.getLegacyReceipts().isEmpty()) {
             LegacyReceipts legacyreceipts;

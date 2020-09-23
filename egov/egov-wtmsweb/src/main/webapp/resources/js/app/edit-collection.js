@@ -128,7 +128,13 @@ $(document).ready(function(e){
 			  
 			var prevInstallmentAmt=-1;
 			var prevActualAmt=-1;
-			  
+			if($('#nonLegacy').val()==='true'){
+    			$('#submitButtonId').hide();
+				bootbox.alert('Invalid H.S.C. Number');
+				$('#dcbOnlinePaymentTable').hide();
+				$('#receiptDetails').hide();
+				return false;
+			}
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
@@ -193,5 +199,11 @@ $(document).ready(function(e){
 		   return isSuccess;
 			
 		});
+		
+		if($('#nonLegacy').val()==='true'){
+			bootbox.alert('Invalid H.S.C. Number');
+			$('#dcbOnlinePaymentTable').hide();
+			$('#receiptDetails').hide();
+		}
 	 
 	 

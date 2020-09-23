@@ -77,6 +77,7 @@
 						value="${current1HalfInstallment}" />
 						<input type="hidden" id="legacyReceipts" name="legacyReceips"
 						value="${legacyReceipts}" />
+						<input type="hidden" id="nonLegacy" value="${nonLegacy}">
 						
 					<form:hidden path="id" />
 					<div class="panel-heading">
@@ -185,7 +186,8 @@
 									
 									</div>
 					</div>
-						<div class="form-group">
+					<div class="form-group" id= "receiptDetails">
+	
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.receiptNo" /><span class="mandatory"></span></label> 
 	<div class="col-sm-2 add-margin">
