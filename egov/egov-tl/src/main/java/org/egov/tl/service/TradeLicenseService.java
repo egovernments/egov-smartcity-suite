@@ -63,6 +63,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -262,6 +263,9 @@ public class TradeLicenseService {
     
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+    
+    @Autowired
+    private LicenseDemandVoucherService licenseDemandVoucherService;
 
 	private InputStream generateNoticePDF;
 
@@ -269,7 +273,7 @@ public class TradeLicenseService {
 		return this.licenseRepository.findOne(id);
 	}
 
-	public void raiseNewDemand(TradeLicense license) {
+	public EgDemand raiseNewDemand(TradeLicense license) {
 		Module moduleName = licenseUtils.getModule();
 		Date currentDate = new Date();
 		Date commencementDate = license.getCommencementDate();
@@ -293,6 +297,7 @@ public class TradeLicenseService {
 		applyPenalty(license, demand);
 		license.setDemand(demand);
 		license.recalculateBaseDemand();
+		return demand;
 	}
 
 	private BigDecimal calculateFeeByRateType(TradeLicense license, FeeMatrixDetail feeMatrixDetail) {
@@ -334,9 +339,18 @@ public class TradeLicenseService {
 			BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
 			totalAmount = totalAmount.add(tradeAmt);
 		}
-
+		List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
+        		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
+        String demandVhPosting = null;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+        	demandVhPosting = appConfigVal.getValue();
+        }
 		if (totalAmount.compareTo(latestFeePaid) > 0) {
 			recalculateDemand(feeMatrixDetails, license);
+			BigDecimal diffAmount = license.getDemand().getBaseDemand().subtract(licenseDemand.getBaseDemand());
+			if(diffAmount.intValue() > 0) {
+				licenseDemandVoucherService.createDemandVoucher(license,license.getDemand(),diffAmount, demandVhPosting);
+			}
 		} else {
 			Date currentDate = new Date();
 			for (EgDemandDetails demandDetail : demandDetails) {

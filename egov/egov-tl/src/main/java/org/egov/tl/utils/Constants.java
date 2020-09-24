@@ -195,6 +195,9 @@ public final class Constants {
     public static final String WARDSECRETARY_USER_NAME = "wardsecretary";
     public static final String NOTICE_TYPE_REJECTION_NOTICE = "Rejection Notice";
     public static final String MODULE_NAME = "Trade License";
+    public static final String DEMAND_VOUCHER_POSTING="DEMAND_VOUCHER_POSTING";
+    public static final String TLREASONCODE = "License Fee";
+    public static final String TLREASONCODEPENALTY = "Penalty";
 
     private Constants() {
         // only invariants

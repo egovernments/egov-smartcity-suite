@@ -67,10 +67,13 @@ import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.integration.event.model.ApplicationDetails;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
@@ -112,6 +115,9 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
+    
+    @Autowired
+    private LicenseDemandVoucherService licenseDemandVoucherService;
 
     @Transactional
     public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
@@ -169,7 +175,7 @@ public class LicenseApplicationService extends TradeLicenseService {
                 || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
         license.setLicenseAppType(licenseAppTypeService.getNewLicenseApplicationType());
-        raiseNewDemand(license);
+        
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setUid(UUID.randomUUID().toString());
@@ -180,7 +186,18 @@ public class LicenseApplicationService extends TradeLicenseService {
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
+        EgDemand demand = raiseNewDemand(license);
         licenseRepository.save(license);
+        //Demand Voucher Posting
+        List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
+        		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
+        String demandVhPosting = null;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+        	demandVhPosting = appConfigVal.getValue();
+        }
+        if(demandVhPosting.equalsIgnoreCase("YES")) {
+        	licenseDemandVoucherService.createDemandVoucher(license, demand, null, demandVhPosting);
+        }
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
@@ -205,6 +222,16 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         this.licenseRepository.save(license);
+        //Demand Voucher Posting
+        List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
+        		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
+        String demandVhPosting = null;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+        	demandVhPosting = appConfigVal.getValue();
+        }
+        if(demandVhPosting.equalsIgnoreCase("YES")) {
+        	licenseDemandVoucherService.createDemandVoucher(license, license.getDemand(),null, demandVhPosting);
+        }
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
