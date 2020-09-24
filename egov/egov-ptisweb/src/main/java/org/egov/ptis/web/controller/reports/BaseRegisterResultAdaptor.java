@@ -182,10 +182,7 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
                 baseRegisterResultObj.getUsage() != null ? baseRegisterResultObj.getUsage() : "NA");
         jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
         jsonObject.addProperty("courtCase", baseRegisterResultObj.getIsUnderCourtCase() ? "Yes" : "No");
-        jsonObject.addProperty("arrearPeriod",
-                baseRegisterResultObj.getDuePeriod() != null
-                        && org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getDuePeriod())
-                                ? baseRegisterResultObj.getDuePeriod() : "NA");
+        jsonObject.addProperty("arrearPeriod", propertyTaxService.getArrearsPeriod(baseRegisterResultObj));
         jsonObject.addProperty("currentColl", currColl);
         jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getAggrArrDmd() != null
                 ? baseRegisterResultObj.getAggrArrDmd() : BigDecimal.ZERO);

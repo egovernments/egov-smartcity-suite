@@ -53,10 +53,18 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ER
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.infra.admin.master.repository.ModuleRepository;
+import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
@@ -74,6 +82,15 @@ public class PropertyTaxService {
 
     @Autowired
     private PropertyExternalService propertyExternalService;
+
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private InstallmentHibDao<?, ?> installmentDao;
+
+    @Autowired
+    private ModuleRepository moduleRepository;
 
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
             final String mobileNumber, final String category, final String doorNo) {
@@ -126,5 +143,20 @@ public class PropertyTaxService {
     public BigDecimal nullCheckBigDecimal(BigDecimal value) {
 
         return value != null ? value : BigDecimal.ZERO;
+    }
+
+    public String getArrearsPeriod(final PropertyMVInfo propMatView) {
+        List<InstDmdCollInfo> instDemandCollList = new LinkedList<>(propMatView.getInstDmdColl());
+        Collections.sort(instDemandCollList, (o1, o2) -> o1.getInstallment() - o2.getInstallment());
+        String arrearPerFrom = "";
+        String arrearPerTo = "";
+        if (!propMatView.getInstDmdColl().isEmpty()) {
+            arrearPerTo = installmentDao
+                    .getInsatllmentByModuleForGivenDate(moduleRepository.findByName(PropertyTaxConstants.PTMODULENAME), DateUtils
+                            .add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1))
+                    .getDescription();
+            arrearPerFrom = installmentDao.findById(instDemandCollList.get(0).getInstallment(), false).getDescription();
+        }
+        return arrearPerFrom.isEmpty() ? "NA" : arrearPerFrom.concat(" to ").concat(arrearPerTo);
     }
 }

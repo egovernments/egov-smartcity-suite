@@ -165,10 +165,7 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("currTotal", currTotal);
 
             jsonObject.addProperty("penaltyFines", currPenaltyFine);
-            jsonObject.addProperty("arrearPeriod",
-                    baseRegisterResultObj.getDuePeriod() != null
-                            && org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getDuePeriod())
-                                    ? baseRegisterResultObj.getDuePeriod() : "NA");
+            jsonObject.addProperty("arrearPeriod", propertyTaxService.getArrearsPeriod(baseRegisterResultObj));
             jsonObject.addProperty("arrearPropertyTax",
                     baseRegisterResultObj.getAggrArrDmd() != null
                             && baseRegisterResultObj.getAggrArrDmd().compareTo(BigDecimal.ZERO) >= 1
