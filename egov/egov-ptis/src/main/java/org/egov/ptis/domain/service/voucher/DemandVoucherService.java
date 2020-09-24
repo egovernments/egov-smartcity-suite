@@ -505,8 +505,7 @@ public class DemandVoucherService {
         demandVoucherDetails.setLibraryCessVariation(
                 normalizeDemandDetailsOld.getLibraryCess().subtract(normalizeDemandDetailsNew.getLibraryCess()));
         demandVoucherDetails
-                .setAdvance(
-                        normalizeDemandDetailsOld.getAdvance().subtract(normalizeDemandDetailsNew.getAdvance()));
+                .setAdvance(normalizeDemandDetailsNew.getAdvance().subtract(normalizeDemandDetailsOld.getAdvance()).abs());
         oldBalance = normalizeDemandDetailsOld.getGeneralTax().add(normalizeDemandDetailsOld.getLibraryCess())
                 .add(normalizeDemandDetailsOld.getVacantLandTax()).subtract(normalizeDemandDetailsOld
                         .getGeneralTaxCollection().add(normalizeDemandDetailsOld.getVacantLandTaxCollection())
@@ -790,22 +789,35 @@ public class DemandVoucherService {
             NormalizeDemandDetails normalizeDemandDetailsLarge, boolean isNewPropertyLarger) {
         BigDecimal balance = ZERO;
         demandVoucherDetails.setInstallment(normalizeDemandDetailsLarge.getInstallment());
-        demandVoucherDetails.setGeneralTaxVariation(
-                ZERO.subtract(normalizeDemandDetailsLarge.getGeneralTax()));
-        demandVoucherDetails.setVacantTaxVariation(
-                ZERO.subtract(normalizeDemandDetailsLarge.getVacantLandTax()));
-        demandVoucherDetails.setLibraryCessVariation(
-                ZERO.subtract(normalizeDemandDetailsLarge.getLibraryCess()));
-        demandVoucherDetails
-                .setAdvance(normalizeDemandDetailsLarge.getAdvance().subtract(ZERO).abs());
-        balance = normalizeDemandDetailsLarge.getGeneralTax().add(normalizeDemandDetailsLarge.getLibraryCess())
-                .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
-                        .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
-                        .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
-        if (isNewPropertyLarger)
-            demandVoucherDetails.setNetBalance(balance.subtract(ZERO));
-        else
+        if (isNewPropertyLarger) {
+            demandVoucherDetails.setGeneralTaxVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getGeneralTax()));
+            demandVoucherDetails.setVacantTaxVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getVacantLandTax()));
+            demandVoucherDetails.setLibraryCessVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getLibraryCess()));
+            demandVoucherDetails
+                    .setAdvance(normalizeDemandDetailsLarge.getAdvance().subtract(ZERO).abs());
+            balance = normalizeDemandDetailsLarge.getGeneralTax().add(normalizeDemandDetailsLarge.getLibraryCess())
+                    .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
+                            .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
+                            .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
             demandVoucherDetails.setNetBalance(ZERO.subtract(balance));
+        } else {
+            demandVoucherDetails.setGeneralTaxVariation(
+                    normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));
+            demandVoucherDetails.setVacantTaxVariation(
+                    normalizeDemandDetailsLarge.getVacantLandTax().subtract(ZERO));
+            demandVoucherDetails.setLibraryCessVariation(
+                    normalizeDemandDetailsLarge.getLibraryCess().subtract(ZERO));
+            demandVoucherDetails
+                    .setAdvance(normalizeDemandDetailsLarge.getAdvance().subtract(ZERO).abs());
+            balance = normalizeDemandDetailsLarge.getGeneralTax().add(normalizeDemandDetailsLarge.getLibraryCess())
+                    .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
+                            .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
+                            .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
+            demandVoucherDetails.setNetBalance(balance.subtract(ZERO));
+        }
         demandVoucherDetails.setPenalty(normalizeDemandDetailsLarge.getPenaltyCollection()
                 .subtract(ZERO)
                 .abs());
