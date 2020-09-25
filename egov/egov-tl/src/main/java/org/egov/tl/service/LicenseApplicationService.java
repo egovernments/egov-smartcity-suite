@@ -83,6 +83,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.Validity;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
@@ -174,6 +175,10 @@ public class LicenseApplicationService extends TradeLicenseService {
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
+        Validity validity = validityService.getApplicableLicenseValidity(license);
+    	if (validity == null) {
+            throw new ValidationException("TL-010", "License validity not defined.");
+    	}
         license.setLicenseAppType(licenseAppTypeService.getNewLicenseApplicationType());
         
         license.getLicensee().setLicense(license);
@@ -207,6 +212,10 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public TradeLicense renew(TradeLicense license, WorkflowBean workflowBean) {
+    	Validity validity = validityService.getApplicableLicenseValidity(license);
+    	if (validity == null) {
+            throw new ValidationException("TL-010", "License validity not defined.");
+    	}
         license.setApplicationDate(new Date());
         license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
