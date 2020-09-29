@@ -635,12 +635,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         Integer instId = null;
         BigDecimal demand;
         BigDecimal collection;
+        BigDecimal demandVariation = BigDecimal.ZERO;
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[1]);
+            demandVariation = listObj[5] != null ? new BigDecimal((Double) listObj[5]) : BigDecimal.ZERO;
+            demand = listObj[1] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[1]).subtract(demandVariation);
             collection = listObj[2] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[2]);
 
             installment = installmentDao.findById(instId, false);
