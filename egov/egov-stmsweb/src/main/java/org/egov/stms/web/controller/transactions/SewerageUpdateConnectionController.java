@@ -96,6 +96,7 @@ import org.egov.stms.transactions.service.SewerageFieldInspectionDetailsService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageInspectionDetailsComparatorById;
 import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -382,6 +383,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                          final BindingResult resultBinder, final HttpServletRequest request,
                          final HttpSession session, final Model model, @RequestParam("files") final MultipartFile[] files) {
         String mode = EMPTY;
+        boolean generateDemandVoucher = false;
         WorkflowContainer workflowContainer = sewerageApplicationDetails.getWorkflowContainer();
         String workFlowAction = workflowContainer.getWorkFlowAction();
         sewerageApplicationValidator.validateNewApplicationUpdate(sewerageApplicationDetails, resultBinder, workFlowAction);
@@ -442,8 +444,14 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                 && sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
                 || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
                 || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID))
-                && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
-            populateDonationSewerageTax(sewerageApplicationDetails);
+                && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+            populateDonationSewerageTax(sewerageApplicationDetails); 
+            if(sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED) 
+            		&& SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+            		&& SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())) {
+            	generateDemandVoucher = true;
+            }
+        }
         if (!resultBinder.hasErrors()) {
             try {
                 if (workFlowAction != null && workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
@@ -452,7 +460,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                     return "redirect:/transactions/workorder?pathVar="
                             + sewerageApplicationDetails.getApplicationNumber();
                 sewerageApplicationDetailsService
-                        .updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session);
+                        .updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session, generateDemandVoucher);
             } catch (final ValidationException e) {
                 throw new ValidationException(e);
             }

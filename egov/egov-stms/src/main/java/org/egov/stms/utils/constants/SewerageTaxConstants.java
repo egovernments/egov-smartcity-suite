@@ -314,5 +314,7 @@ public class SewerageTaxConstants {
     public static final String WARDSECRETARY_EVENTPUBLISH_MODE_UPDATE = "update";
     public static final String VIEW_LINK ="%s/stms/application/view/%s/%s";
     public static final String APPLICATION_STATUS_WARDSECRETARYCREATED = "WARDSECRETARYCREATED";
+    public static final String FINANCIALYEAR_START_DATE = "STARTDATE";
+    public static final String FINANCIALYEAR_END_DATE = "ENDDATE";
 
 }

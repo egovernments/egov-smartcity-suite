@@ -452,7 +452,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                         }
                     }
                 }
-                sewerageApplicationDetailsService.updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session);
+                sewerageApplicationDetailsService.updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session, false);
             } catch (final ValidationException e) {
                 throw new ValidationException(e);
             }
