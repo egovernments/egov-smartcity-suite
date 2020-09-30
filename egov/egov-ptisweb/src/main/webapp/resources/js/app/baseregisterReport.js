@@ -65,19 +65,26 @@ $('#baseRegisterReportSearch').click(function(e){
 	        filter: true,
 	        "searching": false,
 	        "order": [[0, 'asc']],
-	        buttons: [
-	                  {
-	                      text: 'PDF',
-	                      action: function (e, dt, node, config) {
-	                          window.open("download?" + $("#baseRegisterReportSearch").serialize() + "&printFormat=PDF", '_self');
-	                      }
-	                  },
-	                  {
-	                      text: 'XLS',
-	                      action: function (e, dt, node, config) {
-	                          window.open("download?" + $("#baseRegisterReportSearch").serialize() + "&printFormat=XLS", '_self');
-	                      }
-	                  }],
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ 
+				               {
+					             "sExtends": "pdf",
+                                 "sTitle": jQuery('#pdfTitle').val(),
+                                 "sPdfMessage": "Base Register Report",
+                                 "sPdfOrientation": "landscape"
+				                },
+				                {
+						             "sExtends": "xls",
+						             "sTitle": jQuery('#pdfTitle').val(),
+	                                 "sPdfMessage": "Base Register Report"
+					             },{
+						             "sExtends": "print",
+						             "sTitle": jQuery('#pdfTitle').val(),
+	                                 "sPdfMessage": "Base Register Report"
+					               }],
+				
+			},
 			ajax : {
 				url : "/ptis/report/baseRegister/result",
 				type :"GET",
