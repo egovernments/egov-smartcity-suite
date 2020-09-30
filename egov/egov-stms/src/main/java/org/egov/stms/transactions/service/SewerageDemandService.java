@@ -757,9 +757,11 @@ public class SewerageDemandService {
 	 * @return
 	 */
 	public EgDemand generateNextYearDemandForSewerage(final SewerageApplicationDetails applicationDetails,
-			final EgDemandReason oldtaxReasonInstallment, final EgDemandReason newtaxReasonInstallment) {
+			final EgDemandReason oldtaxReasonInstallment, final EgDemandReason newtaxReasonInstallment, 
+			List<BigDecimal> demandForVoucherList) {
 
-		BigDecimal totalDemandAmount = BigDecimal.ZERO;
+		BigDecimal totalBaseDemandAmount = BigDecimal.ZERO;
+		BigDecimal demandAmount = demandForVoucherList.get(0);
 		final EgDemand demand = applicationDetails.getCurrentDemand();
 
 		Boolean taxFeeAlreadyExistInDemand = false;
@@ -780,20 +782,25 @@ public class SewerageDemandService {
 		if (!taxFeeAlreadyExistInDemand && oldTaxDemandDetail != null) {
 			demand.addEgDemandDetails(
 					createDemandDetails(oldTaxDemandDetail.getAmount(), newtaxReasonInstallment, BigDecimal.ZERO));
-			totalDemandAmount = totalDemandAmount.add(oldTaxDemandDetail.getAmount());
+			totalBaseDemandAmount = totalBaseDemandAmount.add(oldTaxDemandDetail.getAmount());
+			demandAmount = demandAmount.add(oldTaxDemandDetail.getAmount());
+			demandForVoucherList.clear();
+			demandForVoucherList.add(0, demandAmount);
 		}
 		demand.setEgInstallmentMaster(newtaxReasonInstallment.getEgInstallmentMaster());
-		demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+		demand.addBaseDemand(totalBaseDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
 		return demand;
 	}
 
 	public Integer[] generateDemandForNextInstallment(final List<SewerageApplicationDetails> sewerageApplicationDetails,
-			final List<Installment> previousInstallment, final Installment sewerageDmdGenerationInstallment) {
+			final List<Installment> previousInstallment, final Installment sewerageDmdGenerationInstallment, List<BigDecimal> totalDemandForVoucherFinalList) {
 		Integer[] res;
 		int totalNoOfRecords = 0;
 		int noOfSuccessRecords = 0;
 		int noOfFailureRecords = 0;
+		List<BigDecimal> demandForVoucherList = new ArrayList<>();
+		demandForVoucherList.add(BigDecimal.ZERO);
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("*************************************** total records " + sewerageApplicationDetails.size());
 		if (!sewerageApplicationDetails.isEmpty()) {
@@ -814,7 +821,6 @@ public class SewerageDemandService {
 					LOGGER.info("*************************************** demand id "
 							+ applicationDetails.getCurrentDemand().getId());
 				Boolean status = false;
-
 				// get last year demand and add as current year.
 
 				try {
@@ -823,7 +829,7 @@ public class SewerageDemandService {
 						if (LOGGER.isInfoEnabled())
 							LOGGER.info("SHSC Number ---> " + applicationDetails.getConnection().getShscNumber());
 						generateNextYearDemandForSewerage(applicationDetails, taxReasonOldInstallment,
-								taxReasonNewInstallment);
+								taxReasonNewInstallment, demandForVoucherList);
 						sewerageApplicationDetailsService.updateSewerageApplicationDetails(applicationDetails);
 
 						if (demandGenerationLog != null) {
@@ -852,6 +858,7 @@ public class SewerageDemandService {
 				noOfFailureRecords = !status ? noOfFailureRecords + 1 : noOfFailureRecords;
 				totalNoOfRecords = noOfSuccessRecords + noOfFailureRecords;
 			}
+			totalDemandForVoucherFinalList.add(0, demandForVoucherList.get(0)); 
 		}
 		res = new Integer[] { totalNoOfRecords, noOfSuccessRecords, noOfFailureRecords };
 		return res;
