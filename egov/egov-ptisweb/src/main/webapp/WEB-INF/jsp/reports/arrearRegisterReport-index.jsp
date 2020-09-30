@@ -79,7 +79,7 @@
 	jQuery(document).ready(function(){
 		 jQuery('#localityId').change(function() {
 			jQuery.ajax({
-				url: "/egi/boundary/ajaxBoundary-blockByLocality",
+				url: "/egi/boundary/ajaxboundary-activeblockbylocality",
 				type: "GET",
 				data: {
 					locality : jQuery('#localityId').val()

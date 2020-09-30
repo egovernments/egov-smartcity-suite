@@ -254,5 +254,40 @@ public class GenericMasterAjaxController {
         }
         IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
+    
+    @GetMapping({"/boundary/ajaxboundary-activeblockbylocality", "/public/boundary/ajaxboundary-activeblockbylocality"})
+    public void activeBlockByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
+        List<Boundary> blocks = crossHierarchyService.getActiveParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+        List<Boundary> streets = boundaryService.getActiveChildBoundariesByBoundaryId(locality);
+        final List<JsonObject> wardJsonObjs = new ArrayList<>();
+        final List<Long> boundaries = new ArrayList<>();
+        for (final Boundary block : blocks) {
+            final Boundary ward = block.getParent();
+            final JsonObject jsonObject = new JsonObject();
+            if (!boundaries.contains(ward.getId()) && ward.isActive()) {
+                jsonObject.addProperty("wardId", ward.getId());
+                jsonObject.addProperty("wardName", ward.getName());
+            }
+            jsonObject.addProperty("blockId", block.getId());
+            jsonObject.addProperty("blockName", block.getName());
+            wardJsonObjs.add(jsonObject);
+            boundaries.add(ward.getId());
+        }
+        final List<JsonObject> streetJsonObjs = new ArrayList<>();
+        for (final Boundary street : streets) {
+            final JsonObject streetObj = new JsonObject();
+            streetObj.addProperty("streetId", street.getId());
+            streetObj.addProperty("streetName", street.getName());
+            streetJsonObjs.add(streetObj);
+        }
+        final Map<String, List<JsonObject>> map = new HashMap<>();
+        map.put("boundaries", wardJsonObjs);
+        map.put("streets", streetJsonObjs);
+        final JsonObject bj = new JsonObject();
+        bj.add("results", new Gson().toJsonTree(map));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(bj.toString(), response.getWriter());
+    }
 
 }
