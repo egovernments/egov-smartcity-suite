@@ -59,6 +59,7 @@ import org.egov.eis.entity.enums.EmployeeGrievanceStatus;
 import org.egov.eis.service.EmployeeGrievanceService;
 import org.egov.eis.service.EmployeeGrievanceTypeService;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.utils.EisUtils;
 import org.egov.eis.web.adaptor.EmployeeGrievanceJsonAdaptor;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -115,7 +116,9 @@ public class EmployeeGrievanceController {
     private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
     @Autowired
     protected FileStoreUtils fileStoreUtils;
-
+    @Autowired
+    private EisUtils eisUtils;
+    
     private void prepareNewForm(Model model) {
         model.addAttribute("employeeGrievanceTypes", employeeGrievanceTypeService.findAll());
 
@@ -134,6 +137,7 @@ public class EmployeeGrievanceController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, @RequestParam("file") final MultipartFile[] files) {
+        validateGrievanceData(employeeGrievance, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return EMPLOYEEGRIEVANCE_NEW;
@@ -179,7 +183,9 @@ public class EmployeeGrievanceController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        validateGrievanceData(employeeGrievance, errors);
         if (errors.hasErrors()) {
+            model.addAttribute("employeeGrievanceStatus", EmployeeGrievanceStatus.values());
             prepareNewForm(model);
             return EMPLOYEEGRIEVANCE_EDIT;
         }
@@ -258,6 +264,17 @@ public class EmployeeGrievanceController {
         }
 
         return message;
+    }
+    
+    private void validateGrievanceData(final EmployeeGrievance employeeGrievance, final BindingResult errors) {
+
+        if (StringUtils.isNotBlank(employeeGrievance.getDetails())
+                && eisUtils.hasHtmlTags(employeeGrievance.getDetails())) {
+            errors.rejectValue("details", "invalid.input");
+        } else if (StringUtils.isNotBlank(employeeGrievance.getGrievanceResolution())
+                && eisUtils.hasHtmlTags(employeeGrievance.getGrievanceResolution())) {
+            errors.rejectValue("grievanceResolution", "invalid.input");
+        }
     }
 
 }
