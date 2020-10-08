@@ -111,6 +111,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -271,10 +272,13 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     public void copyDemandDetailsForExemption(final Installment installmentFirstHalf, Date effectiveDate,
             final Set<EgDemandDetails> demandDetailSet, final Ptdemand ptdemand) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(effectiveDate);
+        cal.add(Calendar.DATE, -2);
         if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
             for (final EgDemandDetails demandDetails : ptdemand.getEgDemandDetails())
                 if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
-                        || demandDetails.getInstallmentStartDate().after(effectiveDate))
+                        || demandDetails.getInstallmentEndDate().after(cal.getTime()))
                     demandDetailSet.add(demandDetails);
             ptdemand.getEgDemandDetails().clear();
             ptdemand.getEgDemandDetails().addAll(demandDetailSet);
