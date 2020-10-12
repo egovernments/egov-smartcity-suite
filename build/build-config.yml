@@ -12,3 +12,4 @@ config:
       build:
         - work-dir: egov
           image-name: egov-erp-platform-build
+          dockerfile: Dockerfile
