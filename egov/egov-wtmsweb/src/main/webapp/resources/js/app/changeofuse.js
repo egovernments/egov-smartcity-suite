@@ -266,6 +266,7 @@ $(document).ready(function(){
 	var pipeSize = $('#pipeSize').val();
 	
 	$(".workAction").click(function (){
+		e.preventDefault();
 		if(($('#connectionType').val()==connectionType) && ($('#usageType').val()==usageType) 
 				&&($('#propertyType').val()==propertyType)
 				&& ($('#pipeSize').val()==pipeSize)) {
@@ -333,3 +334,7 @@ $(document).ready(function(){
 	}
 	
 });
+
+if ($('#isModified').val() === 'false') {
+	bootbox.alert('Please modify at least one mandatory field');
+}

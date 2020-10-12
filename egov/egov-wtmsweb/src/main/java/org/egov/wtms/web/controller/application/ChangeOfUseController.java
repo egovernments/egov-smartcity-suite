@@ -203,7 +203,22 @@ public class ChangeOfUseController extends GenericConnectionController {
         String message = "";
         if (parent != null)
             message = changeOfUseService.validateChangeOfUseConnection(parent);
-        String consumerCode = "";
+		boolean isModified = false;
+		if (!changeOfUse.getPropertyType().equals(connectionUnderChange.getPropertyType())
+				|| !changeOfUse.getUsageType().equals(connectionUnderChange.getUsageType())
+				|| !changeOfUse.getPipeSize().equals(connectionUnderChange.getPipeSize()))
+			isModified = true;
+		message = changeOfUseService.validateChangeOfUseConnection(changeOfUse);
+		if (!isModified) {
+			final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
+			model.addAttribute("isModified", isModified);
+			loadBasicData(model, connectionUnderChange, changeOfUse, connectionUnderChange, meesevaApplicationNumber);
+			final WorkflowContainer workflowContainer = new WorkflowContainer();
+			workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+			prepareWorkflow(model, changeOfUse, workflowContainer);
+			return CHANGEOFUSE_FORM;
+		}
+		String consumerCode = "";
         if (!message.isEmpty() && !"".equals(message)) {
             if (changeOfUse.getConnection().getParentConnection() != null)
                 consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
