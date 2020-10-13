@@ -332,9 +332,7 @@ $(document).ready(function(){
 	});
 	}
 	}
-	
+	if ($('#isModified').val() === 'no') {
+		bootbox.alert('Please modify at least one mandatory field');
+	}
 });
-
-if ($('#isModified').val() === 'false') {
-	bootbox.alert('Please modify at least one mandatory field');
-}
