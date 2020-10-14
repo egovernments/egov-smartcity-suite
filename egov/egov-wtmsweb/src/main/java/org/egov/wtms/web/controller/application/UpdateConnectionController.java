@@ -689,40 +689,24 @@ public class UpdateConnectionController extends GenericConnectionController {
 				&& waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID))
 			updateWaterConnectionValidator.validate(waterConnectionDetails, resultBinder);
 
-		Long approvalPosition = isNotBlank(request.getParameter(APPRIVALPOSITION))
-				? Long.valueOf(request.getParameter(APPRIVALPOSITION))
-				: 0l;
+		final String additionalRule = waterConnectionDetails.getCloseConnectionType() != null ?
+                          request.getParameter(ADDITIONALRULE) :  waterConnectionDetails.getApplicationType().getCode();       
+		final Long approvalPosition =waterConnectionDetailsService.getApproverPosition(waterConnectionDetails, isNotBlank(request.getParameter(APPRIVALPOSITION))
+		                           ? Long.valueOf(request.getParameter(APPRIVALPOSITION))
+		                           : 0l, additionalRule,
+		                        mode, workFlowAction);
 
-		// For Get Configured ApprovalPosition from workflow history
-		if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
-			if (waterConnectionDetails.getCloseConnectionType() != null)
-				approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-						waterConnectionDetails, approvalPosition, request.getParameter(ADDITIONALRULE), mode,
-						workFlowAction);
-			else
-				approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-						waterConnectionDetails, approvalPosition, waterConnectionDetails.getApplicationType().getCode(),
-						mode, workFlowAction);
+		 // For Get Configured ApprovalPosition from workflow history
+		if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
+		                 && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
+		                     || waterConnectionDetails.getStatus().getCode().equals(APPROVED)))
+		            throw new ValidationException("err.nouserdefinedforworkflow");		
+
+		
 		// to get modes to hide and show details in every user inbox
-
-		request.getSession().setAttribute("APPROVAL_POSITION", approvalPosition);
-
 		if (request.getParameter(APPRIVALPOSITION) == null)
 			appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
 
-		// For ReConnection and Closure Connection
-		if ((workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-				|| workFlowAction.equalsIgnoreCase(WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
-				&& (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
-						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
-						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
-						|| waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))
-			approvalPosition = waterTaxUtils.getApproverPosition(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN,
-					waterConnectionDetails);
-		if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
-				&& (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
-						|| waterConnectionDetails.getStatus().getCode().equals(APPROVED)))
-			throw new ValidationException("err.nouserdefinedforworkflow");
 		
 		String approvalComent = isNotBlank(request.getParameter("approvalComent"))
 				? request.getParameter("approvalComent")

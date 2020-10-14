@@ -104,6 +104,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
@@ -141,6 +142,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTIO
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_AE_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_AE_REJECTION_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
@@ -886,6 +888,25 @@ public class WaterConnectionDetailsService {
                                 && TEMPERARYCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType()))
                         waterConnectionDetails.setStatus(
                                         waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_RECONNCTIONSANCTIONED, MODULETYPE));
+        }
+        public Long getApproverPosition(WaterConnectionDetails waterConnectionDetails,Long approvalPosition,String additionalRule,
+                String mode, String workFlowAction)
+        {
+         // For Get Configured ApprovalPosition from workflow history
+            if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
+                approvalPosition = getApprovalPositionByMatrixDesignation(
+                                            waterConnectionDetails, approvalPosition, additionalRule,
+                                            mode, workFlowAction);
+            // For ReConnection and Closure Connection
+            if ((WFLOW_ACTION_STEP_REJECT.equals(workFlowAction)
+                            || WF_RECONNECTIONACKNOWLDGEENT_BUTTON.equalsIgnoreCase(workFlowAction))
+                            && (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
+                                            || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
+                                            || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
+                                            || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))
+                    approvalPosition = waterTaxUtils.getApproverPosition(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN,
+                                    waterConnectionDetails);
+            return approvalPosition;
         }
 
         public Long getApprovalPositionByMatrixDesignation(WaterConnectionDetails waterConnectionDetails,
