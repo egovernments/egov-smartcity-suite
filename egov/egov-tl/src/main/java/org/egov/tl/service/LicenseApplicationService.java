@@ -80,6 +80,7 @@ import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.OwnerGroup;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.TradeLicense;
@@ -90,6 +91,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.egov.pims.commons.Position;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
@@ -273,6 +276,18 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
     
+    @Transactional
+    public void updateLicenseToInitialState(TradeLicense license, WorkflowBean workflowBean, OwnerGroup owner, String extraInfo) {
+    	
+        license.setCollectionPending(true);
+        license.setStatus(licenseStatusService.getLicenseStatusByName(Constants.LICENSE_STATUS_ACKNOWLEDGED));
+        licenseProcessWorkflowService.rollbackStateInfo(license, workflowBean, (Position) owner, extraInfo);
+
+        licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+	}
+   
     @Transactional
     public void saveRejectionNotice(LicenseNotice licenseNotice) {
     	licenseNoticeRepository.save(licenseNotice);

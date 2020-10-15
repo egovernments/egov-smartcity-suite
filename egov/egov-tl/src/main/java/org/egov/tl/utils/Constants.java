@@ -198,6 +198,7 @@ public final class Constants {
     public static final String DEMAND_VOUCHER_POSTING="DEMAND_VOUCHER_POSTING";
     public static final String TLREASONCODE = "License Fee";
     public static final String TLREASONCODEPENALTY = "Penalty";
+    public static final String WF_LICENSE_RENEWAL = "Renewal Initiated";
 
     private Constants() {
         // only invariants
