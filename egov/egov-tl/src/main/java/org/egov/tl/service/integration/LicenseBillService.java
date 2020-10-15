@@ -596,7 +596,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         	receiptCancellationInfo.setCancellationAllowed(false);
             receiptCancellationInfo.setValidationMessage("Consumer code is wrong");
         }else {
-        	if(license.getIsActive() == true && Constants.WF_STATE_COMMISSIONER_APPROVED_STR.equalsIgnoreCase(license.getState().getValue())) {
+        	if(license.getIsActive() && Constants.WF_STATE_COMMISSIONER_APPROVED_STR.equalsIgnoreCase(license.getState().getValue())) {
             	receiptCancellationInfo.setCancellationAllowed(false);
                 receiptCancellationInfo.setValidationMessage(
                         "User cannot cancel the receipt as trade license application is already Approved by Commissioner.");

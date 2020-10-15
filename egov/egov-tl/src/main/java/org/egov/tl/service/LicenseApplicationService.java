@@ -280,7 +280,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     public void updateLicenseToInitialState(TradeLicense license, WorkflowBean workflowBean, OwnerGroup owner, String extraInfo) {
     	
         license.setCollectionPending(true);
-        license.setStatus(licenseStatusService.getLicenseStatusByName(Constants.LICENSE_STATUS_ACKNOWLEDGED));
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         licenseProcessWorkflowService.rollbackStateInfo(license, workflowBean, (Position) owner, extraInfo);
 
         licenseRepository.save(license);
