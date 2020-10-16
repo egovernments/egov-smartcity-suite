@@ -51,9 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -550,7 +548,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
             demandIds = new ArrayList();
             final String qryStr = "SELECT ptdem.id_demand " + "FROM egpt_basic_property bas, " + "  egpt_property prop, "
                     + "  egpt_ptdemand ptdem " + "WHERE bas.ID = prop.ID_BASIC_PROPERTY "
-                    + "AND prop.id = ptdem.ID_PROPERTY " + "AND bas.propertyid = :PropId ";
+                    + "AND prop.id = ptdem.ID_PROPERTY AND prop.status IN ('A', 'I') " + "AND bas.propertyid = :PropId ";
 
             final Query qry = getCurrentSession().createSQLQuery(qryStr);
             qry.setString("PropId", basicProperty.getUpicNo());
