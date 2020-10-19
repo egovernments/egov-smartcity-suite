@@ -106,6 +106,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private String referenceNumber;
     private String transanctionReferenceNumber;
     private String serviceCode;
+    private Boolean isForReconcilation = Boolean.FALSE;
+    private BigDecimal totalReconcilationAmount = BigDecimal.ZERO;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -411,5 +413,21 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
 	public BigDecimal getMinAmountPayable() {
 		return BigDecimal.ZERO;
+	}
+
+	public Boolean isForReconcilation() {
+		return isForReconcilation;
+	}
+
+	public void setForReconcilation(Boolean isForReconcilation) {
+		this.isForReconcilation = isForReconcilation;
+	}
+
+	public BigDecimal getTotalReconcilationAmount() {
+		return totalReconcilationAmount;
+	}
+
+	public void setTotalReconcilationAmount(BigDecimal totalReconcilationAmount) {
+		this.totalReconcilationAmount = totalReconcilationAmount;
 	}
 }

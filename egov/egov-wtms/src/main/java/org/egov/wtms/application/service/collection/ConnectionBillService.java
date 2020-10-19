@@ -118,6 +118,12 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NA
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_CHARGE; 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_MATERIAL_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 @Service
@@ -237,13 +243,35 @@ public class ConnectionBillService extends BillServiceInterface {
 
             List<Installment> advanceInstallments = getAdvanceInstallmentsList(advanceStartDate);
             BigDecimal currentInstDemand = ZERO;
-            for (EgDemandDetails dmdDet : demand.getEgDemandDetails())
-                if (dmdDet.getInstallmentStartDate().equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate()))
-                    currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
-            if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
-                    && WATERTAX_CHARGES_SERVICE_CODE.equals(billObj.getServiceCode()))
-                createAdvanceBillDetails(billDetails, currentInstDemand, demand, billObj, advanceInstallments,
-                        currInstallments.get(CURRENTYEAR_SECOND_HALF));
+			BigDecimal estimationChargesBalance = ZERO;
+			final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) billObj;
+			List<String> estimationChargesCodes = Arrays.asList(WATERTAX_SECURITY_CHARGE, WATERTAX_ROADCUTTING_CHARGE,
+					WATERTAX_SUPERVISION_CHARGE, WATERTAX_DONATION_CHARGE, WATERTAX_FIELDINSPECTION_CHARGE,
+					WATER_MATERIAL_CHARGES_REASON_CODE);
+			Boolean reconcilationForWES = (waterConnectionBillable.isForReconcilation()
+					&& ESTIMATIONCHARGES_SERVICE_CODE.equalsIgnoreCase(waterConnectionBillable.getServiceCode()))
+							? Boolean.TRUE : Boolean.FALSE;
+			for (EgDemandDetails dmdDet : demand.getEgDemandDetails()) {
+				if (dmdDet.getInstallmentStartDate()
+						.equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate()))
+					currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
+				// Below code will be executed only for reconcilation of Water Estimation Charges
+				if (reconcilationForWES) {
+					if (estimationChargesCodes
+							.contains(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+						estimationChargesBalance = estimationChargesBalance
+								.add(dmdDet.getAmount().subtract(dmdDet.getAmtCollected()));
+					}
+				}
+			}
+			if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())) {
+				if (WATERTAX_CHARGES_SERVICE_CODE.equals(billObj.getServiceCode())
+						|| (reconcilationForWES && waterConnectionBillable.getTotalReconcilationAmount()
+								.compareTo(estimationChargesBalance) > 0)) {
+					createAdvanceBillDetails(billDetails, currentInstDemand, demand, billObj, advanceInstallments,
+							currInstallments.get(CURRENTYEAR_SECOND_HALF));
+				}
+			}
         }
         return billDetails;
     }
@@ -364,6 +392,12 @@ public class ConnectionBillService extends BillServiceInterface {
         waterConnectionBillable.setWaterConnectionDetails(
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                         bill.getConsumerId().trim().toUpperCase(), ConnectionStatus.ACTIVE));
+
+        if (ESTIMATIONCHARGES_SERVICE_CODE.equalsIgnoreCase(bill.getServiceCode())) {
+        	waterConnectionBillable.setServiceCode(bill.getServiceCode());
+            waterConnectionBillable.setForReconcilation(Boolean.TRUE);
+            waterConnectionBillable.setTotalReconcilationAmount(bill.getTotalAmount());
+        }
         List<EgBillDetails> egBillDetails = getBilldetails(waterConnectionBillable);
         for (EgBillDetails billDetail : egBillDetails) {
             bill.addEgBillDetails(billDetail);
