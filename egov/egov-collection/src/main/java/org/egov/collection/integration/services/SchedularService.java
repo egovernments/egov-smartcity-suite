@@ -293,7 +293,6 @@ public class SchedularService {
     }
 
     private void processOnlineTransaction(PaymentResponse paymentResponse) {
-
         // If the transaction status is Pending, Keeping the transaction in pending status for five days from transaction date.
         final Calendar fiveDaysBackCalender = Calendar.getInstance();
         fiveDaysBackCalender.add(Calendar.DATE, -5);
@@ -303,7 +302,11 @@ public class SchedularService {
                 Long.valueOf(paymentResponse.getReceiptId()),
                 ApplicationThreadLocals.getCityCode());
 
-        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+        if (onlinePaymentReceiptHeader == null)
+            LOGGER.error("Reconciliation schedular onlinePaymentReceiptHeader is null for Receiptid: "
+                    + paymentResponse.getReceiptId() + "  citycode" + ApplicationThreadLocals.getCityCode() + "payment status "
+                    + paymentResponse.getAuthStatus());
+        else if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
         else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()) &&
                 DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fiveDaysBackCalender.getTime())) {
