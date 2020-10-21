@@ -198,8 +198,10 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
@@ -217,6 +219,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -246,6 +249,8 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionExecutionResponse;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.autonumber.EstimationNumberGenerator;
+import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionAddress;
@@ -411,6 +416,14 @@ public class WaterConnectionDetailsService {
         private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
         @Autowired
         private WaterDemandVoucherService waterDemandVoucherService;
+        
+        @Autowired
+        private AutonumberServiceBeanResolver beanResolver;
+        @Autowired
+        private ReportGenerationService reportGenerationService;
+        
+        @Autowired
+        private CityService cityService;
 
     @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
@@ -2115,4 +2128,95 @@ public class WaterConnectionDetailsService {
     public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyIDAndConnectionStatusList(String propertyId, List<ConnectionStatus> connectionStatusList) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyId, connectionStatusList);
     }
+    
+    public void processApprovalWorkflow(WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
+        if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+            waterConnectionDetails.getConnection()
+                    .setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
+        if (Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE, REGULARIZE_CONNECTION)
+                .contains(waterConnectionDetails.getApplicationType().getCode())) {
+            waterConnectionDetails.setWorkOrderDate(new Date());
+            waterConnectionDetails.setWorkOrderNumber(beanResolver
+                    .getAutoNumberServiceFor(WorkOrderNumberGenerator.class).generateWorkOrderNumber());
+        }
+        ReportOutput reportOutput = getReportOutputObject(waterConnectionDetails, workFlowAction);
+
+        // Setting FileStoreMap object while Commissioner Signs the document
+        if (reportOutput != null) {
+            String fileName;
+            if (Arrays.asList(CLOSINGCONNECTION, RECONNECTION, REGULARIZE_CONNECTION)
+                    .contains(waterConnectionDetails.getApplicationType().getCode()))
+                fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber()
+                        + ".pdf";
+            else
+                fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber()
+                        + ".pdf";
+
+            InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
+                    FILESTORE_MODULECODE);
+            if (CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())) {
+                waterConnectionDetails.setClosureFileStore(fileStore);
+                EgDemand egDemand = waterDemandConnectionService
+                        .getCurrentDemand(waterConnectionDetails).getDemand();
+                if (egDemand != null) {
+                    egDemand.setIsHistory("Y");
+                    egDemand.setModifiedDate(new Date());
+                }
+            } else if (RECONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+                waterConnectionDetails.setReconnectionFileStore(fileStore);
+            else
+                waterConnectionDetails.setFileStore(fileStore);
+            updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+        }
+    }
+
+    private ReportOutput getReportOutputObject(WaterConnectionDetails waterConnectionDetails, String workFlowAction) {
+        ReportOutput reportOutput;
+        if (waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))
+            reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
+                    workFlowAction);
+        else if (waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTION))
+            reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, workFlowAction);
+        else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            reportOutput = reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails);
+        else
+            reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails, workFlowAction);
+
+        return reportOutput;
+    }
+    
+    public void processGenerateEstimationNotice(WaterConnectionDetails waterConnectionDetails)
+    {
+        EstimationNumberGenerator estimationNoGen = beanResolver
+                .getAutoNumberServiceFor(EstimationNumberGenerator.class);
+        String estimationNumber = estimationNoGen.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_ESTIMATION);
+        EstimationNotice estimationNotice = addEstimationOrRejectionNoticeToConnectionDetails(waterConnectionDetails, estimationNumber,
+                        WaterTaxConstants.NOTICETYPE_ESTIMATION, waterConnectionDetails.getApplicationType().getCode());
+        ReportOutput reportOutput = reportGenerationService.generateEstimationNoticeReport(
+                waterConnectionDetails, ApplicationThreadLocals.getCityName(), cityService.getDistrictName(),
+                estimationNumber);
+        if (reportOutput != null)
+            updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
+                    estimationNotice, reportOutput);
+
+    }
+    
+    public void processCancelWorkflow(WaterConnectionDetails waterConnectionDetails, final String cityName,
+            final String approvalComent, final String applicationName) {
+        EstimationNumberGenerator estimationNoGen = beanResolver
+                .getAutoNumberServiceFor(EstimationNumberGenerator.class);
+        String rejectionNumber = estimationNoGen
+                .generateEstimationNumber(WaterTaxConstants.NOTICETYPE_REJECTION);
+        EstimationNotice estimationNotice = addEstimationOrRejectionNoticeToConnectionDetails(waterConnectionDetails,
+                rejectionNumber,
+                WaterTaxConstants.NOTICETYPE_REJECTION, waterConnectionDetails.getApplicationType().getCode());
+        ReportOutput reportOutput = reportGenerationService.generateReportOutputDataForRejection(
+                waterConnectionDetails, cityName,
+                approvalComent, applicationName);
+        if (reportOutput != null)
+            updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
+                    estimationNotice, reportOutput);
+    }
+    
 }
