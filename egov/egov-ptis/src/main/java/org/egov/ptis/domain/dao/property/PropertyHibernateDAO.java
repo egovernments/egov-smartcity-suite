@@ -548,7 +548,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
             demandIds = new ArrayList();
             final String qryStr = "SELECT ptdem.id_demand " + "FROM egpt_basic_property bas, " + "  egpt_property prop, "
                     + "  egpt_ptdemand ptdem " + "WHERE bas.ID = prop.ID_BASIC_PROPERTY "
-                    + "AND prop.id = ptdem.ID_PROPERTY AND prop.status IN ('A', 'I') " + "AND bas.propertyid = :PropId ";
+                    + "AND prop.id = ptdem.ID_PROPERTY AND prop.status IN ('A', 'I', 'H') " + "AND bas.propertyid = :PropId ";
 
             final Query qry = getCurrentSession().createSQLQuery(qryStr);
             qry.setString("PropId", basicProperty.getUpicNo());
