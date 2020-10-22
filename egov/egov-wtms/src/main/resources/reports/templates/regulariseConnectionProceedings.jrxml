@@ -83,6 +83,7 @@
 	<parameter name="toInstallment" class="java.lang.String"/>
 	<parameter name="applicationNumber" class="java.lang.String"/>
 	<parameter name="consumerNumber" class="java.lang.String"/>
+	<parameter name="commissionerName" class="java.lang.String"/>
 	<field name="estimationDetails" class="java.util.List"/>
 	<title>
 		<band height="120" splitType="Stretch">
@@ -140,7 +141,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Present : Sri/Smt."+$P{applicantName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Present : Sri/Smt."+$P{commissionerName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
