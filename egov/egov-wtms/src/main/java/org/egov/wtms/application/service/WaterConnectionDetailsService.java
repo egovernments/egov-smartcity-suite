@@ -1950,6 +1950,7 @@ public class WaterConnectionDetailsService {
                 return connectionAddressCriteria.list();
         }
         
+        @Transactional
         public EstimationNotice addEstimationOrRejectionNoticeToConnectionDetails(WaterConnectionDetails waterConnectionDetails,
                         String estimationNumber, String noticeType, String applicationType) {
                 EstimationNotice estimationNotice = new EstimationNotice();
@@ -2129,6 +2130,7 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyIDAndConnectionStatusList(propertyId, connectionStatusList);
     }
     
+    @Transactional
     public void processApprovalWorkflow(WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
         if (waterConnectionDetails.getConnection().getConsumerCode() == null)
             waterConnectionDetails.getConnection()
@@ -2171,6 +2173,7 @@ public class WaterConnectionDetailsService {
         }
     }
 
+    @Transactional
     private ReportOutput getReportOutputObject(WaterConnectionDetails waterConnectionDetails, String workFlowAction) {
         ReportOutput reportOutput;
         if (waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))
@@ -2186,6 +2189,7 @@ public class WaterConnectionDetailsService {
         return reportOutput;
     }
     
+    @Transactional
     public void processGenerateEstimationNotice(WaterConnectionDetails waterConnectionDetails)
     {
         EstimationNumberGenerator estimationNoGen = beanResolver
@@ -2202,6 +2206,7 @@ public class WaterConnectionDetailsService {
 
     }
     
+    @Transactional
     public void processCancelWorkflow(WaterConnectionDetails waterConnectionDetails, final String cityName,
             final String approvalComent, final String applicationName) {
         EstimationNumberGenerator estimationNoGen = beanResolver
