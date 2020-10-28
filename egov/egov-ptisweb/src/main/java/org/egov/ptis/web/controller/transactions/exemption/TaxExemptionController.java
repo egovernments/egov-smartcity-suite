@@ -303,6 +303,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
             return PROPERTY_VALIDATION_FOR_SPRING;
 
         }
+        if (property.getBasicProperty().isUnderWorkflow() && !propertyTaxCommonUtils.isUserTypeEmployee(loggedInUser)) {
+            model.addAttribute("wfPendingMsg", "Could not do Tax exemption now, property is undergoing some work flow.");
+            return TARGET_WORKFLOW_ERROR;
+        }
         PropertyImpl oldProperty = property.getBasicProperty().getActiveProperty();
         final Assignment assignment = propertyService.isCscOperator(loggedInUser)
                 ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())

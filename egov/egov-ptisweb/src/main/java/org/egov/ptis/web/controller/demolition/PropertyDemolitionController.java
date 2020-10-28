@@ -267,6 +267,11 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                 request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE), request.getParameter(WARDSECRETARY_SOURCE_CODE))) {
             errorMessages.put("ws.source.invalid", "WS.001");
         }
+        if (property.getBasicProperty().isUnderWorkflow() && !propertyTaxCommonUtils.isUserTypeEmployee(loggedInUser)) {
+            model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
+                    + " now, property is undergoing some work flow.");
+            return TARGET_WORKFLOW_ERROR;
+        }
 		if (errorMessages.isEmpty()) {
 			final Character status = STATUS_WORKFLOW;
 			Long approvalPosition = 0l;

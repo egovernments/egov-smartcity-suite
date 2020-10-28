@@ -375,6 +375,11 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             return VACANCYREMISSION_FORM;
 
         }
+        if (basicProperty.isUnderWorkflow()
+                && !propertyTaxCommonUtils.isUserTypeEmployee(vacancyRemissionService.getLoggedInUser())) {
+            model.addAttribute(ERROR_MSG, "msg.under.workflow");
+            return PROPERTY_VALIDATION_FOR_SPRING;
+        }
         validateDates(vacancyRemission, resultBinder);
         vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())

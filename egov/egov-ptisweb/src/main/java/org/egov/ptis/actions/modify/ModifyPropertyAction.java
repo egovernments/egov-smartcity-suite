@@ -251,7 +251,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
     private static final String PROPERTY_ALTER_ADDITION = "Property Alter/Addition";
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
-    private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
     private static final long serialVersionUID = 1L;
     private static final String RESULT_ERROR = "error";
     private static final String MODIFY_ACK_TEMPLATE = "mainModifyPropertyAck";
@@ -518,15 +517,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         String target;
         PropertyImpl propertyImpl;
         if (basicProp.isUnderWorkflow() && !fromInbox) {
-            final List<String> msgParams = new ArrayList<>();
-            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn))
-                msgParams.add(PROPERTY_BIFURCATION);
-            else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(modifyRsn))
-                msgParams.add(PROPERTY_ALTER_ADDITION);
-            else
-                msgParams.add(PROPERTY_GENERAL_REVISION_PETITION);
-            setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
-            target = TARGET_WORKFLOW_ERROR;
+            return underWorkflowMessage();
         } else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox && isUnderWtmsWF()) {
                 wfErrorMsg = getText("msg.under.wtms.wf.modify");
@@ -669,6 +660,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/modifyProperty-forward")
     public String forwardModify() {
+        if (basicProp.isUnderWorkflow() && !propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser())) {
+            return underWorkflowMessage();
+        }
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         if (hasErrors() && eligibleToShowTaxCalc()) {
@@ -1826,6 +1820,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                         : "Property Bifurcation Rejected";
 
         propertyThirdPartyService.publishUpdateEvent(propertyModel.getApplicationNo(), action, remarks);
+    }
+    
+    private String underWorkflowMessage() {
+        final List<String> msgParams = new ArrayList<>();
+        if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn))
+            msgParams.add(PROPERTY_BIFURCATION);
+        else
+            msgParams.add(PROPERTY_ALTER_ADDITION);
+        setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
+        return TARGET_WORKFLOW_ERROR;
     }
 
     public BasicProperty getBasicProp() {
