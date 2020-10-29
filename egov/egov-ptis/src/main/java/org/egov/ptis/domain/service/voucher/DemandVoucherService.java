@@ -802,7 +802,7 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
                             .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(ZERO.subtract(balance));
+            demandVoucherDetails.setNetBalance(balance);
         } else {
             demandVoucherDetails.setGeneralTaxVariation(
                     normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));
