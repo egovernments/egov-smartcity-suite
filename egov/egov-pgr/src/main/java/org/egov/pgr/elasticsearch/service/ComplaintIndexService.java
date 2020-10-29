@@ -818,8 +818,8 @@ public class ComplaintIndexService {
                         responseDetail.setUlbName(hit[0].field(CITY_NAME).getValue());
                         responseDetail.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
                         responseDetail.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
-                        if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
-                            responseDetail.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
+                        if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
+                            responseDetail.setFunctionaryMobileNumber(complaintIndexRepository.getFunctionryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue()));
                         responseDetail.setFunctionaryName(bucket.getKeyAsString());
                         satisfactionAverage = bucket.getAggregations().get(EXCLUDE_ZERO);
                         final Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
@@ -1068,6 +1068,7 @@ public class ComplaintIndexService {
         final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
         // Fetch ulblevel aggregation
         final Terms ulbTerms = complaintTypeResponse.getAggregations().get(ULBWISE);
+        String functionaryName;
         for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
             final Terms departmentTerms = ulbBucket.getAggregations().get(DEPARTMENTWISE);
             // Fetch departmentLevel data in each ulb
@@ -1077,7 +1078,8 @@ public class ComplaintIndexService {
                 for (final Bucket functionaryBucket : functionaryTerms.getBuckets()) {
                     final ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
                     responseDetail.setTotalComplaintCount(functionaryBucket.getDocCount());
-                    responseDetail.setFunctionaryName(functionaryBucket.getKeyAsString());
+                    functionaryName = functionaryBucket.getKeyAsString();
+                    responseDetail.setFunctionaryName(functionaryName);
 
                     final TopHits topHits = functionaryBucket.getAggregations().get(COMPLAINTRECORD);
                     final SearchHit[] hit = topHits.getHits().getHits();
@@ -1089,7 +1091,7 @@ public class ComplaintIndexService {
                     if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null)
                         initialFunctionaryNumber = NA;
                     else
-                        initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
+                        initialFunctionaryNumber = complaintIndexRepository.getFunctionryMobileNumber(functionaryName);
                     responseDetail.setFunctionaryMobileNumber(initialFunctionaryNumber);
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get(CLOSED_COMPLAINT_COUNT);
@@ -1346,10 +1348,10 @@ public class ComplaintIndexService {
             if (hit[0].field(DEPARTMENT_NAME) != null) {
                 complaintSouce.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
             }
-            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
+            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null) {
                 complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
-            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
-                complaintSouce.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
+                complaintSouce.setFunctionaryMobileNumber(complaintIndexRepository.getFunctionryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue()));
+            }
             CityIndex city;
             if (CITY_REGION_NAME.equals(groupByField))
                 complaintSouce.setRegionName(bucket.getKeyAsString());
@@ -1907,7 +1909,7 @@ public class ComplaintIndexService {
                 hit[0].field(INITIAL_FUNCTIONARY_NAME) == null ? EMPTY : hit[0].field(INITIAL_FUNCTIONARY_NAME).value());
         feedbackResponse
                 .setFunctionaryMobileNo(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null
-                        ? EMPTY : hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).value());
+                        ? EMPTY : complaintIndexRepository.getFunctionryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).value()));
         feedbackResponse.setDepartmentName(hit[0].field(DEPARTMENT_NAME) == null ? EMPTY : hit[0].field(DEPARTMENT_NAME).value());
         feedbackResponse.setDepartmentCode(hit[0].field(DEPARTMENT_CODE) == null ? EMPTY : hit[0].field(DEPARTMENT_CODE).value());
     }
