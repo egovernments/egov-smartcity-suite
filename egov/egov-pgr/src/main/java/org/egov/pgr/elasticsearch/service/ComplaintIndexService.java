@@ -1349,7 +1349,6 @@ public class ComplaintIndexService {
             if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
                 complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
             if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
-                System.out.println("Functionary Name 1 "+hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
                 complaintSouce.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
             CityIndex city;
             if (CITY_REGION_NAME.equals(groupByField))
@@ -1377,7 +1376,6 @@ public class ComplaintIndexService {
             if (INITIAL_FUNCTIONARY_NAME.equals(groupByField)
                     && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
-                System.out.println("Functionary Name"+bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
                 complaintSouce.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
             }
@@ -1534,7 +1532,6 @@ public class ComplaintIndexService {
         if (INITIAL_FUNCTIONARY_NAME.equals(groupByField)
                 && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
             responseDetail.setFunctionaryName(bucket.getKeyAsString());
-            System.out.println(bucket.getKeyAsString());
             final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
             responseDetail.setFunctionaryMobileNumber(mobileNumber);
         }
