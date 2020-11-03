@@ -69,4 +69,10 @@ public class EstimationNoticeService {
 		return estimationNoticeRepository.findNonHistoryEstimationNoticeForConnection(waterConnectionDetails.getId(),
 				waterConnectionDetails.getApplicationType().getCode());
 	}
+	
+	public EstimationNotice getNonHistoryEstimationNoticeForConnectionAndNoticeType(
+			WaterConnectionDetails waterConnectionDetails, String noticeType) {
+		return estimationNoticeRepository.findNonHistoryEstimationNoticeForConnectionAndNoticeType(
+				waterConnectionDetails.getId(), waterConnectionDetails.getApplicationType().getCode(), noticeType);
+	}
 }

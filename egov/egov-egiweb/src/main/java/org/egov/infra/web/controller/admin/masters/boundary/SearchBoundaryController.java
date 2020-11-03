@@ -50,6 +50,8 @@ package org.egov.infra.web.controller.admin.masters.boundary;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -63,6 +65,7 @@ import org.egov.infra.web.support.json.adapter.BoundaryDatatableAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,7 +75,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,10 +94,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("boundary")
+@RequestMapping({"/public/boundary" , "/boundary"})
 public class SearchBoundaryController {
-
-
+	
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
 
@@ -209,5 +214,40 @@ public class SearchBoundaryController {
             boundaryJson.add(boundaryData);
         }
         return boundaryJson.toString();
+    }
+
+	@GetMapping({"ajaxboundary-activeblockbylocality"})
+    public void activeBlockByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK_BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE);
+        List<Boundary> blocks = crossHierarchyService.getActiveParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+        List<Boundary> streets = boundaryService.getActiveChildBoundariesByBoundaryId(locality);
+        final List<JsonObject> wardJsonObjs = new ArrayList<>();
+        final List<Long> boundaries = new ArrayList<>();
+        for (final Boundary block : blocks) {
+            final Boundary ward = block.getParent();
+            final JsonObject jsonObject = new JsonObject();
+            if (!boundaries.contains(ward.getId()) && ward.isActive()) {
+                jsonObject.addProperty("wardId", ward.getId());
+                jsonObject.addProperty("wardName", ward.getName());
+            }
+            jsonObject.addProperty("blockId", block.getId());
+            jsonObject.addProperty("blockName", block.getName());
+            wardJsonObjs.add(jsonObject);
+            boundaries.add(ward.getId());
+        }
+        final List<JsonObject> streetJsonObjs = new ArrayList<>();
+        for (final Boundary street : streets) {
+            final JsonObject streetObj = new JsonObject();
+            streetObj.addProperty("streetId", street.getId());
+            streetObj.addProperty("streetName", street.getName());
+            streetJsonObjs.add(streetObj);
+        }
+        final Map<String, List<JsonObject>> map = new HashMap<>();
+        map.put("boundaries", wardJsonObjs);
+        map.put("streets", streetJsonObjs);
+        final JsonObject bj = new JsonObject();
+        bj.add("results", new Gson().toJsonTree(map));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(bj.toString(), response.getWriter());
     }
 }

@@ -51,7 +51,7 @@ jQuery('#selectAll').click(function(e) {
 	jQuery('td input:checkbox', table).prop('checked', e.target.checked);
 });
 
-function generateNotice(obj, actionName, currentState) {
+function generateNotice(obj, actionName, currentState, natureOfTask) {
 	var rowobj = getRow(obj);
 	var tbl = document.getElementById('digSignDetailsTab');
 	var basicPropertyId = getControlInBranch(tbl.rows[rowobj.rowIndex],
@@ -87,7 +87,12 @@ function generateNotice(obj, actionName, currentState) {
 	} else if (type[0] == 'RP' || type[0] == 'GRP' || type[0] == 'Appeal') {
 		url = "/ptis/revPetition/revPetition-generateSpecialNotice.action?actionType="
 				+ actionName + '&objectionId=' + basicPropertyId;
-	} else {
+	} else if (natureOfTask == 'Write Off') {
+		url = "/ptis/writeoff/generatenotice?actionType=" + actionName
+				+ '&modelId=' + basicPropertyId;
+	}
+
+	else {
 		url = "/ptis/property/transfer/printNotice.action?actionType="
 				+ actionName + '&mutationId=' + basicPropertyId;
 	}

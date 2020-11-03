@@ -66,8 +66,12 @@
 	 	    <input type="hidden" name="shscNumber" id="shscNumber" value="${shscNumber}">  
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
-			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
-			<input type="hidden" id="approverError" name="approverError" value="${approverError}" />	  
+			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}"> 
+			<input type="hidden" id="approverError" name="approverError" value="${approverError}" />
+			<input type="hidden" id="isWardSecretaryUser" name="isWardSecretaryUser" value="${isWardSecretaryUser}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 			<jsp:include page="commonApplicationDetails-view.jsp"/> 
 			<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
 			 
@@ -130,7 +134,7 @@
 					</c:if>
 				</div>
 			</div> 
-			<c:if test="${!isAnonymousUser}">
+			<c:if test="${!isAnonymousUser && !isWardSecretaryUser}">
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>			
 			</c:if>
 	 		<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>

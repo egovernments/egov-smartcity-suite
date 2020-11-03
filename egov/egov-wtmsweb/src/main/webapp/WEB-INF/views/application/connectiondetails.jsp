@@ -69,7 +69,15 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${connectionTypes}" />
+						<c:choose>
+							<c:when
+								test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION'}">
+								<form:options items="${connectionTypeForRegularization}" />
+							</c:when>
+							<c:otherwise>
+								<form:options items="${connectionTypes}" />
+							</c:otherwise>
+						</c:choose>
 					</form:select>
 					<form:errors path="connectionType" cssClass="add-margin error-msg" />
 				</div>
@@ -95,7 +103,15 @@
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${connectionTypes}" />
+					<c:choose>
+						<c:when
+							test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION'}">
+							<form:options items="${connectionTypeForRegularization}" />
+						</c:when>
+						<c:otherwise>
+							<form:options items="${connectionTypes}" />
+						</c:otherwise>
+					</c:choose>
 				</form:select>
 				<form:errors path="connectionType" cssClass="add-margin error-msg" />
 			</div>

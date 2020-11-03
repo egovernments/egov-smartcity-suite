@@ -116,10 +116,9 @@ public class EmployeeGrievanceController {
     private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
     @Autowired
     protected FileStoreUtils fileStoreUtils;
-
-	@Autowired
-	private EisUtils eisUtils;
-
+    @Autowired
+    private EisUtils eisUtils;
+    
     private void prepareNewForm(Model model) {
         model.addAttribute("employeeGrievanceTypes", employeeGrievanceTypeService.findAll());
 
@@ -138,9 +137,8 @@ public class EmployeeGrievanceController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, @RequestParam("file") final MultipartFile[] files) {
-
-		validateGrievanceData(employeeGrievance, errors);
-		if (errors.hasErrors()) {
+        validateGrievanceData(employeeGrievance, errors);
+        if (errors.hasErrors()) {
             prepareNewForm(model);
             return EMPLOYEEGRIEVANCE_NEW;
         }
@@ -185,13 +183,12 @@ public class EmployeeGrievanceController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-    	
-		validateGrievanceData(employeeGrievance, errors);
-		if (errors.hasErrors()) {
-			model.addAttribute("employeeGrievanceStatus", EmployeeGrievanceStatus.values());
-			prepareNewForm(model);
-			return EMPLOYEEGRIEVANCE_EDIT;
-		}
+        validateGrievanceData(employeeGrievance, errors);
+        if (errors.hasErrors()) {
+            model.addAttribute("employeeGrievanceStatus", EmployeeGrievanceStatus.values());
+            prepareNewForm(model);
+            return EMPLOYEEGRIEVANCE_EDIT;
+        }
         employeeGrievanceService.prepareWorkFlowTransition(employeeGrievance);
         employeeGrievanceService.update(employeeGrievance);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.employeegrievance.success", null, null));
@@ -268,16 +265,16 @@ public class EmployeeGrievanceController {
 
         return message;
     }
+    
+    private void validateGrievanceData(final EmployeeGrievance employeeGrievance, final BindingResult errors) {
 
-	private void validateGrievanceData(final EmployeeGrievance employeeGrievance, final BindingResult errors) {
-
-		if (StringUtils.isNotBlank(employeeGrievance.getDetails())
-				&& eisUtils.hasHtmlTags(employeeGrievance.getDetails())) {
-			errors.rejectValue("details", "invalid.input");
-		} else if (StringUtils.isNotBlank(employeeGrievance.getGrievanceResolution())
-				&& eisUtils.hasHtmlTags(employeeGrievance.getGrievanceResolution())) {
-			errors.rejectValue("grievanceResolution", "invalid.input");
-		}
-	}
+        if (StringUtils.isNotBlank(employeeGrievance.getDetails())
+                && eisUtils.hasHtmlTags(employeeGrievance.getDetails())) {
+            errors.rejectValue("details", "invalid.input");
+        } else if (StringUtils.isNotBlank(employeeGrievance.getGrievanceResolution())
+                && eisUtils.hasHtmlTags(employeeGrievance.getGrievanceResolution())) {
+            errors.rejectValue("grievanceResolution", "invalid.input");
+        }
+    }
 
 }

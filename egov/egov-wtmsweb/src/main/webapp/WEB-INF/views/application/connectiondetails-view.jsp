@@ -51,8 +51,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<div class="row">
-	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -179,25 +177,39 @@
 								</div>
 							</div>
 						</c:if>
-					</c:if>
-					<div class="row add-border">
-						<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
-							<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${waterConnectionDetails.connectionReason}"/>
+						</c:if>
+						<c:if test="${not empty waterConnectionDetails.ulbMaterial}">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.materials.supplied" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${waterConnectionDetails.ulbMaterial==true ? 'Yes':'No'}" />
+								</div>
 							</div>
 						</c:if>
-						<c:if test="${waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType!=null}">
-							<div class="col-xs-3 add-margin"><spring:message code="lbl.closure.type" /></div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${waterConnectionDetails.closeConnectionType=='P'?'PERMANENT':'TEMPORARY'}"/>
+						<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.addconnection.reason" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${waterConnectionDetails.connectionReason}" />
+								</div>
+							</div>
+						</c:if>
+						<c:if
+							test="${waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType!=null}">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin">
+									<spring:message code="lbl.closure.type" />
+								</div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out	value="${waterConnectionDetails.closeConnectionType=='P'?'PERMANENT':'TEMPORARY'}" />
+								</div>
 							</div>
 						</c:if>
 					</div>
-				</div>
-			</div>
-		</div>					
-	</div>
 	<c:if test="${mode !='meterEntry'}">
 		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 	</c:if>

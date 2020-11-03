@@ -530,7 +530,8 @@ public class CommonWaterTaxSearchController {
             if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getLegacy()) {
+					&& waterConnectionDetails.getLegacy() 
+					&& waterConnectionDetails.getState() == null) {
                 WaterConnectionDetails connectionDetails = waterConnectionDtlsService
                         .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
                 if (connectionDetails != null)
@@ -584,7 +585,7 @@ public class CommonWaterTaxSearchController {
 
         }
         if (isNotBlank(applicationType) && applicationType.equals(EDITCOLLECTION))
-			if (!waterConnectionDetails.getLegacy()) {
+			if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
 				model.addAttribute(MODE, ERROR_MODE);
 				model.addAttribute(APPLICATIONTYPE, applicationType);
 				resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_SYSTEM_CONN);
@@ -593,7 +594,8 @@ public class CommonWaterTaxSearchController {
         	else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getLegacy())
+                    && waterConnectionDetails.getLegacy()
+                    && waterConnectionDetails.getState()== null)
                 return "redirect:/application/editCollection/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
             else {
@@ -617,17 +619,18 @@ public class CommonWaterTaxSearchController {
                 return COMMON_FORM_SEARCH;
             }
         if (isNotBlank(applicationType) && applicationType.equals(EDITDEMAND))
-			if (!waterConnectionDetails.getLegacy()) {
+			if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
 				model.addAttribute(MODE, ERROR_MODE);
 				model.addAttribute(APPLICATIONTYPE, applicationType);
 				resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_SYSTEM_CONN);
 				return COMMON_FORM_SEARCH;
-			} 
-			else if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+			}
+			else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
 					|| waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-					|| waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
+					|| waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE))
 							&& waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-							&& waterConnectionDetails.getLegacy())
+							&& waterConnectionDetails.getLegacy()
+							&& waterConnectionDetails.getState()== null)
                 return "redirect:/application/editDemand/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute(MODE, ERROR_MODE);

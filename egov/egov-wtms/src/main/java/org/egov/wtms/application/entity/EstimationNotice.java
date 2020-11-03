@@ -107,6 +107,10 @@ public class EstimationNotice extends AbstractAuditable {
 	private boolean isHistory;
 
 	private Long orderNumber;
+	
+	private String noticeType;
+	
+	private String applicationType;
 
 	@Override
 	public Long getId() {
@@ -172,6 +176,22 @@ public class EstimationNotice extends AbstractAuditable {
 
 	public void setOrderNumber(Long orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	public String getNoticeType() {
+		return noticeType;
+	}
+
+	public void setNoticeType(String noticeType) {
+		this.noticeType = noticeType;
+	}
+
+	public String getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
 	}
 
 }

@@ -69,8 +69,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -116,6 +118,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public static final String SBIMOPS_TAMT = "TAMT";
     public static final String SBIMOPS_BNKDT = "BNKDT";
     private static final String UTF8 = "UTF-8";
+    private static final int TIME_OUT = 360 * 1000; // time in millis.
 
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
 
@@ -265,9 +268,13 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public PaymentResponse createOfflinePaymentRequest(final OnlinePayment onlinePayment) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("inside sbimops :createOfflinePaymentRequest");
-        final PaymentResponse sbimopsResponse = new DefaultPaymentResponse();
 
         CloseableHttpResponse response = reconciliationResponse(onlinePayment);
+        return prepareResponse(onlinePayment, response);
+    }
+
+    private PaymentResponse prepareResponse(final OnlinePayment onlinePayment, CloseableHttpResponse response) {
+        final PaymentResponse sbimopsResponse = new DefaultPaymentResponse();
 
         if (response == null) {
             LOGGER.info("Sbimops reconciliation response is null");
@@ -299,7 +306,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             }
             return sbimopsResponse;
         }
-
     }
 
     private CloseableHttpResponse reconciliationResponse(OnlinePayment onlinePayment) {
@@ -408,7 +414,56 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
     @Override
     public PaymentResponse repayReconciliation(OnlinePayment onlinePayment) {
-        return createOfflinePaymentRequest(onlinePayment);
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("inside sbimops :repayReconciliation");
+        CloseableHttpResponse response = repayReconciliationResponse(onlinePayment);
+        return prepareResponse(onlinePayment, response);
+    }
+
+    private CloseableHttpResponse repayReconciliationResponse(OnlinePayment onlinePayment) {
+        CloseableHttpResponse response;
+        try {
+            final HttpPost httpPost = new HttpPost(collectionApplicationProperties.sbimopsReconcileUrl());
+            StringEntity stringEntity = new StringEntity(prepeareReconciliationRequest(onlinePayment),
+                    CollectionConstants.UTF_ENCODING);
+            stringEntity.setContentType(REQUEST_CONTENT_TYPE);
+            httpPost.setEntity(stringEntity);
+
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                    collectionApplicationProperties.sbimopsReconcileUsername(),
+                    collectionApplicationProperties.sbimopsReconcilePassword());
+
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("Sbimops reconciliation URL:" + collectionApplicationProperties.sbimopsReconcileUrl()
+                        + " |username: " + collectionApplicationProperties.sbimopsReconcileUsername()
+                        + " |password: " + collectionApplicationProperties.sbimopsReconcilePassword());
+
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectTimeout(TIME_OUT)
+                    .setConnectionRequestTimeout(TIME_OUT)
+                    .setSocketTimeout(TIME_OUT).build();
+
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+            HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config)
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .build();
+            response = (CloseableHttpResponse) client.execute(httpPost);
+        } catch (ConnectTimeoutException e) {
+            LOGGER.error("SBIMOPS repay reconciliation time out: " + TIME_OUT + "milis. for receiptid: "
+                    + onlinePayment.getReceiptHeader().getId().toString(), e);
+            throw new ApplicationRuntimeException(
+                    "SBIMOPS repay reconciliation time out: " + TIME_OUT + "milis. for receiptid: "
+                            + onlinePayment.getReceiptHeader().getId().toString(),
+                    e);
+        } catch (IOException e) {
+            LOGGER.error(
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
+            throw new ApplicationRuntimeException(
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
+        }
+        return response;
     }
 
 }

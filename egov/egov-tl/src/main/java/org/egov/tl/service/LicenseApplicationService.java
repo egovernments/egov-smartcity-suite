@@ -72,21 +72,27 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.integration.event.model.ApplicationDetails;
 import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.integration.event.publisher.ThirdPartyApplicationEventPublisher;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.OwnerGroup;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.Validity;
 import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.egov.pims.commons.Position;
 
 @Service
 public class LicenseApplicationService extends TradeLicenseService {
@@ -113,6 +119,9 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
+    
+    @Autowired
+    private LicenseDemandVoucherService licenseDemandVoucherService;
 
     @Transactional
     public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
@@ -168,35 +177,48 @@ public class LicenseApplicationService extends TradeLicenseService {
                 .getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().plusYears(1).toDate()).getToDate();
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
-            throw new ValidationException("TL-009", "TL-009", true);
+            throw new ValidationException("TL-009", "TL-009");
+        Validity validity = validityService.getApplicableLicenseValidity(license);
+    	if (validity == null) {
+            throw new ValidationException("TL-010", "License validity not defined.");
+    	}
         license.setLicenseAppType(licenseAppTypeService.getNewLicenseApplicationType());
-        raiseNewDemand(license);
+        
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setUid(UUID.randomUUID().toString());
         if (isBlank(license.getApplicationNumber()))
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license);
-        List<ValidationError> errors = entityValidatorUtil.validateEntity(license);
-        if (errors.isEmpty()) {
-            if (securityUtils.currentUserIsEmployee())
-                licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
-            else
-                licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
-            licenseRepository.save(license);
-            if (securityUtils.currentUserIsCitizen())
-                licenseCitizenPortalService.onCreate(license);
-            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-            tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
-            return license;
-
-        } else {
-            throw new ValidationException(errors);
+        if (securityUtils.currentUserIsEmployee())
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
+        else
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
+        EgDemand demand = raiseNewDemand(license);
+        licenseRepository.save(license);
+        //Demand Voucher Posting
+        List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
+        		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
+        String demandVhPosting = null;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+        	demandVhPosting = appConfigVal.getValue();
         }
+        if(demandVhPosting.equalsIgnoreCase("YES")) {
+        	licenseDemandVoucherService.createDemandVoucher(license, demand, null, demandVhPosting);
+        }
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+        return license;
     }
 
     @Transactional
     public TradeLicense renew(TradeLicense license, WorkflowBean workflowBean) {
+    	Validity validity = validityService.getApplicableLicenseValidity(license);
+    	if (validity == null) {
+            throw new ValidationException("TL-010", "License validity not defined.");
+    	}
         license.setApplicationDate(new Date());
         license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
@@ -206,51 +228,69 @@ public class LicenseApplicationService extends TradeLicenseService {
         processAndStoreDocument(license);
         if (license.isPaid())
             workflowBean.setAdditionaRule(RENEW_WITHOUT_FEE);
-        List<ValidationError> errors = entityValidatorUtil.validateEntity(license);
-        if (errors.isEmpty()) {
-            if (securityUtils.currentUserIsEmployee())
-                licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
-            else
-                licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
-            this.licenseRepository.save(license);
-            if (securityUtils.currentUserIsCitizen())
-                licenseCitizenPortalService.onCreate(license);
-            tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
-            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-            return license;
-        } else {
-            throw new ValidationException(errors);
+
+        if (securityUtils.currentUserIsEmployee())
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
+        else
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
+        this.licenseRepository.save(license);
+        //Demand Voucher Posting
+        List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
+        		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
+        String demandVhPosting = null;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+        	demandVhPosting = appConfigVal.getValue();
         }
+        if(demandVhPosting.equalsIgnoreCase("YES")) {
+        	licenseDemandVoucherService.createDemandVoucher(license, license.getDemand(),null, demandVhPosting);
+        }
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        return license;
     }
 
     @Transactional
     public void updateLicense(TradeLicense license, WorkflowBean workflowBean) {
-        List<ValidationError> errors = entityValidatorUtil.validateEntity(license);
-        if (errors.isEmpty()) {
-            processAndStoreDocument(license);
-            updateDemandForTradeAreaChange(license);
-            license.setCollectionPending(!license.isPaid());
-            if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-                licenseProcessWorkflowService.getRejectTransition(license, workflowBean);
-            else
-                licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
+        processAndStoreDocument(license);
+        updateDemandForTradeAreaChange(license);
+        license.setCollectionPending(!license.isPaid());
+        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            licenseProcessWorkflowService.getRejectTransition(license, workflowBean);
+        else
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
-            if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction())) {
-                if (isEmpty(license.getLicenseNumber()) && license.isNewApplication()) {
-                    license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
-                }
-                if (!license.isCollectionPending()) {
-                    generateAndStoreCertificate(license);
-                }
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction())) {
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication()) {
+                license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
             }
-
-            licenseRepository.save(license);
-            licenseCitizenPortalService.onUpdate(license);
-            tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
-            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        } else {
-            throw new ValidationException(errors);
+            if (!license.isCollectionPending()) {
+                generateAndStoreCertificate(license);
+            }
         }
+
+        licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate(license);
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+    }
+    
+    @Transactional
+    public void updateLicenseToInitialState(TradeLicense license, WorkflowBean workflowBean, OwnerGroup owner, String extraInfo) {
+    	
+        license.setCollectionPending(true);
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+        licenseProcessWorkflowService.rollbackStateInfo(license, workflowBean, (Position) owner, extraInfo);
+
+        licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+	}
+   
+    @Transactional
+    public void saveRejectionNotice(LicenseNotice licenseNotice) {
+    	licenseNoticeRepository.save(licenseNotice);
     }
 
     public void processDigitalSignature(String applicationNumber) {

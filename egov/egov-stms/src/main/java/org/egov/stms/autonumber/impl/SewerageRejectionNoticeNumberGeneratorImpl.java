@@ -57,6 +57,7 @@ import org.springframework.stereotype.Service;
 public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejectionNoticeNumberGenerator {
 
     private static final String REJECTION_NOTICE_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_REJECTION_NOTICE_NUMBER";
+    private static final String REJECTION_NUMBER = "RN/";
 
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
@@ -66,8 +67,7 @@ public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejec
 
     @Override
     public String generateRejectionNoticeNumber() {
-        return String.format("%s%06d", sewerageTaxUtils.getCityCode(),
-                genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
+		return String.format("%s%s%06d", REJECTION_NUMBER, sewerageTaxUtils.getCityCode(),
+				genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
     }
-
 }

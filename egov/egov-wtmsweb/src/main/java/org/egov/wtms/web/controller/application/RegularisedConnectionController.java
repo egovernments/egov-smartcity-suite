@@ -63,6 +63,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -166,6 +167,9 @@ public class RegularisedConnectionController extends GenericConnectionController
         model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
         if (waterTaxUtils.isMeesevaUser(currentUser))
             waterConnectionDetails.setApplicationNumber(request.getParameter("applicationNo"));
+		model.addAttribute("documentNamesList",
+				waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType()));
+		model.addAttribute("connectionTypeForRegularization", Arrays.asList(ConnectionType.NON_METERED));
         return REGULARISE_CONN_FORM;
     }
 
@@ -227,6 +231,8 @@ public class RegularisedConnectionController extends GenericConnectionController
             waterConnectionDetails.setSource(CITIZENPORTAL);
         else if (loggedUserIsMeesevaUser)
             waterConnectionDetails.setSource(MEESEVA);
+		else if (isAnonymousUser)
+			waterConnectionDetails.setSource(ONLINE);
         else
             waterConnectionDetails.setSource(SYSTEM);
 
@@ -276,10 +282,6 @@ public class RegularisedConnectionController extends GenericConnectionController
             } else
                 approvalPosition = userPosition.getId();
         }
-
-        if (isAnonymousUser)
-            waterConnectionDetails.setSource(ONLINE);
-
         if (citizenPortalUser && waterConnectionDetails.getSource() == null)
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
 

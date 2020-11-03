@@ -112,7 +112,7 @@ public class PropertyTaxRegisterController {
         model.addAttribute("ptTaxRegister", new PropertyTaxRegisterBean());
         return "taxregister-pt-form";
     }
-    
+
     @RequestMapping(value = "/taxregister-vlt/form", method = RequestMethod.GET)
     public String vacantLandForm(final Model model) {
         model.addAttribute("currDate", new Date());
@@ -129,7 +129,7 @@ public class PropertyTaxRegisterController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",
-                "inline;filename=PropertyTaxRegister_" + yearMonth + ".pdf");
+                "inline;filename=PropertyTaxRegister_" + yearMonth.replace("-", "_") + ".pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

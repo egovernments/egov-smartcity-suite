@@ -103,6 +103,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/rejectionnotice" })
 
 public class RejectionNoticeController {
+    
     @Autowired
     private NoticeService noticeService;
     @Autowired
@@ -145,7 +146,7 @@ public class RejectionNoticeController {
             basicProperty = property.getBasicProperty();
         } else
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_REJECTION,
+        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_REJECTION,
                 applicationNumber);
         qry = entityManager.createQuery("from StateHistory sh where sh.state.id =:state order by id desc");
         qry.setParameter("state", Long.valueOf(stateId));
@@ -163,12 +164,12 @@ public class RejectionNoticeController {
                     serviceName);
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            final PtNotice savedNotice = noticeService.saveNotice(applicationNumber, noticeNo,
+            notice = noticeService.saveNotice(applicationNumber, noticeNo,
                     NOTICE_TYPE_REJECTION, basicProperty, noticePdf);
-            fileStoreIds = savedNotice.getFileStore().getFileStoreId();
         } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW))
             return "redirect:/rejectionnotice/generaterejectionnotice/preview/" + assessmentNo + "?serviceName=" + serviceName
                     + "&approvalComent=" + approvalComent + "&applicationNumber=" + applicationNumber;
+        fileStoreIds = notice.getFileStore().getFileStoreId();
         model.addAttribute("ulbCode", ulbCode);
         model.addAttribute("fileStoreIds", fileStoreIds);
         model.addAttribute("digitalSignEnabled", digitalSignEnabled);

@@ -863,9 +863,14 @@ public class PropertyTaxCommonUtils {
             noticeType = NOTICE_TYPE_WRITEOFFROCEEDINGS;
         else if (workFlowAction.equalsIgnoreCase(APPEAL_PETITION))
             noticeType = NOTICE_TYPE_APPEALPROCEEDINGS;
-        PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
-		.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())
-		.getSingleResult();
+        final javax.persistence.Query qry = entityManager
+                .createQuery("from PtNotice notice where applicationNumber=? and noticeType=?");
+        qry.setParameter(1, applicationNo);
+        qry.setParameter(2, noticeType);
+        if(qry.getResultList().isEmpty()){
+            qry.setParameter(2, NOTICE_TYPE_SPECIAL_NOTICE);
+        }
+        PtNotice notice = (PtNotice) qry.getSingleResult();
         return notice.getNoticeNo();
     }
 
@@ -1211,5 +1216,8 @@ public class PropertyTaxCommonUtils {
     public Map<String, BigDecimal> getDemandCollMapIncludingPenaltyAndAdvance(Property property) {
         return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
     }
+    
+    public boolean isUserTypeEmployee(User user) {
+        return user.getType().equals(UserType.EMPLOYEE);
+    }
 }
-

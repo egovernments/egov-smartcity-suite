@@ -55,7 +55,7 @@
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.applicationDate}" /></div>
-		<form:form role="form" method="post" 
+		<form:form role="form" method="post" action="/stms/transactions/modifyConnection/${sewerageApplicationDetails.connection.shscNumber}"
 			modelAttribute="sewerageApplicationDetails" id="modifySewerageConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -67,8 +67,12 @@
 	 	    <input type="hidden" name="shscNumber" id="shscNumber" value="${shscNumber}">  
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
-			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
-		   <form:hidden id="documentName" path="" value="${documentName}"/>
+			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">
+			<input type="hidden" id="isWardSecretaryUser" name="isWardSecretaryUser" value="${isWardSecretaryUser}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
+		    <form:hidden id="documentName" path="" value="${documentName}"/>
 		   
 			<div class="panel-body custom-form">
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -77,7 +81,7 @@
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 				</c:if>
 				 <jsp:include page="documentdetails.jsp"></jsp:include>
-				<c:if test="${!isCitizenPortalUser && !isAnonymousUser}">
+				<c:if test="${!isCitizenPortalUser && !isAnonymousUser && !isWardSecretaryUser}">
 					<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 				</c:if>
 			</div>

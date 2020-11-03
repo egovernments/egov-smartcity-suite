@@ -375,6 +375,11 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             return VACANCYREMISSION_FORM;
 
         }
+        if (basicProperty.isUnderWorkflow()
+                && !propertyTaxCommonUtils.isUserTypeEmployee(vacancyRemissionService.getLoggedInUser())) {
+            model.addAttribute(ERROR_MSG, "msg.under.workflow");
+            return PROPERTY_VALIDATION_FOR_SPRING;
+        }
         validateDates(vacancyRemission, resultBinder);
         vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
@@ -420,14 +425,14 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     vacancyRemission.setApplicationNumber(vacancyRemission.getMeesevaApplicationNumber());
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
-                        workFlowAction, propertyByEmployee, meesevaParams,false);
+                        workFlowAction, propertyByEmployee, meesevaParams);
             } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 vacancyRemissionService.saveVacancyRemissionAndPublishEvent(vacancyRemission, approvalPosition, approvalComent, workFlowAction,
                         propertyByEmployee, request);
 
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                        workFlowAction, propertyByEmployee,false);
+                        workFlowAction, propertyByEmployee);
             propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
                 propertyService.pushVacancyRemissionPortalMessage(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);

@@ -167,10 +167,12 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 .findByPropertyIdentifier(assessmentDetails.getPropertyID());
         for (final WaterConnection waterConnection : waterConnections)
             if (waterConnection.getConsumerCode() != null) {
-                final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                        .findByConnection(waterConnection);
-                if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS)
-                        || waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+            	WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                        .findByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(), ConnectionStatus.ACTIVE);
+				if (waterConnectionDetails == null)
+					waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+							waterConnection.getConsumerCode(), ConnectionStatus.INPROGRESS);
+                if (waterConnectionDetails != null)
                     waterConnectionDetailsService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                             waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
             }

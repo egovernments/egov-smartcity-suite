@@ -273,9 +273,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         propQueryString
                 .append("select bndry.boundaryNum,bndry.name, count(bndry.boundaryNum) ")
                 .append("from Boundary bndry, PropertyID pid left join pid.basicProperty bp where bp.upicNo is not null and bp.active = true and ")
-                .append("bp.source = 'M' and pid.ward.id = bndry.id ")
-                .append("and bp.id not in (select basicProperty from PropertyStatusValues group by basicProperty having count(basicProperty) > 0 ) ")
-                .append(" and bp.id in (select basicProperty from PropertyImpl where status = 'A' and isExemptedFromTax = false ) ")
+                .append("pid.ward.id = bndry.id ")
+                .append("and exists (select basicProperty from PropertyImpl where status = 'A' and isExemptedFromTax = false and basicProperty = bp.id) ")
                 .append("group by bndry.name, bndry.boundaryNum ").append("order by bndry.boundaryNum, bndry.name");
 
 		final List<Object> billList = (List<Object>) entityManager.createNamedQuery(QUERY_DEMAND_BILL_STATUS)

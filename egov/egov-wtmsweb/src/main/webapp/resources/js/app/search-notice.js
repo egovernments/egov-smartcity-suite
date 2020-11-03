@@ -262,19 +262,19 @@ function loadingReport(e) {
 								}
 							},
 							{
-								"data" : "hscNo",
-								"title" : "H.S.C NO",
+								"data" : getHyperLinkName(),
+								"title" : getHyperLinkTitle(),
 								"render" : function(data, type, row, meta) {
-									return '<a href="/wtms/report/notice/search/result'
-											+ '?consumerCode='
-											+ data
-											+ '&noticeType='
-											+ noticeType
-											+ '&applicationNumber='
-											+ row.applicationNumber
-											+ '" target="_blank">'
-											+ data
-											+ '</a>';
+										return '<a href="/wtms/report/notice/search/result'
+										+ '?consumerCode='
+										+ data
+										+ '&noticeType='
+										+ noticeType
+										+ '&applicationNumber='
+										+ row.applicationNumber
+										+ '" target="_blank">'
+										+ data
+										+ '</a>';
 								}
 							},
 							{
@@ -350,7 +350,8 @@ function getColumnTitleForNumber() {
 	else if ($('#noticetype').val() === "Sanction Order")
 		return "Sanction Order Number";
 	else if ($('#noticetype').val() === "Regularisation Demand Note"
-			|| $('#noticetype').val() === "Estimation Notice")
+			|| $('#noticetype').val() === "Estimation Notice"
+			|| $('#noticetype').val() === "Rejection Notice")
 		return "Notice Number";
 }
 
@@ -388,7 +389,9 @@ function populateNoticeType() {
 				$("<option />").val('Regularisation Demand Note').text(
 						'Regularisation Demand Note'));
 	}
-
+	$('#noticetype').append(
+			$("<option />").val('Rejection Notice').text(
+					'Rejection Notice'));
 }
 
 function getColumnTitleForDate() {
@@ -397,7 +400,8 @@ function getColumnTitleForDate() {
 	else if ($('#noticetype').val() === "Sanction Order")
 		return "Sanction Order Date";
 	else if ($('#noticetype').val() === "Regularisation Demand Note"
-			|| $('#noticetype').val() === "Estimation Notice")
+			|| $('#noticetype').val() === "Estimation Notice"
+			|| $('#noticetype').val() === "Rejection Notice")
 		return "Notice Date";
 }
 
@@ -407,8 +411,23 @@ function getNumberData() {
 	else if ($('#noticetype').val() === "Sanction Order")
 		return "workOrderNumber";
 	else if ($('#noticetype').val() === "Regularisation Demand Note"
-			|| $('#noticetype').val() === "Estimation Notice")
+			|| $('#noticetype').val() === "Estimation Notice"
+			|| $('#noticetype').val() === "Rejection Notice")
 		return "estimationNumber";
+}
+
+function getHyperLinkName() {
+	if ($("#noticetype").val() === "Rejection Notice")
+		return "applicationNumber";
+	else
+		return "hscNo";
+}
+
+function getHyperLinkTitle() {
+	if ($("#noticetype").val() === "Rejection Notice")
+		return "Application Number";
+	else
+		return "H.S.C NO";
 }
 
 function getName() {
@@ -417,7 +436,8 @@ function getName() {
 	else if ($('#noticetype').val() === "Sanction Order")
 		return "workOrderNumber";
 	else if ($('#noticetype').val() === "Regularisation Demand Note"
-			|| $('#noticetype').val() === "Estimation Notice")
+			|| $('#noticetype').val() === "Estimation Notice"
+			|| $('#noticetype').val() === "Rejection Notice")
 		return "estimationNumber";
 }
 
@@ -427,7 +447,8 @@ function getDateData() {
 	else if ($('#noticetype').val() === "Sanction Order")
 		return "workOrderDate";
 	else if ($('#noticetype').val() === "Regularisation Demand Note"
-			|| $('#noticetype').val() === "Estimation Notice")
+			|| $('#noticetype').val() === "Estimation Notice"
+			|| $('#noticetype').val() === "Rejection Notice")
 		return "estimationDate";
 }
 

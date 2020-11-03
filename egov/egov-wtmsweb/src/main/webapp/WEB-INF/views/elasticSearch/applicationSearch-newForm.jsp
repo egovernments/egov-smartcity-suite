@@ -98,7 +98,6 @@
 						
 						
 						<div class="form-group">
-						<c:if test="${ !citizenRole }">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message
 										code="lbl.application.no" />
 								</label>
@@ -106,7 +105,6 @@
 						<input type="text" name="applicationNumber" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="32" id="app-mobno"
 								 /></div>
 								
-						</c:if>
 						<c:if test="${ !citizenRole }">
 						<label for="field-1" class="col-sm-2 control-label"> <spring:message
 										code="lbl.identifier.number" /></label>

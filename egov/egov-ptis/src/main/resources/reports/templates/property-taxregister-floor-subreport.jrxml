@@ -1,6 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2020  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
 <!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="property-taxregister-floor-subreport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a482e06a-e60b-4b4b-8521-a47bf4ceec95">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="property-taxregister-floor-subreport" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a482e06a-e60b-4b4b-8521-a47bf4ceec95">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.domain.entity.property.*"/>
@@ -22,154 +78,154 @@
 	<detail>
 		<band height="76" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="2" y="1" width="60" height="75" uuid="7a885de9-dccb-4d8f-ac74-9ed91a841ab8"/>
+				<reportElement x="2" y="1" width="38" height="75" uuid="7a885de9-dccb-4d8f-ac74-9ed91a841ab8"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{occupation}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="62" y="1" width="60" height="75" uuid="409c0bf0-caa9-40ef-b2e4-7aa4bcf56d52"/>
+				<reportElement x="40" y="1" width="40" height="75" uuid="409c0bf0-caa9-40ef-b2e4-7aa4bcf56d52"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{usage}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="122" y="1" width="40" height="75" uuid="7b6ad77c-9286-4103-a4a3-0f7f8f6c496a"/>
+				<reportElement x="80" y="1" width="38" height="75" uuid="7b6ad77c-9286-4103-a4a3-0f7f8f6c496a"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="162" y="1" width="60" height="75" uuid="5171bcb9-4694-4c26-82dd-0b43cbf6ce92"/>
+				<reportElement x="118" y="1" width="48" height="75" uuid="5171bcb9-4694-4c26-82dd-0b43cbf6ce92"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{usage}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="222" y="1" width="60" height="75" uuid="7ec30161-1346-490f-af58-9e73808e4553"/>
+				<reportElement x="166" y="1" width="44" height="75" uuid="7ec30161-1346-490f-af58-9e73808e4553"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unitRate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="282" y="1" width="60" height="75" uuid="61854e82-5407-4c48-b97e-8ac652ea9423"/>
+				<reportElement x="210" y="1" width="35" height="75" uuid="61854e82-5407-4c48-b97e-8ac652ea9423"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{mrv}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="342" y="1" width="60" height="75" uuid="e0e77aa1-95ae-4af0-8a90-3d2983b4c489"/>
+				<reportElement x="245" y="1" width="45" height="75" uuid="e0e77aa1-95ae-4af0-8a90-3d2983b4c489"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="402" y="1" width="60" height="75" uuid="1a43d267-798a-4c84-9808-243a14db9594"/>
+				<reportElement x="290" y="1" width="34" height="75" uuid="1a43d267-798a-4c84-9808-243a14db9594"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="462" y="1" width="60" height="75" uuid="16d3d523-c32a-48fc-9662-49c11f29ccac"/>
+				<reportElement x="324" y="1" width="38" height="75" uuid="16d3d523-c32a-48fc-9662-49c11f29ccac"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{buildingARVBeforeDepriciation}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="522" y="1" width="40" height="75" uuid="dc09d05c-33fa-4604-87a6-153f52d24a74"/>
+				<reportElement x="362" y="1" width="40" height="75" uuid="dc09d05c-33fa-4604-87a6-153f52d24a74"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="562" y="1" width="60" height="75" uuid="34a719ce-2851-481c-9f2a-2233117a1262"/>
+				<reportElement x="402" y="1" width="32" height="75" uuid="34a719ce-2851-481c-9f2a-2233117a1262"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{depriciationValue}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="622" y="1" width="60" height="75" uuid="570072e2-ed87-4e09-9baa-2b33361600d4"/>
+				<reportElement x="434" y="1" width="36" height="75" uuid="570072e2-ed87-4e09-9baa-2b33361600d4"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{buildingARV}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="682" y="1" width="60" height="75" uuid="47cd899c-9e9d-428d-92ef-74ccb7cf9a61"/>
+				<reportElement x="470" y="1" width="40" height="75" uuid="47cd899c-9e9d-428d-92ef-74ccb7cf9a61"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sitalARV}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="742" y="1" width="60" height="75" uuid="3936fe22-d609-471e-8537-ffea9af4547a"/>
+				<reportElement x="510" y="1" width="48" height="75" uuid="3936fe22-d609-471e-8537-ffea9af4547a"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalNetARV}]]></textFieldExpression>
 			</textField>

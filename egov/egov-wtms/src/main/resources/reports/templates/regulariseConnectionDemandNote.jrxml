@@ -46,6 +46,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -83,7 +84,6 @@
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" fontName="Arial" fontSize="12"/>
-	<parameter name="municipalityName" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="noticeNumber" class="java.lang.String"/>
@@ -117,35 +117,28 @@
 	<title>
 		<band height="120" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="59" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
+				<reportElement x="0" y="52" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NOTICE FOR REGULARIZATION OF WATER TAP CONNECTION"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="41" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
+				<reportElement x="0" y="34" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{district}+" District"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="4" width="555" height="15" uuid="e5a39ba9-b981-4b8a-9f6e-3ef8b5e337d2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipalityName}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="23" width="555" height="15" uuid="d29a169f-3f2b-403a-998a-c901e27fbb1b"/>
+				<reportElement x="0" y="16" width="555" height="15" uuid="d29a169f-3f2b-403a-998a-c901e27fbb1b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="74" width="555" height="15" uuid="915237bb-c7e3-4df4-b78d-658c70d60ab4"/>
+				<reportElement x="0" y="67" width="555" height="15" uuid="915237bb-c7e3-4df4-b78d-658c70d60ab4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold"/>
 				</textElement>
@@ -698,7 +691,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{municipalityName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

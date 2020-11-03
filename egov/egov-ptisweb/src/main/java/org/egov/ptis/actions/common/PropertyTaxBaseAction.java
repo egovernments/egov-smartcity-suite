@@ -52,7 +52,6 @@ import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATIONTYPEBYNATUREOFTASK;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
@@ -113,9 +112,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -129,7 +125,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -141,12 +136,10 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.dao.PositionMasterDAO;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -166,8 +159,7 @@ import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -230,17 +222,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PropertyUsageService propertyUsageService;
     @Autowired
     protected PropertyTaxCommonUtils propertyTaxCommonUtils;
-
-    @Autowired 
-    private PropertyTypeMasterDAO propertyTypeMasterDAO;
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private PositionMasterDAO positionMasterDAO;
-
-    @Autowired
-    private ThirdPartyService thirdPartyService;
-    
 
     private List<File> uploads = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
@@ -348,7 +329,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.propcatType"));
 
         if (propTypeId != null && !"-1".equals(propTypeId)) {
-            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
+            final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
             if (propTypeMstr != null) {
                 Date regDocDate = null;
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
@@ -494,8 +476,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (floor.getPropertyUsage() != null && isBlank(floor.getFirmName())
                             && null != floor.getPropertyUsage().getId()
                             && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
-                        final PropertyUsage pu = propertyUsageService.findById(floor
-                                .getPropertyUsage().getId());
+                        final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor
+                                .getPropertyUsage().getId()));
                         if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
                             addActionError(getText("mandatory.floor.firmName", msgParams));
                     }
@@ -548,8 +530,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param basicProperty
      */
     protected void validateHouseNumber(final Long wardId, final String houseNo, final BasicProperty basicProperty) {
-		final Query qry = entityManager.unwrap(Session.class).createQuery(
-				"from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
+        final Query qry = getPersistenceService()
+                .getSession()
+                .createQuery(
+                        "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
         qry.setParameter("wardId", wardId);
         if (!qry.list().isEmpty()
@@ -561,10 +545,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * Get Designation for logged in user
      */
     public void setUserInfo() {
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into setUserInfo");
+
         final Long userId = securityUtils.getCurrentUser().getId();
+        if (logger.isDebugEnabled())
+            logger.debug("setUserInfo: Logged in userId" + userId);
         final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
         if (designation != null)
             setUserDesgn(designation.getName());
+        if (logger.isDebugEnabled())
+            logger.debug("Exit from setUserInfo");
     }
 
     /**
@@ -588,8 +579,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Assignment assignment = getApproverAssignment(property);
         if (assignment != null) {
             approverDesignation = assignment.getDesignation().getName();
-            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
-                    || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
+            if (!propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser()))
                 wfInitiator = assignment;
         }
         if (property.getId() != null)
@@ -621,14 +611,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      */
     private Assignment getApproverAssignment(final PropertyImpl property) {
         Assignment assignment = null;
-        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
-                || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser())) {
+        if (!propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser())) {
             currentState = "Created";
-            if (propertyService.isCscOperator(securityUtils.getCurrentUser())
-                    || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
-                assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
-            else
-                assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+            assignment = propertyService.getMappedAssignmentForBusinessUser(property.getBasicProperty());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = assignment.getEmployee().getName().concat("~").concat(
@@ -685,7 +670,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             pos = property.getCurrentState().getOwnerPosition();
         else if (null != approverPositionId && approverPositionId != -1)
-            pos = positionMasterDAO.getPosition(approverPositionId);
+            pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
         else
             pos = wfInitiator.getPosition();
 

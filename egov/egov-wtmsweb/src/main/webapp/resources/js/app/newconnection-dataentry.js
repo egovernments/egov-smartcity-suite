@@ -128,3 +128,15 @@ function validRange(start, end) {
 				return true;
 			}
 	}
+
+if($('#nonLegacy').val()==='true'){
+	bootbox.alert('Invalid H.S.C. Number');
+}
+
+$("#Create").click(function(event){
+	
+	if($('#nonLegacy').val()==='true'){
+    	$('#Create').hide();
+		bootbox.alert('Invalid H.S.C. Number');
+	}	
+});

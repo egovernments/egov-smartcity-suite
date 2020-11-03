@@ -173,6 +173,8 @@ public class EditDemandForDataEntryController {
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 1).getInstallment() : null);
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null)
+			model.addAttribute("nonLegacy", true);
         return "editDemandDateEntry-newForm";
     }
 
@@ -206,7 +208,11 @@ public class EditDemandForDataEntryController {
     public String updateMeterEntry(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
-        final String sourceChannel = request.getParameter("Source");
+    	final String sourceChannel = request.getParameter("Source");
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
+			model.addAttribute("nonLegacy", true);
+			return "editDemandDateEntry-newForm";
+		}
         final WaterConnectionDetails connectionDetails = connectionDemandService
                 .updateDemandForNonMeteredConnectionDataEntry(waterConnectionDetails, sourceChannel);
         model.addAttribute("waterConnectionDetails", connectionDetails);

@@ -144,7 +144,7 @@ public class SewerageActionDropDownUtil {
     }
 
     public static Map<String, String> getActionsByRoles(final List<String> roleName, final String collectionStatus,
-            final SewerageApplicationDetails sewerageApplicationDetails) {
+            final SewerageApplicationDetails sewerageApplicationDetails, boolean isWardSecretaryUser) {
         Set<String> actionList = new HashSet<>();
 
         logger.debug(" ************ Role Name " + roleName);
@@ -165,7 +165,7 @@ public class SewerageActionDropDownUtil {
             }
 			if (role.equalsIgnoreCase(ROLE_ULBOPERATOR) || role.equalsIgnoreCase(ROLE_SEWERAGETAX_CREATOR)
 					|| role.equalsIgnoreCase(ROLE_SEWERAGETAX_APPROVER) || role.equalsIgnoreCase(ROLE_CITIZEN)
-					|| role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE)) {
+					|| role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE) || isWardSecretaryUser) {
 				actionList.add(CHANGENOOFCLOSET);
 			}
             if (role.equalsIgnoreCase(ROLE_CSCOPERTAOR) || role.equalsIgnoreCase(ROLE_ULBOPERATOR)
@@ -176,7 +176,7 @@ public class SewerageActionDropDownUtil {
             if (role.equalsIgnoreCase(ROLE_SEWERAGETAX_ADMINISTRATOR) || role.equalsIgnoreCase(ROLE_SUPERUSER)) {
                 actionList.add(MODIFYLEGACYCONNECTIONACTIONDROPDOWN);
             }
-			if (role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE)) {
+			if (role.equalsIgnoreCase(ROLE_STMS_PUBLIC_ROLE) || isWardSecretaryUser) {
 				actionList.add(CLOSECONNECTION_ACTIONDROPDOWN);
 			}
         }
@@ -186,10 +186,11 @@ public class SewerageActionDropDownUtil {
     }
 
     public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status,
-            final SewerageApplicationDetails sewerageApplicationDetails) {
+            final SewerageApplicationDetails sewerageApplicationDetails, boolean isWardSecretaryUser) {
         SewerageSearchResult searchActions = new SewerageSearchResult();
         if (status != null && sewerageApplicationDetails != null)
-            searchActions.setActions(getActionsByRoles(roleName, status, sewerageApplicationDetails));
+			searchActions
+					.setActions(getActionsByRoles(roleName, status, sewerageApplicationDetails, isWardSecretaryUser));
         return searchActions;
     }
 

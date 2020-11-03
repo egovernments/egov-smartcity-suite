@@ -209,7 +209,7 @@
 		<constructor-arg name="type" value="org.egov.ptis.domain.entity.document.DocumentTypeDetails" />
 	</bean>
 
-    <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
+    <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService" scope="prototype">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>
     </bean>
     
@@ -241,6 +241,6 @@
          <constructor-arg index="0" ref="writeOffPersistenceService"/>
     </bean>
 	
-	<bean id="propertyTaxService" class="org.egov.ptis.service.utils.PropertyTaxService"/>
+	<bean id="propertyTaxService" class="org.egov.ptis.service.utils.PropertyTaxService" scope="prototype"/>
 	
 </beans>

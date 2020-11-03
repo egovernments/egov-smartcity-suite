@@ -70,6 +70,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
@@ -174,6 +175,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = AmalgamationAction.RESULT_ACK, location = "amalgamation/amalgamation-ack.jsp"),
         @Result(name = AmalgamationAction.VIEW, location = "amalgamation/amalgamation-view.jsp"),
         @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp"),
+        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
         @Result(name = AmalgamationAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
 public class AmalgamationAction extends PropertyTaxBaseAction {
@@ -521,6 +523,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     public String forwardModify() {
         if (logger.isDebugEnabled())
             logger.debug("forwardModify: Modify property started " + propertyModel);
+        if (basicProp.isUnderWorkflow() && !propertyTaxCommonUtils.isUserTypeEmployee(securityUtils.getCurrentUser())) {
+            wfErrorMsg = getText("amalgamation.wf.error");
+            return TARGET_WORKFLOW_ERROR;
+        }
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();

@@ -136,13 +136,13 @@ public class BulkBoundaryResultAdaptor implements DataTableJsonAdapter<PropertyM
 		BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK,
 				REVENUE_HIERARCHY_TYPE);
 		final List<Boundary> blockList = crossHierarchyService
-				.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+				.getActiveParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
 		JsonArray boundaryArray = new JsonArray();
 		final List<Long> boundaries = new ArrayList<>();
 		for (final Boundary block : blockList) {
 			final Boundary ward = block.getParent();
 			final JsonObject jsonObject = new JsonObject();
-			if (!boundaries.contains(ward.getId())) {
+			if (!boundaries.contains(ward.getId()) && ward.isActive()) {
 				jsonObject.addProperty("wardId", ward.getId());
 				jsonObject.addProperty("wardName", ward.getName());
 			}

@@ -68,6 +68,7 @@
 						<input type="hidden" id="current1HalfInstallment" name="current1HalfInstallment"
 						value="${current1HalfInstallment}" />
 						<input type="hidden" id="connectionTypeValue" value="${waterConnectionDetails.connectionType}">
+						<input type="hidden" id="nonLegacy" value="${nonLegacy}">
 					<form:hidden path="id" />
 					<div class="panel-heading">
 						<div class="panel-title">

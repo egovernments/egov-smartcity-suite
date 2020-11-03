@@ -94,7 +94,7 @@ public class SeweragePaginationService {
     private SewerageTaxUtils sewerageTaxUtils;
 
     public Page<SewerageIndex> searchResultObj(SewerageConnSearchRequest searchRequest,
-            List<SewerageSearchResult> searchResultFomatted) {
+            List<SewerageSearchResult> searchResultFomatted, boolean isWardSecretaryUser) {
         final Map<String, String> actionMap = new HashMap<>();
         final List<String> roleList = new ArrayList<>();
         final BoolQueryBuilder boolQuery = sewerageIndexService.getActiveApplications(searchRequest);
@@ -113,7 +113,7 @@ public class SeweragePaginationService {
             if (sewerageApplicationDetails != null)
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndexObject.getApplicationStatus(),
-                        sewerageApplicationDetails);
+                        sewerageApplicationDetails, isWardSecretaryUser);
             if (searchActions != null && !searchActions.getActions().isEmpty())
                 getActions(searchActions, actionMap, searchRequest);
             searchResultObject.setActions(actionMap);
@@ -168,7 +168,7 @@ public class SeweragePaginationService {
                             APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                                     && sewerageApplicationDetails.getCurrentDemand() != null)) {
                 SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
-                        sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
+                        sewerageIndex.getApplicationStatus(), sewerageApplicationDetails, false);
                 if (searchActions != null && searchActions.getActions() != null)
                     for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
                         if (COLLECTDONATIONCHARHGES.equals(entry.getValue()))

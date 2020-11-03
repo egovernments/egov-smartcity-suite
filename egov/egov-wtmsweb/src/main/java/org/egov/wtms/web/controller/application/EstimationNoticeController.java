@@ -215,7 +215,7 @@ public class EstimationNoticeController {
                 reportParams.put("district", session.getAttribute("districtName"));
                 EstimationNumberGenerator estimationNoGen = beanResolver
         				.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-        		String estimationNumber = estimationNoGen.generateEstimationNumber();
+        		String estimationNumber = estimationNoGen.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_ESTIMATION);
                 reportParams.put("estimationNumber", estimationNumber);
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
                 FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
@@ -310,13 +310,14 @@ public class EstimationNoticeController {
 	private List<SearchNoticeDetails> preparNoticeDetails(WaterConnectionDetails waterConnectionDetails) {
 		EstimationNumberGenerator estimationNoGen = beanResolver
 				.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-		String estimationNumber = estimationNoGen.generateEstimationNumber();
+		String estimationNumber = estimationNoGen.generateEstimationNumber(WaterTaxConstants.NOTICETYPE_ESTIMATION);
 		EstimationNotice estimationNotice = waterConnectionDetailsService
-				.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
+				.addEstimationOrRejectionNoticeToConnectionDetails(waterConnectionDetails, estimationNumber,
+						WaterTaxConstants.NOTICETYPE_ESTIMATION, waterConnectionDetails.getApplicationType().getCode());
 		ReportOutput reportOutput = reportGenerationService.generateNewEstimationNotice(waterConnectionDetails,
 				estimationNumber, cityService.getMunicipalityName(), cityService.getDistrictName());
 		if (reportOutput != null)
-			waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails,
+			waterConnectionDetailsService.updateConnectionDetailsWithEstimationOrRejectionNotice(waterConnectionDetails,
 					estimationNotice, reportOutput);
 		SearchNoticeDetails noticeDetails = searchNoticeService.buildNoticeDetails(waterConnectionDetails);
 		noticeDetails.setEstimationNumber(estimationNotice.getEstimationNumber());

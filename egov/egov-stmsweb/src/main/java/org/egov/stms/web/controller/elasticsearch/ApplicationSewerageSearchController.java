@@ -47,11 +47,28 @@
  */
 package org.egov.stms.web.controller.elasticsearch;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.ACTIVE;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.CLOSED;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.INPROGRESS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
@@ -70,23 +87,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.ACTIVE;
-import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.CLOSED;
-import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.INPROGRESS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
 @Controller
 @RequestMapping(value = "/existing/sewerage")
 public class ApplicationSewerageSearchController {
 
-    @Autowired
+    private static final String YES = "yes";
+	@Autowired
     private CityService cityService;
     @Autowired
     private BoundaryService boundaryService;
@@ -94,6 +103,8 @@ public class ApplicationSewerageSearchController {
     private SewerageConnectionService sewerageConnectionService;
     @Autowired
     private SeweragePaginationService seweragePaginationService;
+    @Autowired
+    private ThirdPartyService thirdPartyService;
 
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
@@ -119,7 +130,8 @@ public class ApplicationSewerageSearchController {
 
     @PostMapping
     @ResponseBody
-    public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageConnSearchRequest searchRequest) {
+    public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageConnSearchRequest searchRequest, HttpServletRequest request) {
+		boolean isWardSecretaryUser = YES.equalsIgnoreCase(searchRequest.getValidWardSecretaryRequest()) ? true : false;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
@@ -136,8 +148,31 @@ public class ApplicationSewerageSearchController {
 
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
-        Page<SewerageIndex> searchResult = seweragePaginationService.searchResultObj(searchRequest, searchResultFormatted);
+        Page<SewerageIndex> searchResult = seweragePaginationService.searchResultObj(searchRequest, searchResultFormatted, isWardSecretaryUser);
         return new DataTable<>(new PageImpl<>(searchResultFormatted, pageable, searchResult.getTotalElements()),
                 searchRequest.draw());
     }
+    
+	@RequestMapping(value = "/form", method = RequestMethod.POST)
+	public String searchForWardSecretary(Model model, HttpServletRequest request) {
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest))
+			throw new ApplicationRuntimeException("WS.001");
+
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+		String wsTransactionId = request.getParameter("transactionId");
+		String wsSource = request.getParameter("source");
+		if (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource))
+			throw new ApplicationRuntimeException("WS.001");
+
+		SewerageConnSearchRequest sewerageConnSearchRequest = new SewerageConnSearchRequest();
+		sewerageConnSearchRequest.setSearchType("searchConnection");
+		sewerageConnSearchRequest.setValidWardSecretaryRequest(YES);
+		model.addAttribute("sewerageConnSearchRequest", sewerageConnSearchRequest);
+		model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+		model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+		model.addAttribute("isAnonymousOrWardSecretaryUser", YES);
+		return "sewerageTaxSearch-form";
+	}
 }

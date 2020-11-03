@@ -52,14 +52,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEALPETITION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_APP_STATUS_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_CREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_HEARINGCOMPLETED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_INSPECTIONVERIFIED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_INSPECTION_COMPLETE;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_WF_REGISTERED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_APPEAL_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -81,15 +73,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GRP_INSPECTIONVERIFIE
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_INSPECTION_COMPLETE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_WF_REGISTERED;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_HEARING_COMPLETED;
 import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_HEARING_FIXED;
@@ -116,11 +104,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_MEESEVA;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OBJECTED_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
@@ -129,6 +115,20 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED_TO_
 import static org.egov.ptis.constants.PropertyTaxConstants.WS_VIEW_PROPERT_BY_APP_NO_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_INSPECTION_COMPLETE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEALPETITION_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_APPEAL_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_INSPECTIONVERIFIED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_HEARINGCOMPLETED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_WF_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_APPEALPETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPEAL_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_APPEALPROCEEDINGS;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -142,8 +142,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -165,11 +163,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.search.elasticsearch.entity.ApplicationIndex;
-import org.egov.search.elasticsearch.service.ApplicationIndexService;
-import org.egov.infra.integration.event.model.enums.ApplicationStatus;
-import org.egov.infra.integration.event.model.enums.TransactionStatus;
-import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -192,21 +185,22 @@ import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
-import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -284,16 +278,6 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
 
     @Autowired
     private ModuleService moduleDao;
-    
-    @Autowired
-    private PropertyDAO propertyDAO;
-    
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private EventPublisher eventPublisher;
-
-    private ThirdPartyService thirdPartyService;
     
     public RevisionPetitionService() {
         super(Petition.class);
@@ -542,11 +526,8 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     }
 
     public Petition getExistingGRP(final BasicProperty basicProperty) {
-        @SuppressWarnings("unchecked")
-        List<Petition> petition = (List<Petition>) entityManager
-                .createNamedQuery("RP_BY_BASICPROPERTYANDTYPE").setParameter("basicProperty", basicProperty)
-                .setParameter("type", NATURE_OF_WORK_GRP).getResultList();
-        return !petition.isEmpty() ? petition.get(0) : null;
+        return find("from Petition rp where rp.basicProperty = ? and rp.type = ?", basicProperty,
+                NATURE_OF_WORK_GRP);
     }
 
     /**
@@ -615,7 +596,7 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
         if (petition != null) {
             final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(petition.getProperty());
             final Map<String, BigDecimal> earlierDemand = ptDemandDAO.getDemandCollMap(
-                    propertyDAO.getHistoryPropertyForBasicProperty(petition.getBasicProperty()));
+                    propertyService.getLatestHistoryProperty(petition.getBasicProperty().getUpicNo()));
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(petition.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
             else if(WFLOW_ACTION_APPEALPETITION.equalsIgnoreCase(petition.getType()))
@@ -650,7 +631,7 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     }
 
     public void setNoticeInfo(final PropertyImpl property, final PropertyNoticeInfo propertyNotice,
-            final BasicProperty basicProperty, final Petition petition) {
+            final BasicPropertyImpl basicProperty, final Petition petition) {
         final PropertyAckNoticeInfo infoBean = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
@@ -681,8 +662,7 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
             infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
 
         // Sets data for the latest history property
-		final PropertyImpl historyProperty = (PropertyImpl) propertyDAO
-				.getHistoryPropertyForBasicProperty(basicProperty);
+        final PropertyImpl historyProperty = propertyService.getLatestHistoryProperty(basicProperty.getUpicNo());
         final Ptdemand historyDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(historyProperty);
         if (historyProperty != null && historyDemand != null) {
             totalTax = BigDecimal.ZERO;
@@ -799,7 +779,7 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
     }
 
     public Map<String, String[]> updateStateAndStatus(final Petition petition, final Long approverPositionId,
-            final String workFlowAction, final String approverComments, final String approverName,final boolean wsPortalRequest) {
+            final String workFlowAction, final String approverComments, final String approverName) {
         Position position = null;
         WorkFlowMatrix wfmatrix;
         Assignment wfInitiator;
@@ -862,11 +842,8 @@ public class RevisionPetitionService extends PersistenceService<Petition, Long> 
                     pendingAction != null ? pendingAction : null, null, null);
         if (petition.getState() == null) {
             if (position == null && (approverPositionId == null || approverPositionId != -1)) {
-                Assignment assignment;
-                if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest))
-                    assignment = propertyService.getMappedAssignmentForBusinessUser(petition.getBasicProperty());
-                else
-                    assignment = propertyService.getUserPositionByZone(petition.getBasicProperty(), false);
+                Assignment assignment = propertyService.getMappedAssignmentForBusinessUser(petition.getBasicProperty());
+                wfInitiator = assignment;
                 if (assignment != null)
                     position = assignment.getPosition();
             }

@@ -239,7 +239,7 @@ public class PropertyService {
     protected static final Set<String> DEMAND_REASONS = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
             DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
             DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
-            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY));
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     @SuppressWarnings("rawtypes")
@@ -2568,6 +2568,19 @@ public class PropertyService {
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
+    /**
+     * Returns the latest history property of a basic property
+     *
+     * @param upicNo
+     * @return
+     */
+    public PropertyImpl getLatestHistoryProperty(final String upicNo) {
+        final PropertyImpl property = (PropertyImpl) propPerServ.find(
+                "from PropertyImpl prop where prop.basicProperty.upicNo = ? and prop.status = 'H' order by prop.id desc",
+                upicNo);
+        return property;
+    }
+    
     /*
      * api to fetch the assignee details for business user request (CSC opertaor , Ward Secretary)
      */

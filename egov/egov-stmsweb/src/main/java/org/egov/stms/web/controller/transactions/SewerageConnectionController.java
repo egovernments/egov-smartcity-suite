@@ -50,31 +50,44 @@ package org.egov.stms.web.controller.transactions;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.commons.entity.Source.CITIZENPORTAL;
 import static org.egov.commons.entity.Source.CSC;
-import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.commons.entity.Source.SYSTEM;
+import static org.egov.commons.entity.Source.WARDSECRETARY;
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_PDF;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_PDF;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WARDSECRETARYCREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CSCOPERTAOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -111,11 +124,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -162,6 +175,9 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private transient ThirdPartyService thirdPartyService;
 
     @ModelAttribute("documentNamesList")
     public List<SewerageApplicationDetailsDocument> documentTypeMasterList(
@@ -180,12 +196,26 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             });
         return tempDocList;
     }
-
-    @GetMapping("/newConnection-newform")
+    @RequestMapping(value = "/newConnection-newform")
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-                                         final Model model) {
+                                         final Model model, HttpServletRequest request) {
         LOG.debug("Inside showNewApplicationForm method");
         final SewerageConnection connection = new SewerageConnection();
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter("transactionId");
+		String wsSource = request.getParameter("source");
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (isWardSecretaryUser) {
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		}
+        model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
         sewerageApplicationDetails.setApplicationDate(new Date());
         connection.setStatus(SewerageConnectionStatus.INPROGRESS);
         sewerageApplicationDetails.setConnection(connection);
@@ -216,6 +246,15 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                          final RedirectAttributes redirectAttributes,
                          final HttpServletRequest request, final Model model,
                          @RequestParam("files") final MultipartFile[] files) {
+    	String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+        boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+        
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+        
         sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
@@ -231,12 +270,21 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
             model.addAttribute(INSPECTIONFEEREQUIRED, inspectionFeeCollectionRequired);
             model.addAttribute("mode", null);
+            if (isWardSecretaryUser) {
+				model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+			}
             return "newconnection-form";
         }
+        if (isWardSecretaryUser && StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getAdditionalRule()))
+			sewerageApplicationDetails.getWorkflowContainer()
+					.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
         final Boolean isEmployee = securityUtils.currentUserIsEmployee();
         final boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
         if (!sewerageApplicationDetails.hasState()) {
-            updateSourceAndStatus(sewerageApplicationDetails, isEmployee, citizenPortalUser);
+            updateSourceAndStatus(sewerageApplicationDetails, isEmployee, citizenPortalUser, isWardSecretaryUser);
         }
 
         sewerageApplicationDetails.getAppDetailsDocument().clear();
@@ -245,7 +293,10 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         populateFeesDetails(sewerageApplicationDetails);
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, files, request);
-
+        
+        if (isWardSecretaryUser)
+        	sewerageApplicationDetailsService.persistAndPublishEventForWardSecretary(sewerageApplicationDetails, files,
+        			request, StringUtils.EMPTY, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -253,7 +304,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         String approverName = "";
         String nextDesignation = "";
 
-        if (!isEmployee || citizenPortalUser) {
+        if (!isEmployee || citizenPortalUser || isWardSecretaryUser) {
             final Assignment assignment = sewerageWorkflowService
                     .getMappedAssignmentForCscOperator(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             if (assignment != null) {
@@ -283,7 +334,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         }
     }
 
-    private void updateSourceAndStatus(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, Boolean isEmployee, boolean citizenPortalUser) {
+	private void updateSourceAndStatus(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
+			Boolean isEmployee, boolean citizenPortalUser, boolean isWardSecretaryUser) {
         if (isEmployee) {
             String status = sewerageTaxUtils.isInspectionFeeCollectionRequired()
                     ? APPLICATION_STATUS_COLLECTINSPECTIONFEE : APPLICATION_STATUS_CREATED;
@@ -292,6 +344,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             setSourceAndStatus(sewerageApplicationDetails, CSC.toString(), APPLICATION_STATUS_CSCCREATED);
         else if (citizenPortalUser)
             setSourceAndStatus(sewerageApplicationDetails, CITIZENPORTAL.toString(), APPLICATION_STATUS_FEECOLLECTIONPENDING);
+        else if (isWardSecretaryUser)
+            setSourceAndStatus(sewerageApplicationDetails, WARDSECRETARY.toString(), APPLICATION_STATUS_WARDSECRETARYCREATED);
         else
             setSourceAndStatus(sewerageApplicationDetails, ONLINE.toString(), APPLICATION_STATUS_ANONYMOUSCREATED);
     }

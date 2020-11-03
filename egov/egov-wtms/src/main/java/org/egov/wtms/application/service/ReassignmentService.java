@@ -88,8 +88,8 @@ public class ReassignmentService {
                 .stream()
                 .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
                         assignment -> new StringBuffer().append(assignment.getEmployee().getName())
-                                .append('-').append(assignment.getPosition().getName()).toString()));
-
+								.append('-').append(assignment.getPosition().getName()).toString(),
+						(posId1, posId2) -> posId1));
     }
 
     @Transactional

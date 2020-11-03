@@ -1,19 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2020  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
 <!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="property-taxregister-subreport" pageWidth="842" pageHeight="1191" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="a80f41fb-e85c-4d5e-91d9-0c18a11b34b1">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="property-taxregister-subreport" pageWidth="595" pageHeight="1191" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="a80f41fb-e85c-4d5e-91d9-0c18a11b34b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="5"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.domain.entity.property.*"/>
@@ -41,9 +79,9 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="608" splitType="Stretch">
+		<band height="659" splitType="Stretch">
 			<staticText>
-				<reportElement positionType="Float" x="100" y="72" width="30" height="20" uuid="dd19c4b3-066c-4dc6-9a2e-9e2cde9cba9c"/>
+				<reportElement positionType="Float" x="-16" y="110" width="20" height="20" uuid="dd19c4b3-066c-4dc6-9a2e-9e2cde9cba9c"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -56,7 +94,7 @@
 				<text><![CDATA[4]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="129" width="30" height="20" uuid="23a475ab-e2a5-4104-b725-f9a30cbe4c03"/>
+				<reportElement positionType="Float" x="-16" y="167" width="20" height="20" uuid="23a475ab-e2a5-4104-b725-f9a30cbe4c03"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -69,7 +107,7 @@
 				<text><![CDATA[5]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="149" width="30" height="20" uuid="e85ff7b4-d914-4316-a82d-fc02d9655043"/>
+				<reportElement positionType="Float" x="-16" y="187" width="20" height="20" uuid="e85ff7b4-d914-4316-a82d-fc02d9655043"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -82,7 +120,7 @@
 				<text><![CDATA[6]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="169" width="30" height="20" uuid="1f6bd9a9-f550-4782-9567-c0a679cc9d54"/>
+				<reportElement positionType="Float" x="-16" y="207" width="20" height="20" uuid="1f6bd9a9-f550-4782-9567-c0a679cc9d54"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -95,7 +133,7 @@
 				<text><![CDATA[7]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="189" width="30" height="20" uuid="eb052d26-3a76-4e4d-a9e5-64eb23a49b52"/>
+				<reportElement positionType="Float" x="-16" y="227" width="20" height="20" uuid="eb052d26-3a76-4e4d-a9e5-64eb23a49b52"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -108,7 +146,7 @@
 				<text><![CDATA[7 a]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="209" width="30" height="20" uuid="3e0fb13b-8e37-49a7-9981-f84e7fe96a07"/>
+				<reportElement positionType="Float" x="-16" y="247" width="20" height="20" uuid="3e0fb13b-8e37-49a7-9981-f84e7fe96a07"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -121,7 +159,7 @@
 				<text><![CDATA[7 b]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="229" width="30" height="20" uuid="c7994144-b1ae-4ac2-874e-9cca00c6f980"/>
+				<reportElement positionType="Float" x="-16" y="267" width="20" height="20" uuid="c7994144-b1ae-4ac2-874e-9cca00c6f980"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -134,7 +172,7 @@
 				<text><![CDATA[8]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="249" width="30" height="20" uuid="30595d14-eef9-4c77-a849-21c21b0f8144"/>
+				<reportElement positionType="Float" x="-16" y="287" width="20" height="20" uuid="30595d14-eef9-4c77-a849-21c21b0f8144"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -147,7 +185,7 @@
 				<text><![CDATA[9]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="42" width="240" height="30" uuid="c7db9dbf-8576-4284-9058-d7a978efb2de"/>
+				<reportElement positionType="Float" x="4" y="42" width="240" height="68" uuid="c7db9dbf-8576-4284-9058-d7a978efb2de"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -160,7 +198,7 @@
 				<text><![CDATA[Name(s) of the Owner with full Address]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="72" width="240" height="20" uuid="e9fe1741-e39b-46aa-a931-31ca443eff7c"/>
+				<reportElement positionType="Float" x="4" y="110" width="240" height="20" uuid="e9fe1741-e39b-46aa-a931-31ca443eff7c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -173,7 +211,7 @@
 				<text><![CDATA[No. in the Assessment Register]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="129" width="240" height="20" uuid="1a98cde8-feda-44d8-85be-50a344a25fc3"/>
+				<reportElement positionType="Float" x="4" y="167" width="240" height="20" uuid="1a98cde8-feda-44d8-85be-50a344a25fc3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -186,7 +224,7 @@
 				<text><![CDATA[Annual Rental Value/Capital Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="149" width="240" height="20" uuid="b8e0eb1a-a4e0-4b1a-8e98-468302405dd7"/>
+				<reportElement positionType="Float" x="4" y="187" width="240" height="20" uuid="b8e0eb1a-a4e0-4b1a-8e98-468302405dd7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -199,7 +237,7 @@
 				<text><![CDATA[Property Tax [excluding LC]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="169" width="240" height="20" uuid="c5da661b-4311-405e-a765-4c2e64df240e"/>
+				<reportElement positionType="Float" x="4" y="207" width="240" height="20" uuid="c5da661b-4311-405e-a765-4c2e64df240e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -212,7 +250,7 @@
 				<text><![CDATA[Library Cess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="189" width="240" height="20" uuid="8be30c8e-9735-4577-b6d0-e55e104506f1"/>
+				<reportElement positionType="Float" x="4" y="227" width="240" height="20" uuid="8be30c8e-9735-4577-b6d0-e55e104506f1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -225,7 +263,7 @@
 				<text><![CDATA[UC Penalty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="209" width="240" height="20" uuid="1b86a347-45d1-424b-a4ff-d87a1b275095"/>
+				<reportElement positionType="Float" x="4" y="247" width="240" height="20" uuid="1b86a347-45d1-424b-a4ff-d87a1b275095"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -238,7 +276,7 @@
 				<text><![CDATA[Total Property Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="229" width="240" height="20" uuid="c4d18900-e811-41fd-a011-a00b7174c785"/>
+				<reportElement positionType="Float" x="4" y="267" width="240" height="20" uuid="c4d18900-e811-41fd-a011-a00b7174c785"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -251,7 +289,7 @@
 				<text><![CDATA[Zone No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="249" width="240" height="20" uuid="512b14c8-bfe8-4d1d-a224-d7a6368381ae"/>
+				<reportElement positionType="Float" x="4" y="287" width="240" height="20" uuid="512b14c8-bfe8-4d1d-a224-d7a6368381ae"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -264,7 +302,7 @@
 				<text><![CDATA[Name of the Locality]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="2" width="19" height="20" uuid="abfe5308-c3a1-445a-8c57-c3fed602342f"/>
+				<reportElement positionType="Float" x="244" y="2" width="19" height="20" uuid="abfe5308-c3a1-445a-8c57-c3fed602342f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -275,7 +313,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="72" width="19" height="20" uuid="62657aa7-7cc5-43e0-9057-b8419baa8061"/>
+				<reportElement positionType="Float" x="244" y="110" width="19" height="20" uuid="62657aa7-7cc5-43e0-9057-b8419baa8061"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -286,7 +324,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="129" width="19" height="20" uuid="2fd696db-b633-4bf6-9f50-3ddee460706f"/>
+				<reportElement positionType="Float" x="244" y="167" width="19" height="20" uuid="2fd696db-b633-4bf6-9f50-3ddee460706f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -297,7 +335,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="149" width="19" height="20" uuid="5bf7f609-b842-4ef5-bfa1-5cbad34dec97"/>
+				<reportElement positionType="Float" x="244" y="187" width="19" height="20" uuid="5bf7f609-b842-4ef5-bfa1-5cbad34dec97"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -308,7 +346,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="169" width="19" height="20" uuid="986c019c-39dd-4700-b6bc-21a23b689f87"/>
+				<reportElement positionType="Float" x="244" y="207" width="19" height="20" uuid="986c019c-39dd-4700-b6bc-21a23b689f87"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -319,7 +357,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="189" width="19" height="20" uuid="fd383494-3b9f-4d12-b435-70ce3fe641a5"/>
+				<reportElement positionType="Float" x="244" y="227" width="19" height="20" uuid="fd383494-3b9f-4d12-b435-70ce3fe641a5"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -330,7 +368,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="209" width="19" height="20" uuid="596dc440-1104-4970-ac5f-306c92d578f7"/>
+				<reportElement positionType="Float" x="244" y="247" width="19" height="20" uuid="596dc440-1104-4970-ac5f-306c92d578f7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -341,7 +379,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="229" width="19" height="20" uuid="7d286394-30d1-48d7-af13-0f47f89882ee"/>
+				<reportElement positionType="Float" x="244" y="267" width="19" height="20" uuid="7d286394-30d1-48d7-af13-0f47f89882ee"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -352,7 +390,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="249" width="19" height="20" uuid="42726e16-5f3d-4239-b3b3-3a8b4e88aa19"/>
+				<reportElement positionType="Float" x="244" y="287" width="19" height="20" uuid="42726e16-5f3d-4239-b3b3-3a8b4e88aa19"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -363,7 +401,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="2" width="292" height="20" uuid="bf84a7ae-05a9-4333-86c7-b217adfac015">
+				<reportElement positionType="Float" x="263" y="2" width="275" height="20" uuid="bf84a7ae-05a9-4333-86c7-b217adfac015">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -378,7 +416,7 @@
 				<textFieldExpression><![CDATA[$F{ward}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="22" width="292" height="20" uuid="c51f9177-7a08-447b-8330-baa51b1a153a"/>
+				<reportElement positionType="Float" x="263" y="22" width="275" height="20" uuid="c51f9177-7a08-447b-8330-baa51b1a153a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -391,7 +429,7 @@
 				<textFieldExpression><![CDATA[$F{doorNo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="72" width="292" height="20" uuid="a97319f1-1124-47fe-95e7-c47a9ff011b7">
+				<reportElement positionType="Float" x="263" y="110" width="275" height="20" uuid="a97319f1-1124-47fe-95e7-c47a9ff011b7">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -406,7 +444,7 @@
 				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="129" width="292" height="20" uuid="e0140692-00a8-4a46-b5b0-28c91d953143">
+				<reportElement positionType="Float" x="263" y="167" width="275" height="20" uuid="e0140692-00a8-4a46-b5b0-28c91d953143">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -418,9 +456,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getCapitalOrARValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="169" width="292" height="20" uuid="ccb641c3-8844-4da8-9791-e95567d26d80">
+				<reportElement positionType="Float" x="263" y="207" width="275" height="20" uuid="ccb641c3-8844-4da8-9791-e95567d26d80">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -432,9 +471,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getLibraryCess()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="189" width="292" height="20" uuid="c1bdbf8d-1141-4b24-b4cb-7fcdb3b43cfa">
+				<reportElement positionType="Float" x="263" y="227" width="275" height="20" uuid="c1bdbf8d-1141-4b24-b4cb-7fcdb3b43cfa">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -446,9 +486,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getUnauthorizedPenalty()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="209" width="292" height="20" uuid="300bc0b8-c00e-45d5-84b7-84604e858578">
+				<reportElement positionType="Float" x="263" y="247" width="275" height="20" uuid="300bc0b8-c00e-45d5-84b7-84604e858578">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -460,9 +501,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getTotalTax()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="229" width="292" height="20" uuid="e19abd26-9c4a-4c6e-b604-ae955dbd331e">
+				<reportElement positionType="Float" x="263" y="267" width="275" height="20" uuid="e19abd26-9c4a-4c6e-b604-ae955dbd331e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -477,7 +519,7 @@
 				<textFieldExpression><![CDATA[$F{zone}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="249" width="292" height="20" uuid="59cb7dfa-c0ab-4641-80dc-bed6439c8701">
+				<reportElement positionType="Float" x="263" y="287" width="275" height="20" uuid="59cb7dfa-c0ab-4641-80dc-bed6439c8701">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -492,7 +534,7 @@
 				<textFieldExpression><![CDATA[$F{locality}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="42" width="30" height="30" uuid="9efbdce3-8d17-4b6c-941a-0dc9ec130b4b"/>
+				<reportElement positionType="Float" x="-16" y="42" width="20" height="68" uuid="9efbdce3-8d17-4b6c-941a-0dc9ec130b4b"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -505,7 +547,7 @@
 				<text><![CDATA[3]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="2" width="30" height="20" uuid="962a7aba-a108-4ab1-97a3-a9e1a89b0fcb"/>
+				<reportElement positionType="Float" x="-16" y="2" width="20" height="20" uuid="962a7aba-a108-4ab1-97a3-a9e1a89b0fcb"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -515,10 +557,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
-				<text><![CDATA[  1]]></text>
+				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="2" width="240" height="20" uuid="86b053ef-abf8-4044-a9d5-e90ae95f65f6"/>
+				<reportElement positionType="Float" x="4" y="2" width="240" height="20" uuid="86b053ef-abf8-4044-a9d5-e90ae95f65f6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -531,7 +573,7 @@
 				<text><![CDATA[Ward No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="22" width="30" height="20" uuid="163fb6fb-7687-43f0-997a-5c5d37f29e23"/>
+				<reportElement positionType="Float" x="-16" y="22" width="20" height="20" uuid="163fb6fb-7687-43f0-997a-5c5d37f29e23"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -541,10 +583,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
-				<text><![CDATA[  2]]></text>
+				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="22" width="240" height="20" uuid="1979a4e9-f420-4eb8-aa7f-9bbb988c2ea5"/>
+				<reportElement positionType="Float" x="4" y="22" width="240" height="20" uuid="1979a4e9-f420-4eb8-aa7f-9bbb988c2ea5"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -557,7 +599,7 @@
 				<text><![CDATA[Door No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="22" width="19" height="20" uuid="a9219df9-7485-41a5-808c-f9eb89d34081"/>
+				<reportElement positionType="Float" x="244" y="22" width="19" height="20" uuid="a9219df9-7485-41a5-808c-f9eb89d34081"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -568,7 +610,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="42" width="19" height="30" uuid="89560d9c-fbbe-4bb2-9584-09dff7816934"/>
+				<reportElement positionType="Float" x="244" y="42" width="19" height="68" uuid="89560d9c-fbbe-4bb2-9584-09dff7816934"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -579,7 +621,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="269" width="30" height="20" uuid="d7716518-28e2-4c54-ba86-c54cfcd634ae"/>
+				<reportElement positionType="Float" x="-16" y="307" width="20" height="20" uuid="d7716518-28e2-4c54-ba86-c54cfcd634ae"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -592,7 +634,7 @@
 				<text><![CDATA[10]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="269" width="240" height="20" uuid="5362be8d-2358-4e01-8440-497a233c0811"/>
+				<reportElement positionType="Float" x="4" y="307" width="240" height="20" uuid="5362be8d-2358-4e01-8440-497a233c0811"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -605,7 +647,7 @@
 				<text><![CDATA[Cause of Liability of Asst. or Increase Asst.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="269" width="19" height="20" uuid="db791be5-56f5-481a-a951-41a1712a1e5c"/>
+				<reportElement positionType="Float" x="244" y="307" width="19" height="20" uuid="db791be5-56f5-481a-a951-41a1712a1e5c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -616,7 +658,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="289" width="30" height="20" uuid="ef26e753-fcdc-4cee-8e34-e4fe29054cc9"/>
+				<reportElement positionType="Float" x="-16" y="327" width="20" height="20" uuid="ef26e753-fcdc-4cee-8e34-e4fe29054cc9"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -629,7 +671,7 @@
 				<text><![CDATA[11]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="289" width="240" height="20" uuid="10b2dbee-8aa4-4de4-af16-15d9a9fb9bdd"/>
+				<reportElement positionType="Float" x="4" y="327" width="240" height="20" uuid="10b2dbee-8aa4-4de4-af16-15d9a9fb9bdd"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -642,7 +684,7 @@
 				<text><![CDATA[Date of Completion of Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="289" width="19" height="20" uuid="f3da25df-8db1-47cd-9f05-fafc144c9cb7"/>
+				<reportElement positionType="Float" x="244" y="327" width="19" height="20" uuid="f3da25df-8db1-47cd-9f05-fafc144c9cb7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -653,7 +695,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="269" width="292" height="20" uuid="dba8ef97-e6de-4e42-84a0-27b8e6072f40">
+				<reportElement positionType="Float" x="263" y="307" width="275" height="20" uuid="dba8ef97-e6de-4e42-84a0-27b8e6072f40">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -668,7 +710,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getApplicationType()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="289" width="292" height="20" uuid="0ec10df6-3df5-40d7-a464-dffd2984df68">
+				<reportElement positionType="Float" x="263" y="327" width="275" height="20" uuid="0ec10df6-3df5-40d7-a464-dffd2984df68">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -683,7 +725,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getConstructionDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="42" width="292" height="30" uuid="4b401706-79bd-4c36-a8fd-a23472849b1e"/>
+				<reportElement positionType="Float" x="263" y="42" width="275" height="68" uuid="4b401706-79bd-4c36-a8fd-a23472849b1e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -696,7 +738,7 @@
 				<textFieldExpression><![CDATA[$F{ownerName} + "\n" + $F{ownerAddress}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="149" width="292" height="20" uuid="5a5b17dc-40fb-42e7-bb8d-3a5f35e3535a">
+				<reportElement positionType="Float" x="263" y="187" width="275" height="20" uuid="5a5b17dc-40fb-42e7-bb8d-3a5f35e3535a">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -708,9 +750,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{previousTaxDetails}.getPropertyTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="100" y="109" width="581" height="20" uuid="2149656b-95e6-44ec-b023-382991ec93b8"/>
+				<reportElement x="-16" y="147" width="554" height="20" uuid="2149656b-95e6-44ec-b023-382991ec93b8"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -724,7 +767,7 @@
 				<text><![CDATA[Existing Assessment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="309" width="30" height="20" uuid="efaa45bc-ea73-477e-a958-081b12dd55f3"/>
+				<reportElement positionType="Float" x="-16" y="347" width="20" height="20" uuid="efaa45bc-ea73-477e-a958-081b12dd55f3"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -737,7 +780,7 @@
 				<text><![CDATA[12]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="309" width="240" height="20" uuid="21ef9225-f7e3-4608-a4aa-f9546a966dba"/>
+				<reportElement positionType="Float" x="4" y="347" width="240" height="20" uuid="21ef9225-f7e3-4608-a4aa-f9546a966dba"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -750,7 +793,7 @@
 				<text><![CDATA[Date of Occupation of Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="309" width="19" height="20" uuid="01f61edd-aadb-4141-a78f-7a47c6a95f09"/>
+				<reportElement positionType="Float" x="244" y="347" width="19" height="20" uuid="01f61edd-aadb-4141-a78f-7a47c6a95f09"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -761,7 +804,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="309" width="292" height="20" uuid="a43edf7e-3ae8-48d0-9bb6-50e214599bfd">
+				<reportElement positionType="Float" x="263" y="347" width="275" height="20" uuid="a43edf7e-3ae8-48d0-9bb6-50e214599bfd">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -776,7 +819,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getEffectiveDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="329" width="30" height="20" uuid="bb44e895-0572-4dcb-a1ec-40cd438755be"/>
+				<reportElement positionType="Float" x="-16" y="367" width="20" height="20" uuid="bb44e895-0572-4dcb-a1ec-40cd438755be"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -789,7 +832,7 @@
 				<text><![CDATA[13]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="329" width="240" height="20" uuid="8563f104-0cda-461e-8561-2c89ec648891"/>
+				<reportElement positionType="Float" x="4" y="367" width="240" height="20" uuid="8563f104-0cda-461e-8561-2c89ec648891"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -802,7 +845,7 @@
 				<text><![CDATA[Date of Demolition of Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="329" width="19" height="20" uuid="d8f7f5af-5daa-4f10-b07a-fd7d6e0928cf"/>
+				<reportElement positionType="Float" x="244" y="367" width="19" height="20" uuid="d8f7f5af-5daa-4f10-b07a-fd7d6e0928cf"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -813,7 +856,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="329" width="292" height="20" uuid="841ca6ce-9c21-4369-b5e7-5e8b5f480e3f">
+				<reportElement positionType="Float" x="263" y="367" width="275" height="20" uuid="841ca6ce-9c21-4369-b5e7-5e8b5f480e3f">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -828,7 +871,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getDemoltionEffectiveDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="349" width="30" height="20" uuid="a8c55400-9f8e-4dc1-bea3-62ee8d5ec72a"/>
+				<reportElement positionType="Float" x="-16" y="387" width="20" height="20" uuid="a8c55400-9f8e-4dc1-bea3-62ee8d5ec72a"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -841,7 +884,7 @@
 				<text><![CDATA[14]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="349" width="240" height="20" uuid="466a0a5d-3720-493f-ba0d-f9d0ce7d84a6"/>
+				<reportElement positionType="Float" x="4" y="387" width="240" height="20" uuid="466a0a5d-3720-493f-ba0d-f9d0ce7d84a6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -854,7 +897,7 @@
 				<text><![CDATA[Nature & Type of Roofing]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="349" width="19" height="20" uuid="2b768325-3411-4c34-83ce-4bbf8aa678b1"/>
+				<reportElement positionType="Float" x="244" y="387" width="19" height="20" uuid="2b768325-3411-4c34-83ce-4bbf8aa678b1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -865,7 +908,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="349" width="292" height="20" uuid="46777db0-35af-4054-ac00-f3ca7233b55e">
+				<reportElement positionType="Float" x="263" y="387" width="275" height="20" uuid="46777db0-35af-4054-ac00-f3ca7233b55e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -880,7 +923,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRoofType()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="369" width="30" height="20" uuid="a26a43f0-5f5e-4a1b-8d55-7eb43328e1c0"/>
+				<reportElement positionType="Float" x="-16" y="407" width="20" height="20" uuid="a26a43f0-5f5e-4a1b-8d55-7eb43328e1c0"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -893,7 +936,7 @@
 				<text><![CDATA[15]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="369" width="240" height="20" uuid="7d5cc4bc-2d3f-4bc0-a2b3-53f9600f0541"/>
+				<reportElement positionType="Float" x="4" y="407" width="240" height="20" uuid="7d5cc4bc-2d3f-4bc0-a2b3-53f9600f0541"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -906,7 +949,7 @@
 				<text><![CDATA[Nature & Type of Flooring]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="369" width="19" height="20" uuid="d1403433-de08-4162-8c7b-c5493d6a5532"/>
+				<reportElement positionType="Float" x="244" y="407" width="19" height="20" uuid="d1403433-de08-4162-8c7b-c5493d6a5532"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -917,7 +960,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="369" width="292" height="20" uuid="34b51736-fae1-4b32-bb60-eef13cc732be">
+				<reportElement positionType="Float" x="263" y="407" width="275" height="20" uuid="34b51736-fae1-4b32-bb60-eef13cc732be">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -932,7 +975,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getFloorType()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="389" width="30" height="20" uuid="d3fcd962-b5ff-4520-b2ce-85a3d470be9e"/>
+				<reportElement positionType="Float" x="-16" y="427" width="20" height="20" uuid="d3fcd962-b5ff-4520-b2ce-85a3d470be9e"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -945,7 +988,7 @@
 				<text><![CDATA[16]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="389" width="240" height="20" uuid="ffa14c37-b9af-4467-ab12-3eeb14aec4d1"/>
+				<reportElement positionType="Float" x="4" y="427" width="240" height="20" uuid="ffa14c37-b9af-4467-ab12-3eeb14aec4d1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -958,7 +1001,7 @@
 				<text><![CDATA[Nature & Type of Wood]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="389" width="19" height="20" uuid="dd7418da-6237-407d-8ca1-c4c47677a328"/>
+				<reportElement positionType="Float" x="244" y="427" width="19" height="20" uuid="dd7418da-6237-407d-8ca1-c4c47677a328"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -969,7 +1012,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="389" width="292" height="20" uuid="eac8d9b4-f781-48cc-9528-92b2c8959f2c">
+				<reportElement positionType="Float" x="263" y="427" width="275" height="20" uuid="eac8d9b4-f781-48cc-9528-92b2c8959f2c">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -984,7 +1027,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getWoodType()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="409" width="30" height="20" uuid="8061c781-818f-4e06-9979-d840d3102502"/>
+				<reportElement positionType="Float" x="-16" y="447" width="20" height="20" uuid="8061c781-818f-4e06-9979-d840d3102502"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -997,7 +1040,7 @@
 				<text><![CDATA[17]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="409" width="240" height="20" uuid="13d7a28b-acfc-44da-a6dc-baf645a07b31"/>
+				<reportElement positionType="Float" x="4" y="447" width="240" height="20" uuid="13d7a28b-acfc-44da-a6dc-baf645a07b31"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1010,7 +1053,7 @@
 				<text><![CDATA[Nature & Type of Wall]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="409" width="19" height="20" uuid="b28d4182-3dfb-4c74-bb4b-f57df8c73dc4"/>
+				<reportElement positionType="Float" x="244" y="447" width="19" height="20" uuid="b28d4182-3dfb-4c74-bb4b-f57df8c73dc4"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1021,7 +1064,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="409" width="292" height="20" uuid="c53904d7-b76b-4720-ba06-d90dbc18558d">
+				<reportElement positionType="Float" x="263" y="447" width="275" height="20" uuid="c53904d7-b76b-4720-ba06-d90dbc18558d">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1036,7 +1079,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getWallType()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="464" width="30" height="20" uuid="c38e65d6-1ab7-4e05-9573-bff4bd622dba"/>
+				<reportElement positionType="Float" x="-16" y="502" width="20" height="20" uuid="c38e65d6-1ab7-4e05-9573-bff4bd622dba"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1049,7 +1092,7 @@
 				<text><![CDATA[18]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="464" width="240" height="20" uuid="1cb05a7e-f43f-4d1a-aee3-610d64f655ea"/>
+				<reportElement positionType="Float" x="4" y="502" width="240" height="20" uuid="1cb05a7e-f43f-4d1a-aee3-610d64f655ea"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1062,7 +1105,7 @@
 				<text><![CDATA[Electricity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="464" width="19" height="20" uuid="187d1654-c37e-40cc-a125-e3336a15141e"/>
+				<reportElement positionType="Float" x="244" y="502" width="19" height="20" uuid="187d1654-c37e-40cc-a125-e3336a15141e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1073,7 +1116,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="464" width="292" height="20" uuid="394ca70f-0eec-48a2-b68f-d114fdfb5719">
+				<reportElement positionType="Float" x="263" y="502" width="275" height="20" uuid="394ca70f-0eec-48a2-b68f-d114fdfb5719">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1088,7 +1131,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getElectricity()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="484" width="30" height="20" uuid="2317f632-1a13-4a48-ac84-40811adbab7e"/>
+				<reportElement positionType="Float" x="-16" y="522" width="20" height="20" uuid="2317f632-1a13-4a48-ac84-40811adbab7e"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1101,7 +1144,7 @@
 				<text><![CDATA[19]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="484" width="240" height="20" uuid="8c9fb1e6-2314-4b00-8466-a1c8b7ac4b8f"/>
+				<reportElement positionType="Float" x="4" y="522" width="240" height="20" uuid="8c9fb1e6-2314-4b00-8466-a1c8b7ac4b8f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1114,7 +1157,7 @@
 				<text><![CDATA[Water Tap / Well]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="484" width="19" height="20" uuid="95aea466-674a-491d-8949-53b10d95159f"/>
+				<reportElement positionType="Float" x="244" y="522" width="19" height="20" uuid="95aea466-674a-491d-8949-53b10d95159f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1125,7 +1168,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="484" width="292" height="20" uuid="b3fa31d3-a191-4f0b-ba7c-68e8fdd15100">
+				<reportElement positionType="Float" x="263" y="522" width="275" height="20" uuid="b3fa31d3-a191-4f0b-ba7c-68e8fdd15100">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1140,7 +1183,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getWaterTap()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="504" width="30" height="20" uuid="011da644-9ef3-4faf-ac83-2fbbb0edb32b"/>
+				<reportElement positionType="Float" x="-16" y="542" width="20" height="20" uuid="011da644-9ef3-4faf-ac83-2fbbb0edb32b"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1153,7 +1196,7 @@
 				<text><![CDATA[20]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="504" width="240" height="20" uuid="38d5d6e0-c978-4405-aaf4-42b0ce955010"/>
+				<reportElement positionType="Float" x="4" y="542" width="240" height="20" uuid="38d5d6e0-c978-4405-aaf4-42b0ce955010"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1166,7 +1209,7 @@
 				<text><![CDATA[Whether connected with Municipal Drainage]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="504" width="19" height="20" uuid="11cea250-68b8-4937-b63e-fe281f8816c0"/>
+				<reportElement positionType="Float" x="244" y="542" width="19" height="20" uuid="11cea250-68b8-4937-b63e-fe281f8816c0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1177,7 +1220,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="504" width="292" height="20" uuid="6007bd4a-11a9-4586-b589-025ba87cb3ec">
+				<reportElement positionType="Float" x="263" y="542" width="275" height="20" uuid="6007bd4a-11a9-4586-b589-025ba87cb3ec">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1191,7 +1234,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="524" width="30" height="20" uuid="f32663af-159f-480c-841c-b0a4d6e7c729"/>
+				<reportElement positionType="Float" x="-16" y="562" width="20" height="20" uuid="f32663af-159f-480c-841c-b0a4d6e7c729"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1204,7 +1247,7 @@
 				<text><![CDATA[21]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="524" width="240" height="20" uuid="30257a2e-4e6f-47dc-b66e-477ae9e0f6ca"/>
+				<reportElement positionType="Float" x="4" y="562" width="240" height="20" uuid="30257a2e-4e6f-47dc-b66e-477ae9e0f6ca"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1217,7 +1260,7 @@
 				<text><![CDATA[Attached Bathroom]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="524" width="19" height="20" uuid="605f58da-20a6-4056-a82a-b98f2df031cf"/>
+				<reportElement positionType="Float" x="244" y="562" width="19" height="20" uuid="605f58da-20a6-4056-a82a-b98f2df031cf"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1228,7 +1271,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="524" width="292" height="20" uuid="e62d3c54-e29d-4931-98c3-3e49800262ac">
+				<reportElement positionType="Float" x="263" y="562" width="275" height="20" uuid="e62d3c54-e29d-4931-98c3-3e49800262ac">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1243,7 +1286,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getAttachedBathroom()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="544" width="30" height="20" uuid="c2a738ec-baad-4de1-a084-c4e3e2ec2662"/>
+				<reportElement positionType="Float" x="-16" y="582" width="20" height="20" uuid="c2a738ec-baad-4de1-a084-c4e3e2ec2662"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1256,7 +1299,7 @@
 				<text><![CDATA[22]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="544" width="240" height="20" uuid="59d65547-2ee6-4737-8763-51cad01efdce"/>
+				<reportElement positionType="Float" x="4" y="582" width="240" height="20" uuid="59d65547-2ee6-4737-8763-51cad01efdce"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1269,7 +1312,7 @@
 				<text><![CDATA[Total Adjacent premises [in Sq. Mtrs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="544" width="19" height="20" uuid="56e27e3d-ab72-4dcb-bda6-15520cb06a12"/>
+				<reportElement positionType="Float" x="244" y="582" width="19" height="20" uuid="56e27e3d-ab72-4dcb-bda6-15520cb06a12"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1280,7 +1323,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="544" width="292" height="20" uuid="3a5e27b3-0c04-459b-a32f-547de3425888">
+				<reportElement positionType="Float" x="263" y="582" width="275" height="20" uuid="3a5e27b3-0c04-459b-a32f-547de3425888">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1294,7 +1337,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="564" width="30" height="20" uuid="61ffb6e2-ff59-444a-9d7f-03375ae0796a"/>
+				<reportElement positionType="Float" x="-16" y="602" width="20" height="35" uuid="61ffb6e2-ff59-444a-9d7f-03375ae0796a"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1307,20 +1350,20 @@
 				<text><![CDATA[23]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="564" width="240" height="20" uuid="da8098e5-a322-43b7-bbc1-bccb3bbcedf9"/>
+				<reportElement positionType="Float" x="4" y="602" width="240" height="35" uuid="da8098e5-a322-43b7-bbc1-bccb3bbcedf9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[Area of appurtenant land allowed under explanation to Section 87 of APM Act]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="564" width="19" height="20" uuid="345c7c32-9239-4c56-ae40-aef7a56fc661"/>
+				<reportElement positionType="Float" x="244" y="602" width="19" height="35" uuid="345c7c32-9239-4c56-ae40-aef7a56fc661"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1331,7 +1374,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="564" width="292" height="20" uuid="d4eef570-3e44-42e8-b8e7-560ceee51654">
+				<reportElement positionType="Float" x="263" y="602" width="275" height="35" uuid="d4eef570-3e44-42e8-b8e7-560ceee51654">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1345,7 +1388,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="584" width="30" height="20" uuid="de3dcb94-cfe3-4dd0-b42e-8d0f6521fd0b"/>
+				<reportElement positionType="Float" x="-16" y="637" width="20" height="20" uuid="de3dcb94-cfe3-4dd0-b42e-8d0f6521fd0b"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1358,7 +1401,7 @@
 				<text><![CDATA[24]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="584" width="240" height="20" uuid="f197c8f5-33d6-4ba2-9872-13426f62261b"/>
+				<reportElement positionType="Float" x="4" y="637" width="240" height="20" uuid="f197c8f5-33d6-4ba2-9872-13426f62261b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1371,7 +1414,7 @@
 				<text><![CDATA[Area to be taxed under VLT with Asst. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="584" width="19" height="20" uuid="4747998b-8eb8-4562-9587-a87219268028"/>
+				<reportElement positionType="Float" x="244" y="637" width="19" height="20" uuid="4747998b-8eb8-4562-9587-a87219268028"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1382,7 +1425,7 @@
 				<text><![CDATA[  :]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="584" width="292" height="20" uuid="60e16bc5-8a9f-4d82-881d-9964f72d541d">
+				<reportElement positionType="Float" x="263" y="637" width="275" height="20" uuid="60e16bc5-8a9f-4d82-881d-9964f72d541d">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -1396,7 +1439,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement x="100" y="444" width="581" height="20" uuid="1b3845de-a6ee-499d-a9a5-23392ead90fb"/>
+				<reportElement x="-16" y="482" width="554" height="20" uuid="1b3845de-a6ee-499d-a9a5-23392ead90fb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1410,9 +1453,9 @@
 				<text><![CDATA[Amenities provided in the Building]]></text>
 			</staticText>
 		</band>
-		<band height="177" splitType="Stretch">
+		<band height="192" splitType="Stretch">
 			<staticText>
-				<reportElement x="-18" y="7" width="800" height="20" uuid="912f679c-e598-4d7a-8730-3f22285207c2"/>
+				<reportElement x="-18" y="13" width="556" height="20" uuid="912f679c-e598-4d7a-8730-3f22285207c2"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1426,7 +1469,7 @@
 				<text><![CDATA[Description of each storey of the Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-18" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="b330756e-e438-4ef3-9bdb-e68e1709d60a"/>
+				<reportElement x="-18" y="33" width="38" height="82" isPrintInFirstWholeBand="true" uuid="b330756e-e438-4ef3-9bdb-e68e1709d60a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1434,12 +1477,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Name and Occupation of the Occupant [Owner/Tenant]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-18" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="69677625-8bf2-432e-bb1e-0aeeb146e570"/>
+				<reportElement x="-18" y="115" width="38" height="10" isPrintInFirstWholeBand="true" uuid="69677625-8bf2-432e-bb1e-0aeeb146e570"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1447,12 +1490,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[25]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="bb4ea32a-4925-449c-b229-b905f4d7b426"/>
+				<reportElement x="20" y="33" width="40" height="82" isPrintInFirstWholeBand="true" uuid="bb4ea32a-4925-449c-b229-b905f4d7b426"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1460,12 +1503,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Type of Construction]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="faae0074-de6e-4149-a9a5-8eaef756ff92"/>
+				<reportElement x="20" y="115" width="40" height="10" isPrintInFirstWholeBand="true" uuid="faae0074-de6e-4149-a9a5-8eaef756ff92"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1473,12 +1516,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[26]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="102" y="27" width="40" height="40" isPrintInFirstWholeBand="true" uuid="d08edd65-439c-4c77-b427-a4a1a0ee244f"/>
+				<reportElement x="60" y="33" width="38" height="82" isPrintInFirstWholeBand="true" uuid="d08edd65-439c-4c77-b427-a4a1a0ee244f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1486,12 +1529,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Plinth area of building per each type of construction [in Sq. Mtrs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="102" y="67" width="40" height="10" isPrintInFirstWholeBand="true" uuid="65c82c24-4f43-4391-8065-15bcf535be2b"/>
+				<reportElement x="60" y="115" width="38" height="10" isPrintInFirstWholeBand="true" uuid="65c82c24-4f43-4391-8065-15bcf535be2b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1499,12 +1542,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[27]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="0f7423e2-d2f9-4578-91bd-d2192d1ae515"/>
+				<reportElement x="98" y="33" width="48" height="82" isPrintInFirstWholeBand="true" uuid="0f7423e2-d2f9-4578-91bd-d2192d1ae515"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1512,12 +1555,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Nature of use of the Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="3089187e-b689-4d1e-bad6-658578edb2e1"/>
+				<reportElement x="98" y="115" width="48" height="10" isPrintInFirstWholeBand="true" uuid="3089187e-b689-4d1e-bad6-658578edb2e1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1525,12 +1568,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[28]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="202" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="f8e51c03-f2ce-44f6-842e-5dc5a59c5da0"/>
+				<reportElement x="146" y="33" width="44" height="82" isPrintInFirstWholeBand="true" uuid="f8e51c03-f2ce-44f6-842e-5dc5a59c5da0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1538,12 +1581,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Monthly rent notified per Sq. Mtr. Of Plinth Area as per type of Construction and Nature of Usage of the Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="202" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="5289ccdf-c72f-410a-9691-29af6b7d77ca"/>
+				<reportElement x="146" y="115" width="44" height="10" isPrintInFirstWholeBand="true" uuid="5289ccdf-c72f-410a-9691-29af6b7d77ca"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1551,12 +1594,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[29]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="262" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="da696407-3b4a-496e-952d-90867575ae72"/>
+				<reportElement x="190" y="33" width="35" height="82" isPrintInFirstWholeBand="true" uuid="da696407-3b4a-496e-952d-90867575ae72"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1564,12 +1607,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Monthly Rental value fixed [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="262" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="316f848d-67bd-4f4a-babc-65e5fd480e6c"/>
+				<reportElement x="190" y="115" width="35" height="10" isPrintInFirstWholeBand="true" uuid="316f848d-67bd-4f4a-babc-65e5fd480e6c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1577,12 +1620,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[30]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="322" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="e12b4e2b-abbd-49b7-8519-98dfb200bdf7"/>
+				<reportElement x="225" y="33" width="45" height="82" isPrintInFirstWholeBand="true" uuid="e12b4e2b-abbd-49b7-8519-98dfb200bdf7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1590,12 +1633,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Reasons for Increase/ Decrease/ Omission]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="322" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="dd3dda4a-4fbb-4346-a9b8-2435d9bbf1b9"/>
+				<reportElement x="225" y="115" width="45" height="10" isPrintInFirstWholeBand="true" uuid="dd3dda4a-4fbb-4346-a9b8-2435d9bbf1b9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1603,12 +1646,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[31]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="382" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="40e5ef31-2863-4ba2-8afa-72f57701a477"/>
+				<reportElement x="270" y="33" width="34" height="82" isPrintInFirstWholeBand="true" uuid="40e5ef31-2863-4ba2-8afa-72f57701a477"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1616,12 +1659,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Asst. No. allotted in the New Register]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="382" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="f7a0c40c-237a-430a-b069-39be51004db1"/>
+				<reportElement x="270" y="115" width="34" height="10" isPrintInFirstWholeBand="true" uuid="f7a0c40c-237a-430a-b069-39be51004db1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1629,12 +1672,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[32]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="442" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="f656f966-e815-47df-9873-56c20a0baad1"/>
+				<reportElement x="304" y="33" width="38" height="82" isPrintInFirstWholeBand="true" uuid="f656f966-e815-47df-9873-56c20a0baad1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1642,12 +1685,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Gross ARV of the Building [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="442" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="db143ac0-e7de-4fe8-a7e9-5dbba2f144a0"/>
+				<reportElement x="304" y="115" width="38" height="10" isPrintInFirstWholeBand="true" uuid="db143ac0-e7de-4fe8-a7e9-5dbba2f144a0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1655,12 +1698,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[33]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="502" y="27" width="40" height="40" isPrintInFirstWholeBand="true" uuid="cf7164d8-4258-44c9-a243-97304b7f3f56"/>
+				<reportElement x="342" y="33" width="40" height="82" isPrintInFirstWholeBand="true" uuid="cf7164d8-4258-44c9-a243-97304b7f3f56"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1668,12 +1711,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Age of the Building 25 Years below / Above 25 Years]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="502" y="67" width="40" height="10" isPrintInFirstWholeBand="true" uuid="2865d573-9e06-4651-aa0e-03a5334a7180"/>
+				<reportElement x="342" y="115" width="40" height="10" isPrintInFirstWholeBand="true" uuid="2865d573-9e06-4651-aa0e-03a5334a7180"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1681,12 +1724,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[34]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="542" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="74e8e292-7fb2-41a4-b977-b3d0863f183b"/>
+				<reportElement x="382" y="33" width="32" height="82" isPrintInFirstWholeBand="true" uuid="74e8e292-7fb2-41a4-b977-b3d0863f183b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1694,12 +1737,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Allowances for repairs of depreciation / owner occupied residential building [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="542" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="ba039b1a-9c2b-450c-b2ea-888b045143e3"/>
+				<reportElement x="382" y="115" width="32" height="10" isPrintInFirstWholeBand="true" uuid="ba039b1a-9c2b-450c-b2ea-888b045143e3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1707,12 +1750,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[35]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="602" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="b7961157-f45d-451c-b165-c6f059231e9c"/>
+				<reportElement x="414" y="33" width="36" height="82" isPrintInFirstWholeBand="true" uuid="b7961157-f45d-451c-b165-c6f059231e9c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1720,12 +1763,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[ARV of the building [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="602" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="49477065-c6d4-40a0-91f7-32259467dd99"/>
+				<reportElement x="414" y="115" width="36" height="10" isPrintInFirstWholeBand="true" uuid="49477065-c6d4-40a0-91f7-32259467dd99"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1733,12 +1776,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[36]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="662" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="7c656cca-45cd-4a45-a6b6-a4943abcebf0"/>
+				<reportElement x="450" y="33" width="40" height="82" isPrintInFirstWholeBand="true" uuid="7c656cca-45cd-4a45-a6b6-a4943abcebf0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1746,12 +1789,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Annual Rental Value of the site and premises [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="662" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="7c3dc9b9-02ed-425e-9e33-fedcfb6a39ea"/>
+				<reportElement x="450" y="115" width="40" height="10" isPrintInFirstWholeBand="true" uuid="7c3dc9b9-02ed-425e-9e33-fedcfb6a39ea"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1759,12 +1802,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[37]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="722" y="27" width="60" height="40" isPrintInFirstWholeBand="true" uuid="3e70c6c4-50ea-4dd2-b571-24a43bcc77a1"/>
+				<reportElement x="490" y="33" width="48" height="82" isPrintInFirstWholeBand="true" uuid="3e70c6c4-50ea-4dd2-b571-24a43bcc77a1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1772,12 +1815,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Total Annual Rental Value [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="722" y="67" width="60" height="10" isPrintInFirstWholeBand="true" uuid="a2a98cfa-e638-4a25-b3fe-76ecd369cf52"/>
+				<reportElement x="490" y="115" width="48" height="10" isPrintInFirstWholeBand="true" uuid="a2a98cfa-e638-4a25-b3fe-76ecd369cf52"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1785,19 +1828,19 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<text><![CDATA[38]]></text>
 			</staticText>
 			<subreport isUsingCache="false" runToBottom="false">
-				<reportElement stretchType="RelativeToTallestObject" x="-20" y="76" width="842" height="94" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="257090f0-c48c-4539-85e2-7142962fd909"/>
+				<reportElement stretchType="RelativeToTallestObject" x="-20" y="125" width="558" height="50" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="257090f0-c48c-4539-85e2-7142962fd909"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{storeyDetails},false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("property-taxregister-floor-subreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="650" splitType="Stretch">
+		<band height="690" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="25" width="292" height="20" uuid="1a56e79e-26e5-4ed4-8f30-220d4827f1b1"/>
+				<reportElement positionType="Float" x="263" y="25" width="275" height="20" uuid="1a56e79e-26e5-4ed4-8f30-220d4827f1b1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1810,7 +1853,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getGeneral()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="25" width="19" height="20" uuid="bcdbea91-5738-49e2-af7e-48c9666d60eb"/>
+				<reportElement positionType="Float" x="244" y="25" width="19" height="20" uuid="bcdbea91-5738-49e2-af7e-48c9666d60eb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1823,7 +1866,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="25" width="240" height="20" uuid="eb661d17-6f23-44ea-b5d6-f2546894fd28"/>
+				<reportElement positionType="Float" x="4" y="25" width="240" height="20" uuid="eb661d17-6f23-44ea-b5d6-f2546894fd28"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1836,20 +1879,20 @@
 				<text><![CDATA[Tax for General Purpose [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="25" width="30" height="20" uuid="c3867b4e-60d5-4783-ab3c-cd9573403a34"/>
+				<reportElement positionType="Float" x="-16" y="25" width="20" height="20" uuid="c3867b4e-60d5-4783-ab3c-cd9573403a34"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[39]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="5" width="581" height="20" uuid="f0da4dd1-a646-49e2-bb92-e57caea44787"/>
+				<reportElement positionType="Float" x="-16" y="5" width="554" height="20" uuid="f0da4dd1-a646-49e2-bb92-e57caea44787"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1863,7 +1906,7 @@
 				<text><![CDATA[Revised Assessment as fixed by the Commissioner ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="45" width="292" height="20" uuid="aa88e1fe-03b0-4f78-b589-5fae0c475230"/>
+				<reportElement positionType="Float" x="263" y="45" width="275" height="20" uuid="aa88e1fe-03b0-4f78-b589-5fae0c475230"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1876,7 +1919,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getWaterAndDrainage()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="45" width="19" height="20" uuid="28707d5e-7c44-4590-b821-71bce1cdd9c5"/>
+				<reportElement positionType="Float" x="244" y="45" width="19" height="20" uuid="28707d5e-7c44-4590-b821-71bce1cdd9c5"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1889,7 +1932,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="45" width="240" height="20" uuid="eac20dc9-6073-4f20-b4a2-e8012fd32dcf"/>
+				<reportElement positionType="Float" x="4" y="45" width="240" height="20" uuid="eac20dc9-6073-4f20-b4a2-e8012fd32dcf"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1902,20 +1945,20 @@
 				<text><![CDATA[Water & Drainage Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="45" width="30" height="20" uuid="84be208e-c51c-48b4-b857-d24fe6bb7024"/>
+				<reportElement positionType="Float" x="-16" y="45" width="20" height="20" uuid="84be208e-c51c-48b4-b857-d24fe6bb7024"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[40]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="65" width="292" height="20" uuid="8e8bb0c5-0378-4db5-8f3b-355652e12f16"/>
+				<reportElement positionType="Float" x="263" y="65" width="275" height="20" uuid="8e8bb0c5-0378-4db5-8f3b-355652e12f16"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1928,7 +1971,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getLight()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="65" width="19" height="20" uuid="c8a9a131-ec4d-4159-bb5a-f67d3a05f3ba"/>
+				<reportElement positionType="Float" x="244" y="65" width="19" height="20" uuid="c8a9a131-ec4d-4159-bb5a-f67d3a05f3ba"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1941,7 +1984,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="65" width="240" height="20" uuid="58f2a960-aa8b-48cc-913f-c283dd055f08"/>
+				<reportElement positionType="Float" x="4" y="65" width="240" height="20" uuid="58f2a960-aa8b-48cc-913f-c283dd055f08"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1954,20 +1997,20 @@
 				<text><![CDATA[Lighting Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="65" width="30" height="20" uuid="751284a6-2ff7-4f33-8c3d-b2aced54e5e1"/>
+				<reportElement positionType="Float" x="-16" y="65" width="20" height="20" uuid="751284a6-2ff7-4f33-8c3d-b2aced54e5e1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[41]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="85" width="292" height="20" uuid="5c91b26e-19db-4cb0-83ef-eed23effc9be"/>
+				<reportElement positionType="Float" x="263" y="85" width="275" height="20" uuid="5c91b26e-19db-4cb0-83ef-eed23effc9be"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1980,7 +2023,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getScavenge()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="85" width="19" height="20" uuid="d8efc6fe-e2f5-4e23-83c0-dd02fb294b73"/>
+				<reportElement positionType="Float" x="244" y="85" width="19" height="20" uuid="d8efc6fe-e2f5-4e23-83c0-dd02fb294b73"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1993,7 +2036,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="85" width="240" height="20" uuid="82428451-ca8d-4a60-b589-1f228e86d96b"/>
+				<reportElement positionType="Float" x="4" y="85" width="240" height="20" uuid="82428451-ca8d-4a60-b589-1f228e86d96b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2006,20 +2049,20 @@
 				<text><![CDATA[Scavenging Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="85" width="30" height="20" uuid="898d2119-391c-4b6c-beb8-f9f82c8024f1"/>
+				<reportElement positionType="Float" x="-16" y="85" width="20" height="20" uuid="898d2119-391c-4b6c-beb8-f9f82c8024f1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[42]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="105" width="292" height="20" uuid="40548e71-fb97-4387-8b15-b6f1583271e7"/>
+				<reportElement positionType="Float" x="263" y="105" width="275" height="20" uuid="40548e71-fb97-4387-8b15-b6f1583271e7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2032,7 +2075,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getEducation()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="105" width="19" height="20" uuid="7a0babe3-4f02-4b0c-8508-b4035c1026a8"/>
+				<reportElement positionType="Float" x="244" y="105" width="19" height="20" uuid="7a0babe3-4f02-4b0c-8508-b4035c1026a8"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2045,7 +2088,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="105" width="240" height="20" uuid="98e13c1d-9bd7-4341-96f7-b7c52308ed73"/>
+				<reportElement positionType="Float" x="4" y="105" width="240" height="20" uuid="98e13c1d-9bd7-4341-96f7-b7c52308ed73"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2058,20 +2101,20 @@
 				<text><![CDATA[Education Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="105" width="30" height="20" uuid="fe87a06e-9fee-4460-be35-e01cf3071718"/>
+				<reportElement positionType="Float" x="-16" y="105" width="20" height="20" uuid="fe87a06e-9fee-4460-be35-e01cf3071718"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[43]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="125" width="292" height="20" uuid="9ef17606-bce0-4f46-bfc5-9f1da32317ec"/>
+				<reportElement positionType="Float" x="263" y="125" width="275" height="20" uuid="9ef17606-bce0-4f46-bfc5-9f1da32317ec"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2084,7 +2127,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getPropertyTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="125" width="19" height="20" uuid="df9a5d83-b1f6-4328-8a58-6bd51bfe91ea"/>
+				<reportElement positionType="Float" x="244" y="125" width="19" height="20" uuid="df9a5d83-b1f6-4328-8a58-6bd51bfe91ea"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2097,7 +2140,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="125" width="240" height="20" uuid="d0c190d7-5d0e-4d87-a96f-bc0aa7dc00ed"/>
+				<reportElement positionType="Float" x="4" y="125" width="240" height="20" uuid="d0c190d7-5d0e-4d87-a96f-bc0aa7dc00ed"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2110,20 +2153,20 @@
 				<text><![CDATA[Property Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="125" width="30" height="20" uuid="76f59ece-f7dd-4a44-b254-f3cdd08e8356"/>
+				<reportElement positionType="Float" x="-16" y="125" width="20" height="20" uuid="76f59ece-f7dd-4a44-b254-f3cdd08e8356"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[44]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="145" width="292" height="20" uuid="d55623a0-ac3d-4c64-be2c-6998761a8a30"/>
+				<reportElement positionType="Float" x="263" y="145" width="275" height="20" uuid="d55623a0-ac3d-4c64-be2c-6998761a8a30"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2136,7 +2179,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getLibraryCess()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="145" width="19" height="20" uuid="6b7ea67a-5548-4ea7-b88d-f4fe69d14a11"/>
+				<reportElement positionType="Float" x="244" y="145" width="19" height="20" uuid="6b7ea67a-5548-4ea7-b88d-f4fe69d14a11"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2149,7 +2192,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="145" width="240" height="20" uuid="3e120c61-296b-49c5-9686-2c571a8c43cf"/>
+				<reportElement positionType="Float" x="4" y="145" width="240" height="20" uuid="3e120c61-296b-49c5-9686-2c571a8c43cf"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2162,20 +2205,20 @@
 				<text><![CDATA[Library Cess [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="145" width="30" height="20" uuid="7ebd4a52-249c-4212-8cf2-2c0bd745fb2f"/>
+				<reportElement positionType="Float" x="-16" y="145" width="20" height="20" uuid="7ebd4a52-249c-4212-8cf2-2c0bd745fb2f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[45]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="165" width="292" height="20" uuid="abb31e6c-8a67-434e-8107-22314ccc6d81"/>
+				<reportElement positionType="Float" x="263" y="165" width="275" height="20" uuid="abb31e6c-8a67-434e-8107-22314ccc6d81"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2188,7 +2231,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getUnauthorizedPenalty()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="165" width="19" height="20" uuid="4f20c190-6d41-4bee-bb0e-16a03457fe46"/>
+				<reportElement positionType="Float" x="244" y="165" width="19" height="20" uuid="4f20c190-6d41-4bee-bb0e-16a03457fe46"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2201,7 +2244,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="165" width="240" height="20" uuid="9f8ee391-2405-48f4-bb63-a2c5f5c4f8d6"/>
+				<reportElement positionType="Float" x="4" y="165" width="240" height="20" uuid="9f8ee391-2405-48f4-bb63-a2c5f5c4f8d6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2214,20 +2257,20 @@
 				<text><![CDATA[UC Penalty [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="165" width="30" height="20" uuid="b9fd3fea-9813-4a65-94b2-33df92a44de9"/>
+				<reportElement positionType="Float" x="-16" y="165" width="20" height="20" uuid="b9fd3fea-9813-4a65-94b2-33df92a44de9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[45 a]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="185" width="292" height="20" uuid="7ca41db4-1a8d-484d-8f32-a070c89c6c9c"/>
+				<reportElement positionType="Float" x="263" y="185" width="275" height="20" uuid="7ca41db4-1a8d-484d-8f32-a070c89c6c9c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2240,7 +2283,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getRevisedTaxDetails().getTotalTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="185" width="19" height="20" uuid="dbfe1cf4-4131-4a52-89d7-a170f59d68a6"/>
+				<reportElement positionType="Float" x="244" y="185" width="19" height="20" uuid="dbfe1cf4-4131-4a52-89d7-a170f59d68a6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2253,7 +2296,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="185" width="240" height="20" uuid="de5746eb-02d0-48e0-a04e-1ba449dcb4f6"/>
+				<reportElement positionType="Float" x="4" y="185" width="240" height="20" uuid="de5746eb-02d0-48e0-a04e-1ba449dcb4f6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2266,20 +2309,20 @@
 				<text><![CDATA[Total Property Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="185" width="30" height="20" uuid="34601ba9-3050-4661-921a-472930c78e80"/>
+				<reportElement positionType="Float" x="-16" y="185" width="20" height="20" uuid="34601ba9-3050-4661-921a-472930c78e80"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[46]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="205" width="292" height="20" uuid="af554909-35ec-47db-8887-8b3cfeba20ed"/>
+				<reportElement positionType="Float" x="263" y="205" width="275" height="43" uuid="af554909-35ec-47db-8887-8b3cfeba20ed"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2292,7 +2335,7 @@
 				<textFieldExpression><![CDATA["Yes"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="205" width="19" height="20" uuid="1f7561e5-eaf3-4da2-b8b5-03f6490f8fc8"/>
+				<reportElement positionType="Float" x="244" y="205" width="19" height="43" uuid="1f7561e5-eaf3-4da2-b8b5-03f6490f8fc8"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2305,7 +2348,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="205" width="240" height="20" uuid="4cfa4127-b01f-4b35-b83d-4c6a36f27c86"/>
+				<reportElement positionType="Float" x="4" y="205" width="240" height="43" uuid="4cfa4127-b01f-4b35-b83d-4c6a36f27c86"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2318,20 +2361,20 @@
 				<text><![CDATA[Whether entered in the Asst. Book [Demand Register]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="205" width="30" height="20" uuid="42899539-8239-4d70-8bbd-0f94de58edea"/>
+				<reportElement positionType="Float" x="-16" y="205" width="20" height="43" uuid="42899539-8239-4d70-8bbd-0f94de58edea"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[47]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="225" width="292" height="20" uuid="f954383a-9a07-484c-b4a9-299a5374d875"/>
+				<reportElement positionType="Float" x="263" y="248" width="275" height="20" uuid="f954383a-9a07-484c-b4a9-299a5374d875"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2343,7 +2386,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="225" width="19" height="20" uuid="283f80a9-7986-4af3-a7dc-868bad7c8e76"/>
+				<reportElement positionType="Float" x="244" y="248" width="19" height="20" uuid="283f80a9-7986-4af3-a7dc-868bad7c8e76"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2356,7 +2399,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="225" width="240" height="20" uuid="5e74478b-b9e1-4c7b-8f49-7e5cffbcad5f"/>
+				<reportElement positionType="Float" x="4" y="248" width="240" height="20" uuid="5e74478b-b9e1-4c7b-8f49-7e5cffbcad5f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2369,20 +2412,20 @@
 				<text><![CDATA[Initials of the Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="225" width="30" height="20" uuid="7e84a13c-6cf6-4db5-8648-3814d89aab6a"/>
+				<reportElement positionType="Float" x="-16" y="248" width="20" height="20" uuid="7e84a13c-6cf6-4db5-8648-3814d89aab6a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[48]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="245" width="292" height="20" uuid="fa1df878-f149-4a29-8f21-d86471600b06"/>
+				<reportElement positionType="Float" x="263" y="268" width="275" height="20" uuid="fa1df878-f149-4a29-8f21-d86471600b06"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2395,7 +2438,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getSpecialNotice()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="245" width="19" height="20" uuid="75743a7b-4ad4-4f5d-afec-352e8a539ddc"/>
+				<reportElement positionType="Float" x="244" y="268" width="19" height="20" uuid="75743a7b-4ad4-4f5d-afec-352e8a539ddc"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2408,7 +2451,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="245" width="240" height="20" uuid="810e5951-ec50-4d24-9e06-7e15bf404702"/>
+				<reportElement positionType="Float" x="4" y="268" width="240" height="20" uuid="810e5951-ec50-4d24-9e06-7e15bf404702"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2421,20 +2464,20 @@
 				<text><![CDATA[No. of Special Notice]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="245" width="30" height="20" uuid="98233bc9-f877-4afa-81ea-23aece686cc3"/>
+				<reportElement positionType="Float" x="-16" y="268" width="20" height="20" uuid="98233bc9-f877-4afa-81ea-23aece686cc3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[49]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="265" width="292" height="20" uuid="6cb28820-95f1-4c62-9494-c9b67f711696"/>
+				<reportElement positionType="Float" x="263" y="288" width="275" height="20" uuid="6cb28820-95f1-4c62-9494-c9b67f711696"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2447,7 +2490,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getApplicationNoRP()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="265" width="19" height="20" uuid="80107552-f600-4b15-af13-4ab9fafe4e6b"/>
+				<reportElement positionType="Float" x="244" y="288" width="19" height="20" uuid="80107552-f600-4b15-af13-4ab9fafe4e6b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2460,7 +2503,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="265" width="240" height="20" uuid="49ac2d57-80ef-40c0-a0da-8ab6ee5a9368"/>
+				<reportElement positionType="Float" x="4" y="288" width="240" height="20" uuid="49ac2d57-80ef-40c0-a0da-8ab6ee5a9368"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2473,20 +2516,20 @@
 				<text><![CDATA[No. of Revision Petition]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="265" width="30" height="20" uuid="ad794e78-23e9-48e0-9103-3951e3cbf844"/>
+				<reportElement positionType="Float" x="-16" y="288" width="20" height="20" uuid="ad794e78-23e9-48e0-9103-3951e3cbf844"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[50]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="285" width="292" height="20" uuid="0325434c-0673-4b98-a168-9bd2c120b52a"/>
+				<reportElement positionType="Float" x="263" y="308" width="275" height="20" uuid="0325434c-0673-4b98-a168-9bd2c120b52a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2499,7 +2542,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getSpecialNoticeDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="285" width="19" height="20" uuid="e6809166-bc25-4261-a172-7eb672e9d023"/>
+				<reportElement positionType="Float" x="244" y="308" width="19" height="20" uuid="e6809166-bc25-4261-a172-7eb672e9d023"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2512,7 +2555,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="285" width="240" height="20" uuid="4f0ead6f-a977-4d92-9502-db3ba93af197"/>
+				<reportElement positionType="Float" x="4" y="308" width="240" height="20" uuid="4f0ead6f-a977-4d92-9502-db3ba93af197"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2525,20 +2568,20 @@
 				<text><![CDATA[Date of service of Special Notice]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="285" width="30" height="20" uuid="49c30f1d-9c80-4d47-b3f7-e5762640264e"/>
+				<reportElement positionType="Float" x="-16" y="308" width="20" height="20" uuid="49c30f1d-9c80-4d47-b3f7-e5762640264e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[51]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="305" width="292" height="20" uuid="180c9ba7-35ed-4f3a-b8f8-d7a92c716190"/>
+				<reportElement positionType="Float" x="263" y="328" width="275" height="20" uuid="180c9ba7-35ed-4f3a-b8f8-d7a92c716190"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2551,7 +2594,7 @@
 				<textFieldExpression><![CDATA[$F{revisedAssessmentDetails}.getApplicationDateRP()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="305" width="19" height="20" uuid="0842042a-092c-4726-90ca-23d911b56219"/>
+				<reportElement positionType="Float" x="244" y="328" width="19" height="20" uuid="0842042a-092c-4726-90ca-23d911b56219"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2564,7 +2607,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="305" width="240" height="20" uuid="a7a82b89-81d2-4d05-bdf4-109850677a6e"/>
+				<reportElement positionType="Float" x="4" y="328" width="240" height="20" uuid="a7a82b89-81d2-4d05-bdf4-109850677a6e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2577,20 +2620,20 @@
 				<text><![CDATA[Date of Receipt of Revision Petition]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="305" width="30" height="20" uuid="c3c0f35f-feee-4b89-a0bf-576701a23bd1"/>
+				<reportElement positionType="Float" x="-16" y="328" width="20" height="20" uuid="c3c0f35f-feee-4b89-a0bf-576701a23bd1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[52]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="325" width="292" height="20" uuid="75541831-ee59-40ab-99aa-77021bdb5c18"/>
+				<reportElement positionType="Float" x="263" y="348" width="275" height="20" uuid="75541831-ee59-40ab-99aa-77021bdb5c18"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2602,7 +2645,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="325" width="19" height="20" uuid="ff2320a2-0725-4368-a35c-04d3341302b8"/>
+				<reportElement positionType="Float" x="244" y="348" width="19" height="20" uuid="ff2320a2-0725-4368-a35c-04d3341302b8"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2615,7 +2658,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="325" width="240" height="20" uuid="0b00d9f6-6c0b-432b-b32e-55e27cdcd218"/>
+				<reportElement positionType="Float" x="4" y="348" width="240" height="20" uuid="0b00d9f6-6c0b-432b-b32e-55e27cdcd218"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2628,20 +2671,20 @@
 				<text><![CDATA[Orders of the Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="325" width="30" height="20" uuid="d09c360b-39c5-4206-b8f8-6ef276725f34"/>
+				<reportElement positionType="Float" x="-16" y="348" width="20" height="20" uuid="d09c360b-39c5-4206-b8f8-6ef276725f34"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[53]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="376" width="292" height="20" uuid="95ec4f90-9db1-410b-9e88-15b0eec2949e"/>
+				<reportElement positionType="Float" x="263" y="399" width="275" height="20" uuid="95ec4f90-9db1-410b-9e88-15b0eec2949e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2651,9 +2694,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getGeneral()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="376" width="19" height="20" uuid="5fd8775f-0cf1-4128-a347-30b42e2b2a47"/>
+				<reportElement positionType="Float" x="244" y="399" width="19" height="20" uuid="5fd8775f-0cf1-4128-a347-30b42e2b2a47"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2666,7 +2710,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="376" width="240" height="20" uuid="a80bfa5e-5341-4133-9069-58e176a832df"/>
+				<reportElement positionType="Float" x="4" y="399" width="240" height="20" uuid="a80bfa5e-5341-4133-9069-58e176a832df"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2679,20 +2723,20 @@
 				<text><![CDATA[Tax for General Purpose [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="376" width="30" height="20" uuid="2b571b93-87e8-491f-ae77-26728f1876fb"/>
+				<reportElement positionType="Float" x="-16" y="399" width="20" height="20" uuid="2b571b93-87e8-491f-ae77-26728f1876fb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[54]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="356" width="581" height="20" uuid="6f745654-ab69-481f-9cd7-1b7755f68e45"/>
+				<reportElement positionType="Float" x="-16" y="379" width="554" height="20" uuid="6f745654-ab69-481f-9cd7-1b7755f68e45"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2706,7 +2750,7 @@
 				<text><![CDATA[Asst. Fixed on Revision Petition]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="396" width="292" height="20" uuid="55a2b529-fe86-4ced-8e7b-c83745c30f5d"/>
+				<reportElement positionType="Float" x="263" y="419" width="275" height="20" uuid="55a2b529-fe86-4ced-8e7b-c83745c30f5d"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2716,9 +2760,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getWaterAndDrainage()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="396" width="19" height="20" uuid="e7d2a487-a8fe-4f1d-bf56-81554dc7530c"/>
+				<reportElement positionType="Float" x="244" y="419" width="19" height="20" uuid="e7d2a487-a8fe-4f1d-bf56-81554dc7530c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2731,7 +2776,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="396" width="240" height="20" uuid="51341651-45f3-420b-a6ad-f6c6b808d5d6"/>
+				<reportElement positionType="Float" x="4" y="419" width="240" height="20" uuid="51341651-45f3-420b-a6ad-f6c6b808d5d6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2744,20 +2789,20 @@
 				<text><![CDATA[Water & Drainage Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="396" width="30" height="20" uuid="3e3aaadc-f7d8-4478-90dc-808772e0686e"/>
+				<reportElement positionType="Float" x="-16" y="419" width="20" height="20" uuid="3e3aaadc-f7d8-4478-90dc-808772e0686e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[55]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="416" width="292" height="20" uuid="66702989-3dbe-4d2c-a0d4-cf65d231ea7f"/>
+				<reportElement positionType="Float" x="263" y="439" width="275" height="20" uuid="66702989-3dbe-4d2c-a0d4-cf65d231ea7f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2767,9 +2812,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getLight()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="416" width="19" height="20" uuid="0a8df1ff-63c9-4ce4-8bb6-157ce232c5da"/>
+				<reportElement positionType="Float" x="244" y="439" width="19" height="20" uuid="0a8df1ff-63c9-4ce4-8bb6-157ce232c5da"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2782,7 +2828,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="416" width="240" height="20" uuid="e939b1d5-a042-48b9-93ce-3a11b69a66fb"/>
+				<reportElement positionType="Float" x="4" y="439" width="240" height="20" uuid="e939b1d5-a042-48b9-93ce-3a11b69a66fb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2795,20 +2841,20 @@
 				<text><![CDATA[Lighting Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="416" width="30" height="20" uuid="3245f597-6a90-4faf-9c5d-7f60cc2f9a26"/>
+				<reportElement positionType="Float" x="-16" y="439" width="20" height="20" uuid="3245f597-6a90-4faf-9c5d-7f60cc2f9a26"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[56]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="436" width="292" height="20" uuid="9d0154d5-da2f-40c6-893a-f69cd3747c4d"/>
+				<reportElement positionType="Float" x="263" y="459" width="275" height="20" uuid="9d0154d5-da2f-40c6-893a-f69cd3747c4d"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2818,9 +2864,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getScavenge()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="436" width="19" height="20" uuid="e1a81e69-87f4-47d5-b4c6-a56870fb9c0b"/>
+				<reportElement positionType="Float" x="244" y="459" width="19" height="20" uuid="e1a81e69-87f4-47d5-b4c6-a56870fb9c0b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2833,7 +2880,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="436" width="240" height="20" uuid="9bcc0437-e485-4061-84bf-9ee093b2539a"/>
+				<reportElement positionType="Float" x="4" y="459" width="240" height="20" uuid="9bcc0437-e485-4061-84bf-9ee093b2539a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2846,20 +2893,20 @@
 				<text><![CDATA[Scavenging Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="436" width="30" height="20" uuid="b72c112c-10d7-4066-a7c1-586a5b2d80d3"/>
+				<reportElement positionType="Float" x="-16" y="459" width="20" height="20" uuid="b72c112c-10d7-4066-a7c1-586a5b2d80d3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[57]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="456" width="292" height="20" uuid="cb0225bf-7f53-4796-8b4f-7d84a3d29484"/>
+				<reportElement positionType="Float" x="263" y="479" width="275" height="20" uuid="cb0225bf-7f53-4796-8b4f-7d84a3d29484"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2869,9 +2916,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getEducation()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="456" width="19" height="20" uuid="6e97f435-d7a6-4a2a-af53-7c903c5e0ef3"/>
+				<reportElement positionType="Float" x="244" y="479" width="19" height="20" uuid="6e97f435-d7a6-4a2a-af53-7c903c5e0ef3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2884,7 +2932,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="456" width="240" height="20" uuid="30112ec4-1ce4-42e4-8a00-e4a5b5a0b51a"/>
+				<reportElement positionType="Float" x="4" y="479" width="240" height="20" uuid="30112ec4-1ce4-42e4-8a00-e4a5b5a0b51a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2897,20 +2945,20 @@
 				<text><![CDATA[Education Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="456" width="30" height="20" uuid="e47b6eee-716d-4c75-bd5c-29ac153d0015"/>
+				<reportElement positionType="Float" x="-16" y="479" width="20" height="20" uuid="e47b6eee-716d-4c75-bd5c-29ac153d0015"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[58]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="476" width="292" height="20" uuid="6df15a2e-f6f8-470f-939e-e719f5b25509"/>
+				<reportElement positionType="Float" x="263" y="499" width="275" height="20" uuid="6df15a2e-f6f8-470f-939e-e719f5b25509"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2920,9 +2968,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getPropertyTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="476" width="19" height="20" uuid="f0ff5866-556c-4b93-900a-9da39ed51a79"/>
+				<reportElement positionType="Float" x="244" y="499" width="19" height="20" uuid="f0ff5866-556c-4b93-900a-9da39ed51a79"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2935,7 +2984,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="476" width="240" height="20" uuid="c76fd31d-3e66-41ac-b2c0-933fd682152c"/>
+				<reportElement positionType="Float" x="4" y="499" width="240" height="20" uuid="c76fd31d-3e66-41ac-b2c0-933fd682152c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2948,20 +2997,20 @@
 				<text><![CDATA[Property Tax [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="476" width="30" height="20" uuid="37702456-ca4d-42da-8691-5e7d0455e61e"/>
+				<reportElement positionType="Float" x="-16" y="499" width="20" height="20" uuid="37702456-ca4d-42da-8691-5e7d0455e61e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[59]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="496" width="292" height="20" uuid="4e786e3f-5662-44c0-8c92-e514fde4c0fe"/>
+				<reportElement positionType="Float" x="263" y="519" width="275" height="20" uuid="4e786e3f-5662-44c0-8c92-e514fde4c0fe"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2971,9 +3020,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getLibraryCess()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="496" width="19" height="20" uuid="53bd9c8e-e26d-4ba1-aeaf-e735ac45f249"/>
+				<reportElement positionType="Float" x="244" y="519" width="19" height="20" uuid="53bd9c8e-e26d-4ba1-aeaf-e735ac45f249"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2986,7 +3036,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="496" width="240" height="20" uuid="8435f7c0-a38c-476c-a168-1d88c26ba23b"/>
+				<reportElement positionType="Float" x="4" y="519" width="240" height="20" uuid="8435f7c0-a38c-476c-a168-1d88c26ba23b"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2999,20 +3049,20 @@
 				<text><![CDATA[Library Cess [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="496" width="30" height="20" uuid="7af53ec0-854a-4ec1-acf1-3164bf3690d9"/>
+				<reportElement positionType="Float" x="-16" y="519" width="20" height="20" uuid="7af53ec0-854a-4ec1-acf1-3164bf3690d9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[60]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="516" width="292" height="20" uuid="448ed7b5-7076-473f-be9e-a525ed376680"/>
+				<reportElement positionType="Float" x="263" y="539" width="275" height="20" uuid="448ed7b5-7076-473f-be9e-a525ed376680"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3022,9 +3072,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getUnauthorizedPenalty()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="516" width="19" height="20" uuid="451d08ae-2f24-4275-ad2c-6e34ceaf8c3a"/>
+				<reportElement positionType="Float" x="244" y="539" width="19" height="20" uuid="451d08ae-2f24-4275-ad2c-6e34ceaf8c3a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3037,7 +3088,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="516" width="240" height="20" uuid="afadf894-9429-42f5-bf75-b87bc34e8446"/>
+				<reportElement positionType="Float" x="4" y="539" width="240" height="20" uuid="afadf894-9429-42f5-bf75-b87bc34e8446"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3050,20 +3101,20 @@
 				<text><![CDATA[UC Penalty [in Rs.]]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="516" width="30" height="20" uuid="e95ecd31-9438-4aef-b42a-15226ecc4cf1"/>
+				<reportElement positionType="Float" x="-16" y="539" width="20" height="20" uuid="e95ecd31-9438-4aef-b42a-15226ecc4cf1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[60 a]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="536" width="292" height="20" uuid="9c39cebc-2940-484e-bfc4-f0e83779eac9"/>
+				<reportElement positionType="Float" x="263" y="559" width="275" height="20" uuid="9c39cebc-2940-484e-bfc4-f0e83779eac9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3073,9 +3124,10 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{revisionPetitionTaxDetails}.getTotalTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="536" width="19" height="20" uuid="6eff33bc-a130-4a2f-a8f3-ca8369b7a174"/>
+				<reportElement positionType="Float" x="244" y="559" width="19" height="20" uuid="6eff33bc-a130-4a2f-a8f3-ca8369b7a174"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3088,7 +3140,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="536" width="240" height="20" uuid="f9fd85b4-845a-40dd-926f-c6cb06734dc1"/>
+				<reportElement positionType="Float" x="4" y="559" width="240" height="20" uuid="f9fd85b4-845a-40dd-926f-c6cb06734dc1"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3101,20 +3153,20 @@
 				<text><![CDATA[Total Property Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="536" width="30" height="20" uuid="1b62d5cc-8c87-4fef-8781-c6235d13c455"/>
+				<reportElement positionType="Float" x="-16" y="559" width="20" height="20" uuid="1b62d5cc-8c87-4fef-8781-c6235d13c455"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[61]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="568" width="581" height="20" uuid="b6ea4ba7-504b-4e74-b7a5-d56bcd255bb3"/>
+				<reportElement positionType="Float" x="-16" y="591" width="554" height="20" uuid="b6ea4ba7-504b-4e74-b7a5-d56bcd255bb3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3128,7 +3180,7 @@
 				<text><![CDATA[Appeal]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="588" width="292" height="20" uuid="76fca065-2024-4416-933e-e5648145a834"/>
+				<reportElement positionType="Float" x="263" y="611" width="275" height="20" uuid="76fca065-2024-4416-933e-e5648145a834"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3140,7 +3192,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="588" width="19" height="20" uuid="b0dcd04f-17d0-4fdd-aa7b-309e2817eafc"/>
+				<reportElement positionType="Float" x="244" y="611" width="19" height="20" uuid="b0dcd04f-17d0-4fdd-aa7b-309e2817eafc"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3153,7 +3205,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="588" width="240" height="20" uuid="0fc53757-6d56-43c2-a948-023f2376eb97"/>
+				<reportElement positionType="Float" x="4" y="611" width="240" height="20" uuid="0fc53757-6d56-43c2-a948-023f2376eb97"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3166,20 +3218,20 @@
 				<text><![CDATA[No. of Appeal]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="588" width="30" height="20" uuid="bb1f9801-21b9-473a-b089-ca0412cd12de"/>
+				<reportElement positionType="Float" x="-16" y="611" width="20" height="20" uuid="bb1f9801-21b9-473a-b089-ca0412cd12de"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[62]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="608" width="292" height="20" uuid="73d36ea5-9be1-4bdc-83ac-7c7cda29dcea"/>
+				<reportElement positionType="Float" x="263" y="631" width="275" height="20" uuid="73d36ea5-9be1-4bdc-83ac-7c7cda29dcea"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3191,7 +3243,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="608" width="19" height="20" uuid="6475da2a-64e0-4246-a57f-455c1d44e712"/>
+				<reportElement positionType="Float" x="244" y="631" width="19" height="20" uuid="6475da2a-64e0-4246-a57f-455c1d44e712"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3204,7 +3256,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="608" width="240" height="20" uuid="69b382a1-fdeb-446a-af4a-a98c864b93bd"/>
+				<reportElement positionType="Float" x="4" y="631" width="240" height="20" uuid="69b382a1-fdeb-446a-af4a-a98c864b93bd"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3217,20 +3269,20 @@
 				<text><![CDATA[Orders of the Appellate Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="608" width="30" height="20" uuid="3816f0a5-7db5-4df3-b4fd-3df2402a68ba"/>
+				<reportElement positionType="Float" x="-16" y="631" width="20" height="20" uuid="3816f0a5-7db5-4df3-b4fd-3df2402a68ba"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[63]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="389" y="628" width="292" height="20" uuid="e488f371-52f1-4d87-b1a3-18ff28022a7e"/>
+				<reportElement positionType="Float" x="263" y="651" width="275" height="20" uuid="e488f371-52f1-4d87-b1a3-18ff28022a7e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3242,7 +3294,7 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="370" y="628" width="19" height="20" uuid="b6554206-a832-4813-ac73-828d89eb5ea4"/>
+				<reportElement positionType="Float" x="244" y="651" width="19" height="20" uuid="b6554206-a832-4813-ac73-828d89eb5ea4"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3255,7 +3307,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="130" y="628" width="240" height="20" uuid="9400ca41-2b06-44f1-9a96-cafe5cfd3f4f"/>
+				<reportElement positionType="Float" x="4" y="651" width="240" height="20" uuid="9400ca41-2b06-44f1-9a96-cafe5cfd3f4f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3268,18 +3320,21 @@
 				<text><![CDATA[Initials of the Appellate Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="100" y="628" width="30" height="20" uuid="bdc67eae-bd8a-449d-a74d-4e172c55ee70"/>
+				<reportElement positionType="Float" x="-16" y="651" width="20" height="20" uuid="bdc67eae-bd8a-449d-a74d-4e172c55ee70"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="4"/>
 				</textElement>
 				<text><![CDATA[64]]></text>
 			</staticText>
+			<break>
+				<reportElement x="0" y="680" width="545" height="1" uuid="d5f9b6d6-7660-4334-bdcc-73186d7171d0"/>
+			</break>
 		</band>
 	</detail>
 </jasperReport>

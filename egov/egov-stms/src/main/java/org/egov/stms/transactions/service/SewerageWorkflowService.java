@@ -250,13 +250,6 @@ public class SewerageWorkflowService {
                 return true;
         return false;
     }
-    
-	public boolean isWardSecretaryUser(final User user) {
-		for (Role role : user.getRoles())
-			if (SewerageTaxConstants.WARDSECRETARY_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
-				return true;
-		return false;
-	}
 
     public String getDepartmentForReassignment() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,

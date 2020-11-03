@@ -74,6 +74,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -530,21 +531,36 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null)
+			model.addAttribute("nonLegacy", true);
         return "newconnection-dataEntryEditForm";
     }
 
     @PostMapping(value = "/newConnection-editExisting/{consumerCode}")
     public String modifyExisting(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
             @PathVariable String consumerCode, BindingResult resultBinder, Model model) {
+		if (!waterConnectionDetails.getLegacy() || waterConnectionDetails.getState() != null) {
+			model.addAttribute("nonLegacy", true);
+			return "newconnection-dataEntryEditForm";
+		}
         return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
 
     // sewerage
     private void sewerageIntegration(WaterConnectionDetails waterConnectionDetails, BindingResult resultBinder,
             SewerageApplicationDetails sewerageDetails) {
-        if (sewerageDetails.getState() == null)
-            sewerageDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                    SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
+        if (sewerageDetails.getState() == null) {
+        	String status = StringUtils.EMPTY;
+        	if(CSC.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED;
+        	else if(ONLINE.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
+        	else if(WARDSECRETARY.toString().equalsIgnoreCase(sewerageDetails.getSource()))
+        		status = SewerageTaxConstants.APPLICATION_STATUS_WARDSECRETARYCREATED;
+        	
+        	if(StringUtils.isNotBlank(status))
+        		sewerageDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(status, SewerageTaxConstants.MODULETYPE));
+        }
         SewerageApplicationType sewerageType = sewerageApplicationTypeService
                 .findBy(waterConnectionDetails.getSewerageApplicationDetails().getApplicationType().getId());
 

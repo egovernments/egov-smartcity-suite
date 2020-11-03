@@ -175,6 +175,31 @@ public class LicenseProcessWorkflowService {
         }
     }
 
+	public void rollbackStateInfo(TradeLicense tradeLicense, WorkflowBean workflowBean, Position ownerPos, String extraInfo) {
+		DateTime currentDate = new DateTime();
+		User currentUser = securityUtils.getCurrentUser();
+		if (tradeLicense.isCollectionPending())
+			workflowBean
+					.setAdditionaRule(tradeLicense.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
+		WorkFlowMatrix workFlowMatrix = getInitialWorkFlowMatrix(tradeLicense, workflowBean);
+		tradeLicense.transition().progressWithStateCopy()
+				.withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+				.withComments(workflowBean.getApproverComments())
+				.withStateValue(workFlowMatrix.getNextState())
+				.withDateInfo(currentDate.toDate())
+				.withOwner(ownerPos)
+				.withNextAction(workFlowMatrix.getNextAction())
+				.withExtraInfo(extraInfo);
+	}
+    
+	public WorkFlowMatrix getInitialWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
+		WorkFlowMatrix wfmatrix;
+		wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), ANY,
+                null, workflowBean.getAdditionaRule(), "Start", null,
+                new Date(), null);
+		return wfmatrix;
+	}
+	
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
         WorkFlowMatrix wfmatrix;
         if (tradeLicense.hasState() && !tradeLicense.getState().isEnded()) {

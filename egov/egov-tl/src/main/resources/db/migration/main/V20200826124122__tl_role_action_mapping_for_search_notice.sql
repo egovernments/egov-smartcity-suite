@@ -1,0 +1,3 @@
+Insert into EG_ACTION(id,name,url,queryparams,parentmodule,ordernumber,displayname,enabled,contextroot,version,createdby,createddate,lastmodifiedby,lastmodifieddate,application) values (nextval('SEQ_EG_ACTION'),'Search Rejection Notice','/demand-notice/result',null,(select id from eg_module where name='Trade License Transactions'),null,'Search Rejection Notice','false','tl',0,1,to_timestamp('2020-08-26 17:14:12.454451','null'),1,to_timestamp('2020-08-26 17:14:12.454451','null'),(select id from eg_module where name='Trade License'));
+
+Insert into EG_ROLEACTION values ((select id from eg_role where name like 'TLAdmin'),(select id from eg_action where name='Search Rejection Notice' and contextroot='tl'));

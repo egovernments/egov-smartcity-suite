@@ -203,7 +203,12 @@ public class ChangeOfUseController extends GenericConnectionController {
         String message = "";
         if (parent != null)
             message = changeOfUseService.validateChangeOfUseConnection(parent);
-        String consumerCode = "";
+		String isModified = StringUtils.EMPTY;
+		if (changeOfUse.getPropertyType().getCode().equalsIgnoreCase(connectionUnderChange.getPropertyType().getCode())
+				&& changeOfUse.getUsageType().getCode().equalsIgnoreCase(connectionUnderChange.getUsageType().getCode())
+				&& changeOfUse.getPipeSize().getCode().equalsIgnoreCase(connectionUnderChange.getPipeSize().getCode()))
+			isModified = "no";
+		String consumerCode = "";
         if (!message.isEmpty() && !"".equals(message)) {
             if (changeOfUse.getConnection().getParentConnection() != null)
                 consumerCode = changeOfUse.getConnection().getParentConnection().getConsumerCode();
@@ -235,7 +240,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             }
         if (ConnectionType.NON_METERED.equals(changeOfUse.getConnectionType()))
             waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
-        if (resultBinder.hasErrors()) {
+        if (resultBinder.hasErrors() || StringUtils.isNotBlank(isModified)) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
             loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse, changeOfUse.getMeesevaApplicationNumber());
@@ -244,8 +249,9 @@ public class ChangeOfUseController extends GenericConnectionController {
             prepareWorkflow(model, changeOfUse, workflowContainer);
             model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
             model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
-            model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
-                    + resultBinder.getFieldErrors().get(0).getDefaultMessage());
+            if (StringUtils.isBlank(isModified))
+	            model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
+	                    + resultBinder.getFieldErrors().get(0).getDefaultMessage());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(currentUser));
             if (isWardSecretaryUser) {
@@ -253,9 +259,8 @@ public class ChangeOfUseController extends GenericConnectionController {
 				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
 				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
 			}
-
+           	model.addAttribute("isModified", isModified);
             return CHANGEOFUSE_FORM;
-
         }
         if (changeOfUse.getState() == null)
             changeOfUse.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(

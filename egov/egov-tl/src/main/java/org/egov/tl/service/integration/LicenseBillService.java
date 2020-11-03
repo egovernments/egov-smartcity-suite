@@ -54,6 +54,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
@@ -82,10 +83,12 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.LicenseCitizenPortalService;
@@ -94,6 +97,7 @@ import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
@@ -129,6 +133,7 @@ import static org.egov.tl.utils.Constants.*;
 public class LicenseBillService extends BillServiceInterface implements BillingIntegrationService {
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
     private static final String TL_FUNCTION_CODE = "1500";
+    protected transient WorkflowBean workflowBean = new WorkflowBean();
 
     @Autowired
     protected EgBillDetailsDao egBillDetailsDao;
@@ -372,8 +377,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 licenseCitizenPortalService.onUpdate(tradeLicense);
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(tradeLicense);
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(tradeLicense, billReceipt.getTotalAmount());
-            } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
+            } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
                 reconcileCollForRcptCancel(demand, billReceipt);
+                //Reverting Workflow while receipt cancelled.
+                final TradeLicense license = licenseApplicationService.getLicenseByDemand(demand);
+                revertWorkflowState(license);
+            }
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be
         } catch (ValidationException e) {
@@ -384,6 +393,21 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         }
 
         return true;
+    }
+    
+    @Transactional
+    private void revertWorkflowState(TradeLicense license) {
+    	StateHistory initialHistory = null;
+		for(StateHistory historyObj : license.getState().getHistory()) {
+			if(historyObj.getValue().contains(WF_LICENSE_CREATED)  || historyObj.getValue().contains(WF_LICENSE_RENEWAL)) {
+				initialHistory = historyObj;
+			}
+		}
+		workflowBean.setApproverPositionId(initialHistory.getOwnerPosition().getId());
+        workflowBean.setCurrentState(initialHistory.getValue());
+		workflowBean.setApproverComments("Application sent back to JA as the Receipt is cancelled");
+		licenseApplicationService.updateLicenseToInitialState(license, workflowBean, initialHistory.getOwnerPosition(),
+				 initialHistory.getExtraInfo());
     }
 
     /**
@@ -559,6 +583,27 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 break;
             }
         return chqBounceDemand;
+    }
+    @Override
+    public ReceiptCancellationInfo validateCancelReceipt(final String receiptNumber, final String consumerCode) {
+        ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+        TradeLicense license;
+        license = licenseApplicationService.getLicenseByLicenseNumber(consumerCode);
+        if(license == null) {
+        	license = licenseApplicationService.getLicenseByApplicationNumber(consumerCode);
+        }         
+        if(license == null) {
+        	receiptCancellationInfo.setCancellationAllowed(false);
+            receiptCancellationInfo.setValidationMessage("Consumer code is wrong");
+        }else {
+        	if(license.getIsActive() && Constants.WF_STATE_COMMISSIONER_APPROVED_STR.equalsIgnoreCase(license.getState().getValue())) {
+            	receiptCancellationInfo.setCancellationAllowed(false);
+                receiptCancellationInfo.setValidationMessage(
+                        "User cannot cancel the receipt as trade license application is already Approved by Commissioner.");
+            }
+        }
+        
+        return receiptCancellationInfo;
     }
 
     @Transactional

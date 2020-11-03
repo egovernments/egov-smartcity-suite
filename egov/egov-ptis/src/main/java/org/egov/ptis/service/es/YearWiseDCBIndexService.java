@@ -120,6 +120,8 @@ public class YearWiseDCBIndexService {
     private static final String CURRENT_WO_AMOUNT = "currentWriteOff";
     private static final String ARREAR_INTEREST_WO_AMOUNT = "arrearPenWriteOff";
     private static final String CURRENT_INTEREST_WO_AMOUNT = "currentPenWriteOff";
+    private static final String IS_ACTIVE = "isActive";
+    private static final String IS_EXEMPTED = "isExempted";
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -425,6 +427,8 @@ public class YearWiseDCBIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(CITY_CODE, ApplicationThreadLocals.getCityCode()));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURT, serviceRequest.getIsCourtCase()));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
         if (StringUtils.isBlank(serviceRequest.getPropertyUsage()))
             boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CATEGORY, Arrays.asList(EWHS_CODE, VLT_CODE)));
         if (StringUtils.isNotBlank(serviceRequest.getPropertyUsage()))

@@ -76,10 +76,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -104,6 +106,8 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Sets;
 
 @Transactional(readOnly = true)
 @Service
@@ -189,19 +193,41 @@ public class DemandVoucherService {
          */
         Ptdemand ptDemand;
         ptDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(newProperty);
-        Ptdemand oldPtDemand;
+        Ptdemand oldPtDemand = null;
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
+        /*
+         * instChangeOpposite will be true when overall demand will increase/decrease and a particular installment(s) demand will
+         * decrease/increase. areInstallmentsMismatch api will return true when old property has less installments as compared to
+         * new property.
+         */
+        boolean instChangeOpposite = false;
+        boolean areInstallmentsMismatch = false;
         if (oldProperty != null) {
             oldPtDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(oldProperty);
-            demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    oldPtDemand, ptDemand, applicationDetails);
+            areInstallmentsMismatch = areInstallmentsMismatch(oldPtDemand, ptDemand);
+            boolean isRPNewPropertyCase = oldProperty.getPropertyModifyReason().equals(PropertyTaxConstants.PROP_CREATE_RSN)
+                    && newProperty.getPropertyModifyReason()
+                            .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
+            if (!areInstallmentsMismatch)
+                instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
+            if (areInstallmentsMismatch)
+                demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
+                        oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
+            else
+                demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
+                        oldPtDemand, ptDemand, applicationDetails, instChangeOpposite);
         } else
             demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
-                    null, ptDemand, applicationDetails);
+                    null, ptDemand, applicationDetails, instChangeOpposite);
 
         if (!demandVoucherDetailList.isEmpty())
-            prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
-                    demandVoucherDetailList, applicationDetails);
+            if (oldProperty != null && (areInstallmentsMismatch
+                    || instChangeOpposite))
+                prepareVoucherDetailsMapForMismatch(voucherDetails, glCodeMap, demandIncreased,
+                        demandVoucherDetailList, applicationDetails);
+            else
+                prepareVoucherDetailsMap(voucherDetails, glCodeMap, demandIncreased,
+                        demandVoucherDetailList, applicationDetails);
 
         return voucherDetails;
     }
@@ -236,9 +262,12 @@ public class DemandVoucherService {
         if (advance.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
                     putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX, applicationDetails);
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX, applicationDetails);
-        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS, applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS,
+                applicationDetails);
         assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, priorIncome, PRIOR_INCOME, applicationDetails);
         if (penalty.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
@@ -254,12 +283,73 @@ public class DemandVoucherService {
                     putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
     }
 
+    private void prepareVoucherDetailsMapForMismatch(Map<String, Map<String, Object>> voucherDetails,
+            Map<String, String> glCodeMap, boolean demandIncreased,
+            List<DemandVoucherDetails> demandVoucherDetailList, Map<String, String> applicationDetails) {
+        BigDecimal generalTax = ZERO;
+        BigDecimal vacantLandtax = ZERO;
+        BigDecimal libraryCess = ZERO;
+        BigDecimal priorIncome = ZERO;
+        BigDecimal arrearsTax = ZERO;
+        BigDecimal currentTax = ZERO;
+        BigDecimal penalty = ZERO;
+        BigDecimal advance = ZERO;
+        for (DemandVoucherDetails demandVoucherDetail : demandVoucherDetailList) {
+            if (demandVoucherDetail.getPurpose().equals(CURR_TAX)) {
+                generalTax = generalTax.add(demandVoucherDetail.getGeneralTaxVariation());
+                vacantLandtax = vacantLandtax.add(demandVoucherDetail.getVacantTaxVariation());
+                currentTax = currentTax.add(demandVoucherDetail.getNetBalance());
+            }
+            if (demandVoucherDetail.getPurpose().equals(ARREAR_TAX)) {
+                priorIncome = priorIncome.add(demandVoucherDetail.getGeneralTaxVariation())
+                        .add(demandVoucherDetail.getVacantTaxVariation());
+                arrearsTax = arrearsTax.add(demandVoucherDetail.getNetBalance());
+            }
+            libraryCess = libraryCess.add(demandVoucherDetail.getLibraryCessVariation());
+            advance = advance.add(demandVoucherDetail.getAdvance());
+            penalty = penalty.add(demandVoucherDetail.getPenalty());
+        }
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, libraryCess, DEMANDRSN_CODE_LIBRARY_CESS,
+                applicationDetails);
+        assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, priorIncome, PRIOR_INCOME, applicationDetails);
+        if (penalty.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (penalty.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_PENALTY_FINES),
+                    putAmountAndType(penalty.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (arrearsTax.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(ARREAR_TAX),
+                    putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (arrearsTax.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(ARREAR_TAX),
+                    putAmountAndType(arrearsTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (currentTax.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(CURR_TAX),
+                    putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (currentTax.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(CURR_TAX),
+                    putAmountAndType(currentTax.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+        if (advance.compareTo(ZERO) > 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
+                    putAmountAndType(advance.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (advance.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
+                    putAmountAndType(advance.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
+    }
+
     private void assembleIncomeHeads(Map<String, Map<String, Object>> voucherDetails, Map<String, String> glCodeMap,
-            boolean demandIncreased, BigDecimal incomeHeadAmount, String demandReasonCode, Map<String, String> applicationDetails) {
+            boolean demandIncreased, BigDecimal incomeHeadAmount, String demandReasonCode,
+            Map<String, String> applicationDetails) {
         if (incomeHeadAmount.compareTo(ZERO) != 0) {
             /*
              * if overall demand is decreased and income head is increased or vice-versa, then income head amount will go to
-             * credit and debit account respectively and should not be a special case for e.g. Vacancy Remission, Write Off, Court Verdict.
+             * credit and debit account respectively and should not be a special case for e.g. Vacancy Remission, Write Off, Court
+             * Verdict.
              */
             if ((!demandIncreased && incomeHeadAmount.compareTo(ZERO) < 0
                     || demandIncreased && incomeHeadAmount.compareTo(ZERO) > 0) && !isSpecialCase(applicationDetails))
@@ -298,13 +388,12 @@ public class DemandVoucherService {
 
     public List<DemandVoucherDetails> prepareDemandVoucherDetails(
             Installment currFirstHalf, Installment currSecondHalf, Ptdemand oldPtDemand, Ptdemand newPtDemand,
-            Map<String, String> applicationDetails) {
+            Map<String, String> applicationDetails, boolean instChangeOpposite) {
 
         List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
         List<NormalizeDemandDetails> normalizedDemandDetailListOld = new ArrayList<>();
         BigDecimal oldBalance = ZERO;
         BigDecimal newBalance = ZERO;
-
         List<NormalizeDemandDetails> normalizedDemandDetailListNew = normalizeDemandDetails(currFirstHalf, currSecondHalf,
                 newPtDemand);
         if (oldPtDemand != null)
@@ -336,19 +425,106 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsNew.getVacantLandTax()).subtract(normalizeDemandDetailsNew
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance));
+
             if (isPenaltyCollectionApportioned(applicationDetails, normalizeDemandDetailsNew, normalizeDemandDetailsOld))
                 demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
                         .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
-            else
-                demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
-                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection())
-                        .abs());
+            else {
+                if (instChangeOpposite) {
+                    demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
+                    demandVoucherDetails.setNetBalance(oldBalance.subtract(newBalance));
+                } else {
+                    demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).abs());
+                    demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance));
+                }
+            }
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
             demandVoucherDetailList.add(demandVoucherDetails);
         }
 
         return demandVoucherDetailList;
+    }
+
+    public List<DemandVoucherDetails> prepareDemandVoucherDetailsForMismatch(
+            Installment currFirstHalf, Installment currSecondHalf, Ptdemand oldPtDemand, Ptdemand newPtDemand,
+            Map<String, String> applicationDetails, boolean isRPNewPropertyCase) {
+
+        List<DemandVoucherDetails> demandVoucherDetailList = new ArrayList<>();
+        List<NormalizeDemandDetails> normalizedDemandDetailListOld = new ArrayList<>();
+
+        List<NormalizeDemandDetails> normalizedDemandDetailListNew = normalizeDemandDetails(currFirstHalf, currSecondHalf,
+                newPtDemand);
+        if (oldPtDemand != null)
+            normalizedDemandDetailListOld = normalizeDemandDetails(currFirstHalf, currSecondHalf,
+                    oldPtDemand);
+        else
+            normalizedDemandDetailListOld = constructNormalizeDemandDetailsByApplicationType(normalizedDemandDetailListNew,
+                    applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE));
+        if (applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND))
+            normalizedDemandDetailListNew = constructNormalizeDemandDetailsForZeroDemand(normalizedDemandDetailListNew);
+        List<NormalizeDemandDetails> largeList;
+        List<NormalizeDemandDetails> smallList;
+        // isNewPropertyLarger depicts whether new property has more no of installments than the old property.
+        boolean isNewPropertyLarger = normalizedDemandDetailListNew.size() > normalizedDemandDetailListOld.size();
+        if (isNewPropertyLarger) {
+            largeList = normalizedDemandDetailListNew;
+            smallList = normalizedDemandDetailListOld;
+        } else {
+            largeList = normalizedDemandDetailListOld;
+            smallList = normalizedDemandDetailListNew;
+        }
+        for (int s = 0, l = 0; l < largeList.size(); l++) {
+            DemandVoucherDetails demandVoucherDetails = new DemandVoucherDetails();
+            if (largeList.get(l).getInstallment().equals(smallList.get(s).getInstallment())) {
+                if (isNewPropertyLarger)
+
+                    prepareDataForMatchedInstallments(applicationDetails, demandVoucherDetails, smallList.get(s),
+                            largeList.get(l), isRPNewPropertyCase);
+                else
+                    prepareDataForMatchedInstallments(applicationDetails, demandVoucherDetails, largeList.get(l),
+                            smallList.get(s), isRPNewPropertyCase);
+                demandVoucherDetailList.add(demandVoucherDetails);
+                s++;
+            } else {
+                prepareDataForMissingInstallments(demandVoucherDetails, largeList.get(l), isNewPropertyLarger);
+                demandVoucherDetailList.add(demandVoucherDetails);
+            }
+        }
+        return demandVoucherDetailList;
+    }
+
+    private void prepareDataForMatchedInstallments(Map<String, String> applicationDetails,
+            DemandVoucherDetails demandVoucherDetails, NormalizeDemandDetails normalizeDemandDetailsOld,
+            NormalizeDemandDetails normalizeDemandDetailsNew, boolean isRPNewPropertyCase) {
+        BigDecimal oldBalance = ZERO;
+        BigDecimal newBalance = ZERO;
+        demandVoucherDetails.setInstallment(normalizeDemandDetailsOld.getInstallment());
+        setVariationAmount(demandVoucherDetails, normalizeDemandDetailsOld, normalizeDemandDetailsNew);
+        demandVoucherDetails.setLibraryCessVariation(
+                normalizeDemandDetailsOld.getLibraryCess().subtract(normalizeDemandDetailsNew.getLibraryCess()));
+        demandVoucherDetails
+                .setAdvance(normalizeDemandDetailsNew.getAdvance().subtract(normalizeDemandDetailsOld.getAdvance()).abs());
+        oldBalance = normalizeDemandDetailsOld.getGeneralTax().add(normalizeDemandDetailsOld.getLibraryCess())
+                .add(normalizeDemandDetailsOld.getVacantLandTax()).subtract(normalizeDemandDetailsOld
+                        .getGeneralTaxCollection().add(normalizeDemandDetailsOld.getVacantLandTaxCollection())
+                        .add(normalizeDemandDetailsOld.getLibraryCessCollection()));
+        newBalance = normalizeDemandDetailsNew.getGeneralTax().add(normalizeDemandDetailsNew.getLibraryCess())
+                .add(normalizeDemandDetailsNew.getVacantLandTax()).subtract(normalizeDemandDetailsNew
+                        .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
+                        .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
+        if (isRPNewPropertyCase)
+            demandVoucherDetails.setNetBalance(oldBalance.subtract(newBalance));
+        else
+            demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance));
+        if (isPenaltyCollectionApportioned(applicationDetails, normalizeDemandDetailsNew, normalizeDemandDetailsOld))
+            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
+                    .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
+        else
+            demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
+                    .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).abs());
+        demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
     }
 
     private List<NormalizeDemandDetails> normalizeDemandDetails(Installment currFirstHalf, Installment currSecondHalf,
@@ -602,12 +778,90 @@ public class DemandVoucherService {
                 normalizedDemandDetaiNew.getPenalty().subtract(normalizedDemandDetailOld.getPenaltyCollection())
                         .compareTo(ZERO) < 0;
     }
-    
 
     public boolean isSpecialCase(Map<String, String> applicationDetails) {
         return applicationDetails.get(PropertyTaxConstants.ACTION).equals(PropertyTaxConstants.ZERO_DEMAND)
                 || applicationDetails.get(PropertyTaxConstants.APPLICATION_TYPE)
                         .equals(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
+    }
+
+    public void prepareDataForMissingInstallments(DemandVoucherDetails demandVoucherDetails,
+            NormalizeDemandDetails normalizeDemandDetailsLarge, boolean isNewPropertyLarger) {
+        BigDecimal balance = ZERO;
+        demandVoucherDetails.setInstallment(normalizeDemandDetailsLarge.getInstallment());
+        if (isNewPropertyLarger) {
+            demandVoucherDetails.setGeneralTaxVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getGeneralTax()));
+            demandVoucherDetails.setVacantTaxVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getVacantLandTax()));
+            demandVoucherDetails.setLibraryCessVariation(
+                    ZERO.subtract(normalizeDemandDetailsLarge.getLibraryCess()));
+            demandVoucherDetails
+                    .setAdvance(normalizeDemandDetailsLarge.getAdvance().subtract(ZERO).abs());
+            balance = normalizeDemandDetailsLarge.getGeneralTax().add(normalizeDemandDetailsLarge.getLibraryCess())
+                    .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
+                            .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
+                            .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
+            demandVoucherDetails.setNetBalance(balance);
+        } else {
+            demandVoucherDetails.setGeneralTaxVariation(
+                    normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));
+            demandVoucherDetails.setVacantTaxVariation(
+                    normalizeDemandDetailsLarge.getVacantLandTax().subtract(ZERO));
+            demandVoucherDetails.setLibraryCessVariation(
+                    normalizeDemandDetailsLarge.getLibraryCess().subtract(ZERO));
+            demandVoucherDetails
+                    .setAdvance(normalizeDemandDetailsLarge.getAdvance().subtract(ZERO).abs());
+            balance = normalizeDemandDetailsLarge.getGeneralTax().add(normalizeDemandDetailsLarge.getLibraryCess())
+                    .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
+                            .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
+                            .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
+            demandVoucherDetails.setNetBalance(balance.subtract(ZERO));
+        }
+        demandVoucherDetails.setPenalty(normalizeDemandDetailsLarge.getPenaltyCollection()
+                .subtract(ZERO)
+                .abs());
+        demandVoucherDetails.setPurpose(normalizeDemandDetailsLarge.getPurpose());
+    }
+
+    public boolean areInstallmentsMismatch(Ptdemand oldDemand, Ptdemand newDemand) {
+        return getInstallmentSet(oldDemand).size() != getInstallmentSet(newDemand).size();
+    }
+
+    public boolean ifInstallmentChangeIsOpposite(Ptdemand oldDemand, Ptdemand newDemand, boolean demandIncreased) {
+        final Map<Installment, BigDecimal> instWiseDemandOld = getInstallmentWiseDemand(oldDemand);
+        final Map<Installment, BigDecimal> instWiseDemandNew = getInstallmentWiseDemand(newDemand);
+        for (Installment key : Sets.union(instWiseDemandOld.keySet(), instWiseDemandNew.keySet())) {
+            BigDecimal oldAmount = instWiseDemandOld.get(key);
+            BigDecimal newAmount = instWiseDemandNew.get(key);
+            if ((demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) > 1)
+                    || (!demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) < 1)) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    public Map<Installment, BigDecimal> getInstallmentWiseDemand(Ptdemand demand) {
+        Map<Installment, BigDecimal> instWiseDemand = new LinkedHashMap<>();
+        BigDecimal totalamount = ZERO;
+        for (Installment inst : getInstallmentSet(demand)) {
+            for (EgDemandDetails demandDetails : demand.getEgDemandDetails())
+                if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(inst))
+                    totalamount = totalamount.add(demandDetails.getAmount());
+            instWiseDemand.put(inst, totalamount);
+            totalamount = ZERO;
+        }
+        return instWiseDemand;
+    }
+
+    public Set<Installment> getInstallmentSet(Ptdemand demand) {
+        Set<Installment> installments = new LinkedHashSet<>(demand.getEgDemandDetails().size());
+        demand.getEgDemandDetails().stream()
+                .filter(p -> installments.add(p.getEgDemandReason().getEgInstallmentMaster()))
+                .collect(Collectors.toList());
+        return installments;
     }
 
 }

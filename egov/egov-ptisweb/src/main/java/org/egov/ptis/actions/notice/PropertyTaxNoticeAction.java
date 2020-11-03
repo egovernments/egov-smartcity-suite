@@ -155,6 +155,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -241,6 +242,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient CityService cityService;
+    
+    @Autowired
+    private WriteOffService writeOffService;
 
     @Autowired
     private PropertyDAO propertyDAO;
@@ -328,7 +332,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             noticeMode = VACANCYREMISSIONAPPROVAL;
             noticeType = NOTICE_TYPE_VRPROCEEDINGS;
             fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[2]));
-        } else {
+        } 
+        else if(PropertyTaxConstants.NATURE_WRITE_OFF.equalsIgnoreCase(id[2])){
+            fileStoreId.append(writeOffService.generateWOBulkNotice(Long.valueOf(id[0])));
+        }
+        else {
             final String cityGrade = cityService.getCityGrade();
             Boolean isCorporation;
             if (cityGrade != null && cityGrade != ""

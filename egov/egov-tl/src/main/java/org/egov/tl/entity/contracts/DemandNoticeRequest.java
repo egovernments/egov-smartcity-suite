@@ -48,9 +48,12 @@
 
 package org.egov.tl.entity.contracts;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.tl.entity.LicenseNotice;
 import org.egov.tl.entity.TradeLicense;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 public class DemandNoticeRequest {
@@ -78,6 +81,12 @@ public class DemandNoticeRequest {
     private BigDecimal tlCurentPenalty;
     private Long electionWard;
     private String electionWardName;
+    private Long noticeTypeId;
+    private String noticeTypeName;
+    private Date noticeFromDate;
+    private Date noticeToDate;
+    private String noticeNumber;
+    private FileStoreMapper fileStore;
 
     public DemandNoticeRequest() {
 
@@ -116,8 +125,15 @@ public class DemandNoticeRequest {
         }
 
     }
+    public DemandNoticeRequest(final LicenseNotice licenseNotice) {
+    	setApplicationNumber(licenseNotice.getApplicationNumber());
+    	setNoticeFromDate(licenseNotice.getNoticeDate());
+    	setNoticeTypeName(licenseNotice.getNoticeType());
+    	setFileStore(licenseNotice.getFileStore());
+    	setNoticeNumber(licenseNotice.getNoticeNo());
+    }
 
-    public Long getLicenseId() {
+	public Long getLicenseId() {
         return licenseId;
     }
 
@@ -300,4 +316,52 @@ public class DemandNoticeRequest {
     public void setElectionWardName(String electionWardName) {
         this.electionWardName = electionWardName;
     }
+
+	public Long getNoticeTypeId() {
+		return noticeTypeId;
+	}
+
+	public void setNoticeTypeId(Long noticeTypeId) {
+		this.noticeTypeId = noticeTypeId;
+	}
+
+	public String getNoticeTypeName() {
+		return noticeTypeName;
+	}
+
+	public void setNoticeTypeName(String noticeTypeName) {
+		this.noticeTypeName = noticeTypeName;
+	}
+
+	public Date getNoticeFromDate() {
+		return noticeFromDate;
+	}
+
+	public void setNoticeFromDate(Date noticeFromDate) {
+		this.noticeFromDate = noticeFromDate;
+	}
+
+	public Date getNoticeToDate() {
+		return noticeToDate;
+	}
+
+	public void setNoticeToDate(Date noticeToDate) {
+		this.noticeToDate = noticeToDate;
+	}
+
+	public String getNoticeNumber() {
+		return noticeNumber;
+	}
+
+	public void setNoticeNumber(String noticeNumber) {
+		this.noticeNumber = noticeNumber;
+	}
+
+	public FileStoreMapper getFileStore() {
+		return fileStore;
+	}
+
+	public void setFileStore(FileStoreMapper fileStore) {
+		this.fileStore = fileStore;
+	}   
 }

@@ -53,6 +53,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -167,11 +168,12 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
             Boolean citizenPortalUser = sewerageTaxUtils.isCitizenPortalUser(user);
-            boolean isWardSecretaryOperator = sewerageWorkflowService.isWardSecretaryUser(user);
+            boolean isWardSecretaryApplication = Source.WARDSECRETARY.toString().equalsIgnoreCase(sewerageApplicationDetails.getSource()) ? true : false;
+
             if (sewerageApplicationDetails.getState() == null
-                    && (cscOperatorLoggedIn || citizenPortalUser || isWardSecretaryOperator
+                    && (cscOperatorLoggedIn || citizenPortalUser || isWardSecretaryApplication
                     || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
-                if (cscOperatorLoggedIn || isWardSecretaryOperator)
+                if (cscOperatorLoggedIn || isWardSecretaryApplication)
                     currState = THIRD_PARTY_OPERATOR_CREATED;
                 else if (citizenPortalUser && sewerageApplicationDetails.getState() == null)
                     currState = CITIZEN_CREATED;
@@ -357,8 +359,12 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             else
                 pos = wfInitiator.getPosition();
 			if (sewerageApplicationDetails.getState() == null) {
+				boolean isWardSecretaryApplication = Source.WARDSECRETARY.toString()
+						.equalsIgnoreCase(sewerageApplicationDetails.getSource()) ? true : false;
 				if (sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()))
 					currState = ANONYMOUS_CREATED;
+				else if(isWardSecretaryApplication)
+					currState = THIRD_PARTY_OPERATOR_CREATED;
 				wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
 						null, null, additionalRule, currState, null);
 				sewerageApplicationDetails.transition().start()

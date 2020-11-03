@@ -439,8 +439,12 @@ public class OnlineReceiptAction extends BaseFormAction {
         if (onlinePaymentReceiptHeader == null)
             throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
                     REPAY_VALIDATION_KEY)));
+        try{
         paymentResponse = collectionCommon.repayReconciliation(onlinePaymentReceiptHeader.getOnlinePayment().getService(),
                 onlinePaymentReceiptHeader.getOnlinePayment());
+        }catch(ApplicationRuntimeException e){
+            throw new ValidationException(new ValidationError("validation", "Error while reconciling the transaction."));
+        }
         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
         else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus())) {

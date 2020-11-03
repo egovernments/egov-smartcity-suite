@@ -47,9 +47,11 @@
  */
 package org.egov.wtms.autonumber.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,7 @@ import org.springframework.stereotype.Service;
 public class EstimationNumberGeneratorImpl implements EstimationNumberGenerator {
     private static final String ESTIMATION_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATION_NUMBER";
     private static final String ESTIMATION_NUMBER = "EN-";
+    private static final String REJECTION_NUMBER = "RN/";
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
@@ -64,9 +67,18 @@ public class EstimationNumberGeneratorImpl implements EstimationNumberGenerator 
     private WaterTaxUtils waterTaxUtils;
 
     @Override
-    public String generateEstimationNumber() {
-        return String.format("%s%s%06d", ESTIMATION_NUMBER, waterTaxUtils.getCityCode(),
-                genericSequenceNumberGenerator.getNextSequence(ESTIMATION_NUMBER_SEQ_PREFIX));
+    public String generateEstimationNumber(String noticeType) {
+    	String noticeNumber = StringUtils.EMPTY;
+    	if(StringUtils.isNotBlank(noticeType)) {
+    		String numberFormat = StringUtils.EMPTY;
+    		if(WaterTaxConstants.NOTICETYPE_ESTIMATION.equalsIgnoreCase(noticeType))
+    			numberFormat = ESTIMATION_NUMBER;
+    		else if(WaterTaxConstants.NOTICETYPE_REJECTION.equalsIgnoreCase(noticeType))
+    			numberFormat = REJECTION_NUMBER;
+    		noticeNumber = String.format("%s%s%06d", numberFormat, waterTaxUtils.getCityCode(),
+	                genericSequenceNumberGenerator.getNextSequence(ESTIMATION_NUMBER_SEQ_PREFIX));
+    	}
+        return noticeNumber;
     }
 
 }

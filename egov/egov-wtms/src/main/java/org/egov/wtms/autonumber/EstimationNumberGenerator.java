@@ -52,5 +52,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface EstimationNumberGenerator {
 
-    public String generateEstimationNumber();
+    public String generateEstimationNumber(String noticeType);
 }

@@ -1,3 +1,4 @@
 /.idea
 *.iml
 */**/egov-erp-*.properties
+/.metadata/

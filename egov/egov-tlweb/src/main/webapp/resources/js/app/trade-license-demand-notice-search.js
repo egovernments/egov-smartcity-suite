@@ -181,10 +181,159 @@ $(document).ready(function () {
                 var wardId = $('#wardId').val();
                 var localityId = $('#localityId').val();
                 var electionWard = $('#electionWard').val();
-                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !electionWard) {
+                var noticeTypeName = $('#noticeTypeId :selected').text();
+                var noticeFromDate = $('#noticeFromDate').val();
+                var noticeToDate = $('#noticeToDate').val();
+                var correctNoticeType = false;
+                
+                if(noticeTypeName == "Rejection Notice"){
+                	noticeType = [{
+                        "data": "applicationNumber",
+                        "sTitle": "Application No."
+                    	}, {
+                            "data": "noticeNumber",
+                            "sTitle": "Notice Number"
+                        }, {
+                            "data": "noticeName",
+                            "sTitle": "Notice Name"
+                        }, {
+                            "data": "noticeDate",
+                            "sTitle": "Notice Date"
+                        }, {
+                            "data": "subCategory",
+                            "sTitle": "Sub-Category"
+                        }, {
+                            "data": "tradeTitle",
+                            "sTitle": "Title of Trade"
+                        }, {
+                            "data": "tradeOwner",
+                            "sTitle": "Trade Owner"
+                        },
+                        {
+                            "data": "revenueWardName",
+                            "sTitle": "Revenue Ward"
+                        },
+                        {
+                            "data": "adminWardName",
+                            "sTitle": "Election Ward"
+                        },
+                        {
+                            "data": "tlArrearFee",
+                            "sTitle": "License Fee (Arrears)"
+                        }, {
+                            "data": "tlCurrentFee",
+                            "sTitle": "License Fee (Current)"
+                        }, {
+                            "data": "tlArrearPenalty",
+                            "sTitle": "Penalty (Arrears)"
+                        },
+                        {
+                            "data": "status",
+                            "sTitle": "Status"
+                        },
+                        {
+                            "data": "ownerName",
+                            "sTitle": "Owner Name"
+                        },
+                        {
+                            "data": function (row) {
+                                return "Generate Notice";
+                            },
+                            "render": function (data, type, row) {
+                                return '<a href="javascript:void(0);" onclick="showRejectionNotice(&quot;'+row.fileStore+'&quot;,&quot;'+row.applicationNumber+'&quot;);" data-hiddenele="fileStore" data-eleval="'
+                                + data.fileStore + '">' + "Generate Notice" + '</a>';
+                            },
+                            "sTitle": "Action",
+                            "sortable": false,
+                            "orderable": false
+                        }];
+                }else{
+                	noticeType = [{
+                        "data": "applicationNumber",
+                        "sTitle": "Application No."
+                    	}, {
+                            "data": "tlNumber",
+                            "sTitle": "TL Number"
+                        }, {
+                            "data": "oldTLNumber",
+                            "sTitle": "Old TL Number"
+                        }, {
+                            "data": "category",
+                            "sTitle": "Category"
+                        }, {
+                            "data": "subCategory",
+                            "sTitle": "Sub-Category"
+                        }, {
+                            "data": "tradeTitle",
+                            "sTitle": "Title of Trade"
+                        }, {
+                            "data": "tradeOwner",
+                            "sTitle": "Trade Owner"
+                        },
+                        {
+                            "data": "revenueWardName",
+                            "sTitle": "Revenue Ward"
+                        },
+                        {
+                            "data": "adminWardName",
+                            "sTitle": "Election Ward"
+                        },
+                        {
+                            "data": "tlArrearFee",
+                            "sTitle": "License Fee (Arrears)"
+                        }, {
+                            "data": "tlCurrentFee",
+                            "sTitle": "License Fee (Current)"
+                        }, {
+                            "data": "tlArrearPenalty",
+                            "sTitle": "Penalty (Arrears)"
+                        },
+                        {
+                            "data": "status",
+                            "sTitle": "Status"
+                        },
+                        {
+                            "data": "ownerName",
+                            "sTitle": "Owner Name"
+                        },
+                        {
+                            "data": function (row) {
+                                return "Generate Notice";
+                            },
+                            "render": function (data, type, row) {
+                                return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
+                                    + data.id + '">' + "Generate Notice" + '</a>';
+                            },
+                            "sTitle": "Action",
+                            "sortable": false,
+                            "orderable": false
+                        }];
+                }
+                
+                
+                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !electionWard && !noticeTypeName) {
                     bootbox.alert("Atleast one search criteria is mandatory!");
                     return false;
                 }
+                
+                if(noticeTypeName == "Rejection Notice" || noticeTypeName == "Generate Bulk Demand Notice"){
+                	correctNoticeType = true;
+                }
+                if(!correctNoticeType){
+                	bootbox.alert("Please select the notice type");
+                    return false;
+                }
+                
+            	if (noticeToDate < noticeFromDate) {
+            		bootbox.alert("Please enter correct date range");
+            		return false; 
+            	}
+            	if(noticeTypeName == "Rejection Notice"){
+            		if(noticeFromDate == "" || noticeToDate == ""){
+            			bootbox.alert("Date can not be empty");
+            			return false;
+            		}
+            	}
 
                 $('.loader-class').modal('show', {backdrop: 'static'});
                 $('.report-section').show();
@@ -200,7 +349,10 @@ $(document).ready(function () {
                                 subCategoryId: subCategory,
                                 wardId: wardId,
                                 electionWard: electionWard,
-                                localityId: localityId
+                                localityId: localityId,
+                                noticeTypeName: noticeTypeName,
+                                noticeFromDate: noticeFromDate,
+                                noticeToDate: noticeToDate
                             }
                         },
                         "initComplete": function (settings, json) {
@@ -218,67 +370,7 @@ $(document).ready(function () {
                         },
                         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
                         aaSorting: [],
-                        columns: [{
-                            "data": "applicationNumber",
-                            "sTitle": "Application No."
-                        },
-                            {
-                                "data": "tlNumber",
-                                "sTitle": "TL Number"
-                            }, {
-                                "data": "oldTLNumber",
-                                "sTitle": "Old TL Number"
-                            }, {
-                                "data": "category",
-                                "sTitle": "Category"
-                            }, {
-                                "data": "subCategory",
-                                "sTitle": "Sub-Category"
-                            }, {
-                                "data": "tradeTitle",
-                                "sTitle": "Title of Trade"
-                            }, {
-                                "data": "tradeOwner",
-                                "sTitle": "Trade Owner"
-                            },
-                            {
-                                "data": "revenueWardName",
-                                "sTitle": "Revenue Ward"
-                            },
-                            {
-                                "data": "adminWardName",
-                                "sTitle": "Election Ward"
-                            },
-                            {
-                                "data": "tlArrearFee",
-                                "sTitle": "License Fee (Arrears)"
-                            }, {
-                                "data": "tlCurrentFee",
-                                "sTitle": "License Fee (Current)"
-                            }, {
-                                "data": "tlArrearPenalty",
-                                "sTitle": "Penalty (Arrears)"
-                            },
-                            {
-                                "data": "status",
-                                "sTitle": "Status"
-                            },
-                            {
-                                "data": "ownerName",
-                                "sTitle": "Owner Name"
-                            },
-                            {
-                                "data": function (row) {
-                                    return "Generate Notice";
-                                },
-                                "render": function (data, type, row) {
-                                    return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
-                                        + data.id + '">' + "Generate Notice" + '</a>';
-                                },
-                                "sTitle": "Action",
-                                "sortable": false,
-                                "orderable": false
-                            }]
+                        columns: noticeType
                     });
             } else {
                 $('.report-section').hide();
@@ -290,8 +382,36 @@ $(document).ready(function () {
     );
 });
 
+jQuery(function ($) {
+ 	try { 
+ 		$(".datepicker").datepicker({
+ 			format: "dd/mm/yyyy"
+ 		}); 
+ 		}catch(e){
+ 		console.warn("No Date Picker "+ e);
+ 	}
+		$('.datepicker').on('changeDate', function(ev){
+		    $(this).datepicker('hide');
+		});
+ });
+
 function goToView(id) {
     window.open("generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
 } 
 
+function showRejectionNotice(fileStoreId,applNumber) {
+    window.open("/tl/demand-notice/result?"+'applNumber='+applNumber+'&tlFileStoreId='+fileStoreId, 'dn' + fileStoreId, 'scrollbars=yes,width=1000,height=700,status=yes');
+}
 
+function selectNoticeType (){
+	var noticeType = $('#noticeTypeId :selected').text();
+	if(noticeType == "Rejection Notice"){
+		$("#showDateRange").css("display", "block");
+		$("#btngeneratePDF").hide();
+	}else{
+		$("#showDateRange").css("display", "none");
+		$("#btngeneratePDF").show();
+		$('#noticeFromDate').val("");
+		$('#noticeToDate').val("");
+	}
+}

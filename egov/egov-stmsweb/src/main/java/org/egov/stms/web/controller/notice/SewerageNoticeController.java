@@ -79,6 +79,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
@@ -302,9 +303,9 @@ public class SewerageNoticeController {
         return noticeType;
     }
 
-    @RequestMapping(value = "/searchNotices-showSewerageNotice/{noticeNo}/{noticeType}", method = RequestMethod.GET)
-    public String showNotice(@PathVariable("noticeNo") final String noticeNo,
-                             @PathVariable("noticeType") final String noticeTypeInput, final Model model,
+    @RequestMapping(value = "/searchNotices-showSewerageNotice/", method = RequestMethod.GET)
+    public String showNotice(@RequestParam("noticeNo") final String noticeNo,
+            @RequestParam("noticeType") final String noticeTypeInput, final Model model,
                              final HttpServletResponse response) throws IOException {
         if (noticeNo != null) {
             String noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);

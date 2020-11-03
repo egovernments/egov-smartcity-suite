@@ -52,6 +52,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
+<input type="hidden" name="wsPortalRequest" id="wsPortalRequest" value="${wsPortalRequest}">
+<input type="hidden" name="wsTransactionId" id="wsTransactionId" value="${wsTransactionId}">
+<input type="hidden" name="wsSource" id="wsSource" value="${wsSource}">
+<input type="hidden" name="isAnonymousOrWardSecretaryUser" id="isAnonymousOrWardSecretaryUser" value="${isAnonymousOrWardSecretaryUser}">
+
 <jsp:include page="sewerage-common-search-form.jsp"></jsp:include>
 
 <script

@@ -141,8 +141,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("surveyNo", StringUtils.isNotBlank(baseRegisterResultObj.getSurveyNo())
                     ? baseRegisterResultObj.getSurveyNo() : "NA");
             jsonObject.addProperty("taxationRate", taxRate);
-            jsonObject.addProperty("marketValue", marketValue.toString());
-            jsonObject.addProperty("documentValue", capitalValue.toString());
+            jsonObject.addProperty("marketValue", marketValue.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+            jsonObject.addProperty("documentValue", capitalValue.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             jsonObject.addProperty("higherValueForImposedtax", higherValueForImposedTax.toString());
             jsonObject.addProperty("isExempted", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
             jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
@@ -165,10 +165,7 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("currTotal", currTotal);
 
             jsonObject.addProperty("penaltyFines", currPenaltyFine);
-            jsonObject.addProperty("arrearPeriod",
-                    baseRegisterResultObj.getDuePeriod() != null
-                            && org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getDuePeriod())
-                                    ? baseRegisterResultObj.getDuePeriod() : "NA");
+            jsonObject.addProperty("arrearPeriod", propertyTaxService.getArrearsPeriod(baseRegisterResultObj));
             jsonObject.addProperty("arrearPropertyTax",
                     baseRegisterResultObj.getAggrArrDmd() != null
                             && baseRegisterResultObj.getAggrArrDmd().compareTo(BigDecimal.ZERO) >= 1

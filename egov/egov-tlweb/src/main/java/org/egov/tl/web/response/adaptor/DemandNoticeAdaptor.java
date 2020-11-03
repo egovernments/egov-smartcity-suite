@@ -52,8 +52,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.egov.tl.entity.contracts.DemandNoticeRequest;
+import org.egov.tl.enums.NoticeTypeEnum;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
@@ -79,7 +81,16 @@ public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeRequest> 
             jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
             jsonObject.addProperty("revenueWardName", searchFormObj.getWarName());
             jsonObject.addProperty("adminWardName", searchFormObj.getElectionWardName());
+            
+        }
+        if(NoticeTypeEnum.REJECTIONNOTICE.toString().equalsIgnoreCase(searchFormObj.getNoticeTypeName())) {
 
+            jsonObject.addProperty("noticeNumber", searchFormObj.getNoticeNumber());
+            jsonObject.addProperty("fileStore", searchFormObj.getFileStore().getFileStoreId());
+            jsonObject.addProperty("noticeName", searchFormObj.getNoticeTypeName());
+            SimpleDateFormat sdfr = new SimpleDateFormat("dd/MM/yyyy");
+            String dateString = sdfr.format(searchFormObj.getNoticeFromDate());
+            jsonObject.addProperty("noticeDate", dateString);
         }
         return jsonObject;
     }

@@ -303,6 +303,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
             return PROPERTY_VALIDATION_FOR_SPRING;
 
         }
+        if (property.getBasicProperty().isUnderWorkflow() && !propertyTaxCommonUtils.isUserTypeEmployee(loggedInUser)) {
+            model.addAttribute("wfPendingMsg", "Could not do Tax exemption now, property is undergoing some work flow.");
+            return TARGET_WORKFLOW_ERROR;
+        }
         PropertyImpl oldProperty = property.getBasicProperty().getActiveProperty();
         final Assignment assignment = propertyService.isCscOperator(loggedInUser)
                 ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
@@ -357,13 +361,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
                     property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams,false);
+                        approvalPosition, taxExemptedReason, EXEMPTION, meesevaParams);
             } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
                 taxExemptionService.savePropertyAndPublishEvent(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, request);
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION,false);
+                        approvalPosition, taxExemptedReason, EXEMPTION);
             propertyService.updateIndexes(property, APPLICATION_TYPE_TAX_EXEMTION);
             model.addAttribute("showAckBtn", Boolean.TRUE);
             model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));

@@ -138,6 +138,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.integration.event.model.enums.TransactionStatus;
 import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
@@ -209,6 +210,7 @@ import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.property.PropertyThirdPartyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.voucher.DemandVoucherService;
+import org.egov.ptis.event.EventPublisher;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -245,6 +247,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     protected static final String EDIT_DATA_ENTRY = "editDataEntry";
     private static final String MEESEVA_SERVICE_CODE_NEWPROPERTY = "PT01";
     private static final String MEESEVA_SERVICE_CODE_SUBDIVISION = "PT04";
+    private static final String PROPTYPEMASTER_QUERY = "from PropertyTypeMaster ptm where ptm.id = ?";
     private static final String MEESEVA_SERVICE_CODE = "meesevaServicecode";
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
@@ -412,6 +415,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     
     @Autowired
     private ThirdPartyService thirdPartyService;
+    
+    @Autowired
+    private EventPublisher eventPublisher;
 
     public CreatePropertyAction() {
         super();
@@ -516,59 +522,76 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             } else
                 property.setSource(Source.WARDSECRETARY.toString());
         }
-        if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
-            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        if (multipleSubmitCondition(property, approverPositionId)) {
-            return multipleSubmitRedirect();
-        }
-        if (property.getPropertyDetail().isAppurtenantLandChecked()) {
-            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
-            if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-                property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
-            else
-                property.getPropertyDetail().setPropertyType(PropertyTaxConstants.BUILT_UP_PROPERTY);
-            return createAppurTenantProperties(STATUS_WORKFLOW);
-        }
 
-        final BasicProperty basicProperty = createBasicProp(STATUS_WORKFLOW);
         try {
-            addDemandAndCompleteDate(STATUS_WORKFLOW, basicProperty, basicProperty.getPropertyMutationMaster());
-        } catch (final TaxCalculatorExeption e) {
-            basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
-            addActionError(getText(UNIT_RATE_ERROR));
-            logger.error("create : There are no Unit rates defined for chosen combinations", e);
-            return RESULT_NEW;
-        }
-        basicProperty.setUnderWorkflow(Boolean.TRUE);
-        basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        // this should be appending to message
-        transitionWorkFlow(property);
-        basicPropertyService.applyAuditing(property.getState());
-        if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
-            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        else if (isWardSecretaryRequest)
-            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
+            if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
+                ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+            if (multipleSubmitCondition(property, approverPositionId)) {
+                return multipleSubmitRedirect();
+            }
+            if (property.getPropertyDetail().isAppurtenantLandChecked()) {
+                propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
+                        Long.valueOf(propTypeId));
+                if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+                    property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
+                else
+                    property.getPropertyDetail().setPropertyType(PropertyTaxConstants.BUILT_UP_PROPERTY);
+                return createAppurTenantProperties(STATUS_WORKFLOW);
+            }
 
-        propService.processAndStoreDocument(property.getAssessmentDocuments());
+            final BasicProperty basicProperty = createBasicProp(STATUS_WORKFLOW);
+            try {
+                addDemandAndCompleteDate(STATUS_WORKFLOW, basicProperty, basicProperty.getPropertyMutationMaster());
+            } catch (final TaxCalculatorExeption e) {
+                basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
+                addActionError(getText(UNIT_RATE_ERROR));
+                logger.error("create : There are no Unit rates defined for chosen combinations", e);
+                return RESULT_NEW;
+            }
+            basicProperty.setUnderWorkflow(Boolean.TRUE);
+            basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
+            // this should be appending to message
+            transitionWorkFlow(property);
+            basicPropertyService.applyAuditing(property.getState());
+            if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
+                basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            else if (isWardSecretaryRequest)
+                basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_WARDSECRETARY);
 
-        if (isWardSecretaryRequest) {
-            propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property,request, transactionId);
-        } else if (!loggedUserIsMeesevaUser)
-            basicPropertyService.persist(basicProperty);
-        else {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("ADMISSIONFEE", "0");
-            meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
-            basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
+            propService.processAndStoreDocument(property.getAssessmentDocuments());
+
+            if (isWardSecretaryRequest) {
+                propertyThirdPartyService.saveBasicPropertyAndPublishEvent(basicProperty, property, request, transactionId);
+            } else if (!loggedUserIsMeesevaUser)
+                basicPropertyService.persist(basicProperty);
+            else {
+                final HashMap<String, String> meesevaParams = new HashMap<>();
+                meesevaParams.put("ADMISSIONFEE", "0");
+                meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
+                basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
+            }
+            if (citizenPortalUser)
+                propService.pushPortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
+            buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
+            setBasicProp(basicProperty);
+            propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
+            setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
+            setApplicationNoMessage(" with application number : ");
+            propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        } catch (Exception e) {
+            if (isWardSecretaryRequest) {
+                String remarks = null;
+                logger.error("Error in creating new property application", e);
+                if (PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(property.getBasicProperty().getPropertyMutationMaster().getCode())) {
+                    remarks = "Child Property for Bifurcation Failed";
+                } else
+                    remarks = "Property Creation Failed";
+                eventPublisher.publishWSEvent(transactionId, TransactionStatus.FAILED,
+                        property.getApplicationNo(), null, null, remarks);
+            }
+            addActionMessage(getText("petition.app.error"));
+            return RESULT_ERROR;
         }
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        if (citizenPortalUser)
-            propService.pushPortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        setBasicProp(basicProperty);
-        propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
-        setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
-        setApplicationNoMessage(" with application number : ");
         if (!loggedUserIsMeesevaUser)
             return RESULT_ACK;
         else

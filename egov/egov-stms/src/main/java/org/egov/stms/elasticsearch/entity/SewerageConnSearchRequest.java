@@ -66,6 +66,7 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
     private String fromDate;
     private String toDate;
     private String searchType;
+    private String validWardSecretaryRequest;
 
     public String getModuleName() {
         return moduleName;
@@ -186,4 +187,12 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
     public void setSearchType(String searchType) {
         this.searchType = searchType;
     }
+
+	public String getValidWardSecretaryRequest() {
+		return validWardSecretaryRequest;
+	}
+
+	public void setValidWardSecretaryRequest(String validWardSecretaryRequest) {
+		this.validWardSecretaryRequest = validWardSecretaryRequest;
+	}
 }

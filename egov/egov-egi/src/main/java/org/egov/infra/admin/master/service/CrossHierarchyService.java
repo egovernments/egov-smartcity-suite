@@ -123,6 +123,10 @@ public class CrossHierarchyService {
     public List<Boundary> getParentBoundaryByChildBoundaryAndParentBoundaryType(Long childId, Long parentTypeId) {
         return crossHierarchyRepository.findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(childId, parentTypeId);
     }
+    
+    public List<Boundary> getActiveParentBoundaryByChildBoundaryAndParentBoundaryType(Long childId, Long parentTypeId) {
+        return crossHierarchyRepository.findActiveParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(childId, parentTypeId);
+    }
 
     public List<Boundary> getActiveChildBoundariesByParentId(Long parentId) {
         return crossHierarchyRepository.findChildBoundariesByActiveParentBoundaryId(parentId);

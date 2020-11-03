@@ -65,7 +65,11 @@
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
-			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"> 
+			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">
+			<input type="hidden" id="isWardSecretaryUser" name="isWardSecretaryUser" value="${isWardSecretaryUser}" />
+			<input type="hidden" id="wsTransactionId" name="wsTransactionId" value="${wsTransactionId}" />
+			<input type="hidden" id="wsSource" name="wsSource" value="${wsSource}" />
+			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
 			<form:hidden id="documentName" path="" value="${documentName}"/>
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
 				<jsp:include page="connectiondetails.jsp"></jsp:include>
@@ -73,7 +77,7 @@
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 				</c:if>
 				<jsp:include page="documentdetails.jsp"></jsp:include>	
-				<c:if test="${isEmployee && !isCitizenPortalUser}">
+				<c:if test="${isEmployee && !isCitizenPortalUser && !isWardSecretaryUser}">
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				</c:if>
 			<div class="buttonbottom" align="center">

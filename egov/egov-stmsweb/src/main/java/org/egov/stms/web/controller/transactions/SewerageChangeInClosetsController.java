@@ -49,6 +49,10 @@ package org.egov.stms.web.controller.transactions;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_EVENTPUBLISH_MODE_CREATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_SOURCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_TRANSACTIONID_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WARDSECRETARY_WSPORTAL_REQUEST;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
@@ -63,6 +67,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -96,6 +102,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -137,13 +144,43 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     private SewerageWorkflowService sewerageWorkflowService;
     @Autowired
     private MessageSource messageSource;
+    @Autowired
+    private transient ThirdPartyService thirdPartyService;
 
-    @GetMapping("/modifyConnection/{shscNumber}")
-    public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-                                         @PathVariable final String shscNumber, final Model model, final HttpServletRequest request,
-                                         final BindingResult errors) {
-        BigDecimal taxDue;
+	@RequestMapping("/modifyConnection/{shscNumber}")
+	public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
+			@PathVariable final String shscNumber, final Model model, final HttpServletRequest request,
+			final BindingResult errors) {
+		return loadChangeInCLosetForm(sewerageApplicationDetails, shscNumber, model, request);
+	}
+
+	@RequestMapping(value = "/modifyConnection/form/{shscNumber}", method = RequestMethod.POST)
+	public String showNewApplicationFormForWardSecretary(
+			@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
+			@PathVariable final String shscNumber, final Model model, final HttpServletRequest request,
+			final BindingResult errors) {
+		return loadChangeInCLosetForm(sewerageApplicationDetails, shscNumber, model, request);
+	}
+
+	private String loadChangeInCLosetForm(final SewerageApplicationDetails sewerageApplicationDetails,
+			final String shscNumber, final Model model, final HttpServletRequest request) {
+		BigDecimal taxDue;
         SewerageApplicationDetails applicationDetails;
+		boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+		String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+		boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+
+		if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+
+		if (isWardSecretaryUser) {
+			model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+			model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+			model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+		}
+		model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByShscNumberAndIsActive(shscNumber);
@@ -203,7 +240,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         if (inspectionFeeCollectionRequired)
             createSewerageConnectionFee(sewerageApplicationDetails, SewerageTaxConstants.FEE_INSPECTIONCHARGE);
         return "changeInClosetsConnection-form";
-    }
+	}
 
     @ModelAttribute("documentNamesList")
     public List<SewerageApplicationDetailsDocument> documentTypeMasterList(
@@ -230,10 +267,19 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 			final BindingResult resultBinder, final HttpServletRequest request, final Model model,
 			@RequestParam("files") final MultipartFile[] files) {
 
+    	final Boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
+		final Boolean anonymousUser = sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+    	boolean wsPortalRequest = Boolean.valueOf(request.getParameter(WARDSECRETARY_WSPORTAL_REQUEST));
+        boolean isWardSecretaryUser = thirdPartyService.isWardSecretaryRequest(wsPortalRequest);
+		String wsTransactionId = request.getParameter(WARDSECRETARY_TRANSACTIONID_CODE);
+        String wsSource = request.getParameter(WARDSECRETARY_SOURCE_CODE);
+        
+        if (!thirdPartyService.isValidWardSecretaryRequest(wsPortalRequest)
+				|| (isWardSecretaryUser && ThirdPartyService.validateWardSecretaryRequest(wsTransactionId, wsSource)))
+			throw new ApplicationRuntimeException("WS.001");
+        
         sewerageApplicationDetails.getConnectionDetail().setPropertyIdentifier(request.getParameter(PTASSESSMENT_NUMBER));
         sewerageApplicationValidator.validateChangeInClosetsApplication(sewerageApplicationDetails, resultBinder, request);
-        final Boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
-		final Boolean anonymousUser = sewerageTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
@@ -247,9 +293,15 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 			prepareChangeForm(sewerageApplicationDetails, shscNumber, model, citizenPortalUser, anonymousUser);
             model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
             model.addAttribute(PTASSESSMENT_NUMBER, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            if (isWardSecretaryUser) {
+				model.addAttribute("isWardSecretaryUser", isWardSecretaryUser);
+				model.addAttribute(WARDSECRETARY_TRANSACTIONID_CODE, wsTransactionId);
+				model.addAttribute(WARDSECRETARY_SOURCE_CODE, wsSource);
+				model.addAttribute(WARDSECRETARY_WSPORTAL_REQUEST, wsPortalRequest);
+			}
             return "changeInClosetsConnection-form";
         }
-		if (anonymousUser && StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getAdditionalRule()))
+		if ((anonymousUser || isWardSecretaryUser) && StringUtils.isBlank(sewerageApplicationDetails.getWorkflowContainer().getAdditionalRule()))
 			sewerageApplicationDetails.getWorkflowContainer()
 					.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
         /**
@@ -269,6 +321,11 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING, SewerageTaxConstants.MODULETYPE));
             }
+            else if (isWardSecretaryUser) {
+				sewerageApplicationDetails.setSource(Source.WARDSECRETARY.toString());
+				sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+						SewerageTaxConstants.APPLICATION_STATUS_WARDSECRETARYCREATED, SewerageTaxConstants.MODULETYPE));
+			}
 			else if (anonymousUser) {
 				sewerageApplicationDetails.setSource(Source.ONLINE.toString());
 				sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
@@ -287,12 +344,15 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         sewerageConnection.addApplicantDetails(sewerageApplicationDetails);
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, files, request);
+        if (isWardSecretaryUser)
+        	sewerageApplicationDetailsService.persistAndPublishEventForWardSecretary(sewerageApplicationDetails, files,
+    			request, StringUtils.EMPTY, WARDSECRETARY_EVENTPUBLISH_MODE_CREATE);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         Long approvalPosition = sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId();
         String approverName = EMPTY;
         String nextDesignation = EMPTY;
-		if (citizenPortalUser || anonymousUser) {
+		if (citizenPortalUser || anonymousUser || isWardSecretaryUser) {
 			Assignment assignment = sewerageWorkflowService.getMappedAssignmentForCscOperator(
 					sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
 			if (assignment != null) {
@@ -321,7 +381,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 			return "redirect:/citizen/search/sewerageGenerateonlinebill/"
 					+ newSewerageApplicationDetails.getApplicationNumber() + "/"
 					+ newSewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier();
-		else if (anonymousUser) {
+		else if (anonymousUser || isWardSecretaryUser) {
 			redirectAttributes.addFlashAttribute("message", message);
 			return "redirect:/transactions/new-sewerage-ackowledgement/"
 					+ newSewerageApplicationDetails.getApplicationNumber();

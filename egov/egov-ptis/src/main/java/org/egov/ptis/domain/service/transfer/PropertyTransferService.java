@@ -893,17 +893,12 @@ public class PropertyTransferService {
      * @return Assignment
      */
     public Assignment getAssignmentForThirdPartyByMutationType(final PropertyMutation propertyMutation,
-            final BasicProperty basicproperty, final User user,final boolean wsPortalRequest) {
-        if (propertyService.isCscOperator(user) || thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
-            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
-                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
-            else
-                return propertyService.getMappedAssignmentForBusinessUser(basicproperty);
-        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
+            final BasicProperty basicproperty) {
+
+        if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
             return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
         else
-            return propertyService.getUserPositionByZone(basicproperty, false);
-
+            return propertyService.getMappedAssignmentForBusinessUser(basicproperty);
     }
 
     public void updateMutationReason(final PropertyMutation propertyMutation) {

@@ -81,9 +81,9 @@
 	jQuery(document).ready(function() {
 		jQuery('#localityId').change(function() {
 			jQuery.ajax({
-				url : "/egi/boundary/block/by-locality",
-				type : "GET",
-				data : {
+				url: "/egi/boundary/ajaxboundary-activeblockbylocality",
+				type: "GET",
+				data: {
 					locality : jQuery('#localityId').val()
 				},
 				cache : true,

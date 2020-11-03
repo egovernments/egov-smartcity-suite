@@ -64,7 +64,8 @@
 			<form:hidden path="id" id="id" value="${id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
-			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="true"> 
+			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="true">
+			<input type="hidden" id="nonLegacy" value="${nonLegacy}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

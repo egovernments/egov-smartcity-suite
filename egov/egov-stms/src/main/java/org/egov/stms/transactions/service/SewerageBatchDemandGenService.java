@@ -63,6 +63,8 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -91,6 +93,9 @@ public class SewerageBatchDemandGenService {
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
+    
+    @Autowired
+    private SewerageDemandVoucherService sewerageDemandVoucherService;
 
     public List<SewerageTaxBatchDemandGenerate> findActiveBatchDemands() {
         return sewerageTaxBatchDemandGenRepository.findByActiveTrueOrderByCreatedDate();
@@ -107,7 +112,8 @@ public class SewerageBatchDemandGenService {
     }
 
     public int generateSewerageDemandForNextFinYear() {
-        Integer[] recordsResult = null;
+    	Integer[] recordsResult = null;
+        List<BigDecimal> totalDemandForVoucherList = new ArrayList<BigDecimal>();
         List<SewerageTaxBatchDemandGenerate> sewerageBatchDmdGenResult = findActiveBatchDemands();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("SewerageBatchDmdGenResult " + sewerageBatchDmdGenResult.size());
@@ -143,7 +149,7 @@ public class SewerageBatchDemandGenService {
                     }
 
                     recordsResult = sewerageDemandService.generateDemandForNextInstallment(
-                            sewerageApplnsDetails, previousInstallment, sewerageDmdGenerationInstallment);
+                            sewerageApplnsDetails, previousInstallment, sewerageDmdGenerationInstallment, totalDemandForVoucherList);
 
                 }
                 sewerageDmdGen.setActive(false);
@@ -153,12 +159,16 @@ public class SewerageBatchDemandGenService {
                         (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
                 sewerageDmdGen.setFailureRecords(
                         (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
-
+                BigDecimal totalDemandForPostingVoucher = totalDemandForVoucherList.get(0);
                 final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
                 txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
                 txTemplate.execute(result -> {
                     updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
+					if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
+						createDemandVoucher(totalDemandForPostingVoucher,
+								sewerageDmdGenerationInstallment.getDescription());
+					}
                     return Boolean.TRUE;
                 });
             }
@@ -182,4 +192,14 @@ public class SewerageBatchDemandGenService {
         return installmentDao.getInsatllmentByModuleAndDescription(
                 sewerageTaxUtils.getModule(), financialYear);
     }
+    
+    /**
+     * Create consolidated Demand Voucher during rollover
+     * @param totalDemandForVoucher
+     * @param installment
+     */
+	private void createDemandVoucher(BigDecimal totalDemandForVoucher, String installment) {
+		if (sewerageDemandVoucherService.getDemandVoucherEnable())
+			sewerageDemandVoucherService.createDemandVoucherAfterRollover(installment, totalDemandForVoucher);
+	}
 }
