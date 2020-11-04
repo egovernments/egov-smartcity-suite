@@ -404,10 +404,7 @@ $(document).ready(
     		$('#approverDetailHeading').hide();
     		return false;
     	}
-
-        if ($('#isModified').val() === 'no') {
-    		bootbox.alert('Please modify at least one mandatory field');
-    	}
+      
     });
 
 function removedMandatoryCheckForApprovalDetails() {

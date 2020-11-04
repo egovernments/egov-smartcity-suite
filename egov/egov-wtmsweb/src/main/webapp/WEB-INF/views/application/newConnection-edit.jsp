@@ -92,8 +92,6 @@
         <input type="hidden" id="noActiveJAOrSA" name="noActiveJAOrSA" value="${noActiveJAOrSA}" />
         <input type="hidden" id="connectionTypeForRegularization" name="connectionTypeForRegularization" value="${connectionTypeForRegularization}" />
         <input type="hidden" id="isEstimationDetailsPresent" name="isEstimationDetailsPresent" value="${isEstimationDetailsPresent}" />
-        <input type="hidden" id="isModified" name="isModified" value="${isModified}" />
-        
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">
