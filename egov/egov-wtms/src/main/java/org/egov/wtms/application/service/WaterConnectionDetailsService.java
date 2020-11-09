@@ -277,6 +277,8 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -298,8 +300,9 @@ import com.google.gson.reflect.TypeToken;
 @Transactional(readOnly = true)
 public class WaterConnectionDetailsService {
 
+        private static final Logger LOGGER = LoggerFactory.getLogger(WaterConnectionDetailsService.class);
 	private static final String APPLICATION_TYPE_CLOSING_CONNECTION = "Closing connection";
-    private static final String APPLICATION_TYPE_RECONNECTION = "Reconnection";
+        private static final String APPLICATION_TYPE_RECONNECTION = "Reconnection";
         private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
         private static final String APPLICATION_NO = "Application no ";
         private static final String REGARDING = " regarding ";
@@ -2017,8 +2020,10 @@ public class WaterConnectionDetailsService {
                                         waterConnectionDetails.getApplicationType().getName(), true, mode, workFlowAction);
 
                 } catch (Exception e) {
+                        LOGGER.error("New waterconnect application failed",e);
                         publishEventForWardSecretary(request, waterConnectionDetails.getApplicationNumber(),
                                         waterConnectionDetails.getApplicationType().getName(), false, mode, workFlowAction);
+                        throw new ApplicationRuntimeException(e.getMessage());
                 }
         }
 
