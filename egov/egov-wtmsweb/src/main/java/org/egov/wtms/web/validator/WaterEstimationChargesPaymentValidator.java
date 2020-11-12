@@ -60,6 +60,8 @@ import org.springframework.validation.Validator;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_SANCTIONED;
+
 
 @Component
 public class WaterEstimationChargesPaymentValidator implements Validator {
@@ -94,7 +96,7 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
                 : waterConnectionDetailsService.findByConsumerCode(consumerNumber);
         
         EstimationNotice estimationNotice = null;
-        if(connectionDetails != null)
+        if(connectionDetails != null && !APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(connectionDetails.getStatus().getCode()))
         	estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
         
         if (isNotBlank(applicationNumber) && isNotBlank(consumerNumber)) {
@@ -116,7 +118,8 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
             errors.reject("msg.estimationcharges", "msg.estimationcharges");
             return true;
         }
-        else if (estimationNotice == null) {
+		else if (!APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(connectionDetails.getStatus().getCode())
+				&& estimationNotice == null) {
             errors.reject("msg.estimation.notice.not.generated", "msg.estimation.notice.not.generated");
             return true;
         }
