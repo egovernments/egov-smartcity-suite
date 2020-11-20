@@ -335,9 +335,7 @@ public class DigitalSignatureWorkflowController {
     private void transition(final Petition petition) {
         petition.getBasicProperty().setStatus(
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
-        petition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
         petition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-        petition.getProperty().setStatus(STATUS_ISACTIVE);
         petition.transition().end().withOwner(petition.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
 

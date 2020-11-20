@@ -186,6 +186,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.Petition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -1208,5 +1209,21 @@ public class PropertyTaxCommonUtils {
     
     public boolean isUserTypeEmployee(User user) {
         return user.getType().equals(UserType.EMPLOYEE);
+    }
+    
+    /**
+     * Returns whether demand details has current installment demand or not.
+     *
+     * @return boolean
+     */
+    public boolean isCurInstDemandPresent(Ptdemand ptdemand) {
+        boolean present = false;
+        for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+            if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentInstallment())) {
+                present = true;
+                break;
+            }
+        }
+        return present;
     }
 }
