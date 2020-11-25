@@ -49,8 +49,10 @@
 package org.egov.mrs.application.service;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -76,9 +78,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,13 +105,14 @@ public class MarriageCertificateService {
     private static final String REGISTRAR_NAME = "registrarName";
     private static final String RE_ISSUE_DOT_REGISTRATION = "reIssue.registration";
     private static final String REGISTRATION = "registration";
+    private static final String REISSUE = "reissue";
     private static final String CERTIFICATE_DOT_REGISTRATION = "certificate.registration";
     private static final String REGISTRATION_DOT_REGISTRATION_NO = "registration.registrationNo";
     private static final String CERTIFICATE = "certificate";
     private static final String CERTIFICATE_DATE = "certificateDate";
     private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
     private static final String CERTIFICATE_TEMPLATE_REISSUE = "reissuecertificate";
-    private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
+    private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectionNotice";
     private static final String[] MONTHNAME = {"January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"};
     private static final String COMMISSIONER = "Commissioner";
@@ -130,6 +135,8 @@ public class MarriageCertificateService {
     private InputStream generateCertificatePDF;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private DesignationService designationService;
 
     @Autowired
     private CityService cityService;
@@ -496,5 +503,74 @@ public class MarriageCertificateService {
     public MarriageCertificate getGeneratedReIssueCertificateForPrint(final ReIssue reIssue) {
         return marriageCertificateRepository.findByReIssue(reIssue);
     }
+    
+	public ReportOutput prepareRejectionCertificate(final MarriageRegistration registration, final ReIssue reIssue,
+			final HttpServletRequest request) throws IOException {
+		ReportRequest reportInput = null;
+		ReportOutput reportOutput;
+		final Map<String, Object> reportParams = new HashMap<>();
+		final List<Assignment> assignList = assignmentService
+				.getAllActiveAssignments(designationService.getDesignationByName(COMMISSIONER).getId());
+		
+		String applicantName = (reIssue == null
+				? registration.getHusband().getFullName().concat(" and ").concat(registration.getWife().getFullName())
+				: reIssue.getRegistration().getHusband().getFullName().concat(" and ")
+						.concat(reIssue.getRegistration().getWife().getFullName()));
+		String applicationNumber = (reIssue == null ? registration.getApplicationNo()
+				: reIssue.getRegistration().getApplicationNo());
+		String applicationType = (reIssue == null ? REGISTRATION : REISSUE);
+		reportParams.put("applicantName", applicantName);
+		reportParams.put(IS_COMMISSIONER,
+				assignList == null ? StringUtils.EMPTY : assignList.get(0).getEmployee().getName());
+		reportParams.put("applicationNumber", applicationNumber);
+		reportParams.put("applicationType", applicationType);
+		reportParams.put("cityName", cityService.getMunicipalityName());
+		reportParams.put("remarks", request.getParameter("approvalComent"));
+		reportInput = new ReportRequest(CERTIFICATE_TEMPLATE_REJECTION, new RegistrationCertificate(),
+					reportParams);
+		reportOutput = reportService.createReport(reportInput);
+		return reportOutput;
+	}
 
+	public MarriageCertificate generateRejectionCertificate(final MarriageRegistration marriageRegistration,
+			final ReIssue reIssue, final HttpServletRequest request) throws IOException {
+		MarriageCertificate marriageCertificate = null;
+		ReportOutput reportOutput;
+		final String certificateNo = marriageCertificateNumberGenerator.generateRejectionCertificateNumber();
+		reportOutput = prepareRejectionCertificate(marriageRegistration, reIssue, request);
+		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+			generateCertificatePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+			marriageCertificate = saveRejectionCertificate(marriageRegistration, reIssue, generateCertificatePDF,
+					certificateNo);
+		}
+		return marriageCertificate;
+	}
+    
+    @Transactional
+	public MarriageCertificate generateAndAddRejectionCertificate(final MarriageRegistration marriageRegistration,
+			ReIssue reIssue, final HttpServletRequest request) throws IOException {
+		MarriageCertificate marriageCertificate = null;
+		if (reIssue == null) {
+			marriageCertificate = generateRejectionCertificate(marriageRegistration, null, request);
+			marriageRegistration.addCertificate(marriageCertificate);
+		} else {
+			marriageCertificate = generateRejectionCertificate(null, reIssue, request);
+			reIssue.addCertificate(marriageCertificate);
+		}
+		return marriageCertificate;
+	}
+    
+	public MarriageCertificate saveRejectionCertificate(final MarriageRegistration marriageRegistration,
+			final ReIssue reIssue, final InputStream fileStream, final String certificateNo) {
+		final MarriageCertificate marriageCertificate = new MarriageCertificate();
+		if (marriageRegistration != null || reIssue != null) {
+			final String fileName = certificateNo + ".pdf";
+			buildCertificate(marriageRegistration, reIssue, marriageCertificate, certificateNo,
+					MarriageCertificateType.REJECTION);
+			final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+					MarriageConstants.FILESTORE_MODULECODE);
+			marriageCertificate.setFileStore(fileStore);
+		}
+		return marriageCertificate;
+	}
 }

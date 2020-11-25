@@ -59,6 +59,7 @@ import org.springframework.stereotype.Service;
 public class MarriageCertificateNumberGeneratorImpl implements MarriageCertificateNumberGenerator {
 
     private static final String CERTIFICATE_NUMBER_SEQ_PREFIX = "SEQ_EGMRS_CERTIFICATE_NUMBER";
+    private static final String REJECTION_NUMBER = "RN/";
 
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
@@ -75,4 +76,10 @@ public class MarriageCertificateNumberGeneratorImpl implements MarriageCertifica
         return String.format("%s%06d", ApplicationThreadLocals.getCityCode(),
                 genericSequenceNumberGenerator.getNextSequence(CERTIFICATE_NUMBER_SEQ_PREFIX));
     }
+
+	@Override
+	public String generateRejectionCertificateNumber() {
+		return String.format("%s%s%06d", REJECTION_NUMBER, ApplicationThreadLocals.getCityCode(),
+				genericSequenceNumberGenerator.getNextSequence(CERTIFICATE_NUMBER_SEQ_PREFIX));
+	}
 }

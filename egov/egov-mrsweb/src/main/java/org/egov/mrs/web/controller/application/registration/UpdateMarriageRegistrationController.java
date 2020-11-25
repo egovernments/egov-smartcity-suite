@@ -104,6 +104,7 @@ import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -333,8 +334,10 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                         null);
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_CANCEL)) {
                 marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
-                message = messageSource.getMessage("msg.cancelled.registration",
-                        new String[] { marriageRegistration.getApplicationNo(), null }, null);
+				marriageCertificateService.generateAndAddRejectionCertificate(marriageRegistration, null, request);
+				return "redirect:/registration/rejectionnotice?applicationNo=".concat(marriageRegistration.getApplicationNo())
+						.concat("&approvalComent=").concat(marriageRegistration.getRejectionReason())
+						.concat("&applicationType=").concat(MarriageConstants.STATETYPE_REGISTRATION);
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                 // If digital signature is configured, after approve appl shld remain in commissioner inbox for digital signature
                 // otherwise gets fwded to creator for print certificate.

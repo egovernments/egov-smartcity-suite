@@ -57,4 +57,6 @@ public interface MarriageCertificateNumberGenerator {
     String generateCertificateNumber(MarriageRegistration marriageRegistration);
 
     String generateCertificateNumber(ReIssue reIssue);
+    
+    String generateRejectionCertificateNumber();
 }
