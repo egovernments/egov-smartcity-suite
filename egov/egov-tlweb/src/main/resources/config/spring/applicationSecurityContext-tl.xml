@@ -59,7 +59,6 @@
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/search/license" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
                 <security:filter-chain pattern="/struts/**" filters="none" />
 				<security:filter-chain pattern="/newtradelicense/success.action**" filters="none"/>
