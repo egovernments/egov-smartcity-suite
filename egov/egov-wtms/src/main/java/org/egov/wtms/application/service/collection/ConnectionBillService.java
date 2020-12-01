@@ -389,9 +389,13 @@ public class ConnectionBillService extends BillServiceInterface {
         bill.getEgBillDetails().clear();
         WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context.getBean("waterConnectionBillable");
 
-        waterConnectionBillable.setWaterConnectionDetails(
-                waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                        bill.getConsumerId().trim().toUpperCase(), ConnectionStatus.ACTIVE));
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+                bill.getConsumerId().trim().toUpperCase(), ConnectionStatus.INPROGRESS);
+        if(waterConnectionDetails == null)
+        	waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+                    bill.getConsumerId().trim().toUpperCase(), ConnectionStatus.ACTIVE);
+        
+        waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
 
         if (ESTIMATIONCHARGES_SERVICE_CODE.equalsIgnoreCase(bill.getServiceCode())) {
         	waterConnectionBillable.setServiceCode(bill.getServiceCode());
