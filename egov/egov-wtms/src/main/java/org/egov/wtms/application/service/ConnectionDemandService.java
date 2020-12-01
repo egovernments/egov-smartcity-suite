@@ -468,8 +468,11 @@ public class ConnectionDemandService {
         String currentInstallmentYear = EMPTY;
         WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context.getBean("waterConnectionBillable");
         BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+        		consumerCode, INPROGRESS);
+        if (waterConnectionDetails == null)
+        	waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+        			consumerCode, ACTIVE);
 
         if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment(MODULE_NAME, YEARLY, new Date()).getInstallmentYear());
