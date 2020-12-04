@@ -1219,7 +1219,7 @@ public class PropertyTaxCommonUtils {
     public boolean isCurInstDemandPresent(Ptdemand ptdemand) {
         boolean present = false;
         for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
-            if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentInstallment())) {
+            if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentPeriodInstallment())) {
                 present = true;
                 break;
             }
