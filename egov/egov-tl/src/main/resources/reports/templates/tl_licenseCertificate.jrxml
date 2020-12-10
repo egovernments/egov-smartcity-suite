@@ -3,7 +3,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.y" value="158"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -29,47 +29,40 @@
 	</parameter>
 	<parameter name="category" class="java.lang.String"/>
 	<background>
-		<band height="802" splitType="Stretch">
+		<band height="802">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="802" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
 				<graphicElement>
-					<pen lineWidth="2.0"/>
+					<pen lineWidth="1.25"/>
 				</graphicElement>
 			</rectangle>
 		</band>
 	</background>
 	<title>
-		<band height="126" splitType="Stretch">
+		<band height="109" splitType="Stretch">
 			<staticText>
-				<reportElement x="3" y="33" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="3" y="46" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TRADE  LICENSE]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="3" y="76" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="3" y="89" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["for the year "+$P{installMentYear}+""]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="3" y="12" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="3" y="25" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="3" y="96" width="547" height="30" uuid="7250628c-58c0-4d79-87e3-2480bba3e774"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["(Issued under Section 263, 264, 272. 275 &amp; 288 etc., of APM Act, 1965)"]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="3" y="54" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
+				<reportElement x="3" y="67" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -78,9 +71,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="251">
-			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="77" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
+		<band height="134">
+			<textField textAdjust="StretchHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="70" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -101,7 +94,7 @@
 				<textFieldExpression><![CDATA["1. Trade License is issued to Sri/Smt "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " ("+$P{category}+","+$P{subCategory}+ ") at premises No: "+$P{licenceAddress}+" Vide TIN No: "+($P{licencenumber}==null?"-----":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="17" y="17" width="60" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
+				<reportElement stretchType="RelativeToTallestObject" x="5" y="17" width="65" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -112,7 +105,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[ROC No:]]></text>
+				<text><![CDATA[File No:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="383" y="17" width="59" height="20" uuid="c67c6385-263a-4696-9626-aca81e907863"/>
@@ -128,7 +121,7 @@
 				</textElement>
 				<text><![CDATA[Date:]]></text>
 			</staticText>
-			<textField>
+			<textField textAdjust="StretchHeight">
 				<reportElement stretchType="RelativeToTallestObject" x="442" y="17" width="108" height="20" uuid="25037863-19fe-4b9b-a3c7-2eef74de2758"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
@@ -143,24 +136,6 @@
 				<textFieldExpression><![CDATA[$P{applicationdate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="53" y="164" width="473" height="87" isPrintWhenDetailOverflows="true" uuid="8aece0f8-5e61-4f50-826d-0eab46059551">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1. Exclusive container (Dust-bin) for storing the waste generated within the premises shall be installed and maintained by the Trader.\n"+"2. Street littering is to be avoided by the Trader.\n"+"3. Plastic carry bags less than 40 microns thickness shall not be used by the Trader for any purposes.\n"+"4. In case of eating establishments, the conditions prescribed under Prevention of Food Adulteration Act, 1954 and Food Safety and Standards Authority of India are to be followed by the Trader scrupulously. "]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="133" width="500" height="31" isPrintWhenDetailOverflows="true" uuid="2ea72899-e421-4062-b1b3-12b214470500">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["The trader shall fulfill the following conditions; otherwise the trade license will be cancelled by the undersigned without giving any further notice."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
 				<reportElement x="26" y="96" width="500" height="37" uuid="7d35a8da-8e59-47b6-929e-646aa9200987">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -170,45 +145,7 @@
 				<textFieldExpression><![CDATA["2. License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="230">
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="51" width="500" height="30" uuid="a6796b42-7083-4ff4-a936-7cece08d1895">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["4. This License is invalid if the building structure is un-authorizedly constructed / effecting the road widening or not fulfilling the provisions of the A.P. Municipalities Act, 1965 (or) rules framed thereunder."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="1" width="500" height="50" isPrintWhenDetailOverflows="true" uuid="b25abdc8-1aa3-4468-b649-90ba04e7a77c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["3. This License is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health, convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="82" width="500" height="44" uuid="77b66e20-af11-46dc-808e-26bb3e3a788e">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["5. This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipalities Act, 1965 (or) rules framed thereunder."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="126" width="500" height="94" isPrintWhenDetailOverflows="true" uuid="930aede7-4365-4911-88d2-8fa7e13183ae">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{certificateType}.equals("provisional")]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["6. For New Trade, the License will be issued subject to physical inspection by the competent authority. After inspection, if any trade, other than the trade applied for, is noticed, this license will be treated as null & void. Final License with TIN No will be issued after inspection, on payment of difference amount if any by the Applicant.For Renewal of Trade License, the Digital Signature Certificate will be issued shortly. The same can be availed (or) downloaded from the ULB Website (or) link provided to the Applicant through SMS."]]></textFieldExpression>
-			</textField>
-		</band>
+		<band/>
 		<band/>
 	</detail>
 	<lastPageFooter>
@@ -222,7 +159,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="7" y="41" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="40" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -235,8 +172,8 @@
 				</textElement>
 				<text><![CDATA[Date:]]></text>
 			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="53" y="41" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="49" y="40" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -249,14 +186,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
-			<image scaleImage="RealSize" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="142" y="63" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="138" y="63" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
 			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="343" y="6" width="194" height="32" uuid="559af089-1013-48f7-826c-1e43f61aa6e2"/>
-				<imageExpression><![CDATA[$P{certificateType}!= "provisional" ? $P{commissionerSign} :""]]></imageExpression>
+				<reportElement mode="Transparent" x="343" y="6" width="194" height="32" uuid="739ec1f9-740e-4b0c-b848-183308ff8ddf"/>
+				<imageExpression><![CDATA[$P{commissionerSign}]]></imageExpression>
 			</image>
 		</band>
 	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
 </jasperReport>
