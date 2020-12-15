@@ -212,7 +212,7 @@ public class DemandVoucherService {
                             .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
             if (!areInstallmentsMismatch)
                 instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
-            if (areInstallmentsMismatch)
+            if (areInstallmentsMismatch || instChangeOpposite)
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
             else
@@ -840,8 +840,8 @@ public class DemandVoucherService {
         for (Installment key : Sets.union(instWiseDemandOld.keySet(), instWiseDemandNew.keySet())) {
             BigDecimal oldAmount = instWiseDemandOld.get(key);
             BigDecimal newAmount = instWiseDemandNew.get(key);
-            if ((demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) > 1)
-                    || (!demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) < 1)) {
+            if ((demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) > 0)
+                    || (!demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) < 0)) {
                 return true;
             }
 
