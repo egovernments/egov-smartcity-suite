@@ -420,11 +420,10 @@ public class WaterChargeElasticSearchService {
             // Proportional Demand = (totalDemand/12)*noOfmonths
             final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
             final Sum totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
-            final Sum totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
             final BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
-            final BigDecimal totalCollections = BigDecimal.valueOf(totalCollectionAggregation.getValue()).setScale(0,
-                    BigDecimal.ROUND_HALF_UP);
+            final BigDecimal totalCollections = waterChargeCollDocService.getCollectionBetweenDates(
+                    waterChargedashBoardRequest, fromDate, toDate, fieldName);
             final BigDecimal proportionalDemand = totalDemandValue
                     .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
             taxDetail.setTotalDmd(totalDemandValue);
