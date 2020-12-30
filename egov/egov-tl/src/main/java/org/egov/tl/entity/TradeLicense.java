@@ -300,6 +300,54 @@ public class TradeLicense extends StateAware<Position> {
     @NaturalId
     @Column(nullable = false, unique = true, updatable = false)
     private String uid;
+    
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "CLASSIFICATION_TYPE")
+    private LabourClassification classificationType;
+    
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "EMPLOYERS_NAME")
+    private LabourEmployer employersType;
+     
+    @SafeHtml
+    @NotBlank
+    @Length(max = 100)
+    @Column(name = "MANDAL_NAME")
+    private String mandalName;
+    
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
+    @Column(name = "DOOR_NUMBER")
+    private String doorNo;
+    
+    @Column(name = "DIRECT_WORKER_MALE")
+    private Long directWorkerMale;
+    
+    @Column(name = "DIRECT_WORKER_FEMALE")
+    private Long directWorkerFemale;
+    
+    @Column(name = "CONTRACT_WORKER_MALE")
+    private Long contractWorkerMale;
+    
+    @Column(name = "CONTRACT_WORKER_FEMALE")
+    private Long contractWorkerFemale;
+    
+    @Column(name = "DAILY_WAGES_MALE")
+    private Long dailyWagesMale;
+    
+    @Column(name = "DAILY_WAGES_FEMALE")
+    private Long dailyWagesFemale;
+    
+    @Column(name = "TOTAL_WORKERS")
+    private Long totalWorkers;
+     
 
     @Transient
     private transient WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -776,7 +824,95 @@ public class TradeLicense extends StateAware<Position> {
         this.uid = uid;
     }
 
-    public String generateCertificateFileName() {
+	public LabourClassification getClassificationType() {
+		return classificationType;
+	}
+
+	public void setClassificationType(LabourClassification classificationType) {
+		this.classificationType = classificationType;
+	}
+
+	public LabourEmployer getEmployersType() {
+		return employersType;
+	}
+
+	public void setEmployersType(LabourEmployer employersType) {
+		this.employersType = employersType;
+	}
+
+	public String getMandalName() {
+		return mandalName;
+	}
+
+	public void setMandalName(String mandalName) {
+		this.mandalName = mandalName;
+	}
+
+	public String getDoorNo() {
+		return doorNo;
+	}
+
+	public void setDoorNo(String doorNo) {
+		this.doorNo = doorNo;
+	}
+
+	public Long getDirectWorkerMale() {
+		return directWorkerMale;
+	}
+
+	public void setDirectWorkerMale(Long directWorkerMale) {
+		this.directWorkerMale = directWorkerMale;
+	}
+
+	public Long getDirectWorkerFemale() {
+		return directWorkerFemale;
+	}
+
+	public void setDirectWorkerFemale(Long directWorkerFemale) {
+		this.directWorkerFemale = directWorkerFemale;
+	}
+
+	public Long getContractWorkerMale() {
+		return contractWorkerMale;
+	}
+
+	public void setContractWorkerMale(Long contractWorkerMale) {
+		this.contractWorkerMale = contractWorkerMale;
+	}
+
+	public Long getContractWorkerFemale() {
+		return contractWorkerFemale;
+	}
+
+	public void setContractWorkerFemale(Long contractWorkerFemale) {
+		this.contractWorkerFemale = contractWorkerFemale;
+	}
+
+	public Long getDailyWagesMale() {
+		return dailyWagesMale;
+	}
+
+	public void setDailyWagesMale(Long dailyWagesMale) {
+		this.dailyWagesMale = dailyWagesMale;
+	}
+
+	public Long getDailyWagesFemale() {
+		return dailyWagesFemale;
+	}
+
+	public void setDailyWagesFemale(Long dailyWagesFemale) {
+		this.dailyWagesFemale = dailyWagesFemale;
+	}
+
+	public Long getTotalWorkers() {
+		return totalWorkers;
+	}
+
+	public void setTotalWorkers(Long totalWorkers) {
+		this.totalWorkers = totalWorkers;
+	}
+
+	public String generateCertificateFileName() {
         return new StringBuilder()
                 .append(licenseAppType.getCode().toLowerCase())
                 .append(UNDERSCORE).append(appendTimestamp((isBlank(this.getLicenseNumber())

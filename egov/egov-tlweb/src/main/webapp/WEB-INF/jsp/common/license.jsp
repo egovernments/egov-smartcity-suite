@@ -136,3 +136,129 @@
         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="512" class="form-control" rows="3"/>
     </div>
 </div>
+
+<!-- Labour-Details -->
+<div class="panel-heading custom_form_panel_heading">
+    <div class="panel-title"><s:text name='license.labour.details.lbl'/></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.classification.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:select name="classificationType" list="dropdownData.classificationList"
+                  listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}"
+                  value="%{classificationType.id}"
+                  required="true" class="form-control"/>
+        <div id="classificationType_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.labour.employers.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:select name="employersType" list="dropdownData.employersList"
+                  listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}"
+                  value="%{employersType.id}"
+                  required="true" class="form-control"/>
+        <div id="employersType_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.mandal.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="mandalName" cssClass="form-control newpatternvalidation" id="mandalName"
+                     value="%{mandalName}" maxlength="250" onBlur="checkLength(this,250)" required="true"/>
+        <div id="mandalName_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+
+    <label class="col-sm-2 control-label text-right"><s:text name='license.labour.doorno.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="doorNo" cssClass="form-control newpatternvalidation" id="doorNo"
+                     value="%{doorNo}" maxlength="250" onBlur="checkLength(this,250)" required="true"/>
+        <div id="doorNo_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.direct.workers.lbl'/><span
+            class=""></span></label>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.male.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="directWorkerMale" cssClass="form-control newpatternvalidation" id="directWorkerMale"
+                     value="%{directWorkerMale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="directWorkerMale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+
+    <label class="col-sm-2 control-label text-right"><s:text name='license.labour.female.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="directWorkerFemale" cssClass="form-control newpatternvalidation" id="directWorkerFemale"
+                     value="%{directWorkerFemale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="directWorkerFemale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.contract.workers.lbl'/><span
+            class=""></span></label>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.male.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="contractWorkerMale" cssClass="form-control newpatternvalidation" id="contractWorkerMale"
+                     value="%{contractWorkerMale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="contractWorkerMale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+
+    <label class="col-sm-2 control-label text-right"><s:text name='license.labour.female.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="contractWorkerFemale" cssClass="form-control newpatternvalidation" id="contractWorkerFemale"
+                     value="%{contractWorkerFemale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="contractWorkerFemale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.daily.wages.lbl'/><span
+            class=""></span></label>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.male.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="dailyWagesMale" cssClass="form-control newpatternvalidation" id="dailyWagesMale"
+                     value="%{dailyWagesMale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="dailyWagesMale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+
+    <label class="col-sm-2 control-label text-right"><s:text name='license.labour.female.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="dailyWagesFemale" cssClass="form-control newpatternvalidation" id="dailyWagesFemale"
+                     value="%{dailyWagesFemale}" maxlength="5" onBlur="checkLength(this,250);" 
+                     onchange="calculateTotalWorkers();" required="true" type="text" 
+                     onkeypress='return event.charCode >= 48 && event.charCode <= 57'/>
+        <div id="dailyWagesFemale_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.labour.total.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="totalWorkers" cssClass="form-control newpatternvalidation" id="totalWorkers"
+                     value="%{totalWorkers}" maxlength="25" onBlur="checkLength(this,25)" required="true" readonly="true"/>
+        <div id="totalWorkers_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>

@@ -182,3 +182,17 @@ function checkLength(obj, val) {
         obj.value = obj.value.substring(0, val);
     }
 }
+function calculateTotalWorkers(){
+	var directWorkerMale = $('#directWorkerMale').val();
+	var directWorkerFemale = $('#directWorkerFemale').val();
+	var contractWorkerMale = $('#contractWorkerMale').val();
+	var contractWorkerFemale = $('#contractWorkerFemale').val();
+	var dailyWagesMale = $('#dailyWagesMale').val();
+	var dailyWagesFemale = $('#dailyWagesFemale').val();
+	var totalWorkers = 0;
+	
+	totalWorkers = parseInt(directWorkerMale) + parseInt(directWorkerFemale) + parseInt(contractWorkerMale) + 
+	   parseInt(contractWorkerFemale) + parseInt(dailyWagesMale) + parseInt(dailyWagesFemale);
+	
+	$('#totalWorkers').val(totalWorkers);
+}

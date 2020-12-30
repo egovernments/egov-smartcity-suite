@@ -110,6 +110,8 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.tl.entity.LabourClassification;
+import org.egov.tl.entity.LabourEmployer;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
@@ -205,6 +207,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         this.addRelatedEntity("natureOfBusiness", NatureOfBusiness.class);
         this.addRelatedEntity("category", LicenseCategory.class);
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
+        this.addRelatedEntity("classificationType", LabourClassification.class);
+        this.addRelatedEntity("employersType", LabourEmployer.class);
     }
 
     protected TradeLicense license() {

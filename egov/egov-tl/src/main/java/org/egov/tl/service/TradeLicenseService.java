@@ -228,6 +228,12 @@ public class TradeLicenseService {
     protected NatureOfBusinessService natureOfBusinessService;
 
     @Autowired
+    protected LabourEmployeeService labourEmployeeService;
+    
+    @Autowired
+    protected LabourClassificationService labourClassificationService;
+    
+    @Autowired
     protected EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
@@ -599,6 +605,14 @@ public class TradeLicenseService {
 
 	public List<NatureOfBusiness> getAllNatureOfBusinesses() {
 		return natureOfBusinessService.getNatureOfBusinesses();
+	}
+	
+	public List<LabourEmployer> getAllLabourEmployer() {
+		return labourEmployeeService.getLabourEmployer();
+	}
+	
+	public List<LabourClassification> getAllLabourClassifications() {
+		return labourClassificationService.getLabourClassification();
 	}
 
 	@SuppressWarnings("unused")

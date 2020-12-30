@@ -199,6 +199,8 @@ public final class Constants {
     public static final String TLREASONCODE = "License Fee";
     public static final String TLREASONCODEPENALTY = "Penalty";
     public static final String WF_LICENSE_RENEWAL = "Renewal Initiated";
+    public static final String DROPDOWN_CLASSIFICATION_LIST = "classificationList";
+    public static final String DROPDOWN_EMPLOYERS_LIST = "employersList";
 
     private Constants() {
         // only invariants

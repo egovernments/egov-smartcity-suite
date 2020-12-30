@@ -294,6 +294,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 		final List<Boundary> localityList = boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
 		addDropdownData("localityList", localityList);
+		addDropdownData(DROPDOWN_CLASSIFICATION_LIST, tradeLicenseService.getAllLabourClassifications());
+		addDropdownData(DROPDOWN_EMPLOYERS_LIST, tradeLicenseService.getAllLabourEmployer());
 		addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
 		addDropdownData("categoryList", licenseCategoryService.getCategoriesOrderByName());
 		addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());

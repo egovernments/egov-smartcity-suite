@@ -279,6 +279,92 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="panel-heading  custom_form_panel_heading subheadnew">
+                                        <div class="panel-title">
+                                            <spring:message code='license.labourdetail'/>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.labourclassification'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.classificationType.name}
+                                            </div>
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.labouremployers'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.employersType.name}
+                                            </div>
+                                        </div>
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.labourmandal'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.mandalName}
+                                            </div>
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.labourdoorno'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.doorNo}
+                                            </div>
+                                        </div>
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.directworkers.male'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.directWorkerMale}
+                                            </div>
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.directworkers.female'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.directWorkerFemale}
+                                            </div>
+                                        </div>
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.contractworkers.male'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.contractWorkerMale}
+                                            </div>
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.contractworkers.female'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.contractWorkerFemale}
+                                            </div>
+                                        </div>
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.dailywages.male'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.dailyWagesMale}
+                                            </div>
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.dailywages.female'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.dailyWagesFemale}
+                                            </div>
+                                        </div>
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='license.totalworkers'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.totalWorkers}
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
                                     <c:if test="${tradeLicense.agreementDate!=null}">
                                         <div class="panel-heading  custom_form_panel_heading subheadnew">
                                             <div class="panel-title">
