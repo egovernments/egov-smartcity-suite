@@ -145,7 +145,7 @@
     <label class="col-sm-3 control-label text-right"><s:text name='license.labour.classification.lbl'/><span
             class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="classificationType" list="dropdownData.classificationList"
+        <s:select name="classificationType" id="classificationType" list="dropdownData.classificationList"
                   listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}"
                   value="%{classificationType.id}"
                   required="true" class="form-control"/>
@@ -154,7 +154,7 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.labour.employers.lbl'/><span
             class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="employersType" list="dropdownData.employersList"
+        <s:select name="employersType" id="employersType" list="dropdownData.employersList"
                   listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}"
                   value="%{employersType.id}"
                   required="true" class="form-control"/>

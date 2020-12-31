@@ -190,7 +190,24 @@ function calculateTotalWorkers(){
 	var dailyWagesMale = $('#dailyWagesMale').val();
 	var dailyWagesFemale = $('#dailyWagesFemale').val();
 	var totalWorkers = 0;
-	
+	if(directWorkerMale == '' || directWorkerMale == null){
+		directWorkerMale = 0;
+	}
+	if(directWorkerFemale == '' || directWorkerFemale == null){
+		directWorkerFemale = 0;
+	}
+	if(contractWorkerMale == '' || contractWorkerMale == null){
+		contractWorkerMale = 0;
+	}
+	if(contractWorkerFemale == '' || contractWorkerFemale == null){
+		contractWorkerFemale = 0;
+	}
+	if(dailyWagesMale == '' || dailyWagesMale == null){
+		dailyWagesMale = 0;
+	}
+	if(dailyWagesFemale == '' || dailyWagesFemale == null){
+		dailyWagesFemale = 0;
+	}
 	totalWorkers = parseInt(directWorkerMale) + parseInt(directWorkerFemale) + parseInt(contractWorkerMale) + 
 	   parseInt(contractWorkerFemale) + parseInt(dailyWagesMale) + parseInt(dailyWagesFemale);
 	
