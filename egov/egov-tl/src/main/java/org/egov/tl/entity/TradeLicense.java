@@ -301,14 +301,10 @@ public class TradeLicense extends StateAware<Position> {
     @Column(nullable = false, unique = true, updatable = false)
     private String uid;
     
-    @SafeHtml
-    @Length(max = 50)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CLASSIFICATION_TYPE")
     private LabourClassification classificationType;
     
-    @SafeHtml
-    @Length(max = 50)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMPLOYERS_NAME")
     private LabourEmployer employersType;
