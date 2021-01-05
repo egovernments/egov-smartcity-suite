@@ -35,7 +35,6 @@ public class LabourClassification extends AbstractPersistable<Long>{
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank
     @Length(max = 25)
     @SafeHtml
     private String name;

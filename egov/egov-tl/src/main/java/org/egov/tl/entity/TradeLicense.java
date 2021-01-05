@@ -302,27 +302,23 @@ public class TradeLicense extends StateAware<Position> {
     private String uid;
     
     @SafeHtml
-    @NotBlank
     @Length(max = 50)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CLASSIFICATION_TYPE")
     private LabourClassification classificationType;
     
     @SafeHtml
-    @NotBlank
     @Length(max = 50)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMPLOYERS_NAME")
     private LabourEmployer employersType;
      
     @SafeHtml
-    @NotBlank
     @Length(max = 100)
     @Column(name = "MANDAL_NAME")
     private String mandalName;
     
     @SafeHtml
-    @NotBlank
     @Length(max = 50)
     @Column(name = "DOOR_NUMBER")
     private String doorNo;
