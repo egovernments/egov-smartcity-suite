@@ -89,8 +89,8 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     @Query("select l.licensee.mobilePhoneNumber from TradeLicense l where l.licensee.mobilePhoneNumber like '%'||:mobilePhoneNumber||'%'")
     List<String> findAllMobilePhoneNumberLike(@Param("mobilePhoneNumber") String mobilePhoneNumber);
 
-    @Query("select l.id from TradeLicense l where l.natureOfBusiness.name='Permanent' " +
-            "and l.isActive=true and l.demand.egInstallmentMaster.fromDate < :installmentFromDate and (l.state is null OR l.state.status = 2 )")
+    @Query("select l.id from TradeLicense l left join l.state st where l.natureOfBusiness.name='Permanent' " +
+            "and l.isActive=true and l.demand.egInstallmentMaster.fromDate < :installmentFromDate and  (l.state is null OR st.status = 2 ) ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
     
     @Query("select max(rh.receiptdate) from ReceiptHeader rh where rh.consumerCode =:licenseNumber")
