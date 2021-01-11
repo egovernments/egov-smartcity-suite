@@ -568,7 +568,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction) &&
                 CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()) &&
-                APPLICATION_STATUS_CLOSERINPROGRESS.equals(waterConnectionDetails.getStatus().getCode())
+                (APPLICATION_STATUS_CLOSERINPROGRESS.equals(waterConnectionDetails.getStatus().getCode())
+                        || APPLICATION_STATUS_CLOSERINITIATED.equals(waterConnectionDetails.getStatus().getCode()))
                 && isBlank(request.getParameter(APPRIVALPOSITION))) {
             if ((!(waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser())
                     || waterTaxUtils
