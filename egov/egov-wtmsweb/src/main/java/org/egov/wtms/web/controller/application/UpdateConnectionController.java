@@ -582,7 +582,11 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
             meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
-        
+
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
+                !CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+            waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+
         if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 && validateApplicationUpdate(model, workFlowAction, waterConnectionDetails)) {
             entityManager.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
