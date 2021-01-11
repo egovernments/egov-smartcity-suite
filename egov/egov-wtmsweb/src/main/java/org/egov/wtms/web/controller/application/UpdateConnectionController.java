@@ -566,11 +566,22 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (isNotBlank(workFlowAction))
             request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
 
+        if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction) &&
+                CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()) &&
+                APPLICATION_STATUS_CLOSERINPROGRESS.equals(waterConnectionDetails.getStatus().getCode())
+                && isBlank(request.getParameter(APPRIVALPOSITION))) {
+            if ((!(waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser())
+                    || waterTaxUtils
+                            .isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()))
+                    || waterTaxUtils
+                            .isAnonymousUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()))))) {
+                resultBinder.reject("err.validate.approver");
+                return loadViewData(model, request, waterConnectionDetails);
+            } 
+        }
+
         if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
             meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
-        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
-                !CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
-            waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         
         if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 && validateApplicationUpdate(model, workFlowAction, waterConnectionDetails)) {

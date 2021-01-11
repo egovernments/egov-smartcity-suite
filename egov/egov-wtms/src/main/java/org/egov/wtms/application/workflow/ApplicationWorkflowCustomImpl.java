@@ -113,6 +113,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -415,11 +417,17 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
                 else
+                {
+                    if(null == ownerPosition)
+                        throw new ValidationException(
+                                new ValidationError("Workflow state owner position is null", "Workflow state owner position is null"));
+                  
                     waterConnectionDetails.transition().progressWithStateCopy()
                             .withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                             .withDateInfo(currentDate.toDate()).withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);
+                }
             }
         }
         if (LOG.isDebugEnabled())
