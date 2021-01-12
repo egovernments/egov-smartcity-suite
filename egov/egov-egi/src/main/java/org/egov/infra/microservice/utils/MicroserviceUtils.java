@@ -182,6 +182,7 @@ public class MicroserviceUtils {
                 inboxItem.setDetails(t.getDetails());
                 inboxItem.setLink(t.getUrl());
                 inboxItem.setSender(t.getSenderName());
+                inboxItem.setModuleName(t.getModuleName());
                 inboxItems.add(inboxItem);
             }
         }

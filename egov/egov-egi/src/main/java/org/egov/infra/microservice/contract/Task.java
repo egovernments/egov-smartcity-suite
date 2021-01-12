@@ -171,6 +171,8 @@ public class Task {
      * like amount based flow etc
      */
     private String entity;
+    
+    private String moduleName;
 
     private String tenantId;
 
@@ -326,6 +328,14 @@ public class Task {
 
     public void setAttributes(Map<String, Attribute> attributes) {
         this.attributes = attributes;
+    }
+    
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
 }
