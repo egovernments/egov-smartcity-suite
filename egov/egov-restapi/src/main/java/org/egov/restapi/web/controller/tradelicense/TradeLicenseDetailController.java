@@ -49,8 +49,10 @@
 package org.egov.restapi.web.controller.tradelicense;
 
 import org.egov.restapi.model.RestErrors;
+import org.egov.restapi.web.contracts.tradelicense.LicenseSimpleDeskRequest;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailRequest;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
+import org.egov.restapi.web.contracts.tradelicense.TradeLicenseSimpleDeskResponse;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,6 +77,14 @@ public class TradeLicenseDetailController {
                 .parallelStream()
                 .map(TradeLicenseDetailResponse::new)
                 .collect(Collectors.toList());
+    }
+    
+    @PostMapping(value = "/licenseappicationdetails", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<TradeLicenseSimpleDeskResponse> licenseAppicationDetails(@RequestBody LicenseSimpleDeskRequest request) {
+    	return tradeLicenseService.getLicenses(request.tradeLicenseLikeSimpledesk())
+        		.parallelStream()
+        		.map(TradeLicenseSimpleDeskResponse::new)
+        		.collect(Collectors.toList());
     }
 
     @ExceptionHandler(RuntimeException.class)
