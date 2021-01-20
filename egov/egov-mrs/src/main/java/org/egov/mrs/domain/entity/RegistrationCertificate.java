@@ -93,7 +93,11 @@ public class RegistrationCertificate {
 
     }
 
-    public MarriageRegistration getRegistration() {
+    public RegistrationCertificate() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public MarriageRegistration getRegistration() {
         return registration;
     }
 

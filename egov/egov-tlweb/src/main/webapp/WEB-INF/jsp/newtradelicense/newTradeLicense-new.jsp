@@ -92,7 +92,7 @@
                     showMessage('natureOfBusiness_error', '<s:text name="newlicense.buildingtype.null" />');
                     $('#buildingType').focus();
                     return false;
-                } else if (document.getElementById("category").value == '-1') {
+                }else if (document.getElementById("category").value == '-1') {
                     showMessage('category_error', '<s:text name="newlicense.category.null" />');
                     $('#category').focus();
                     return false;
@@ -190,6 +190,47 @@
         function onSubmit() {
             var mode = $("#mode").val();
             var workflowaction = $("#workFlowAction").val();
+            
+            if(workflowaction == "Save"){
+            	//Validation for Labour fields
+                if (document.getElementById("classificationType").value == '-1') {
+                    showMessage('classificationType_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    $('#classificationType').focus();
+                    return false;
+                }else if (document.getElementById("employersType").value == '-1') {
+                    showMessage('employersType_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    $('#employersType').focus();
+                    return false;
+                }
+            	
+            	if(document.getElementById("directWorkerMale").value.trim() == '' || document.getElementById("directWorkerMale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}else if(document.getElementById("directWorkerFemale").value.trim() == '' || document.getElementById("directWorkerFemale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}
+            	else if(document.getElementById("contractWorkerMale").value.trim() == '' || document.getElementById("contractWorkerMale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}else if(document.getElementById("contractWorkerFemale").value.trim() == '' || document.getElementById("contractWorkerFemale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}else if(document.getElementById("dailyWagesMale").value.trim() == '' || document.getElementById("dailyWagesMale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}else if(document.getElementById("dailyWagesFemale").value.trim() == '' || document.getElementById("dailyWagesFemale").value == null){
+            		showMessage('newLicense_error', '<s:text name="newlicense.mandatory.field.null" />');
+                    window.scroll(0, 0);
+                    return false;
+            	}
+            }
+            
             <s:if test="%{!isNewWorkflow()}">
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
             window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(), 'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
@@ -227,6 +268,11 @@
     </script>
     <script>
         function onBodyLoad() {
+        	if("${licenseAppType.code}" == "RENEW"){
+        		$("#labourDetailFields").hide();
+        	}else{
+        		$("#labourDetailFields").show();
+        	}
             var currentState = document.getElementById("currentWfstate").value;
             showHideAgreement();
             <s:if test="%{!isNewWorkflow()}">

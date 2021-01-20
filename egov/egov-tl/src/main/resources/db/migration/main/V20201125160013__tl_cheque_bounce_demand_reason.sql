@@ -1,0 +1,5 @@
+INSERT INTO eg_demand_reason_master (id,reasonmaster,"category",isdebit,module,code,"order",create_date,modified_date,isdemand) values (nextval('SEQ_EG_DEMAND_REASON_MASTER'), 'Cheque Bounce Penalty', (select id from eg_reason_category where code='PENALTY'), 'N', (select id from eg_module where name = 'Trade License'), 'CHQ_BUNC_PENALTY', 5, current_timestamp, current_timestamp, 't');
+
+INSERT INTO EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) (select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where reasonmaster='Cheque Bounce Penalty' and module=(select id from eg_module where name='Trade License')), (select id from EG_INSTALLMENT_MASTER where ID_MODULE = (select id from EG_MODULE where name = 'Trade License') and start_date = to_date('01/04/2020 00:00:00','dd/MM/yyyy HH24:MI:SS')), null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where name='Penalty on Trade License Late Payment'));
+
+update egtl_configuration set value = 0 where key = 'CHEQUE_BOUNCE_PENALTY';

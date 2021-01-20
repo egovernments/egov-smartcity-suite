@@ -55,6 +55,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 
 @Controller
@@ -131,10 +133,19 @@ public class GenericBillGeneratorController {
     @PostMapping(value = "/generatebill/{applicationCode}")
     public String payTax(@PathVariable String applicationCode,
                          @RequestParam String applicationTypeCode, Model model) {
-        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
-        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                waterconnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        WaterConnectionDetails waterconnectionDetails = null;
+        AssessmentDetails assessmentDetails = null;
+        if (isNotBlank(applicationCode))
+        	waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+            		applicationCode, INPROGRESS);
+        if (waterconnectionDetails == null)
+        	waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+            		applicationCode, ACTIVE);
+		if (waterconnectionDetails != null)
+			assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+					waterconnectionDetails.getConnection().getPropertyIdentifier(),
+					PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        
         if (assessmentDetails == null)
             throw new ValidationException("invalid.property");
         else

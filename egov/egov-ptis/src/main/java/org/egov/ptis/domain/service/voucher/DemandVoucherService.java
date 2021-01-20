@@ -56,6 +56,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HA
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
@@ -121,7 +122,8 @@ public class DemandVoucherService {
     protected static final Set<String> DEMAND_REASONS = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
             DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
             DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
-            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_ADVANCE));
+            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_ADVANCE,
+            DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY));
     protected static final Set<String> DEMAND_REASONS_COMMON = new LinkedHashSet<>(
             Arrays.asList(DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
                     DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
@@ -210,7 +212,7 @@ public class DemandVoucherService {
                             .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
             if (!areInstallmentsMismatch)
                 instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
-            if (areInstallmentsMismatch)
+            if (areInstallmentsMismatch || instChangeOpposite)
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
             else
@@ -547,9 +549,13 @@ public class DemandVoucherService {
                     continue;
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equals(DEMANDRSN_CODE_PENALTY_FINES)) {
-                    normalizedDemandDetail.setPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
-                    normalizedDemandDetail.setPenaltyCollection(demandDetail.getAmtCollected());
+                        .equals(DEMANDRSN_CODE_PENALTY_FINES)
+                        || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+                    normalizedDemandDetail.setPenalty(normalizedDemandDetail.getPenalty()
+                            .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail)));
+                    normalizedDemandDetail.setPenaltyCollection(
+                            normalizedDemandDetail.getPenaltyCollection().add(demandDetail.getAmtCollected()));
                 }
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
@@ -834,8 +840,8 @@ public class DemandVoucherService {
         for (Installment key : Sets.union(instWiseDemandOld.keySet(), instWiseDemandNew.keySet())) {
             BigDecimal oldAmount = instWiseDemandOld.get(key);
             BigDecimal newAmount = instWiseDemandNew.get(key);
-            if ((demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) > 1)
-                    || (!demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) < 1)) {
+            if ((demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) > 0)
+                    || (!demandIncreased && oldAmount.subtract(newAmount).compareTo(ZERO) < 0)) {
                 return true;
             }
 

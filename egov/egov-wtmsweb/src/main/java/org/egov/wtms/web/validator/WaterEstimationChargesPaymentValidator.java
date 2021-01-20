@@ -60,6 +60,11 @@ import org.springframework.validation.Validator;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_SANCTIONED;
+
+
 
 @Component
 public class WaterEstimationChargesPaymentValidator implements Validator {
@@ -84,17 +89,23 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
     }
 
     public boolean validate(String applicationNumber, String consumerNumber, Errors errors) {
-
+    	WaterConnectionDetails connectionDetails;
         if (isBlank(applicationNumber) && isBlank(consumerNumber)) {
             errors.reject("msg.consumercode.or.applicaitonno", "msg.consumercode.or.applicaitonno");
             return true;
         }
-        WaterConnectionDetails connectionDetails = isNotBlank(applicationNumber)
-                ? waterConnectionDetailsService.findByApplicationNumber(applicationNumber)
-                : waterConnectionDetailsService.findByConsumerCode(consumerNumber);
+        if(isNotBlank(applicationNumber))
+        	connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        else {
+        	connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+        			consumerNumber, INPROGRESS);
+            if (connectionDetails == null)
+            	connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+            			consumerNumber, ACTIVE);
+        }
         
         EstimationNotice estimationNotice = null;
-        if(connectionDetails != null)
+        if(connectionDetails != null && !APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(connectionDetails.getStatus().getCode()))
         	estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
         
         if (isNotBlank(applicationNumber) && isNotBlank(consumerNumber)) {
@@ -116,7 +127,8 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
             errors.reject("msg.estimationcharges", "msg.estimationcharges");
             return true;
         }
-        else if (estimationNotice == null) {
+		else if (!APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(connectionDetails.getStatus().getCode())
+				&& estimationNotice == null) {
             errors.reject("msg.estimation.notice.not.generated", "msg.estimation.notice.not.generated");
             return true;
         }

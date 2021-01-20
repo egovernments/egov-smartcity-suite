@@ -287,86 +287,89 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         return super.renew();
     }
 
-    public void prepareRenew() {
+	public void prepareRenew() {
         prepareNewForm();
         renewAppType = RENEW_APPTYPE_CODE;
         documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
     }
 
-    @Override
-    public void prepareNewForm() {
-        super.prepareNewForm();
-        if (license() != null && license().getId() != null)
-            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        documentTypes = licenseDocumentTypeService.getDocumentTypesForNewApplication();
-        setOwnerShipTypeMap(OWNERSHIP_TYPE);
-        final List<Boundary> localityList = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
-        addDropdownData("localityList", localityList);
-        addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-        addDropdownData("categoryList", licenseCategoryService.getCategoriesOrderByName());
-        addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
-        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
-                : licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
-        if (license() != null && license().getAgreementDate() != null)
-            setShowAgreementDtl(true);
-    }
+	@Override
+	public void prepareNewForm() {
+		super.prepareNewForm();
+		if (license() != null && license().getId() != null)
+			tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+		documentTypes = licenseDocumentTypeService.getDocumentTypesForNewApplication();
+		setOwnerShipTypeMap(OWNERSHIP_TYPE);
+		final List<Boundary> localityList = boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
+		addDropdownData("localityList", localityList);
+		addDropdownData(DROPDOWN_CLASSIFICATION_LIST, tradeLicenseService.getAllLabourClassifications());
+		addDropdownData(DROPDOWN_EMPLOYERS_LIST, tradeLicenseService.getAllLabourEmployer());
+		addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
+		addDropdownData("categoryList", licenseCategoryService.getCategoriesOrderByName());
+		addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
+		addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
+				: licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
+		if (license() != null && license().getAgreementDate() != null)
+			setShowAgreementDtl(true);
+	}
 
-    @Override
-    public TradeLicense getModel() {
-        return tradeLicense;
-    }
+	@Override
+	public TradeLicense getModel() {
+		return tradeLicense;
+	}
 
-    public WorkflowBean getWorkflowBean() {
-        return workflowBean;
-    }
+	public WorkflowBean getWorkflowBean() {
+		return workflowBean;
+	}
 
-    public void setWorkflowBean(final WorkflowBean workflowBean) {
-        this.workflowBean = workflowBean;
-    }
+	public void setWorkflowBean(final WorkflowBean workflowBean) {
+		this.workflowBean = workflowBean;
+	}
 
-    public List<LicenseDocumentType> getDocumentTypes() {
-        return documentTypes;
-    }
+	public List<LicenseDocumentType> getDocumentTypes() {
+		return documentTypes;
+	}
 
-    public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
-        this.documentTypes = documentTypes;
-    }
+	public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
+		this.documentTypes = documentTypes;
+	}
 
-    public Map<String, String> getOwnerShipTypeMap() {
-        return ownerShipTypeMap;
-    }
+	public Map<String, String> getOwnerShipTypeMap() {
+		return ownerShipTypeMap;
+	}
 
-    public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
-        this.ownerShipTypeMap = ownerShipTypeMap;
-    }
+	public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
+		this.ownerShipTypeMap = ownerShipTypeMap;
+	}
 
-    public String getMode() {
-        return mode;
-    }
+	public String getMode() {
+		return mode;
+	}
 
-    public void setMode(final String mode) {
-        this.mode = mode;
-    }
+	public void setMode(final String mode) {
+		this.mode = mode;
+	}
 
-    @Override
-    public String getAdditionalRule() {
-        if (tradeLicense.isNewWorkflow()) {
-            if (!securityUtils.currentUserIsEmployee())
-                return RENEW_APPTYPE_CODE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
-            else if (license().isCollectionPending())
-                return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
-            else if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
-                return RENEWLICENSE;
-            else
-                return NEWLICENSE;
-        } else {
-            if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense.isReNewApplication())
-                return RENEW_ADDITIONAL_RULE;
-            else
-                return NEW_ADDITIONAL_RULE;
-        }
-    }
+	@Override
+	public String getAdditionalRule() {
+		if (tradeLicense.isNewWorkflow()) {
+			if (!securityUtils.currentUserIsEmployee())
+				return RENEW_APPTYPE_CODE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
+			else if (license().isCollectionPending())
+				return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
+			else if (RENEW_APPTYPE_CODE.equals(renewAppType)
+					|| tradeLicense != null && tradeLicense.isReNewApplication())
+				return RENEWLICENSE;
+			else
+				return NEWLICENSE;
+		} else {
+			if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense.isReNewApplication())
+				return RENEW_ADDITIONAL_RULE;
+			else
+				return NEW_ADDITIONAL_RULE;
+		}
+	}
 
     public void prepareSave() {
         prepareNewForm();

@@ -48,6 +48,9 @@
 
 package org.egov.wtms.web.controller.transaction.payment;
 
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.service.WaterEstimationChargesPaymentService;
@@ -63,6 +66,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.utils.StringUtils.encodeURL;
 
 @Controller
@@ -97,8 +101,16 @@ public class WaterEstimationChargesPaymentController {
             model.addAttribute("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
             return "estimationpayment-verificationform";
         }
-        WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(
-                isBlank(applicationNumber) ? consumerNumber : applicationNumber);
+        WaterConnectionDetails connectionDetails;
+		if (isNotBlank(applicationNumber))
+			connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+		else {
+			connectionDetails = waterConnectionDetailsService
+					.findByApplicationNumberOrConsumerCodeAndStatus(consumerNumber, INPROGRESS);
+			if (connectionDetails == null)
+				connectionDetails = waterConnectionDetailsService
+						.findByApplicationNumberOrConsumerCodeAndStatus(consumerNumber, ACTIVE);
+		}
         model.addAttribute("waterConnectionDetails", connectionDetails);
         model.addAttribute("estimationAmount", estimationChargesPaymentService.getEstimationDueAmount(connectionDetails));
         return "estimationpayment-verificationform";

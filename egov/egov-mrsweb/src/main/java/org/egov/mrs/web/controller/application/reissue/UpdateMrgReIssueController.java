@@ -95,6 +95,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -297,8 +298,10 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                         approverName.concat("~").concat(nextDesignation) }, null);
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
                 reIssueService.rejectReIssue(reIssue, workflowContainer);
-                message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo() },
-                        null);
+				marriageCertificateService.generateAndAddRejectionCertificate(null, reIssue, request);
+				return "redirect:/registration/rejectionnotice?applicationNo=".concat(reIssue.getApplicationNo())
+						.concat("&approvalComent=").concat(reIssue.getApprovalComent()).concat("&applicationType=")
+						.concat(MarriageConstants.STATETYPE_REISSUE);
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                 // If digital signature is configured, after approve appl shld remain in commissioner inbox for digital signature
                 // otherwise gets fwded to creator for print certificate.

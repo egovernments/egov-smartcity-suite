@@ -361,11 +361,17 @@ public class SearchPropertyAction extends SearchFormAction {
 				addActionError(getText("validation.property.already.under.courtcase"));
 				return COMMON_FORM;
 		}
-        if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
-                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION,APPLICATION_TYPE_APPEAL_PETITION).contains(applicationType)) {
+        if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_APPEAL_PETITION,
+                APPLICATION_TYPE_GRP, APPLICATION_TYPE_REVISION_PETITION, APPLICATION_TYPE_COURT_VERDICT,
+                APPLICATION_TYPE_WRITE_OFF, APPLICATION_TYPE_VACANCY_REMISSION).contains(applicationType)) {
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
             if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
                 addActionError(getText("msg.no.tax"));
+                return COMMON_FORM;
+            }
+            if (!propertyTaxCommonUtils.isCurInstDemandPresent(ptDemand)) {
+                addActionError(getText("curr.tax.absent"));
                 return COMMON_FORM;
             }
         }

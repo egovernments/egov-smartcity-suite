@@ -251,11 +251,7 @@ public class RecoveryNoticeService {
     public ResponseEntity<byte[]> generateNotice(final String assessmentNo, final String noticeType) {
         ReportOutput reportOutput;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByTypeUpicNoAndFinYear(noticeType, basicProperty.getUpicNo());
-        if (notice == null)
-            reportOutput = generateNotice(noticeType, basicProperty);
-        else
-            reportOutput = getNotice(notice, noticeType);
+        reportOutput = generateNotice(noticeType, basicProperty);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=" + noticeType + "_" + basicProperty.getUpicNo() + ".pdf");

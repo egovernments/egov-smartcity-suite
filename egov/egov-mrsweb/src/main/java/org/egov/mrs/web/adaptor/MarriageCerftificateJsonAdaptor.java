@@ -61,6 +61,7 @@ import java.util.Date;
 public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageCertificate> {
     private static final String REGISTRATION_NO = "registrationNo";
     private static final String REGISTRATION = "REGISTRATION";
+    private static final String REJECTION = "REJECTION";
 
     @Override
     public JsonElement serialize(final MarriageCertificate marriageCertificate, final Type type,
@@ -88,13 +89,29 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
             if (marriageCertificate.getCertificateType().name() == REGISTRATION) {
                 if (marriageCertificate.getRegistration().getHusband().getFullName() != null)
                     jsonObject.addProperty("husbandName", marriageCertificate.getRegistration().getHusband().getFullName());
-            } else
+            } 
+			else if (marriageCertificate.getCertificateType().name() == REJECTION) {
+				if (marriageCertificate.getRegistration() != null)
+					jsonObject.addProperty("husbandName",
+							marriageCertificate.getRegistration().getHusband().getFullName());
+				else
+					jsonObject.addProperty("husbandName",
+							marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
+			} else
                 jsonObject.addProperty("husbandName",
                         marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
             if (marriageCertificate.getCertificateType().name() == REGISTRATION) {
                 if (marriageCertificate.getRegistration().getWife().getFullName() != null)
                     jsonObject.addProperty("wifeName", marriageCertificate.getRegistration().getWife().getFullName());
-            } else
+			}
+			else if (marriageCertificate.getCertificateType().name() == REJECTION) {
+				if (marriageCertificate.getRegistration() != null)
+					jsonObject.addProperty("wifeName", marriageCertificate.getRegistration().getWife().getFullName());
+				else
+					jsonObject.addProperty("wifeName",
+							marriageCertificate.getReIssue().getRegistration().getWife().getFullName());
+			}
+			else
                 jsonObject.addProperty("wifeName", marriageCertificate.getReIssue().getRegistration().getWife().getFullName());
 
             if (marriageCertificate.getCertificateType() != null)

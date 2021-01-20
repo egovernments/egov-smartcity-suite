@@ -51,7 +51,6 @@ package org.egov.pgr.elasticsearch.repository;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithExclusion;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithFilter;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getCount;
@@ -89,6 +88,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -597,17 +597,21 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public String getFunctionryMobileNumber(final String functionaryName) {
-        final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setSize(1)
-                .setQuery(QueryBuilders.matchQuery(INITIAL_FUNCTIONARY_NAME, functionaryName))
-                .execute().actionGet();
+	public String getFunctionryMobileNumber(final String functionaryName) {
 
-        Iterator<SearchHit> searchHits = response.getHits().iterator();
-
-        return searchHits.hasNext() ?
-                defaultIfBlank((String) searchHits.next().getSource().get(INITIAL_FUNCTIONARY_MOBILE_NUMBER)) : EMPTY;
-    }
+		final BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+				.filter(QueryBuilders.matchQuery(INITIAL_FUNCTIONARY_NAME, functionaryName));
+		final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(PGR_INDEX_NAME).withQuery(boolQuery)
+				.withSort(new FieldSortBuilder("createdDate").order(SortOrder.DESC)).withPageable(new PageRequest(0, 1))
+				.build();
+		final Page<ComplaintIndex> complaintRecords = elasticsearchTemplate.queryForPage(searchQuery,
+				ComplaintIndex.class);
+		String mobileNumber = null;
+		for (final ComplaintIndex complaint : complaintRecords) {
+			mobileNumber = complaint.getInitialFunctionaryMobileNumber();
+		}
+		return !StringUtils.isBlank(mobileNumber) ? mobileNumber : EMPTY;
+	}
 
     @Override
     public SearchResponse findByAllFunctionary(final ComplaintDashBoardRequest complaintDashBoardRequest,

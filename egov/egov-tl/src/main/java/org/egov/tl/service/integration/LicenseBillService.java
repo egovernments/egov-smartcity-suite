@@ -532,7 +532,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
             dmdDet = penaltyDmdDet;
         }
-
+        LOG.error("Cheque Bounce Penalty Demand Details", dmdDet);
         // setting this min amount into demand to check next payment should be
         // min of this amount with mode of payment cash or DD
         demand.setMinAmtPayable(totalCollChqBounced.add(chqBouncePenalty));
@@ -552,7 +552,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
 
     private BigDecimal updateDmdDetForChqBounce(final EgDemand demand, BigDecimal totalCollChqBounced) {
-        final List<EgDemandDetails> demandList = (List<EgDemandDetails>) demand.getEgDemandDetails();
+        Set<EgDemandDetails> demandSet = demand.getEgDemandDetails();
+        List<EgDemandDetails> demandList = new ArrayList<>();
+        for(EgDemandDetails demandInfo : demandSet) {
+        	if(demandInfo != null) {
+        		demandList.add(demandInfo);
+        	}
+        }
         demandList.sort(Comparator.comparing(
                 (final EgDemandDetails demandDetails) -> demandDetails.getEgDemandReason().getEgDemandReasonMaster().getOrderId())
                 .reversed());
@@ -811,7 +817,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
     EgDemandDetails insertPenalty(final BigDecimal chqBouncePenalty, final Module module) {
         EgDemandDetails demandDetail = null;
-        if (chqBouncePenalty != null && chqBouncePenalty.compareTo(ZERO) > 0) {
+        if (chqBouncePenalty != null && chqBouncePenalty.compareTo(ZERO) >= 0) {
             final Installment currInstallment = getCurrentInstallment(module);
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     "CHQ_BUNC_PENALTY", module);
