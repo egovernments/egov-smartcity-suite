@@ -212,7 +212,7 @@ public class DemandVoucherService {
                             .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
             if (!areInstallmentsMismatch)
                 instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
-            if (areInstallmentsMismatch || instChangeOpposite)
+            if (areInstallmentsMismatch)
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
             else
@@ -808,7 +808,7 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
                             .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(balance);
+            demandVoucherDetails.setNetBalance(ZERO.subtract(balance));
         } else {
             demandVoucherDetails.setGeneralTaxVariation(
                     normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));
