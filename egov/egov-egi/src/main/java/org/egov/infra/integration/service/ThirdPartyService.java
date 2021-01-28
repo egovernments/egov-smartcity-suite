@@ -57,7 +57,8 @@ public class ThirdPartyService {
 
     private static final String WARD_SECRETARY_SOURCE = "WARDSECRETARY";
     private static final String WARDSECRETARY_USER_NAME = "wardsecretary";
-
+    private static final String SINGLE_DESK_SOURCE = "SINGLEDESK";
+    
     @Autowired
     protected transient SecurityUtils securityUtils;
 
@@ -67,6 +68,15 @@ public class ThirdPartyService {
                 || (StringUtils.isNotBlank(source) && !WARD_SECRETARY_SOURCE.equalsIgnoreCase(source)))
             isInvalidRequest = true;
 
+        return isInvalidRequest;
+    }
+    
+    public static boolean validateSingleDeskRequest(String transactionId, String source) {
+        boolean isInvalidRequest = false;
+        
+        if (StringUtils.isBlank(transactionId) || StringUtils.isBlank(source)
+                || (StringUtils.isNotBlank(source) && !SINGLE_DESK_SOURCE.equalsIgnoreCase(source)))
+            isInvalidRequest = true;
         return isInvalidRequest;
     }
 
