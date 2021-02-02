@@ -42,7 +42,7 @@ public class LicenseSimpleDeskRequest {
             license.setApplicationNumber(applicationNumber);
         if (isNotBlank(appSource))
             license.setApplicationSource(appSource);
-        license.setIsActive(true);
+        license.setIsActive(false);
         license.setNewWorkflow(true);
         license.setCollectionPending(false);
 		
