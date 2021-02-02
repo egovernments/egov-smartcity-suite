@@ -13,7 +13,7 @@ public class TradeLicenseSimpleDeskResponse {
 	private String tin;
 	private String applicationNumber;
 	private String applicationStatus;
-	private Date applicationDate;
+	private String applicationDate;
 	private String applicantName;
     private String fatherOrSpouseName;
     private String mobileNumber;
@@ -22,7 +22,7 @@ public class TradeLicenseSimpleDeskResponse {
     private String tradeTitle;
     private String ownershipType;
     private String assessmentNo;
-    private Date commencementDate;
+    private String commencementDate;
     private BigDecimal tradeMeasure;
     private String boundary;
     private String parentBoundary;
@@ -51,7 +51,7 @@ public class TradeLicenseSimpleDeskResponse {
         this.tin = license.getLicenseNumber();
         this.applicationNumber = license.getApplicationNumber();
         this.applicationStatus=license.getStatus().getStatusCode();
-        this.applicationDate=license.getApplicationDate();
+        this.applicationDate=license.getApplicationDate().toString();
         this.applicantName = license.getLicensee().getApplicantName();
         this.fatherOrSpouseName=license.getLicensee().getFatherOrSpouseName();
         this.mobileNumber = license.getLicensee().getMobilePhoneNumber();
@@ -60,7 +60,7 @@ public class TradeLicenseSimpleDeskResponse {
         this.tradeTitle = license.getNameOfEstablishment();
         this.ownershipType=license.getOwnershipType();
         this.assessmentNo = isBlank(license.getAssessmentNo()) ? EMPTY : license.getAssessmentNo();      
-        this.commencementDate=license.getCommencementDate();
+        this.commencementDate=license.getCommencementDate().toString();
         this.tradeMeasure=license.getTradeArea_weight();
         this.boundary=license.getBoundary().getName();
         this.parentBoundary=license.getParentBoundary().getName();
@@ -174,12 +174,20 @@ public class TradeLicenseSimpleDeskResponse {
 		this.agreementDate = agreementDate;
 	}
 
-	public Date getCommencementDate() {
+	public String getCommencementDate() {
 		return commencementDate;
 	}
 
-	public void setCommencementDate(Date commencementDate) {
+	public void setCommencementDate(String commencementDate) {
 		this.commencementDate = commencementDate;
+	}
+
+	public String getApplicationDate() {
+		return applicationDate;
+	}
+
+	public void setApplicationDate(String applicationDate) {
+		this.applicationDate = applicationDate;
 	}
 
 	public String getBoundary() {
@@ -204,14 +212,6 @@ public class TradeLicenseSimpleDeskResponse {
 
 	public void setApplicationStatus(String applicationStatus) {
 		this.applicationStatus = applicationStatus;
-	}
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
 	}
 
 	public String getFatherOrSpouseName() {
