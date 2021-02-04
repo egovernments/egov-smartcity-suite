@@ -82,7 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WaterDemandVoucherService {
 
     private static final Logger LOGGER = Logger.getLogger(WaterDemandVoucherService.class);
-    private static final String APPCONFIG_WC_DEMAND_VOUCHER_GLCODES = "WC_DEMAND_VOUCHER_GLCODES";
+    private static final String APPCONFIG_WCMS_DEMAND_VOUCHER_GLCODES = "WCMS_DEMAND_VOUCHER_GLCODES";
     private static final String APPCONFIG_WC_DEMAND_VOUCHER_REQUIRED = "WT_DEMAND_VOUCHER_GENERATION_REQUIRED";
     private static final String APPCONFIG_VALUE_VOUCHER_ARREARGLCODE = "ARREARRECEIVABLE";
     private static final String APPCONFIG_VALUE_VOUCHER_PRIORINCOMEGLCODE = "PRIORPERIODINCOME";
@@ -160,7 +160,7 @@ public class WaterDemandVoucherService {
                     BigDecimal::add);
             BigDecimal currentDemandAmount = currentDemandDetails.stream().map(EgDemandDetails::getAmount).reduce(BigDecimal.ZERO,
                     BigDecimal::add);
-            Map<String, String> glCodeMap = waterFinancialUtil.getAppconfigValueMap(APPCONFIG_WC_DEMAND_VOUCHER_GLCODES);
+            Map<String, String> glCodeMap = waterFinancialUtil.getAppconfigValueMap(APPCONFIG_WCMS_DEMAND_VOUCHER_GLCODES);
             if (arrearDemandAmount.compareTo(BigDecimal.ZERO) > 0) {
 
                 accountDetList.add(waterFinancialUtil.createAccDetailmap(glCodeMap.get(APPCONFIG_VALUE_VOUCHER_ARREARGLCODE),
