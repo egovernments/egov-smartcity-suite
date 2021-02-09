@@ -48,18 +48,30 @@
 
 package org.egov.restapi.web.controller.tradelicense;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.integration.event.model.enums.ApplicationStatus;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.web.contracts.tradelicense.LicenseSimpleDeskRequest;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailRequest;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseSimpleDeskResponse;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.wardsecretary.transactions.entity.WSTransactionRequest;
+import org.egov.wardsecretary.transactions.entity.contracts.TransactionReconcileSingleDeskRequest;
+import org.egov.wardsecretary.transactions.entity.contracts.TransactionReconcileSingleDeskResponse;
+import org.egov.wardsecretary.transactions.service.WSTransactionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.wardsecretary.utils.constants.WardSecretaryConstants.BLANK;
+import static org.egov.wardsecretary.utils.constants.WardSecretaryConstants.TRANSACTION_RECONCILE_001;
+import static org.egov.wardsecretary.utils.constants.WardSecretaryConstants.TRANSACTION_RECONCILE_002;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -70,6 +82,12 @@ public class TradeLicenseDetailController {
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
+    
+    @Autowired
+	private WSTransactionRequestService wSTransactionRequestService;
+    
+    @Autowired
+	private CityService cityService;
 
     @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
@@ -86,7 +104,58 @@ public class TradeLicenseDetailController {
         		.map(TradeLicenseSimpleDeskResponse::new)
         		.collect(Collectors.toList());
     }
+    @PostMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
+	public TransactionReconcileSingleDeskResponse getTransactionStatus(@RequestBody final TransactionReconcileSingleDeskRequest transactionVerifyRequest) {
+		
+    		TransactionReconcileSingleDeskResponse response = new TransactionReconcileSingleDeskResponse();
+	
+    		if (StringUtils.isNotBlank(transactionVerifyRequest.getTransactionId())
+				|| StringUtils.isNotBlank(transactionVerifyRequest.getApplicationNumber())) {
 
+			WSTransactionRequest wSTransactionRequest = wSTransactionRequestService.getRequestByRequestParametersSingleDesk(transactionVerifyRequest);
+			if (null == wSTransactionRequest) {
+				response.setTransactionId(transactionVerifyRequest.getTransactionId());
+				response.setApplicationNumber(transactionVerifyRequest.getApplicationNumber());
+				response.setRemarks(TRANSACTION_RECONCILE_002);
+			} else {
+				buildResponse(response, wSTransactionRequest);
+			}
+		} else {
+			response.setRemarks(TRANSACTION_RECONCILE_001);
+		}
+		return response;
+	}
+
+	private void buildResponse(TransactionReconcileSingleDeskResponse response, final WSTransactionRequest wSTransactionRequest) {
+
+		response.setTransactionId(wSTransactionRequest.getTpTransactionId());
+		response.setTransactionStatus(wSTransactionRequest.getTransactionStatus() == null ? BLANK
+				: wSTransactionRequest.getTransactionStatus().toString());
+		response.setTransactionDate(wSTransactionRequest.getCreatedDate());
+		response.setApplicationStatus(wSTransactionRequest.getApplicationStatus() == null ? BLANK
+				: wSTransactionRequest.getApplicationStatus().toString());
+		response.setApplicationNumber(
+				wSTransactionRequest.getApplicationNo() == null ? BLANK : wSTransactionRequest.getApplicationNo());
+		if (wSTransactionRequest.getApplicationStatus() == null)
+			response.setApplicationStatus(BLANK);
+		else {
+			response.setApplicationStatus(wSTransactionRequest.getApplicationStatus().toString());
+			if ((wSTransactionRequest.getApplicationStatus().toString().equals(ApplicationStatus.REJECTED.toString())
+					|| wSTransactionRequest.getApplicationStatus().toString()
+							.equals(ApplicationStatus.APPROVED.toString())
+							&& wSTransactionRequest.getDateOfCompletion() != null))
+				response.setDateOfCompletion(wSTransactionRequest.getDateOfCompletion());
+		}
+		response.setDistrict(cityService.getDistrictName() == null ? BLANK : cityService.getDistrictName());
+		response.setCityName(getCityName());
+		response.setServiceCode(
+				wSTransactionRequest.getService() == null ? BLANK : wSTransactionRequest.getService().getCode());
+		response.setServiceName(
+				wSTransactionRequest.getService() == null ? BLANK : wSTransactionRequest.getService().getName());
+		response.setViewLink(wSTransactionRequest.getViewLink() == null ? BLANK : wSTransactionRequest.getViewLink());
+		response.setRemarks(wSTransactionRequest.getRemarks());
+
+	}
     @ExceptionHandler(RuntimeException.class)
     public RestErrors restErrors(RuntimeException runtimeException) {
         return new RestErrors("LICENSE NOT EXIST", runtimeException.getMessage());
