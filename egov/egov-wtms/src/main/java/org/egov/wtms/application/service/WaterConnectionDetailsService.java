@@ -1986,7 +1986,7 @@ public class WaterConnectionDetailsService {
 			fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
 			contentDisposition = "inline;filename=EstimationNotice.pdf";
 		} else if (WaterTaxConstants.NOTICETYPE_REJECTION.equalsIgnoreCase(estimationNotice.getNoticeType())) {
-			fileName = estimationNotice.getEstimationNumber() + ".pdf";
+			fileName = estimationNotice.getEstimationNumber().replace("/", "-") + ".pdf";
 			contentDisposition = "inline;filename=RejectionNotice.pdf";
 		}
 		HttpHeaders headers = new HttpHeaders();
