@@ -72,7 +72,7 @@ function hideDemandHeaderTab() {
 
 function populateBoundaries() {
 	jQuery.ajax({
-		url : "/egi/public/boundary/ajaxboundary-activeblockbylocality",
+		url : "/egi/boundary/ajaxboundary-activeblockbylocality",
 		type : "GET",
 		data : {
 			locality : jQuery('#locality').val()

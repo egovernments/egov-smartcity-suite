@@ -94,7 +94,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping({"/public/boundary" , "/boundary"})
+@RequestMapping("/boundary")
 public class SearchBoundaryController {
 	
     @Autowired

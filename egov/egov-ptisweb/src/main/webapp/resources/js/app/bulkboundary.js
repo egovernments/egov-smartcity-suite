@@ -253,7 +253,7 @@ jQuery(document).ready(function() {
 						var locality = localityDropdown.val();
 						jQuery
 								.ajax({
-									url : "/egi/public/boundary/ajaxboundary-activeblockbylocality",
+									url : "/egi/boundary/ajaxboundary-activeblockbylocality",
 									type : "GET",
 									data : {
 										"locality" : locality

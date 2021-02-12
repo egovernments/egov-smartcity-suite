@@ -65,7 +65,7 @@ function populateBoundaries() {
 	var locality = jQuery('#locality').val();
 	if(locality != -1 && locality != null) {
 	jQuery.ajax({
-		url: "/egi/public/boundary/ajaxboundary-activeblockbylocality",
+		url: "/egi/boundary/ajaxboundary-activeblockbylocality",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()
@@ -76,7 +76,7 @@ function populateBoundaries() {
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
 			jQuery('#streetId').html("");
-            var jsonResp = JSON.parse(response);
+            var jsonResp = response;
 			jQuery.each(jsonResp.results.boundaries, function (j, boundary) {
 				if (boundary.wardId) {
 					jQuery('#wardId').append("<option value='"+boundary.wardId+"'>"+boundary.wardName+"</option>");
