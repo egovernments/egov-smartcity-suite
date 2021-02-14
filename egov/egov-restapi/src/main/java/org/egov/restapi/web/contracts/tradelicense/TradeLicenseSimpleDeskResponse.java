@@ -10,6 +10,7 @@ import org.egov.tl.entity.TradeLicense;
 
 public class TradeLicenseSimpleDeskResponse {
 
+	private Long licenseId;
 	private String tin;
 	private String applicationNumber;
 	private String applicationStatus;
@@ -46,8 +47,10 @@ public class TradeLicenseSimpleDeskResponse {
     private Long dailyWagesMale;
     private Long dailyWagesFemale;
     private Long totalWorkers;
+    private String isPaymentSucess;
    
     public TradeLicenseSimpleDeskResponse(TradeLicense license) {
+    	this.licenseId = license.getId();
         this.tin = license.getLicenseNumber();
         this.applicationNumber = license.getApplicationNumber();
         this.applicationStatus=license.getStatus().getStatusCode();
@@ -84,7 +87,21 @@ public class TradeLicenseSimpleDeskResponse {
         this.dailyWagesMale = license.getDailyWagesMale();
         this.dailyWagesFemale = license.getDailyWagesFemale();
         this.totalWorkers = license.getTotalWorkers();
+        if(license.getDemand().getAmtCollected().compareTo(license.getDemand().getBaseDemand()) == 0 || 
+        		license.getDemand().getAmtCollected().compareTo(license.getDemand().getBaseDemand()) == 1 ) {
+        	this.isPaymentSucess = "YES";
+        }else {
+        	this.isPaymentSucess = "NO";
+        }
     }
+
+	public Long getLicenseId() {
+		return licenseId;
+	}
+
+	public void setLicenseId(Long licenseId) {
+		this.licenseId = licenseId;
+	}
 
 	public BigDecimal getTradeMeasure() {
 		return tradeMeasure;
@@ -372,6 +389,14 @@ public class TradeLicenseSimpleDeskResponse {
 
 	public void setTotalWorkers(Long totalWorkers) {
 		this.totalWorkers = totalWorkers;
+	}
+
+	public String getIsPaymentSucess() {
+		return isPaymentSucess;
+	}
+
+	public void setIsPaymentSucess(String isPaymentSucess) {
+		this.isPaymentSucess = isPaymentSucess;
 	}
     	
 }
