@@ -351,7 +351,7 @@ public class SearchRegistrationController {
 		List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
 				.filter(role -> WARDSECRETARY_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
 				.collect(Collectors.toList());
-		model.addAttribute(REGISTRATION, new MarriageRegistration());
+		model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
 		prepareSearchForm(model);
         return "registration-search-certificateissue";
 	}
