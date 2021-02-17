@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,14 @@ public class TradeLicenseDetailController {
     public List<TradeLicenseSimpleDeskResponse> licenseAppicationDetails(@RequestBody LicenseSimpleDeskRequest request) {
     	return tradeLicenseService.getLicenses(request.tradeLicenseLikeSimpledesk())
         		.parallelStream()
-        		.map(TradeLicenseSimpleDeskResponse::new)
+        		.map(arg0 -> {
+					try {
+						return new TradeLicenseSimpleDeskResponse(arg0);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
         		.collect(Collectors.toList());
     }
 
