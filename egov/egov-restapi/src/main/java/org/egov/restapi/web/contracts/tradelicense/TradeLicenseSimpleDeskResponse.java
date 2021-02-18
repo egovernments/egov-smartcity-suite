@@ -441,14 +441,10 @@ public class TradeLicenseSimpleDeskResponse {
 		Set<FileStoreMapper> fileStoreList = null;
 		List<byte[]> licenseFileList = new ArrayList<>();
 		String fileStoreBaseDir = null;
-		System.out.println("fileStoreBaseDirConfig::"+fileStoreBaseDirConfig);
-		System.out.println("user home::"+getUserDirectoryPath());
 		 if(fileStoreBaseDirConfig.isEmpty()) {
 			 fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
-			 System.out.println("if block::"+fileStoreBaseDir);
 		 }else {
 			 fileStoreBaseDir = fileStoreBaseDirConfig;
-			 System.out.println("else block::"+fileStoreBaseDir);
 		 } 
 		for (LicenseDocument licenseDocument : licensedocs) {
 			fileStoreList = licenseDocument.getFiles();
