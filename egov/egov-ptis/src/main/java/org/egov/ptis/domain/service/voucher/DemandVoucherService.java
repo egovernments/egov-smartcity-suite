@@ -167,10 +167,11 @@ public class DemandVoucherService {
     public Map<String, Map<String, Object>> prepareDemandVoucherData(Property newProperty, Property oldProperty,
             Map<String, String> applicationDetails) {
         BigDecimal existingPropTax = ZERO;
+        boolean demandIncreased;
         BigDecimal currentPropTax = getTotalPropertyTax(newProperty);
         if (oldProperty != null)
             existingPropTax = getTotalPropertyTax(oldProperty);
-        boolean demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
+        demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
         return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationDetails);
     }
 
