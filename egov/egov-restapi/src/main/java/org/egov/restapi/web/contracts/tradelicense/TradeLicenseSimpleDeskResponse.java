@@ -64,8 +64,9 @@ public class TradeLicenseSimpleDeskResponse {
 	private Long totalWorkers;
 	private String isPaymentSucess;
 	private List<byte[]> licenseDocuments;
+	private String fileStoreBaseDir;
 
-	public TradeLicenseSimpleDeskResponse(TradeLicense license) throws IOException {
+	public TradeLicenseSimpleDeskResponse(TradeLicense license, String fileStoreBaseDir) throws IOException {
 		this.licenseId = license.getId();
 		this.tin = license.getLicenseNumber();
 		this.applicationNumber = license.getApplicationNumber();
@@ -110,7 +111,8 @@ public class TradeLicenseSimpleDeskResponse {
 			this.isPaymentSucess = "NO";
 		}
 		
-		this.licenseDocuments = getSupportDocuments(license);
+		this.licenseDocuments = getSupportDocuments(license,fileStoreBaseDir);
+		this.fileStoreBaseDir = fileStoreBaseDir;
 	}
 
 	
@@ -425,12 +427,29 @@ public class TradeLicenseSimpleDeskResponse {
 	public void setLicenseDocuments(List<byte[]> licenseDocuments) {
 		this.licenseDocuments = licenseDocuments;
 	}
+	
+	public String getFileStoreBaseDir() {
+		return fileStoreBaseDir;
+	}
 
-	private List<byte[]> getSupportDocuments(TradeLicense license) throws IOException {
+	public void setFileStoreBaseDir(String fileStoreBaseDir) {
+		this.fileStoreBaseDir = fileStoreBaseDir;
+	}
+
+	private List<byte[]> getSupportDocuments(TradeLicense license, String fileStoreBaseDirConfig) throws IOException {
 		List<LicenseDocument> licensedocs = license.getDocuments();
 		Set<FileStoreMapper> fileStoreList = null;
 		List<byte[]> licenseFileList = new ArrayList<>();
-		String fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
+		String fileStoreBaseDir = null;
+		System.out.println("fileStoreBaseDirConfig::"+fileStoreBaseDirConfig);
+		System.out.println("user home::"+getUserDirectoryPath());
+		 if(fileStoreBaseDirConfig.isEmpty()) {
+			 fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
+			 System.out.println("if block::"+fileStoreBaseDir);
+		 }else {
+			 fileStoreBaseDir = fileStoreBaseDirConfig;
+			 System.out.println("else block::"+fileStoreBaseDir);
+		 } 
 		for (LicenseDocument licenseDocument : licensedocs) {
 			fileStoreList = licenseDocument.getFiles();
 			for (FileStoreMapper fileStoreMapper : fileStoreList) {
