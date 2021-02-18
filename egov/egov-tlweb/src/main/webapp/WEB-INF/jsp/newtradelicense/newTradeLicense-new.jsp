@@ -401,6 +401,7 @@
         <s:if test="%{hasErrors()}">
             <div class="text-center error-msg" align="center" style="font-size: 14px;">
                 <s:actionerror/>
+                <s:fielderror/>
             </div>
         </s:if>
         <s:if test="%{hasActionMessages()}">
