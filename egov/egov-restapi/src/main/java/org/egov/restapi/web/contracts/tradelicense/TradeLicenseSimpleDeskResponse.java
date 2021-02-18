@@ -65,6 +65,7 @@ public class TradeLicenseSimpleDeskResponse {
 	private String isPaymentSucess;
 	private List<byte[]> licenseDocuments;
 	private String fileStoreBaseDir;
+	private String digiSignedCertFilestoreId;
 
 	public TradeLicenseSimpleDeskResponse(TradeLicense license, String fileStoreBaseDir) throws IOException {
 		this.licenseId = license.getId();
@@ -112,7 +113,7 @@ public class TradeLicenseSimpleDeskResponse {
 		}
 		
 		this.licenseDocuments = getSupportDocuments(license,fileStoreBaseDir);
-		this.fileStoreBaseDir = fileStoreBaseDir;
+		this.digiSignedCertFilestoreId = license.getDigiSignedCertFileStoreId();
 	}
 
 	
@@ -434,6 +435,14 @@ public class TradeLicenseSimpleDeskResponse {
 
 	public void setFileStoreBaseDir(String fileStoreBaseDir) {
 		this.fileStoreBaseDir = fileStoreBaseDir;
+	}
+
+	public String getDigiSignedCertFilestoreId() {
+		return digiSignedCertFilestoreId;
+	}
+
+	public void setDigiSignedCertFilestoreId(String digiSignedCertFilestoreId) {
+		this.digiSignedCertFilestoreId = digiSignedCertFilestoreId;
 	}
 
 	private List<byte[]> getSupportDocuments(TradeLicense license, String fileStoreBaseDirConfig) throws IOException {
