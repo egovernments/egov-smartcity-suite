@@ -56,6 +56,8 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 
+    <input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	
 	<jsp:include page="councilpreamble-form.jsp" />
 
 	<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
