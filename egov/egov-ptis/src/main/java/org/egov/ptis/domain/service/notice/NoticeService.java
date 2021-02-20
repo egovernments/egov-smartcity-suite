@@ -157,7 +157,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         ptNotice.setUserId(ApplicationThreadLocals.getUserId());
         ptNotice.setBasicProperty(basicProperty);
         ptNotice.setApplicationNumber(applicationNumber);
-        final String fileName = ptNotice.getNoticeNo() + ".pdf";
+        final String fileName = ptNotice.getNoticeNo().replace("/", "-") + ".pdf";
         final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                 FILESTORE_MODULE_NAME);
         ptNotice.setFileStore(fileStore);
