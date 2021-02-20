@@ -175,7 +175,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
      * @return
      */
     public PtNotice updateNotice(final PtNotice notice, final InputStream fileStream) {
-        final String fileName = notice.getNoticeNo() + ".pdf";
+        final String fileName = notice.getNoticeNo().replace("/", "-") + ".pdf";
         final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                 FILESTORE_MODULE_NAME);
         notice.setFileStore(fileStore);
