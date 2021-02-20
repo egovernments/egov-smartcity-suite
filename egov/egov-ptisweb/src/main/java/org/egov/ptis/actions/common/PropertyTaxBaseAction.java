@@ -93,6 +93,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CA
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
@@ -100,7 +101,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT_TO_CANCEL;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -111,6 +111,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -125,6 +128,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.integration.service.ThirdPartyService;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -136,10 +140,12 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.pims.commons.dao.PositionMasterDAO;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -160,6 +166,7 @@ import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -222,6 +229,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PropertyUsageService propertyUsageService;
     @Autowired
     protected PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired 
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PositionMasterDAO positionMasterDAO;
+
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+    
 
     private List<File> uploads = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
@@ -329,8 +347,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.propcatType"));
 
         if (propTypeId != null && !"-1".equals(propTypeId)) {
-            final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr != null) {
                 Date regDocDate = null;
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
@@ -530,10 +547,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param basicProperty
      */
     protected void validateHouseNumber(final Long wardId, final String houseNo, final BasicProperty basicProperty) {
-        final Query qry = getPersistenceService()
-                .getSession()
-                .createQuery(
-                        "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
+		final Query qry = entityManager.unwrap(Session.class).createQuery(
+				"from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
         qry.setParameter("wardId", wardId);
         if (!qry.list().isEmpty()
@@ -670,7 +685,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             pos = property.getCurrentState().getOwnerPosition();
         else if (null != approverPositionId && approverPositionId != -1)
-            pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            pos = positionMasterDAO.getPosition(approverPositionId);
         else
             pos = wfInitiator.getPosition();
 
