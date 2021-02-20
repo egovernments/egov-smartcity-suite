@@ -697,11 +697,11 @@ public class PropertyHibernateDAO implements PropertyDAO {
         qry.setString("applicationNo", applicationNo);
         return (Property) qry.uniqueResult();
     }
-
-	@Override
-	public Property getWorkflowPropertyById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+    
+    public Property getWorkflowPropertyById(Long id){
+    	Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where id= :id and status = 'W'");
+        qry.setParameter("id", id);
+        return (Property) qry.uniqueResult();
+    }
 }
