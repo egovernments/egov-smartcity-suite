@@ -2574,12 +2574,19 @@ public class PropertyService {
      * @param upicNo
      * @return
      */
-    public PropertyImpl getLatestHistoryProperty(final String upicNo) {
-        final PropertyImpl property = (PropertyImpl) propPerServ.find(
-                "from PropertyImpl prop where prop.basicProperty.upicNo = ? and prop.status = 'H' order by prop.id desc",
-                upicNo);
-        return property;
-    }
+	public PropertyImpl getLatestHistoryProperty(final String upicNo) {
+
+		final StringBuilder queryStr = new StringBuilder();
+		queryStr.append(
+				"from PropertyImpl prop where prop.basicProperty.upicNo = :upicno and prop.status = 'H' order by prop.id desc");
+		final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
+		query.setParameter("upicno", upicNo);
+		PropertyImpl property = null;
+		List<PropertyImpl> properties = query.list();
+		if (!properties.isEmpty())
+			property = properties.get(0);
+		return property;
+	}
     
     /*
      * api to fetch the assignee details for business user request (CSC opertaor , Ward Secretary)
