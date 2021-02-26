@@ -849,7 +849,7 @@ public class SewerageApplicationDetailsService {
     private void publishEventUpdateForWardSecretary(final SewerageApplicationDetails sewerageApplicationDetails,
             String workFlowAction) {
         if (StringUtils.isNotBlank(sewerageApplicationDetails.getSource())
-                && Source.WARDSECRETARY.toString().equalsIgnoreCase(sewerageApplicationDetails.getSource())
+                && Source.WARDSECRETARY.toString().equalsIgnoreCase(sewerageApplicationDetails.getSource().toString())
                 && (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))
                 || APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
             if (NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
