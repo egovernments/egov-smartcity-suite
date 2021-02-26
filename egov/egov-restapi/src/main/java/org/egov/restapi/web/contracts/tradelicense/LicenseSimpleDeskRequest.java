@@ -42,11 +42,10 @@ public class LicenseSimpleDeskRequest {
             license.setApplicationNumber(applicationNumber);
         if (isNotBlank(appSource))
             license.setApplicationSource(appSource);
-        license.setIsActive(false);
         license.setNewWorkflow(true);
         license.setCollectionPending(false);
 		
-		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("legacy");
+		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("legacy", "isActive");
         return Example.of(license, matcher);
     }
 	
