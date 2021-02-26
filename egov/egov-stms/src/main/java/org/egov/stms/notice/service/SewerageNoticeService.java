@@ -201,7 +201,7 @@ public class SewerageNoticeService {
             final String rejectionNoticeNo = sewerageApplicationDetails.getRejectionNumber();
             buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, rejectionNoticeNo,
                     sewerageApplicationDetails.getEstimationDate(), SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE);
-            final String fileName = rejectionNoticeNo + ".pdf";
+            final String fileName = rejectionNoticeNo.replace("/", "-") + ".pdf";
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);
