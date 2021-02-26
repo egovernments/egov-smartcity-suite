@@ -72,7 +72,7 @@ public class TradeLicenseSimpleDeskResponse {
 		this.licenseId = license.getId();
 		this.tin = license.getLicenseNumber();
 		this.applicationNumber = license.getApplicationNumber();
-		this.applicationStatus = license.getStatus().getStatusCode();
+		this.applicationStatus = license.getStatus().getName();
 		this.applicationDate = license.getApplicationDate().toString();
 		this.applicantName = license.getLicensee().getApplicantName();
 		this.fatherOrSpouseName = license.getLicensee().getFatherOrSpouseName();
