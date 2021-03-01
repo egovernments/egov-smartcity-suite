@@ -83,7 +83,7 @@ public class WaterFinancialUtil {
     private static final Logger LOGGER = Logger.getLogger(WaterFinancialUtil.class);
     private static final String DCB_URL = "/wtms/viewDcb/consumerCodeWis/%s";
     private static final String VOUCHERDESCRIPTION = "WT %s demand voucher for %s  ";
-    private static final String DEMAND_VOUCHER_HEADER_PARAMS = "DEMAND_VOUCHER_HEADER_PARAMS";
+    private static final String WCMS_DEMAND_VOUCHER_HEADER_PARAMS = "WCMS_DEMAND_VOUCHER_HEADER_PARAMS";
     private static final String DEMANDVOUCHER_DEPARTMENTCODE = "DEPARTMENT";
     private static final String DEMANDVOUCHER_FUNCTIONCODE = "FUNCTION";
     private static final String DEMANDVOUCHER_FUNDCODE = "FUND";
@@ -145,7 +145,7 @@ public class WaterFinancialUtil {
             LOGGER.error("Exception while parsing voucher date", e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
-        Map<String, String> voucherHeaderDataMap = getAppconfigValueMap(DEMAND_VOUCHER_HEADER_PARAMS);
+        Map<String, String> voucherHeaderDataMap = getAppconfigValueMap(WCMS_DEMAND_VOUCHER_HEADER_PARAMS);
         headerdetails.put(VoucherConstant.VOUCHERNAME, voucherHeaderDataMap.get(DEMANDVOUCHER_VOUCHERNAME));
         headerdetails.put(VoucherConstant.VOUCHERTYPE, voucherHeaderDataMap.get(DEMANDVOUCHER_VOUCHERTYPE));
         headerdetails.put(VoucherConstant.FUNDSOURCECODE, voucherHeaderDataMap.get(DEMANDVOUCHER_FUNDSOURCECODE));

@@ -151,6 +151,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final String VALIDATE_SUPPORT_DOCUMENT = "error.support.docs";
     private static final String LICENSE_REJECT = "license.rejected";
     protected static final String INVALID_WORKFLOWACTION ="error.invalid.workflowaction";
+    private static final String TL_SINGLE_DESK_SOURCE = "SINGLEDESK";
     protected transient TradeLicense tradeLicense = new TradeLicense();
     protected transient String roleName;
     protected transient String reportId;
@@ -223,7 +224,15 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (tradeLicenseService.currentUserIsMeeseva()) {
             license.setApplicationNumber(getApplicationNo());
             licenseApplicationService.createWithMeseva(license, workflowBean);
-        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest)) {
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && source.equalsIgnoreCase(TL_SINGLE_DESK_SOURCE)) {        	
+            if (ThirdPartyService.validateSingleDeskRequest(transactionId, source)) {            	
+                addActionMessage(getText("WS.001"));
+                return ERROR;
+            }
+            license.setApplicationSource(source);
+            workflowBean.setActionName(NEW_APPTYPE_CODE);
+            licenseApplicationService.processWithWardSecretary(license, workflowBean, transactionId);
+        } else if (thirdPartyService.isWardSecretaryRequest(wsPortalRequest) && !source.equalsIgnoreCase(TL_SINGLE_DESK_SOURCE)) {
             if (ThirdPartyService.validateWardSecretaryRequest(transactionId, source)) {
                 addActionMessage(getText("WS.001"));
                 return ERROR;

@@ -56,8 +56,10 @@ import org.egov.restapi.web.contracts.tradelicense.TradeLicenseSimpleDeskRespons
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +71,9 @@ public class TradeLicenseDetailController {
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
+    
+    @Value("${filestore.base.dir}")
+    private String fileStoreBaseDir;
 
     @GetMapping(value = "/tradelicense/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
@@ -95,7 +100,14 @@ public class TradeLicenseDetailController {
     public List<TradeLicenseSimpleDeskResponse> licenseAppicationDetails(@RequestBody LicenseSimpleDeskRequest request) {
     	return tradeLicenseService.getLicenses(request.tradeLicenseLikeSimpledesk())
         		.parallelStream()
-        		.map(TradeLicenseSimpleDeskResponse::new)
+        		.map(arg0 -> {
+					try {
+						return new TradeLicenseSimpleDeskResponse(arg0,fileStoreBaseDir);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
         		.collect(Collectors.toList());
     }
 

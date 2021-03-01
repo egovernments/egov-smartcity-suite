@@ -167,10 +167,11 @@ public class DemandVoucherService {
     public Map<String, Map<String, Object>> prepareDemandVoucherData(Property newProperty, Property oldProperty,
             Map<String, String> applicationDetails) {
         BigDecimal existingPropTax = ZERO;
+        boolean demandIncreased;
         BigDecimal currentPropTax = getTotalPropertyTax(newProperty);
         if (oldProperty != null)
             existingPropTax = getTotalPropertyTax(oldProperty);
-        boolean demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
+        demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
         return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationDetails);
     }
 
@@ -212,7 +213,7 @@ public class DemandVoucherService {
                             .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
             if (!areInstallmentsMismatch)
                 instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
-            if (areInstallmentsMismatch || instChangeOpposite)
+            if (areInstallmentsMismatch)
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
             else
@@ -808,7 +809,7 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
                             .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(balance);
+            demandVoucherDetails.setNetBalance(ZERO.subtract(balance));
         } else {
             demandVoucherDetails.setGeneralTaxVariation(
                     normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));

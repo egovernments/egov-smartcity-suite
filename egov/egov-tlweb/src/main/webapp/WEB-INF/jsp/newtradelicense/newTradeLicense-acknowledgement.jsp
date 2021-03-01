@@ -154,6 +154,12 @@
                                             ,'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
                                 Pay License Fee</button>
                         </s:if>
+                        <s:if test="%{!isPaid()}">
+                            <button type="button" id="collectfee" class="btn btn-primary"
+                                    onclick="window.open('/tl/pay/online/<s:property value="%{id}"/>', '_blank'
+                                            ,'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
+                                Pay License Fee</button>
+                        </s:if>
                         <s:if test="%{hasCscOperatorRole()}">
                             <button type="button" id="print" class="btn btn-default printbtn"
                                     onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>'

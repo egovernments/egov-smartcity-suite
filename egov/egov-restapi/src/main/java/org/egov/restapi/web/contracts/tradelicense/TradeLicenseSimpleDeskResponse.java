@@ -1,90 +1,131 @@
 package org.egov.restapi.web.contracts.tradelicense;
 
+import static java.io.File.separator;
+import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.utils.Constants;
+import org.springframework.util.FileCopyUtils;
 
 public class TradeLicenseSimpleDeskResponse {
 
+	private Long licenseId;
 	private String tin;
 	private String applicationNumber;
 	private String applicationStatus;
-	private Date applicationDate;
+	private String applicationDate;
 	private String applicantName;
-    private String fatherOrSpouseName;
-    private String mobileNumber;
-    private String aadharNumber;
-    private String emailId;
-    private String tradeTitle;
-    private String ownershipType;
-    private String assessmentNo;
-    private Date commencementDate;
-    private BigDecimal tradeMeasure;
-    private String boundary;
-    private String parentBoundary;
-    private String natureOfBusiness;   
-    private String subCategory;
-    private String category;  
-    private String tradeAddress;
-    private String licenseeAddress;
-    private String remarks;
-    private Date agreementDate;
-    private String agreementDocNo;
-    private String source;
-    private String classificationType;
-    private String employersType;
-    private String mandalName;
-    private String doorNo;
-    private Long directWorkerMale;
-    private Long directWorkerFemale;
-    private Long contractWorkerMale;
-    private Long contractWorkerFemale;
-    private Long dailyWagesMale;
-    private Long dailyWagesFemale;
-    private Long totalWorkers;
-   
-    public TradeLicenseSimpleDeskResponse(TradeLicense license) {
-        this.tin = license.getLicenseNumber();
-        this.applicationNumber = license.getApplicationNumber();
-        this.applicationStatus=license.getStatus().getStatusCode();
-        this.applicationDate=license.getApplicationDate();
-        this.applicantName = license.getLicensee().getApplicantName();
-        this.fatherOrSpouseName=license.getLicensee().getFatherOrSpouseName();
-        this.mobileNumber = license.getLicensee().getMobilePhoneNumber();
-        
-        this.emailId=license.getLicensee().getEmailId();
-        this.tradeTitle = license.getNameOfEstablishment();
-        this.ownershipType=license.getOwnershipType().toString();
-        this.assessmentNo = isBlank(license.getAssessmentNo()) ? EMPTY : license.getAssessmentNo();      
-        this.commencementDate=license.getCommencementDate();
-        this.tradeMeasure=license.getTradeArea_weight();
-        this.boundary=license.getBoundary().getName();
-        this.parentBoundary=license.getParentBoundary().getName();
-        this.natureOfBusiness = license.getNatureOfBusiness().getName();
-        this.subCategory = license.getTradeName().getName();
-        this.category = license.getCategory().getName();
-        this.tradeAddress = license.getAddress();
-        this.licenseeAddress=license.getLicensee().getAddress();       
-        this.remarks=license.getRemarks();
-        this.agreementDate=license.getAgreementDate();
-        this.agreementDocNo=license.getAgreementDocNo();
-        this.source=license.getApplicationSource();
-        this.classificationType = license.getClassificationType().getName();
-        this.employersType = license.getEmployersType().getName();
-        this.mandalName = license.getMandalName();
-        this.doorNo = license.getDoorNo();
-        this.directWorkerMale = license.getDirectWorkerMale();
-        this.directWorkerFemale = license.getDirectWorkerFemale();
-        this.contractWorkerMale = license.getContractWorkerMale();
-        this.contractWorkerFemale = license.getContractWorkerFemale();
-        this.dailyWagesMale = license.getDailyWagesMale();
-        this.dailyWagesFemale = license.getDailyWagesFemale();
-        this.totalWorkers = license.getTotalWorkers();
-    }
+	private String fatherOrSpouseName;
+	private String mobileNumber;
+	private String aadharNumber;
+	private String emailId;
+	private String tradeTitle;
+	private String ownershipType;
+	private String assessmentNo;
+	private String commencementDate;
+	private BigDecimal tradeMeasure;
+	private String boundary;
+	private String parentBoundary;
+	private String natureOfBusiness;
+	private String subCategory;
+	private String category;
+	private String tradeAddress;
+	private String licenseeAddress;
+	private String remarks;
+	private Date agreementDate;
+	private String agreementDocNo;
+	private String source;
+	private String classificationType;
+	private String employersType;
+	private String mandalName;
+	private String doorNo;
+	private Long directWorkerMale;
+	private Long directWorkerFemale;
+	private Long contractWorkerMale;
+	private Long contractWorkerFemale;
+	private Long dailyWagesMale;
+	private Long dailyWagesFemale;
+	private Long totalWorkers;
+	private String isPaymentSucess;
+	private List<byte[]> licenseDocuments;
+	private String fileStoreBaseDir;
+	private String digiSignedCertFilestoreId;
+	private String uid;
+
+	public TradeLicenseSimpleDeskResponse(TradeLicense license, String fileStoreBaseDir) throws IOException {
+		this.licenseId = license.getId();
+		this.tin = license.getLicenseNumber();
+		this.applicationNumber = license.getApplicationNumber();
+		this.applicationStatus = license.getStatus().getName();
+		this.applicationDate = license.getApplicationDate().toString();
+		this.applicantName = license.getLicensee().getApplicantName();
+		this.fatherOrSpouseName = license.getLicensee().getFatherOrSpouseName();
+		this.mobileNumber = license.getLicensee().getMobilePhoneNumber();
+
+		this.emailId = license.getLicensee().getEmailId();
+		this.tradeTitle = license.getNameOfEstablishment();
+		this.ownershipType = license.getOwnershipType().toString();
+		this.assessmentNo = isBlank(license.getAssessmentNo()) ? EMPTY : license.getAssessmentNo();
+		this.commencementDate = license.getCommencementDate().toString();
+		this.tradeMeasure = license.getTradeArea_weight();
+		this.boundary = license.getBoundary().getName();
+		this.parentBoundary = license.getParentBoundary().getName();
+		this.natureOfBusiness = license.getNatureOfBusiness().getName();
+		this.subCategory = license.getTradeName().getName();
+		this.category = license.getCategory().getName();
+		this.tradeAddress = license.getAddress();
+		this.licenseeAddress = license.getLicensee().getAddress();
+		this.remarks = license.getRemarks();
+		this.agreementDate = license.getAgreementDate();
+		this.agreementDocNo = license.getAgreementDocNo();
+		this.source = license.getApplicationSource();
+		this.classificationType = license.getClassificationType().getName();
+		this.employersType = license.getEmployersType().getName();
+		this.mandalName = license.getMandalName();
+		this.doorNo = license.getDoorNo();
+		this.directWorkerMale = license.getDirectWorkerMale();
+		this.directWorkerFemale = license.getDirectWorkerFemale();
+		this.contractWorkerMale = license.getContractWorkerMale();
+		this.contractWorkerFemale = license.getContractWorkerFemale();
+		this.dailyWagesMale = license.getDailyWagesMale();
+		this.dailyWagesFemale = license.getDailyWagesFemale();
+		this.totalWorkers = license.getTotalWorkers();
+		if (license.getDemand().getAmtCollected().compareTo(license.getDemand().getBaseDemand()) == 0
+				|| license.getDemand().getAmtCollected().compareTo(license.getDemand().getBaseDemand()) == 1) {
+			this.isPaymentSucess = "YES";
+		} else {
+			this.isPaymentSucess = "NO";
+		}
+		
+		this.licenseDocuments = getSupportDocuments(license,fileStoreBaseDir);
+		this.digiSignedCertFilestoreId = license.getDigiSignedCertFileStoreId();
+		this.uid=license.getUid();
+	}
+
+	
+	public Long getLicenseId() {
+		return licenseId;
+	}
+
+	public void setLicenseId(Long licenseId) {
+		this.licenseId = licenseId;
+	}
 
 	public BigDecimal getTradeMeasure() {
 		return tradeMeasure;
@@ -174,12 +215,20 @@ public class TradeLicenseSimpleDeskResponse {
 		this.agreementDate = agreementDate;
 	}
 
-	public Date getCommencementDate() {
+	public String getCommencementDate() {
 		return commencementDate;
 	}
 
-	public void setCommencementDate(Date commencementDate) {
+	public void setCommencementDate(String commencementDate) {
 		this.commencementDate = commencementDate;
+	}
+
+	public String getApplicationDate() {
+		return applicationDate;
+	}
+
+	public void setApplicationDate(String applicationDate) {
+		this.applicationDate = applicationDate;
 	}
 
 	public String getBoundary() {
@@ -204,14 +253,6 @@ public class TradeLicenseSimpleDeskResponse {
 
 	public void setApplicationStatus(String applicationStatus) {
 		this.applicationStatus = applicationStatus;
-	}
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
 	}
 
 	public String getFatherOrSpouseName() {
@@ -373,5 +414,86 @@ public class TradeLicenseSimpleDeskResponse {
 	public void setTotalWorkers(Long totalWorkers) {
 		this.totalWorkers = totalWorkers;
 	}
-    	
+
+	public String getIsPaymentSucess() {
+		return isPaymentSucess;
+	}
+
+	public void setIsPaymentSucess(String isPaymentSucess) {
+		this.isPaymentSucess = isPaymentSucess;
+	}
+
+	public List<byte[]> getLicenseDocuments() {
+		return licenseDocuments;
+	}
+
+	public void setLicenseDocuments(List<byte[]> licenseDocuments) {
+		this.licenseDocuments = licenseDocuments;
+	}
+	
+	public String getFileStoreBaseDir() {
+		return fileStoreBaseDir;
+	}
+
+	public void setFileStoreBaseDir(String fileStoreBaseDir) {
+		this.fileStoreBaseDir = fileStoreBaseDir;
+	}
+
+	public String getDigiSignedCertFilestoreId() {
+		return digiSignedCertFilestoreId;
+	}
+
+	public void setDigiSignedCertFilestoreId(String digiSignedCertFilestoreId) {
+		this.digiSignedCertFilestoreId = digiSignedCertFilestoreId;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	private List<byte[]> getSupportDocuments(TradeLicense license, String fileStoreBaseDirConfig) throws IOException {
+		List<LicenseDocument> licensedocs = license.getDocuments();
+		Set<FileStoreMapper> fileStoreList = null;
+		List<byte[]> licenseFileList = new ArrayList<>();
+		String fileStoreBaseDir = null;
+		 if(fileStoreBaseDirConfig.isEmpty()) {
+			 fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
+		 }else {
+			 fileStoreBaseDir = fileStoreBaseDirConfig;
+		 } 
+		for (LicenseDocument licenseDocument : licensedocs) {
+			fileStoreList = licenseDocument.getFiles();
+			for (FileStoreMapper fileStoreMapper : fileStoreList) {
+				final File file = this.fetch(fileStoreMapper.getFileStoreId(), Constants.TL_FILE_STORE_DIR, fileStoreBaseDir);
+				licenseFileList.add(FileCopyUtils.copyToByteArray(file));
+			}
+		}
+		return licenseFileList;
+	}
+
+	private File fetch(String fileStoreId, String moduleName, String fileStoreBaseDir) {
+		return this.fetchAsPath(fileStoreId, moduleName, fileStoreBaseDir).toFile();
+	}
+
+	private Path fetchAsPath(String fileStoreId, String moduleName, String fileStoreBaseDir) {
+		Path fileDirPath = this.getFileDirectoryPath(moduleName, fileStoreBaseDir);
+		if (!fileDirPath.toFile().exists())
+			throw new ApplicationRuntimeException(String.format("File Store does not exist at Path : %s/%s/%s",
+					fileStoreBaseDir, getCityCode(), moduleName));
+		return this.getFilePath(fileDirPath, fileStoreId);
+	}
+
+	private Path getFilePath(Path fileDirPath, String fileStoreId) {
+		return Paths.get(fileDirPath + separator + fileStoreId);
+	}
+
+	private Path getFileDirectoryPath(String moduleName, String fileStoreBaseDir) {
+		return Paths.get(new StringBuilder().append(fileStoreBaseDir).append(separator).append(getCityCode())
+				.append(separator).append(moduleName).toString());
+	}
+
 }
