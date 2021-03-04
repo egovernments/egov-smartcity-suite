@@ -262,17 +262,17 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
 	}
 
 	private void validateCreate() {
-		if (serviceCategory != null && serviceCategory != -1)
+		if (serviceCategory == null || serviceCategory == -1)
 			addActionError(getText("error.select.service.category"));
-		if (bankId != null && bankId != -1)
+		if (bankId == null && bankId == -1)
 			addActionError(getText("error.select.bank"));
-		if (branchId != null && branchId != -1)
+		if (branchId == null && branchId == -1)
 			addActionError(getText("error.select.bankbranch"));
-		if (bankAccountServiceMap.getServiceDetails() != null
-				&& bankAccountServiceMap.getServiceDetails().getId() != null)
+		if (bankAccountServiceMap.getServiceDetails() == null
+				|| bankAccountServiceMap.getServiceDetails().getId() == null)
 			addActionError(getText("error.select.service.type"));
-		if (bankAccountServiceMap.getBankAccountId() != null
-				&& bankAccountServiceMap.getBankAccountId().getId() != null)
+		if (bankAccountServiceMap.getBankAccountId() == null
+				&& bankAccountServiceMap.getBankAccountId().getId() == null)
 			addActionError(getText("error.select.bankaccount"));
 		if (!hasErrors() && isMapExists())
 			addActionError(getText("service.master.bankmap.exist.error",
