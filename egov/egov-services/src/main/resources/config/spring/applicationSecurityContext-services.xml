@@ -62,7 +62,7 @@
                 <security:filter-chain pattern="/resources/**" filters="none"/>
                 <security:filter-chain pattern="/error/**" filters="none"/>
                 <security:filter-chain pattern="/**" filters="concurrentSessionFilter,securityContextPersistenceFilter,
-                                       logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,
+                                       logoutFilter,authenticationProcessingFilter,headerWriterFilter,
                                        securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,
                                        anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor"/>
             </list>
