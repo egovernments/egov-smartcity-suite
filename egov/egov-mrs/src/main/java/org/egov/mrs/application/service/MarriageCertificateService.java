@@ -565,7 +565,7 @@ public class MarriageCertificateService {
 			final ReIssue reIssue, final InputStream fileStream, final String certificateNo) {
 		final MarriageCertificate marriageCertificate = new MarriageCertificate();
 		if (marriageRegistration != null || reIssue != null) {
-			final String fileName = certificateNo + ".pdf";
+			final String fileName = certificateNo.replace("/", "-") + ".pdf";
 			buildCertificate(marriageRegistration, reIssue, marriageCertificate, certificateNo,
 					MarriageCertificateType.REJECTION);
 			final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
