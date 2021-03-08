@@ -520,11 +520,11 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         billDetails = new HashMap<String, Object>();
         if (parameters.get("from") != null && FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA.equals(parameters.get("from")[0])) {
         	if(parameters.get(VHID) != null) {
-        		contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?",
+        		contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?1",
                         Long.valueOf(parameters.get(VHID)[0]));
 			}else { 
 				contraVoucher = (ContraJournalVoucher)
-				persistenceService.find(" from ContraJournalVoucher where voucherHeaderId.voucherNumber=?",parameters.get(VHNUMBER)[0]); 
+				persistenceService.find(" from ContraJournalVoucher where voucherHeaderId.voucherNumber=?1",parameters.get(VHNUMBER)[0]); 
 			}				 
             voucherHeader = contraVoucher.getVoucherHeaderId();
             from = FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA;
@@ -532,7 +532,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         	if(parameters.get(VHID) != null) {
         		voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
         	}else{
-        		voucherHeader = (CVoucherHeader) getPersistenceService().find("from CVoucherHeader where voucherNumber=?",
+        		voucherHeader = (CVoucherHeader) getPersistenceService().find("from CVoucherHeader where voucherNumber=?1",
         				parameters.get(VHNUMBER)[0]);
         	}
         	from = FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL;
