@@ -1,52 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="appealPetitionProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -81,42 +34,42 @@
 	<field name="disposalDate" class="java.lang.String"/>
 	<title>
 		<band height="348" splitType="Stretch">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="47" y="60" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="85" y="12" width="407" height="28" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["PROCEEDINGS OF COMMISSIONER, "+$P{cityName}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="2" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isItalic="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="170" y="40" width="258" height="20" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
 				<textElement textAlignment="Left" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{ownerInfo}.getApproverName()+"\n\tCommissioner"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="46" y="150" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
 				<textElement markup="styled">
 					<font size="8" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight">
+			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="160" width="452" height="180" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
@@ -124,7 +77,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["\tIn the reference 1st read above a "+$P{natureOfWork}+" has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getDoorNo())+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getActualHearingDate()+"</style> to represent the case before the Appellate Commissioner. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter  careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below by the Regional Director cum Appellate Commissioner, in terms of rule-22(1) ofby the Regional Director cum Appellate Commissioner, in terms of rule-22(1) of Taxation and Finance Rules issued under Schedule II of A.P. Municipalities Act, 1965. \n\n\t The petitioner is therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders."]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="369" y="60" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
 				<textElement markup="styled">
 					<font size="8"/>
@@ -146,7 +99,7 @@
 				</textElement>
 				<text><![CDATA[*  *  *  *]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight">
+			<textField>
 				<reportElement x="47" y="74" width="451" height="16" uuid="659c0df3-0b37-420f-a3f6-517aa9ae101c"/>
 				<textElement>
 					<font size="8" isBold="true"/>
@@ -240,7 +193,7 @@
 	</columnHeader>
 	<detail>
 		<band height="28">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="69" y="0" width="71" height="28" isPrintWhenDetailOverflows="true" uuid="4c758357-ff51-4a94-8532-03b5c26c180d"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
@@ -254,7 +207,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getZoneName()]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="206" y="0" width="72" height="28" isPrintWhenDetailOverflows="true" uuid="8957bca9-614b-485e-94ad-df5b964f0453"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
@@ -268,7 +221,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{buildingClassification}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="###0.00" isBlankWhenNull="true">
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="278" y="0" width="61" height="28" isPrintWhenDetailOverflows="true" uuid="fae351be-980f-44c1-ad91-ba13c1a11183"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -282,7 +235,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="339" y="0" width="61" height="28" isPrintWhenDetailOverflows="true" uuid="69f98db7-45f3-47c7-b5fa-d961279e6bbf"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
@@ -296,7 +249,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="###0" isBlankWhenNull="true">
+			<textField pattern="###0" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="53" height="28" isPrintWhenDetailOverflows="true" uuid="1dd84d75-12a1-428b-bb6c-124582b39615"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -310,7 +263,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{yearlyRentalValue}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="66" height="28" isPrintWhenDetailOverflows="true" uuid="e2127003-e3b6-4f80-89b4-c056556e92bd"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
@@ -340,7 +293,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="205" y="102" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="12" isBold="true"/>
