@@ -137,7 +137,7 @@ public class ApplicationIndex extends AbstractAuditable {
     @SafeHtml
     private String consumerCode;
 
-    @Length(max = 12)
+    @Length(min = 10, max = 50)
     @SafeHtml
     private String mobileNumber;
 
