@@ -82,7 +82,11 @@
 			id : 'wsPortalRequest',
 			name : 'wsPortalRequest',
 			value : wsPortalRequest
-		})).appendTo(document.body).submit();
+		})).append(jQuery('<input>').attr({
+            type: 'hidden',
+            name: '${_csrf.parameterName}',
+            value: '${_csrf.token}'
+        })).appendTo(document.body).submit();
 	});
 </script>
 </head>
