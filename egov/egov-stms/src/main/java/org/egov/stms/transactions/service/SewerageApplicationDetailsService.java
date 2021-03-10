@@ -289,6 +289,7 @@ public class SewerageApplicationDetailsService {
     @Qualifier("workflowService")
     private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
 
+    @Autowired
     private ThirdPartyApplicationEventPublisher thirdPartyApplicationEventPublisher;
     
     @Autowired
