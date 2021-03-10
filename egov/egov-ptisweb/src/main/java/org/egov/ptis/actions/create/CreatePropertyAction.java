@@ -1261,9 +1261,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (Source.WARDSECRETARY.toString().equalsIgnoreCase(applicationSource)
                 && WS_APPLICATION_CHILD_BIFURCATION.equalsIgnoreCase(reasonForCreate)) {
-            mutationList = getPersistenceService().findAllBy(
-                    "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,
-                    PROP_CREATE_RSN_BIFUR);
+            mutationList =(List<PropertyMutationMaster>) propertyMutationMasterDAO
+    				.getAllPropertyMutationMasterByCodeAndType(PROP_CREATE_RSN_BIFUR, PROP_CREATE_RSN);
         }
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
         final List<String> structureList = getPersistenceService()

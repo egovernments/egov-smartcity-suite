@@ -92,7 +92,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Alter_Assessment') {
 					var indexNumber = '${assessmentNum}';
@@ -128,7 +132,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Bifuracate_Assessment') {
 					var indexNumber = '${assessmentNum}';
@@ -164,7 +172,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Amalgamation') {
 					var indexNumber = '${assessmentNum}';
@@ -200,7 +212,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Revision_Petition') {
 					var propertyId = '${assessmentNum}';
@@ -236,7 +252,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'General_Revision_Petition') {
 					var propertyId = '${assessmentNum}';
@@ -272,7 +292,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Tax_Exemption') {
 					var assessmentNo = '${assessmentNum}';
@@ -301,7 +325,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Demolition') {
 					var assessmentNo = '${assessmentNum}';
@@ -330,7 +358,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 				if (applicationType == 'Vacancy_Remission') {
 					var assessmentNo = '${assessmentNum}';
@@ -365,7 +397,11 @@
 						id : 'wsPortalRequest',
 						name : 'wsPortalRequest',
 						value : wsPortalRequest
-					})).appendTo(document.body).submit();
+					})).append(jQuery('<input >').attr({
+				        type: 'hidden',
+				        name: '${_csrf.parameterName}',
+				        value: '${_csrf.token}'
+				    })).appendTo(document.body).submit();
 				}
 			});
 </script>
