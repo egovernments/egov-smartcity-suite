@@ -63,7 +63,7 @@
                 <security:filter-chain pattern="/application/application-success**" filters="none"/>
                 <security:filter-chain pattern="/application/collecttax-view**" filters="csrfFilter"/>
                 <security:filter-chain pattern="/application/estimationNotice/view/*" filters="none"/>
-                <security:filter-chain pattern="/search/waterSearch/" filters="none"/>
+                <security:filter-chain pattern="/search/waterSearch/" filters="csrfFilter"/>
                 <security:filter-chain pattern="/elastic/appSearch/" filters="anonymousAuthenticationFilter"/>
                 <security:filter-chain pattern="/elastic/appSearch/ajax-moduleTypepopulate"
                                        filters="anonymousAuthenticationFilter"/>

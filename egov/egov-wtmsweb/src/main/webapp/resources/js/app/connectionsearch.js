@@ -274,6 +274,11 @@ function goToAction(obj, consumerCode, applicationType, applicationNumber) {
         $('#waterSearchRequestForm').attr('method', 'post');
         $('#waterSearchRequestForm').attr('action', url);
         $('#waterSearchRequestForm').attr('name', 'myform');
+        $(document.forms["myform"]).append( $('<input>', {
+            type: 'hidden',
+            name: tokenName,
+            value: tokenVal
+        }))
         document.forms["myform"].submit();
     }
 }
