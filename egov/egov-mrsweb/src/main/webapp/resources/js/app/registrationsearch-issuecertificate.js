@@ -143,7 +143,13 @@ $(document).ready( function () {
 							"data" : null,
 						    sortable: false,
 						    "render": function ( data, type, row, meta ) {
-							        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
+						    	var reissueUrl;
+						    	if(wsSource == 'WARDSECRETARY')
+						    		reissueUrl = updateurl+'form/'+row.id;
+						    	else
+						    		reissueUrl = updateurl+row.id;
+						    		
+							    return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+reissueUrl +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
 							        
 						    }
 						
@@ -212,8 +218,8 @@ $(document).ready( function () {
 			value : wsPortalRequest
 		})).append(jQuery('<input>').attr({
             type: 'hidden',
-            name: '${_csrf.parameterName}',
-            value: '${_csrf.token}'
+            name: tokenName,
+            value: tokenVal
         })).appendTo(document.body).submit();
 	}
 	
