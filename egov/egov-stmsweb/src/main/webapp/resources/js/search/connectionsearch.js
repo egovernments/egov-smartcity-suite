@@ -347,7 +347,7 @@ function submitFormForWardSecretary(url) {
 		value : wsPortalRequest
 	})).append(jQuery('<input>').attr({
         type: 'hidden',
-        name: '${_csrf.parameterName}',
-        value: '${_csrf.token}'
+        name: tokenName,
+        value: tokenVal
     })).appendTo(document.body).submit();
 }
