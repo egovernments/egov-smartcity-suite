@@ -3942,17 +3942,20 @@ public class PropertyService {
                      */
                 }
             }
+            final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                    .get(CURRENTYEAR_SECOND_HALF);
+            final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
+                    DEMANDRSN_CODE_ADVANCE);
             if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-                final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
-                        .get(CURRENTYEAR_SECOND_HALF);
-                final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
-                        DEMANDRSN_CODE_ADVANCE);
                 if (advanceDemandDetails == null) {
                     final EgDemandDetails dmdDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
                             totalColl, currSecondHalf);
                     ptDemandNew.getEgDemandDetails().add(dmdDetails);
                 } else
                     advanceDemandDetails.setAmtCollected(totalColl);
+            } else {
+                if (null != advanceDemandDetails)
+                    ptDemandNew.getEgDemandDetails().remove(advanceDemandDetails);
             }
         }
     }

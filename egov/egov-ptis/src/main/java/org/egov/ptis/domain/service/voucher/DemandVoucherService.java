@@ -171,6 +171,8 @@ public class DemandVoucherService {
         BigDecimal currentPropTax = getTotalPropertyTax(newProperty);
         if (oldProperty != null)
             existingPropTax = getTotalPropertyTax(oldProperty);
+        if (existingPropTax.compareTo(ZERO) == 0)
+            oldProperty = null;
         demandIncreased = isDemandIncreased(existingPropTax, currentPropTax, applicationDetails);
         return prepareDataForDemandVoucher(newProperty, oldProperty, demandIncreased, applicationDetails);
     }
@@ -213,10 +215,11 @@ public class DemandVoucherService {
                             .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION);
             if (!areInstallmentsMismatch)
                 instChangeOpposite = ifInstallmentChangeIsOpposite(oldPtDemand, ptDemand, demandIncreased);
-            if (areInstallmentsMismatch)
+            if (areInstallmentsMismatch) {
+
                 demandVoucherDetailList = prepareDemandVoucherDetailsForMismatch(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, isRPNewPropertyCase);
-            else
+            } else
                 demandVoucherDetailList = prepareDemandVoucherDetails(currFirstHalf, currSecondHalf,
                         oldPtDemand, ptDemand, applicationDetails, instChangeOpposite);
         } else
@@ -264,7 +267,10 @@ public class DemandVoucherService {
 
         if (advance.compareTo(ZERO) > 0)
             voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
-                    putAmountAndType(advance.setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+                    putAmountAndType(advance.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? true : false));
+        if (advance.compareTo(ZERO) < 0)
+            voucherDetails.put(glCodeMap.get(DEMANDRSN_CODE_ADVANCE),
+                    putAmountAndType(advance.abs().setScale(2, BigDecimal.ROUND_HALF_UP), demandIncreased ? false : true));
         assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, generalTax, DEMANDRSN_CODE_GENERAL_TAX,
                 applicationDetails);
         assembleIncomeHeads(voucherDetails, glCodeMap, demandIncreased, vacantLandtax, DEMANDRSN_CODE_VACANT_TAX,
@@ -417,30 +423,40 @@ public class DemandVoucherService {
             demandVoucherDetails.setInstallment(normalizeDemandDetailsOld.getInstallment());
             setVariationAmount(demandVoucherDetails, normalizeDemandDetailsOld, normalizeDemandDetailsNew);
             demandVoucherDetails.setLibraryCessVariation(
-                    normalizeDemandDetailsOld.getLibraryCess().subtract(normalizeDemandDetailsNew.getLibraryCess()));
-            demandVoucherDetails
-                    .setAdvance(normalizeDemandDetailsNew.getAdvance().subtract(normalizeDemandDetailsOld.getAdvance()).abs());
+                    normalizeDemandDetailsOld.getLibraryCess().subtract(normalizeDemandDetailsNew.getLibraryCess()).setScale(2,
+                            BigDecimal.ROUND_HALF_UP));
+            if (isAdvanceOnlyWithNewProperty(normalizeDemandDetailsOld, normalizeDemandDetailsNew))
+                demandVoucherDetails
+                        .setAdvance(normalizeDemandDetailsNew.getAdvance().subtract(normalizeDemandDetailsOld.getAdvance())
+                                .setScale(2, BigDecimal.ROUND_HALF_UP));
+            else
+                demandVoucherDetails
+                        .setAdvance(normalizeDemandDetailsOld.getAdvance().subtract(normalizeDemandDetailsNew.getAdvance())
+                                .setScale(2, BigDecimal.ROUND_HALF_UP));
             oldBalance = normalizeDemandDetailsOld.getGeneralTax().add(normalizeDemandDetailsOld.getLibraryCess())
                     .add(normalizeDemandDetailsOld.getVacantLandTax()).subtract(normalizeDemandDetailsOld
                             .getGeneralTaxCollection().add(normalizeDemandDetailsOld.getVacantLandTaxCollection())
-                            .add(normalizeDemandDetailsOld.getLibraryCessCollection()));
+                            .add(normalizeDemandDetailsOld.getLibraryCessCollection()))
+                    .setScale(2, BigDecimal.ROUND_HALF_UP);
             newBalance = normalizeDemandDetailsNew.getGeneralTax().add(normalizeDemandDetailsNew.getLibraryCess())
                     .add(normalizeDemandDetailsNew.getVacantLandTax()).subtract(normalizeDemandDetailsNew
                             .getGeneralTaxCollection().add(normalizeDemandDetailsNew.getVacantLandTaxCollection())
-                            .add(normalizeDemandDetailsNew.getLibraryCessCollection()));
+                            .add(normalizeDemandDetailsNew.getLibraryCessCollection()))
+                    .setScale(2, BigDecimal.ROUND_HALF_UP);
 
             if (isPenaltyCollectionApportioned(applicationDetails, normalizeDemandDetailsNew, normalizeDemandDetailsOld))
                 demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenalty()
-                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
+                        .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).setScale(2, BigDecimal.ROUND_HALF_UP));
             else {
                 if (instChangeOpposite) {
                     demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
-                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()));
-                    demandVoucherDetails.setNetBalance(oldBalance.subtract(newBalance));
+                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    demandVoucherDetails.setNetBalance(oldBalance.subtract(newBalance).setScale(2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     demandVoucherDetails.setPenalty(normalizeDemandDetailsNew.getPenaltyCollection()
-                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).abs());
-                    demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance));
+                            .subtract(normalizeDemandDetailsOld.getPenaltyCollection()).abs()
+                            .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    demandVoucherDetails.setNetBalance(newBalance.subtract(oldBalance).setScale(2, BigDecimal.ROUND_HALF_UP));
                 }
             }
             demandVoucherDetails.setPurpose(normalizeDemandDetailsOld.getPurpose());
@@ -634,16 +650,16 @@ public class DemandVoucherService {
         if (oldDetails.getGeneralTax().compareTo(ZERO) > 0
                 && newDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setVacantTaxVariation(
-                    oldDetails.getGeneralTax().subtract(newDetails.getVacantLandTax()));
+                    oldDetails.getGeneralTax().subtract(newDetails.getVacantLandTax()).setScale(2, BigDecimal.ROUND_HALF_UP));
         else if (newDetails.getGeneralTax().compareTo(ZERO) > 0
                 && oldDetails.getVacantLandTax().compareTo(ZERO) > 0)
             demandVoucherDetails.setGeneralTaxVariation(
-                    oldDetails.getVacantLandTax().subtract(newDetails.getGeneralTax()));
+                    oldDetails.getVacantLandTax().subtract(newDetails.getGeneralTax()).setScale(2, BigDecimal.ROUND_HALF_UP));
         else {
             demandVoucherDetails.setGeneralTaxVariation(
-                    oldDetails.getGeneralTax().subtract(newDetails.getGeneralTax()));
+                    oldDetails.getGeneralTax().subtract(newDetails.getGeneralTax()).setScale(2, BigDecimal.ROUND_HALF_UP));
             demandVoucherDetails.setVacantTaxVariation(
-                    oldDetails.getVacantLandTax().subtract(newDetails.getVacantLandTax()));
+                    oldDetails.getVacantLandTax().subtract(newDetails.getVacantLandTax()).setScale(2, BigDecimal.ROUND_HALF_UP));
         }
 
     }
@@ -809,7 +825,7 @@ public class DemandVoucherService {
                     .add(normalizeDemandDetailsLarge.getVacantLandTax()).subtract(normalizeDemandDetailsLarge
                             .getGeneralTaxCollection().add(normalizeDemandDetailsLarge.getVacantLandTaxCollection())
                             .add(normalizeDemandDetailsLarge.getLibraryCessCollection()));
-            demandVoucherDetails.setNetBalance(ZERO.subtract(balance));
+            demandVoucherDetails.setNetBalance(balance);
         } else {
             demandVoucherDetails.setGeneralTaxVariation(
                     normalizeDemandDetailsLarge.getGeneralTax().subtract(ZERO));
@@ -869,6 +885,13 @@ public class DemandVoucherService {
                 .filter(p -> installments.add(p.getEgDemandReason().getEgInstallmentMaster()))
                 .collect(Collectors.toList());
         return installments;
+    }
+
+    public boolean isAdvanceOnlyWithNewProperty(NormalizeDemandDetails normalizeDemandDetailsOld,
+            NormalizeDemandDetails normalizeDemandDetailsNew) {
+        return (normalizeDemandDetailsOld.getAdvance().compareTo(ZERO) == 0) &&
+                (normalizeDemandDetailsNew.getAdvance().compareTo(ZERO) > 0);
+
     }
 
 }
