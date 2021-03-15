@@ -253,6 +253,7 @@ function goToAction(obj,uid, id) {
 }
 
 function renewalForm(renewalUrl) {
+	console.log(tokenName +"     "+ tokenVal);
 	jQuery('<form>.').attr({
 		method : 'POST',
 		action : renewalUrl,
@@ -272,10 +273,15 @@ function renewalForm(renewalUrl) {
 		id : 'wsPortalRequest',
 		name : 'wsPortalRequest',
 		value : wsPortalRequest
-	})).appendTo(document.body).submit();
+	})).append(jQuery('<input>').attr({
+        type: 'hidden',
+        name: tokenName,
+        value: tokenVal
+    })).appendTo(document.body).submit();
 }
 
 function closureForm(closureUrl, id) {
+	console.log(tokenName +"     "+ tokenVal);
 	jQuery('<form>.').attr({
 		method : 'POST',
 		action : closureUrl+"form/"+id,
@@ -295,5 +301,9 @@ function closureForm(closureUrl, id) {
 		id : 'wsPortalRequest',
 		name : 'wsPortalRequest',
 		value : wsPortalRequest
-	})).appendTo(document.body).submit();
+	})).append(jQuery('<input>').attr({
+        type: 'hidden',
+        name: tokenName,
+        value: tokenVal
+    })).appendTo(document.body).submit();
 }
