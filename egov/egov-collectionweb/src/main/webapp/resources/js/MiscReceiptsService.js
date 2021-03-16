@@ -59,7 +59,7 @@
         	var path = '/collection';
         	
         	var url1 = path+"/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService.action?serviceId="+service+"&deptId="+dept;
-        	var transaction = YAHOO.util.Connect.asyncRequest('POST', url1,loadMiscDetails, null);
+        	var transaction = YAHOO.util.Connect.asyncRequest('GET', url1,loadMiscDetails, null);
         	
     		
         	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
