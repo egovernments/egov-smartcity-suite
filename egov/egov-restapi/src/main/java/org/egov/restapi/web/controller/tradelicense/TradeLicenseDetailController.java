@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RequestMapping("/tradelicense")
 public class TradeLicenseDetailController {
 
     @Autowired
@@ -75,7 +76,7 @@ public class TradeLicenseDetailController {
     @Value("${filestore.base.dir}")
     private String fileStoreBaseDir;
 
-    @GetMapping(value = "/tradelicense/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
         return licenseDetails(request);
     }
