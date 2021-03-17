@@ -227,14 +227,14 @@ public class BalanceSheetScheduleService extends ScheduleService {
     private void populatePreviousYearTotalsForSchedule(final Statement balanceSheet, final String filterQuery, Map<String, Object> queryParams, final Date toDate,
                                                        final Date fromDate,
                                                        final String majorCode, final Character type) {
-        String formattedToDate = "";
+        Date formattedToDate= null;
         if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod())) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(fromDate);
             cal.add(Calendar.DATE, -1);
-            formattedToDate = balanceSheetService.getFormattedDate(cal.getTime());
+            formattedToDate = cal.getTime();
         } else
-            formattedToDate = balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(toDate));
+            formattedToDate = balanceSheetService.getPreviousYearFor(toDate);
         final StringBuffer qry = new StringBuffer(512);
         qry.append("select sum(debitamount)-sum(creditamount),c.glcode from generalledger g,chartofaccounts c,voucherheader v   ");
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
@@ -247,8 +247,8 @@ public class BalanceSheetScheduleService extends ScheduleService {
                 .append(" and coa2.glcode=SUBSTR(coad.glcode,1,").append(minorCodeLength).append(") and coad.classification=4 and coad.majorcode=:majorCode)")
                 .append(" and c.majorcode=:majorCode and c.classification=4 ").append(filterQuery).append(" group by c.glcode");
         final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
-        query.setParameter("voucherToDate", formattedToDate, StringType.INSTANCE)
-                .setParameter("voucherFromDate", balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(fromDate)), StringType.INSTANCE)
+        query.setParameter("voucherToDate", formattedToDate)
+                .setParameter("voucherFromDate", balanceSheetService.getPreviousYearFor(fromDate))
                 .setParameter("majorCode", majorCode, StringType.INSTANCE);
 
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));

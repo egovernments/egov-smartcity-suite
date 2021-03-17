@@ -350,8 +350,8 @@ public abstract class ScheduleService extends PersistenceService {
                 .append(",chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = :reportType and coa2.glcode=SUBSTR(coad.glcode,1,")
                 .append(minorCodeLength).append(") and coad.classification=4 and coad.majorcode=:majorCode) and c.majorcode=:majorCode and c.classification=4 ")
                 .append(filterQuery).append(" group by v.fundid,c.glcode order by c.glcode").toString());
-        query.setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE)
-                .setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
+        query.setParameter("voucherToDate", toDate)
+                .setParameter("voucherFromDate", fromDate)
                 .setParameter("reportType", reportType, StringType.INSTANCE)
                 .setParameter("majorCode", majorCode, StringType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
