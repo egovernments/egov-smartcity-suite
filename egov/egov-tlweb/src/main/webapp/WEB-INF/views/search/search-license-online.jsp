@@ -55,7 +55,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action="" id="searchFormForPayment" modelAttribute="onlineSearchForm" method="get">
+		<form:form class="form-horizontal form-groups-bordered" action="" id="searchFormForPayment" modelAttribute="onlineSearchRequest" method="get">
 			<input type="hidden" id="wsTransactionId" name="transactionId" value="${transactionId}" />
 			<input type="hidden" id="wsSource" name="source" value="${source}" />
 			<input type="hidden" id="wsPortalRequest" name="wsPortalRequest" value="${wsPortalRequest}" />
