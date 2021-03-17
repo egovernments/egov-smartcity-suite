@@ -371,13 +371,13 @@ public class GeneralLedgerReport {
                         final StringBuilder sqlString1 = new StringBuilder("select name as \"glname\"")
                                 .append(" from chartofaccounts")
                                 .append(" where glcode = :glCode");
-                        List<Object[]> res = entityManager.createNativeQuery(sqlString1.toString())
+                        List<String> res = entityManager.createNativeQuery(sqlString1.toString())
                                 .setParameter("glCode", code)
                                 .getResultList();
                         String aName = "";
                         if (res != null)
                             aName = res.get(0).toString();
-
+                        
                         arr[1] = "";
                         arr[2] = arr[3] = arr[6] = arr[7] = arr[10] = arr[11] = arr[12] = arr[13] = "";
                         arr[14] = "";
