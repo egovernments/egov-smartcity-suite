@@ -647,12 +647,12 @@ StringBuilder query1 = new StringBuilder("SELECT distinct vh.id as voucherId,vh.
                 .append(" from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and ")
                 .append("ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  ")
                 .append("and exists (SELECT voucherheaderid FROM generalledger gl WHERE glcode=:glCode) AND gl.voucherheaderid = gl1.voucherheaderid")
-                .append(" AND gl1.glcode = :glCode and vh.voucherDate>=:startDate ")
-                .append("and vh.voucherDate<=:endDate and vh.status not in(")
+                .append(" AND gl1.glcode = :glCode and vh.voucherDate>= :startDate ")
+                .append("and vh.voucherDate<= :endDate and vh.status not in(")
                 .append(voucherStatusToExclude).append(") ").append(miscQuery).append(" ").toString();
         queryFromParams.put("glCode",glCode1);
-        queryFromParams.put("startDate",Constants.DDMMYYYYFORMAT1.format(startDate));
-        queryFromParams.put("endDate",Constants.DDMMYYYYFORMAT1.format(endDate));
+        queryFromParams.put("startDate",startDate);
+        queryFromParams.put("endDate",endDate);
         queryFromParams.putAll(queryParams);        OrderBy = "order by voucherdate,vouchernumber";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Main query :" + query1.toString() + queryFrom + OrderBy);
