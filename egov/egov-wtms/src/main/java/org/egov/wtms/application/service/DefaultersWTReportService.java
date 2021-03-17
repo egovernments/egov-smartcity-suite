@@ -98,13 +98,13 @@ public class DefaultersWTReportService {
 			queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
 		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
 		if (Double.parseDouble(toAmount) == 0)
-			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
 		else {
-			finalQuery.setParameter("fromAmount", fromAmount);
-			finalQuery.setParameter("toAmount", toAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
+			finalQuery.setParameter("toAmount", Double.parseDouble(toAmount));
 		}
 		if (ward != null && !ward.isEmpty())
-			finalQuery.setParameter("ward", ward);
+			finalQuery.setParameter("ward", Long.parseLong(ward));
 		finalQuery.setFirstResult(startsFrom);
         finalQuery.setMaxResults(maxResults);
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
@@ -127,12 +127,12 @@ public class DefaultersWTReportService {
             queryStr.append(" and wardboundary.id = :ward "); 
 		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
 		if (ward != null && !ward.isEmpty())
-			finalQuery.setParameter("ward", ward);
+			finalQuery.setParameter("ward", Long.parseLong(ward));
 		if (Double.parseDouble(toAmount) == 0)
-			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
 		else {
-			finalQuery.setParameter("fromAmount", fromAmount);
-			finalQuery.setParameter("toAmount", toAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
+			finalQuery.setParameter("toAmount", Double.parseDouble(toAmount));
 		}
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
@@ -158,13 +158,13 @@ public class DefaultersWTReportService {
         queryStr.append(") as count");
 		final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
 		if (Double.parseDouble(toAmount) == 0)
-			finalQuery.setParameter("fromAmount", fromAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
 		else {
-			finalQuery.setParameter("fromAmount", fromAmount);
-			finalQuery.setParameter("toAmount", toAmount);
+			finalQuery.setParameter("fromAmount", Double.parseDouble(fromAmount));
+			finalQuery.setParameter("toAmount", Double.parseDouble(toAmount));
 		}
 		if (ward != null && !ward.isEmpty())
-			finalQuery.setParameter("ward", ward);
+			finalQuery.setParameter("ward", Long.parseLong(ward));
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
     }

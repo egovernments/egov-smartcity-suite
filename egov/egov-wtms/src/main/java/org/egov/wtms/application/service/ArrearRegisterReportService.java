@@ -90,17 +90,17 @@ public class ArrearRegisterReportService {
         queryString.append(
                 "select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where ")
                 .append(" pmv.connectionDetailsId = idc.waterMatView.connectionDetailsId")
-                .append(" and pmv.connectionstatus =:status and pmv.arrearbalance > 0 ")
+                .append(" and pmv.connectionStatus =:status and pmv.arrearBalance > 0 ")
                 .append(" and idc.installment.fromDate not between :fromDate and :toDate ");
 
         if (locality != null && locality != -1)
             queryString.append(" and pmv.locality= :locality ");
 
         if (zoneId != null && zoneId != -1)
-            queryString.append(" and pmv.zoneid= :zoneId ");
+            queryString.append(" and pmv.zoneId= :zoneId ");
 
         if (wardId != null && wardId != -1)
-            queryString.append("  and pmv.wardid= :wardId ");
+            queryString.append("  and pmv.wardId= :wardId ");
         queryString.append(" order by pmv.connectionDetailsId ");
         final Query query = getCurrentSession().createQuery(queryString.toString());
         query.setParameter("status", ACTIVE);
