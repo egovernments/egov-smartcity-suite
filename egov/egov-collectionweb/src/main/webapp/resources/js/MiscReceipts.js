@@ -704,7 +704,7 @@ function createDropdownFormatterDetailCode(prefix){
 		var detailtypeid = document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 			var selecteddetailcode1=document.getElementById('subLedgerlist['+obj.value+'].detailCode').value;
 			var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+obj.value;
-			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postTypeDetailCode, null);
 	};
 	var postTypeDetailCode = {
 	success: function(o) {
@@ -866,7 +866,7 @@ var onDropdownChange = function(index,obj) {
 		selecteddetailtype=document.getElementById('subLedgerlist['+obj.value+'].detailType.id').value;
 		//document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value= subledgerid.options[subledgerid.selectedIndex].text;
 		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+obj.value+'&selectedDetailType='+selecteddetailtype+'&onload=false';
-		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postType, null);
 };
 var postType = {
 success: function(o) {
@@ -941,7 +941,7 @@ function getDetailType(val){
 	var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 	if( subledgerid.options[subledgerid.selectedIndex].value!=0){
 		var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+accountCode+'&index='+val+'&selectedDetailType='+selecteddetailtype+'&onload=true';
-		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postType, null);
 	}
 	else{
 		var detailCodeObj = document.getElementById('subLedgerlist['+val+'].detailCode');
@@ -972,7 +972,7 @@ function getDetailCodeValue(val){
 	var selecteddetailcode1=document.getElementById('subLedgerlist['+val+'].detailCode').value;
 	if(selecteddetailcode1!=0){
 		var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+selecteddetailcode1+'&detailtypeid='+detailtypeid+'&index='+val+'&codeorname=code';
-		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postTypeDetailCode, null);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postTypeDetailCode, null);
 	}
 
 }
@@ -993,7 +993,7 @@ function check(){
 		}
 	}
 	var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
-	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
+	var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callbackJV, null);
 	
 }
 var callbackJV = {
@@ -1115,7 +1115,7 @@ function validateDetailCode(obj)
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
 	var url =  path+'/receipts/ajaxReceiptCreate-ajaxValidateDetailCodeNew.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index+'&codeorname=both';
-	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCode, null);
+	var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callbackCode, null);
 }
 var callbackCode = {
 	success: function(o) {
@@ -1516,7 +1516,7 @@ var  currRow=getRowIndex(obj);
 			if(onElementFocused(obj)){
 				ShowImage(obj);//To start loading image
 				var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
-				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
+				var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callbackAutoCompleteEntities, null);
 			}
 		}
 		
