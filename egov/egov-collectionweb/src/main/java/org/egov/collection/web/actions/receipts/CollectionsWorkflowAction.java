@@ -78,6 +78,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -537,6 +538,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return SUCCESS/ERROR
      */
+    @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/collectionsWorkflow-approveCollections")
     public String approveCollections() {
         if (!validateApproverRemitterMap()) {
@@ -550,6 +552,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         return SUCCESS;
     }
 
+    @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/collectionsWorkflow-approveAllCollections")
     public String approveAllCollections() {
         // this set's wfAction which is used by listWorkflow

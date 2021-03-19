@@ -997,18 +997,22 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final String nextAction, final Position ownerPosition, final String remarks, final User newOwner) {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
         // Validate state owner position and current user position.
-        Position loggedInUserposition;
         if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
-            loggedInUserposition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
-        else
-            loggedInUserposition = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
-        // Validate
-        if (loggedInUserposition != null && receiptHeader.getState() != null
-                && !(receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName()))) {
+        {
+        	Position loggedInUserposition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
+            if (loggedInUserposition != null && receiptHeader.getState() != null
+                    && !(receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName()))) {
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item" ,
+                                "Current user is not the owner of the selected workflow inbox item")));
+            }
+        }
+        else if (collectionsUtil.isNotValidApprover(receiptHeader, this.securityUtils.getCurrentUser()) ) {
             throw new ValidationException(
-                    Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item",
+                    Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item ",
                             "Current user is not the owner of the selected workflow inbox item")));
         }
+        
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader

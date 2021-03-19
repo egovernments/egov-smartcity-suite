@@ -62,9 +62,15 @@
 		name="collectionsWorkflow.errorMessage" /></div>
 
 	<br />
+	<div class="subheadnew">
+	<s:actionerror />
+     <s:fielderror />
+     </div>
 
-	<input name="buttonClose" type="button" class="buttonsubmit"
-		id="buttonClose" value="Close" onclick="window.close()" />
+	<div class="text-center">	
+	<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
+	</div>
+	
 </s:form>
 </body>
 </html>

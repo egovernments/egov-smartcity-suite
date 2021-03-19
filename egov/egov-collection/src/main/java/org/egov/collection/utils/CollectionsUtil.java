@@ -465,10 +465,14 @@ public class CollectionsUtil {
                 throw new ValidationException(user.getUsername() + " User doesn't have active assignments.",
                         user.getUsername() + " User doesn't have active assignments.");
         }
-
         return position;
     }
-
+    
+    public boolean isNotValidApprover(final ReceiptHeader receiptHeader,final User user) {
+            List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+            return assignList.stream().filter(assign->assign.getPosition().getName().equalsIgnoreCase(receiptHeader.getState().getOwnerPosition().getName())).collect(Collectors.toList()).isEmpty() ;
+    }
+  
     public List<Position> getPositionsForEmployee(final User user) {
         return posService.getPositionsForEmployee(user.getId(), null);
     }
