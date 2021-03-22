@@ -127,6 +127,12 @@ public class SMSService {
     public boolean sendSMS(String mobileNumber, String message, NotificationPriority priority) {
         try {
             HttpClient client = HttpClientBuilder.create().build();
+            LOGGER.error("SMS :", smsProviderURL);
+            LOGGER.error("SMS senderUserName :", senderUserName);
+            LOGGER.error("SMS senderPassword :", senderPassword);
+            LOGGER.error("SMS sender :", sender);
+            LOGGER.error("SMS mobileNumber :", mobileNumber);
+            LOGGER.error("SMS message:", message);
             HttpPost post = new HttpPost(smsProviderURL);
             List<NameValuePair> urlParameters = new ArrayList<>();
             urlParameters.add(new BasicNameValuePair(senderUserNameReqParamName, senderUserName));
@@ -136,7 +142,9 @@ public class SMSService {
             urlParameters.add(new BasicNameValuePair(messageReqParamName, message));
             setAdditionalParameters(urlParameters, priority);
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
+            LOGGER.error("SMS message:--Start---");
             HttpResponse response = client.execute(post);
+            LOGGER.error("SMS message:--End---");
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("SMS :- Mobile Number : {} Response : {}", mobileNumber, responseCode);
