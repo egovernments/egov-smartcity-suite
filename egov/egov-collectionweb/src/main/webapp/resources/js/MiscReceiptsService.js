@@ -51,7 +51,7 @@
         	populateserviceId({serviceCatId:serviceCategory.options[serviceCategory.selectedIndex].value});	
         }
         
-        function loadFinDetails(service){
+        function loadFinDetails(service){ 
         
         	var dept = dom.get('deptId').value;
         	var service = dom.get('serviceId').value;
