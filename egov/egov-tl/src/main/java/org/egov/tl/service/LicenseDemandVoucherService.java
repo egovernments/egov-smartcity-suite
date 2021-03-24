@@ -48,15 +48,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class LicenseDemandVoucherService {
 	
 	private static final Logger LOGGER = Logger.getLogger(LicenseDemandVoucherService.class);
-	private static final String DEMAND_VOUCHER_HEADER_PARAMS = "DEMAND_VOUCHER_HEADER_PARAMS";
-    private static final String VOUCHERDESCRIPTION = "TL Demand voucher";
-    private static final String DEMANDVOUCHER_DEPARTMENTCODE = "DEPARTMENT";
-    private static final String DEMANDVOUCHER_FUNCTIONCODE = "FUNCTION";
-    private static final String DEMANDVOUCHER_FUNDCODE = "FUND";
-    private static final String DEMANDVOUCHER_FUNDSOURCECODE = "FUNDSOURCE";
-    private static final String DEMANDVOUCHER_VOUCHERNAME = "VOUCHERNAME";
-    private static final String DEMANDVOUCHER_VOUCHERTYPE = "VOUCHERTYPE";
-    private static final String DEMANDVOUCHER_VOUCHERSTATUS = "VOUCHERSTATUS";
+	private static final String TL_DEMAND_VOUCHER_HEADER_PARAMS = "TL_DEMAND_VOUCHER_HEADER_PARAMS";
+    private static final String TL_VOUCHERDESCRIPTION = "TL Demand voucher";
+    private static final String TL_DEMANDVOUCHER_DEPARTMENTCODE = "DEPARTMENT";
+    private static final String TL_DEMANDVOUCHER_FUNCTIONCODE = "FUNCTION";
+    private static final String TL_DEMANDVOUCHER_FUNDCODE = "FUND";
+    private static final String TL_DEMANDVOUCHER_FUNDSOURCECODE = "FUNDSOURCE";
+    private static final String TL_DEMANDVOUCHER_VOUCHERNAME = "VOUCHERNAME";
+    private static final String TL_DEMANDVOUCHER_VOUCHERTYPE = "VOUCHERTYPE";
+    private static final String TL_DEMANDVOUCHER_VOUCHERSTATUS = "VOUCHERSTATUS";
     private static final String MODULESID_QUERY = "select id from eg_modules where code =:code";
 	final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
     public static final String FINANCIALYEAR_START_DATE = "STARTDATE";
@@ -174,16 +174,16 @@ public class LicenseDemandVoucherService {
             LOGGER.error("Exception while parsing voucher date", e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
-        Map<String, String> voucherHeaderDataMap = getAppconfigValueMap(DEMAND_VOUCHER_HEADER_PARAMS);
-        headerdetails.put(VoucherConstant.VOUCHERNAME, voucherHeaderDataMap.get(DEMANDVOUCHER_VOUCHERNAME));
-        headerdetails.put(VoucherConstant.VOUCHERTYPE, voucherHeaderDataMap.get(DEMANDVOUCHER_VOUCHERTYPE));
-        headerdetails.put(VoucherConstant.FUNDSOURCECODE, voucherHeaderDataMap.get(DEMANDVOUCHER_FUNDSOURCECODE));
-        headerdetails.put(VoucherConstant.STATUS, voucherHeaderDataMap.get(DEMANDVOUCHER_VOUCHERSTATUS));
-        headerdetails.put(VoucherConstant.DEPARTMENTCODE, voucherHeaderDataMap.get(DEMANDVOUCHER_DEPARTMENTCODE));
-        headerdetails.put(VoucherConstant.FUNDCODE, voucherHeaderDataMap.get(DEMANDVOUCHER_FUNDCODE));
-        headerdetails.put(VoucherConstant.FUNCTIONCODE, voucherHeaderDataMap.get(DEMANDVOUCHER_FUNCTIONCODE));
+        Map<String, String> voucherHeaderDataMap = getAppconfigValueMap(TL_DEMAND_VOUCHER_HEADER_PARAMS);
+        headerdetails.put(VoucherConstant.VOUCHERNAME, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_VOUCHERNAME));
+        headerdetails.put(VoucherConstant.VOUCHERTYPE, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_VOUCHERTYPE));
+        headerdetails.put(VoucherConstant.FUNDSOURCECODE, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_FUNDSOURCECODE));
+        headerdetails.put(VoucherConstant.STATUS, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_VOUCHERSTATUS));
+        headerdetails.put(VoucherConstant.DEPARTMENTCODE, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_DEPARTMENTCODE));
+        headerdetails.put(VoucherConstant.FUNDCODE, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_FUNDCODE));
+        headerdetails.put(VoucherConstant.FUNCTIONCODE, voucherHeaderDataMap.get(TL_DEMANDVOUCHER_FUNCTIONCODE));
         headerdetails.put(VoucherConstant.MODULEID, getModulesId());
-        headerdetails.put(VoucherConstant.DESCRIPTION, String.format(VOUCHERDESCRIPTION, applicationType, applicationNumber));
+        headerdetails.put(VoucherConstant.DESCRIPTION, String.format(TL_VOUCHERDESCRIPTION, applicationType, applicationNumber));
         return headerdetails;
     }
 	
