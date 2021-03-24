@@ -450,7 +450,7 @@ var onDropdownChange = function(index,obj) {
 		document.getElementById(SUBLEDGERLIST+'['+obj.value+'].serviceAccountDetail.glCodeId.glcode').value =accountCode;
 		if(accountCode != '---Select---'){
 			var url = path+'/receipts/ajaxReceiptCreate-getDetailTypeForService.action?accountCode='+accountCode+'&index='+obj.value;
-			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postType, null);
 		}else{
 				var d = document.getElementById(SUBLEDGERLIST+'['+obj.value+'].detailType.id');
 				d.options.length=1;
@@ -501,7 +501,7 @@ function loadSLAccountCode(){
 	}
 	}
 	var url =  path+'/receipts/ajaxReceiptCreate-getDetailCode.action?accountCodes='+accountCodes;
-	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackSLAccCode, null);
+	var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callbackSLAccCode, null);
 }
 var callbackSLAccCode = {
 success: function(o) {
@@ -594,7 +594,7 @@ function autocompleteForEntity(obj,myEvent){
 				if(onElementFocused(obj)){
 					ShowImage(obj);//To start loading image
 					var url =   path+ "/receipts/ajaxReceiptCreate-getCodeNew.action?detailTypeId="+detailtypeidObj.value+"&filterKey="+obj.value;
-					var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackAutoCompleteEntities, null);
+					var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callbackAutoCompleteEntities, null);
 				}
 			}
 			

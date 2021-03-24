@@ -262,7 +262,7 @@ loadFinSubledgerSuccessHandler=function(req,res){
               
                 updateGridSLDropdown('glcode.id',i,res.results[i].glcodeId,res.results[i].subledgerCode);
                 var url = path+'/receipts/ajaxReceiptCreate-getDetailType.action?accountCode='+res.results[i].subledgerCode+'&index='+i+'&selectedDetailType='+res.results[i].detailTypeId+'&onload=flase';
-                var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
+                var transaction = YAHOO.util.Connect.asyncRequest('GET', url, postType, null);
 	           // updateGridSLDropdown('detailType.id',i,res.results[i].detailTypeId,res.results[i].detailTypeName);
                 updateSLGrid('detailCode',i,res.results[i].detailCode);
                 updateSLGrid('detailKeyId',i,res.results[i].detailKeyId);
