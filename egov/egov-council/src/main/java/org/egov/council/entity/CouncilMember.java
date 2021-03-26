@@ -133,7 +133,6 @@ public class CouncilMember extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
-    @Pattern(regexp = ALPHANUMERIC, message=INVALID_ALPHANUMERIC_WITH_SPACE)
     private String name;
 
     @NotNull
