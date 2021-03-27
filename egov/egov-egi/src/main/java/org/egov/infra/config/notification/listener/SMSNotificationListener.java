@@ -63,6 +63,7 @@ import static org.egov.infra.notification.NotificationConstants.MESSAGE;
 import static org.egov.infra.notification.NotificationConstants.MOBILE;
 import static org.egov.infra.notification.NotificationConstants.PRIORITY;
 import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
+import static org.egov.infra.notification.NotificationConstants.TEMPLATEID;
 
 @Component
 public class SMSNotificationListener {
@@ -75,7 +76,7 @@ public class SMSNotificationListener {
         try {
             MapMessage emailMessage = (MapMessage) message;
             smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
-                    NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
+            		emailMessage.getString(TEMPLATEID),NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
         } catch (JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }
@@ -85,7 +86,8 @@ public class SMSNotificationListener {
     public void sendQuickSMS(Message message) {
         try {
             MapMessage emailMessage = (MapMessage) message;
-            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE), HIGH);
+            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
+            			emailMessage.getString(TEMPLATEID), HIGH);
         } catch (JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }
