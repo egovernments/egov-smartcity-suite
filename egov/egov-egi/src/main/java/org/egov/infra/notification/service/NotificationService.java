@@ -73,6 +73,10 @@ import static org.egov.infra.notification.NotificationConstants.PRIORITY;
 import static org.egov.infra.notification.NotificationConstants.SUBJECT;
 import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
+import static org.egov.infra.notification.NotificationConstants.TEMPLATEID;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class NotificationService {
@@ -133,8 +137,14 @@ public class NotificationService {
             });
     }
 
+    /* @deprecated 
+     * As part of new SMS API integration.
+     * <p> Use {@link NotificationService#sendSMS(String mobileNo, String message, String templateId)}
+     */
+    @Deprecated
     public void sendSMS(String mobileNo, String message) {
-        sendSMS(mobileNo, message, MEDIUM);
+        //sendSMS(mobileNo, message, MEDIUM);
+    	sendSMS(mobileNo, getMessage(message), getTemplateIdFromMessage(message), MEDIUM);
     }
 
     public void sendSMS(User user, String templateName, Object... messageValues) {
@@ -152,6 +162,22 @@ public class NotificationService {
                 return mapMessage;
             });
     }
+    
+    public void sendSMS(String mobileNo, String message, String templateId) {
+        sendSMS(mobileNo, message, templateId, MEDIUM);
+    }
+    
+    public void sendSMS(String mobileNo, String message, String templateId, NotificationPriority priority) {
+        if (smsEnabled && isNoneBlank(mobileNo, message))
+            jmsTemplate.send(HIGH.equals(priority) ? flashQueue : smsQueue, session -> {
+                MapMessage mapMessage = session.createMapMessage();
+                mapMessage.setString(MOBILE, mobileNo);
+                mapMessage.setString(MESSAGE, message);
+                mapMessage.setString(TEMPLATEID, templateId);
+                mapMessage.setString(PRIORITY, priority.name());
+                return mapMessage;
+            });
+    }
 
     public void sendCalendarInvite(String email, String subject, CalendarInviteInfo calendarInfo) {
         if (mailEnabled && calendarInfo != null && calendarInfo.getStartDateTime() != null
@@ -165,5 +191,25 @@ public class NotificationService {
                 mapMessage.setObject(calendarInfo);
                 return mapMessage;
             });
+    }
+    
+    public static String getTemplateIdFromMessage(String message) {
+    	Pattern ptn = Pattern.compile("\\$\\$(.*?)\\$\\$");
+    	Matcher m = ptn.matcher(message);
+        while (m.find()) {
+        	return m.group(1);
+        }
+    	return null;
+    }
+    
+    public static String getMessage(String message) {
+    	Pattern ptn = Pattern.compile("\\$\\$(.*?)\\$\\$");
+    	String[] parts = ptn.split(message);
+    	StringBuilder builder = new StringBuilder(""); 
+        for(String p:parts){
+        	builder.append(p);
+        	builder.append(" ");
+        }
+    	return builder.toString().trim();
     }
 }

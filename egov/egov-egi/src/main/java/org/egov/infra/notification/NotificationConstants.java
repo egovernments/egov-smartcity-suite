@@ -69,6 +69,7 @@ public final class NotificationConstants {
     public static final String CONTENTID_VALUE = "calendar_message";
     public static final String DATASOURCETYPE = "text/calendar";
     public static final String DATETIME_FORMAT_YYYYMMDDTHHMMSSZ = "yyyyMMdd'T'HHmmss'Z'";
+    public static final String TEMPLATEID = "templateId";
 
     private NotificationConstants() {
         // only constants
