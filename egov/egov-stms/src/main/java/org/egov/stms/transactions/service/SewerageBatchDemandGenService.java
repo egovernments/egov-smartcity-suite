@@ -159,16 +159,19 @@ public class SewerageBatchDemandGenService {
                         (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
                 sewerageDmdGen.setFailureRecords(
                         (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
+                if(!totalDemandForVoucherList.isEmpty())
+                {
                 BigDecimal totalDemandForPostingVoucher = totalDemandForVoucherList.get(0);
+                }
                 final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
                 txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
                 txTemplate.execute(result -> {
                     updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
-					if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
+					/*if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
 						createDemandVoucher(totalDemandForPostingVoucher,
 								sewerageDmdGenerationInstallment.getDescription());
-					}
+					}*/
                     return Boolean.TRUE;
                 });
             }
