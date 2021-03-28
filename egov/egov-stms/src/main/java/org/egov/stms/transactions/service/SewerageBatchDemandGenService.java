@@ -47,6 +47,11 @@
  */
 package org.egov.stms.transactions.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -59,14 +64,8 @@ import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -112,7 +111,7 @@ public class SewerageBatchDemandGenService {
     }
 
     public int generateSewerageDemandForNextFinYear() {
-    	Integer[] recordsResult = null;
+        Integer[] recordsResult = null;
         List<BigDecimal> totalDemandForVoucherList = new ArrayList<BigDecimal>();
         List<SewerageTaxBatchDemandGenerate> sewerageBatchDmdGenResult = findActiveBatchDemands();
         if (LOGGER.isInfoEnabled()) {
@@ -163,17 +162,18 @@ public class SewerageBatchDemandGenService {
                 {
                 BigDecimal totalDemandForPostingVoucher = totalDemandForVoucherList.get(0);
                 }
-                final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+                updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
+               /* final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
                 txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-                txTemplate.execute(result -> {
-                    updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
-					/*if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
-						createDemandVoucher(totalDemandForPostingVoucher,
-								sewerageDmdGenerationInstallment.getDescription());
-					}*/
+                transactionTemplate.execute(result -> {
+                    
+                                        if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
+                                                createDemandVoucher(totalDemandForPostingVoucher,
+                                                                sewerageDmdGenerationInstallment.getDescription());
+                                        }
                     return Boolean.TRUE;
-                });
+                });*/
             }
 
         }
@@ -201,8 +201,8 @@ public class SewerageBatchDemandGenService {
      * @param totalDemandForVoucher
      * @param installment
      */
-	private void createDemandVoucher(BigDecimal totalDemandForVoucher, String installment) {
-		if (sewerageDemandVoucherService.getDemandVoucherEnable())
-			sewerageDemandVoucherService.createDemandVoucherAfterRollover(installment, totalDemandForVoucher);
-	}
+        private void createDemandVoucher(BigDecimal totalDemandForVoucher, String installment) {
+                if (sewerageDemandVoucherService.getDemandVoucherEnable())
+                        sewerageDemandVoucherService.createDemandVoucherAfterRollover(installment, totalDemandForVoucher);
+        }
 }
