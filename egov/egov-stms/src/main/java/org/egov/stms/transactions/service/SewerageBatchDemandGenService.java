@@ -47,11 +47,6 @@
  */
 package org.egov.stms.transactions.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -64,8 +59,14 @@ import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -158,22 +159,22 @@ public class SewerageBatchDemandGenService {
                         (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
                 sewerageDmdGen.setFailureRecords(
                         (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
-                if(!totalDemandForVoucherList.isEmpty())
-                {
-                BigDecimal totalDemandForPostingVoucher = totalDemandForVoucherList.get(0);
-                }
-                updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
+                
+                 BigDecimal totalDemandForPostingVoucher = totalDemandForVoucherList.get(0);
+                //}
+                
                /* final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
-                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);*/
 
                 transactionTemplate.execute(result -> {
                     
                                         if (totalDemandForPostingVoucher.compareTo(BigDecimal.ZERO) > 0) {
+                                         updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
                                                 createDemandVoucher(totalDemandForPostingVoucher,
                                                                 sewerageDmdGenerationInstallment.getDescription());
                                         }
                     return Boolean.TRUE;
-                });*/
+                });
             }
 
         }

@@ -113,6 +113,7 @@ public class SewerageDemandGenerationLogService {
      * @param detailMsg
      * @return
      */
+    @Transactional
     public SewerageDemandGenerationLogDetail createOrGetDemandGenerationLogDetail(final SewerageDemandGenerationLog demandGenerationLog,
            final SewerageApplicationDetails applicationDetails, final SewerageProcessStatus status,final String detailMsg) {
 

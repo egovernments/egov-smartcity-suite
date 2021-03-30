@@ -709,7 +709,8 @@ public class SewerageApplicationDetailsService {
         }
         return modelParams;
     }
-
+    
+    @Transactional
     public SewerageApplicationDetails updateSewerageApplicationDetails(
             final SewerageApplicationDetails sewerageApplicationDetails) {
         return sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
