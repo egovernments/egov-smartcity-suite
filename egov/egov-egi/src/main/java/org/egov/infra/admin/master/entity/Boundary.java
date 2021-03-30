@@ -105,7 +105,6 @@ public class Boundary extends AbstractAuditable {
     @Length(max = 512)
     @SafeHtml
     @NotBlank
-    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String name;
 
     @Length(max = 25)
@@ -152,7 +151,6 @@ public class Boundary extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 256)
-    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String localName;
 
     @Positive
