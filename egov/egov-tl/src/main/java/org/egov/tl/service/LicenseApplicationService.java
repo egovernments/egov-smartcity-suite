@@ -199,7 +199,7 @@ public class LicenseApplicationService extends TradeLicenseService {
         //Demand Voucher Posting
         List<AppConfigValues> appConfigValuesList = licenseDemandVoucherService.getAppConfigValueByModuleNameAndKeyName
         		(Constants.MODULE_NAME, Constants.DEMAND_VOUCHER_POSTING);
-        String demandVhPosting = null;
+        String demandVhPosting = "NO";
         for (final AppConfigValues appConfigVal : appConfigValuesList) {
         	demandVhPosting = appConfigVal.getValue();
         }
