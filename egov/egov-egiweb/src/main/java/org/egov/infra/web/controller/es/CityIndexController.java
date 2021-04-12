@@ -48,6 +48,9 @@
 
 package org.egov.infra.web.controller.es;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +67,10 @@ public class CityIndexController {
     private CityIndexService cityIndexService;
 
     @PostMapping(value = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<CityIndex> getAllCityDetails() {
-        return cityIndexService.findAll();
-    }
+	public List<CityIndex> getAllCityDetails() {
+		List<CityIndex> cityDetails = new ArrayList<CityIndex>();
+		cityIndexService.findAll().forEach(cityDetails::add);
+		return cityDetails;
+	}
 
 }
