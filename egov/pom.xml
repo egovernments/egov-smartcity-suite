@@ -206,7 +206,7 @@
         <commons-collections4-version>4.1</commons-collections4-version>
         <commons-codec-version>1.11</commons-codec-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
-        <commons-io-version>2.6</commons-io-version>
+        <commons-io-version>2.7</commons-io-version>
         <commons-fileupload-version>1.3.3</commons-fileupload-version>
         <commons.text.version>1.1</commons.text.version>
         <commons.compress.version>1.16.1</commons.compress.version>
