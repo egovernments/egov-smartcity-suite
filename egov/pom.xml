@@ -215,7 +215,7 @@
         <ehcache-web-version>2.0.4</ehcache-web-version>
         <joda-time-version>2.9.9</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
-        <jsoup-version>1.10.3</jsoup-version>
+        <jsoup-version>1.14.2</jsoup-version>
         <jython-version>2.7.1b3</jython-version>
         <flyway-core-version>5.0.3</flyway-core-version>
         <junit-version>4.12</junit-version>
