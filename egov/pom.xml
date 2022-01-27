@@ -166,7 +166,7 @@
         <javax-jms-version>1.0.1.Final</javax-jms-version>
         <javax-mail-version>1.5.6</javax-mail-version>
         <javax-el-version>3.0.1-b08</javax-el-version>
-        <xerces-version>2.11.0.SP5</xerces-version>
+        <xerces-version>2.12.2</xerces-version>
         <postgres-version>42.1.4</postgres-version>
 
         <!-- Other application dependency versions -->
