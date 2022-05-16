@@ -180,7 +180,7 @@
         <spring-security-version>4.2.3.RELEASE</spring-security-version>
         <spring-security-oauth2-version>2.2.0.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
-        <elastic-search-version>2.4.6</elastic-search-version>
+        <elastic-search-version>6.8.17</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
         <quartz-version>2.3.0</quartz-version>
